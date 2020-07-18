@@ -1,7 +1,7 @@
 Ext.define('MasterSol.view.layout.Header', {
     extend: 'Ext.toolbar.Toolbar',
     height: 50,
-    xtype: 'toolbarheader',
+    xtype: 'header',
    // requires: ['MasterSol.view.layout.HeaderController', 'MasterSol.view.layout.ComboTemas'],
    // controller: 'header',
 

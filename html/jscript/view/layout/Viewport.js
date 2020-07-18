@@ -11,7 +11,7 @@ Ext.define('MasterSol.view.layout.Viewport', {
         type: 'border'
     },
     items: [{
-        xtype: 'toolbarheader',
+        xtype: 'header',
         id: 'header-panel',
         region: 'north'
     }, {
@@ -19,7 +19,7 @@ Ext.define('MasterSol.view.layout.Viewport', {
         region: 'center',
         id: 'center-panel',
     }, {
-        xtype: 'toolbarfooter',
+        xtype: 'footer',
         id: 'footer-panel',
         region: 'south'
     }]
