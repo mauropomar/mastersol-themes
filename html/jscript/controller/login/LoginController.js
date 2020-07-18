@@ -42,41 +42,64 @@ Ext.define('MasterSol.controller.login.LoginController', {
         '<div class="login100-form-avatar"><img src="html/login/images/avatar-02.png" alt="AVATAR"></div>' +
         '<span class="login100-form-title p-t-20 p-b-45">Bienvenido</span>' +
         '<div class="wrap-input100 validate-input m-b-10" data-validate = "Username is required">' +
-        '<input class="input100" type="text" name="username" placeholder="Username">' +
+        '<input class="input100" type="text" name="username" placeholder="Username" id="user_login">' +
         '<span class="focus-input100"></span><span class="symbol-input100"><i class="fa fa-user"></i>' +
         '</span></div><div class="wrap-input100 validate-input m-b-10" data-validate = "Password is required">'+
-        '<input class="input100" type="password" name="pass" placeholder="Password"><span class="focus-input100"></span>'+
+        '<input class="input100" type="password" name="pass" placeholder="Password" id="pass_login"><span class="focus-input100"></span>'+
         '<span class="symbol-input100"><i class="fa fa-lock"></i></span></div>'+
-        '<div class="container-login100-form-btn p-t-10"><button class="login100-form-btn">Login</button></div>'+
+        '<div class="container-login100-form-btn p-t-10"><button class="login100-form-btn" type="button" onclick=MasterApp.getController("MasterSol.controller.login.LoginController").validateLogin();>Login</button></div>'+
         '</a></div></form></div></div></div>'
         return html;
     },
 
-    /* onFormSubmit: function (usuario, password, div_mensaje) {
-         var ventana = Ext.ComponentQuery.query('#ventana_login')[0];
+    validateLogin: function () {
+        var user = Ext.get('user_login').dom.value;
+        var pass = Ext.get('pass_login').dom.value;
+     //   var div_mensaje = Ext.get('mensaje_login');
+        var message = "";
+     //   var icono = "exclamation.png";
+        if (user == "" && pass == "") {
+            message = "Introduzca el usuario y su contrase&ntilde;a";
+        }
+        if (user == "" && pass != "") {
+            message = "Introduzca el usuario";
+        }
+        if (user != "" && pass == "") {
+            message = "Introduzca la contrase&ntilde;a";
+        }
+        if (message != "") {
+          //  div_mensaje.dom.innerHTML = mensaje_validado;
+            return;
+        } else {
+            this.auth(user, pass);
+        }
+    },
+
+    auth: function (username, password) {
+         var ventana = Ext.ComponentQuery.query('#view_login')[0];
          var Mask = new Ext.LoadMask(ventana, {
              msg: 'Comprobando usuario y contrase&ntilde;a...'
          });
          Mask.show();
-         var auntenticarse = {
+         var auth = {
              url: 'php/authentication.php',
              method: 'POST',
              scope: this,
              params: {
-                 'user': usuario,
+                 'user': username,
                  'password': sha256(password)
              },
              success: function (response) {
                  Mask.hide();
                  var json = Ext.JSON.decode(response.responseText);
                  if (json.success === true) {
-                     Ext.ComponentQuery.query('#ventana_login')[0].hide();
-                     Ext.create('MasterSol.view.layout.Home');
+                     Ext.ComponentQuery.query('#view_login')[0].hide();
+                     Ext.create('MasterSol.view.layout.Viewport');
                      var idrol = 1;
-                     MasterApp.globales.setIdRol(idrol);
-                     this.configurarOpcionesPorRol(idrol);
-                     this.cargarOpciones();
-                     MasterApp.alertas.obtenerAlertasSistema();
+                     MasterApp.globals.setIdRol(idrol);
+                  ///   this.configurarOpcionesPorRol(idrol);
+                   //  this.cargarOpciones();
+                  //   MasterApp.alertas.obtenerAlertasSistema();
                  } else {
                      Ext.MessageBox.alert(
                          'Error!',
@@ -85,40 +108,11 @@ Ext.define('MasterSol.controller.login.LoginController', {
                  }
              }
          };
-         Ext.Ajax.request(auntenticarse);
-     },
-
-     validar: function () {
-         var user_imput = Ext.get('user_login').dom.value;
-         var pass_imput = Ext.get('pass_login').dom.value;
-         var div_mensaje = Ext.get('mensaje_login');
-         var mensaje_validado = this.funcionValidar(user_imput, pass_imput);
-         if (mensaje_validado != "") {
-             div_mensaje.dom.innerHTML = mensaje_validado;
-             return;
-         } else {
-             this.onFormSubmit(user_imput, pass_imput, div_mensaje);
-         }
+         Ext.Ajax.request(auth);
      },
 
      funcionValidar: function (user, pass) {
-         var mensaje = "";
-         var icono = "exclamation.png";
-         if (user == "" && pass == "") {
-             mensaje = "Introduzca el usuario y su contrase&ntilde;a";
-         }
-         if (user == "" && pass != "") {
-             mensaje = "Introduzca el usuario";
-         }
-         if (user != "" && pass == "") {
-             mensaje = "Introduzca la contrase&ntilde;a";
-         }
-         if(mensaje != "") {
-             mensaje = '<div class="hboxinline">' +
-                 '<div class="cellOne"><img src="app/images/icons/' + icono + '"/></div>' +
-                 '<div class="cellTwo">' + mensaje + '</div>' +
-                 '</div>';
-         }
+
          return mensaje;
      },
 
@@ -187,5 +181,5 @@ Ext.define('MasterSol.controller.login.LoginController', {
              },
              scope: this
          });
-     }*/
+     }
 });
