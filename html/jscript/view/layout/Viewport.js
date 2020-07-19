@@ -17,8 +17,12 @@ Ext.define('MasterSol.view.layout.Viewport', {
     }, {
         xtype: 'panel',
         region: 'center',
-        id: 'center-panel',
-    }, {
+        id:'panel-center',
+        layout:'fit',
+        items:[{
+            xtype:'dataview-menu'
+        }]
+    },{
         xtype: 'footer',
         id: 'footer-panel',
         region: 'south'

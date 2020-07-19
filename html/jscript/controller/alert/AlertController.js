@@ -33,13 +33,14 @@ Ext.define('MasterSol.controller.alert.AlertController', {
     },
 
     getAlert: function () {
+        this.callAsyncFunction();
         var obt = {
             url: 'php/manager/managerFunctionsEvent.php',
             method: 'GET',
             scope: this,
             success: function (response) {
                 var json = Ext.JSON.decode(response.responseText);
-                this.callAsyncFunction();
+            //    this.callAsyncFunction();
             }
         };
         Ext.Ajax.request(obt);
