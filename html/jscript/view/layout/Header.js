@@ -4,7 +4,6 @@ Ext.define('MasterSol.view.layout.Header', {
     xtype: 'header',
    // requires: ['MasterSol.view.layout.HeaderController', 'MasterSol.view.layout.ComboTemas'],
    // controller: 'header',
-
     items: [{
         xtype: 'tbtext',
         id:'tbtext-title',
@@ -18,7 +17,7 @@ Ext.define('MasterSol.view.layout.Header', {
         '->',
         {
             xtype: 'button',
-            iconCls: 'x-fa fa-server',
+            iconCls: 'fa fa-server',
             id: 'btnEnCascada',
             tooltip: 'En Cascada',
             tooltipType:'title',
@@ -27,7 +26,7 @@ Ext.define('MasterSol.view.layout.Header', {
         },
         {
             xtype: 'button',
-            iconCls: 'x-fa fa-columns',
+            iconCls: 'fa fa-columns',
             id: 'btnEnMosaico',
             tooltip: 'En Mosaico',
             tooltipType:'title',
@@ -39,21 +38,21 @@ Ext.define('MasterSol.view.layout.Header', {
         },*/
         {
             xtype: 'button',
-            iconCls: 'x-fa fa-home',
+            iconCls: 'fa fa-home',
             handler: 'irInicio',
             tooltip: 'Ir a Inicio',
             tooltipType:'title',
         },
         {
             xtype: 'button',
-            iconCls: 'x-fa fa-bell',
+            iconCls: 'fa fa-bell',
             tooltip: 'Alertas',
             tooltipType:'title',
             handler: 'mostrarAlerta'
         },
         {
             xtype: 'button',
-            iconCls: 'x-fa fa-sign-out',
+            iconCls: 'fa fa-sign-out',
             tooltip: 'Cerrar Sesión',
             tooltipType:'title',
             handler: 'cerrarSesion'

@@ -12,7 +12,7 @@ Ext.define('MasterSol.view.layout.Footer', {
 
     items: [{
         xtype: 'button',
-        iconCls: 'x-fa fa-bars',
+        iconCls: 'fa fa-bars',
        /* menu:[{
             xtype:'menu-panel',
         }]*/
@@ -29,11 +29,11 @@ Ext.define('MasterSol.view.layout.Footer', {
         listeners:{
             select:'seleccionarMenu'
         }
-    },'->',{
-        xtype: 'comboventana',
-        id:'comboventana',
-        listeners:{
+    },'->'*/,{
+        xtype: 'combowindow',
+        id:'combowindow',
+      /*  listeners:{
             select:'seleccionarVentana'
-        }
-    }*/]
+        }*/
+    }]
 })

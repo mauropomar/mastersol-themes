@@ -13,7 +13,7 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         optionSelect: null,
         arrayFunctionTotal: [],
         selEnCascade: false,
-        selEnMosaico: false,
+        selEnMosaic: false,
         idRol: null,
         constructor: function () {
             this.recProd = null;
@@ -21,8 +21,6 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.recSection = null;
             this.gridSection = null;
             this.gridSectionPrincipal = null;
-            this.cliksSection = false;
-            this.moveColumns = false;
         },
         getoptionSelected: function () {
             return this.optionSelect;
@@ -73,19 +71,19 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             return this.selEnCascade;
         },
         isMosaico: function () {
-            return this.selEnMosaico;
+            return this.selEnMosaic;
         },
         setEnMosaico: function (val) {
             if (val) {
-                this.selEnMosaico = true;
+                this.selEnMosaic = true;
                 this.selEnCascade = false;
             } else {
-                this.selEnMosaico = false;
+                this.selEnMosaic = false;
             }
         },
         setEnCascade: function (val) {
             if (val) {
-                this.selEnMosaico = false;
+                this.selEnMosaic = false;
                 this.selEnCascade = true;
             } else {
                 this.selEnCascade = false;
