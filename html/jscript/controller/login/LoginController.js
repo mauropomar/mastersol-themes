@@ -15,8 +15,8 @@ Ext.define('MasterSol.controller.login.LoginController', {
             listeners: {
                 scope: this,
                 afterrender: function () {
-                     this.actionKey();
-                     document.getElementById("user_login").focus();
+                    this.actionKey();
+                    document.getElementById("user_login").focus();
                 }
             }
         });
@@ -111,12 +111,10 @@ Ext.define('MasterSol.controller.login.LoginController', {
         Ext.Ajax.request(auth);
     },
 
-
-
     loadOptions: function () {
         Ext.ComponentQuery.query('#comborol')[0].getStore().load();
-        Ext.ComponentQuery.query('#comboidioma')[0].getStore().load();
-        this.getAccess();
+        Ext.ComponentQuery.query('#combolanguage')[0].getStore().load();
+      //  this.getAccess();
         this.getOptions();
     },
     //mostrar u ocultar opciones por rol
@@ -159,11 +157,10 @@ Ext.define('MasterSol.controller.login.LoginController', {
                 if (json.length > 0) {
                     var root = {
                         text: 'Opciones',
-                        id: 'opciones',
                         expanded: true,
                         children: json
                     };
-                    var store = Ext.ComponentQuery.query('tree-opciones')[0].store;
+                    var store = Ext.ComponentQuery.query('tree-options')[0].store;
                     store.setRootNode(root);
                 }
             }

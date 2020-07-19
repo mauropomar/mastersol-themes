@@ -1,7 +1,7 @@
 Ext.define('MasterSol.view.layout.ComboWindow', {
     extend: 'Ext.form.field.ComboBox',
     requires: [
-        'MasterSol.store.layout.StoreWindow'
+        'MasterSol.store.layout.WindowStore'
     ],
     xtype: 'combowindow',
     fieldLabel: 'Ventana',

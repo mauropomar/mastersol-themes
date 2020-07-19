@@ -1,17 +1,19 @@
-Ext.define('MasterSol.view.layout.ComboIdioma', {
+Ext.define('MasterSol.view.layout.ComboLanguage', {
     extend: 'Ext.form.field.ComboBox',
     requires: [
-        'MasterSol.store.layout.IdiomaStore'
+        'MasterSol.store.layout.LanguageStore'
     ],
-    xtype: 'comboidioma',
+    xtype: 'combolanguage',
     fieldLabel: 'Idioma',
-    name: 'comboidioma',
+    name: 'combolanguage',
     store: {
-        type: 'store_idioma'
+        type: 'store_language'
     },
     valueField: 'id',
     displayField: 'nombre',
     typeAhead: true,
     queryMode: 'local',
-    emptyText: 'Select un idioma...'
+    emptyText: 'Select un idioma...',
+    allowBlank:false,
+    blankText:'Debe introducir un menú.'
 })

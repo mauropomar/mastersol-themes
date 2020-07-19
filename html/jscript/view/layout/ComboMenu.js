@@ -2,10 +2,10 @@ Ext.define('MasterSol.view.layout.ComboMenu', {
     extend: 'Ext.form.field.ComboBox',
     requires: [
         'MasterSol.store.layout.MenuStore',
-        'MasterSol.view.layout.OpcionesController'
+        'MasterSol.view.layout.FooterController'
     ],
     xtype: 'combomenu',
-    controller:'opciones',
+    controller:'footer',
     fieldLabel: 'Menú',
     name: 'combomenu',
     store: {
@@ -14,19 +14,21 @@ Ext.define('MasterSol.view.layout.ComboMenu', {
     valueField: 'id',
     displayField: 'nombre',
     typeAhead: false,
-    hideLabel:true,
-    hideTrigger:true,
-    enableKeyEvents:true,
+    hideLabel: true,
+    hideTrigger: true,
+    enableKeyEvents: true,
     matchFieldWidth: false,
-    minChars:2,
+    minChars: 2,
     emptyText: 'Select a opción...',
     listConfig: {
         loadingText: 'Buscando...',
         emptyText: 'No existen opciones....',
         itemSelector: '.search-item',
-        width:300
+        width: 300
     },
-    listeners:{
-        keyup:'keyUpMenu'
+    listeners: {
+        keyup: 'keyUpMenu',
+        select:'selectMenu'
+
     }
 })

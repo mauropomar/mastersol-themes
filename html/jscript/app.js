@@ -8,6 +8,7 @@ Ext.application({
     launch: function () {
         MasterApp = this;
         MasterApp.globals = MasterApp.getController('MasterSol.controller.util.GlobalController');
+        MasterApp.login = MasterApp.getController('MasterSol.controller.login.LoginController');
         this.showPanel();
     },
 
@@ -17,7 +18,12 @@ Ext.application({
             MasterApp.getController('MasterSol.controller.login.LoginController').showLogin();
         } else {
             Ext.create('MasterSol.view.layout.Viewport');
+            this.loadAllOptions();
         }
+    },
+
+    loadAllOptions(){
+        MasterApp.login.loadOptions();
     }
 
 });

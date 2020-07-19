@@ -1,39 +1,32 @@
 Ext.define('MasterSol.view.layout.Footer', {
     extend: 'Ext.toolbar.Toolbar',
     xtype: 'footer',
-    requires:[
-       /* 'MasterSol.view.layout.ComboMenu',
-        'MasterSol.view.layout.ComboVentana',
-        'MasterSol.view.layout.MenuPanel',
-        'MasterSol.view.layout.OpcionesController',
-        'MasterSol.view.layout.FooterController'*/
+    requires: [
+        'MasterSol.view.layout.ComboWindow',
+        'MasterSol.view.layout.ComboMenu',
+        'MasterSol.view.layout.FooterController',
+        'MasterSol.view.layout.MenuPanel'
     ],
-  //  controller:'opciones',
+    //  controller:'opciones',
 
     items: [{
         xtype: 'button',
         iconCls: 'fa fa-bars',
-       /* menu:[{
-            xtype:'menu-panel',
-        }]*/
+        menu: [{
+            xtype: 'menu-panel',
+        }]
     }, {
         xtype: 'tbtext',
         text: 'Menú:',
-        id:'tbtext_menu',
-        style: {
-            color: 'white'
-        }
-    },/* {
+        id: 'tbtext_menu'
+    }, {
         xtype: 'combomenu',
-        id:'combomenu',
-        listeners:{
-            select:'seleccionarMenu'
-        }
-    },'->'*/,{
+        id: 'combomenu'
+    }, '->', {
         xtype: 'combowindow',
-        id:'combowindow',
-      /*  listeners:{
-            select:'seleccionarVentana'
-        }*/
+        id: 'combowindow',
+        /*  listeners:{
+              select:'seleccionarVentana'
+          }*/
     }]
 })
