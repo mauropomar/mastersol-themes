@@ -1,4 +1,4 @@
-Ext.define('MasterSol.view.layout.FooterController', {
+Ext.define('MasterSol.controller.layout.FooterController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.footer',
     clickAccessDirect: function (tree, record) {

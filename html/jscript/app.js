@@ -9,6 +9,7 @@ Ext.application({
         MasterApp = this;
         MasterApp.globals = MasterApp.getController('MasterSol.controller.util.GlobalController');
         MasterApp.login = MasterApp.getController('MasterSol.controller.login.LoginController');
+        MasterApp.alert = MasterApp.getController('MasterSol.controller.alert.AlertController');
         this.showPanel();
     },
 

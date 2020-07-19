@@ -114,7 +114,8 @@ Ext.define('MasterSol.controller.login.LoginController', {
     loadOptions: function () {
         Ext.ComponentQuery.query('#comborol')[0].getStore().load();
         Ext.ComponentQuery.query('#combolanguage')[0].getStore().load();
-      //  this.getAccess();
+        MasterApp.alert.getAlert();
+        this.getAccess();
         this.getOptions();
     },
     //mostrar u ocultar opciones por rol

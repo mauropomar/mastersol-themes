@@ -4,7 +4,7 @@ Ext.define('MasterSol.view.layout.Footer', {
     requires: [
         'MasterSol.view.layout.ComboWindow',
         'MasterSol.view.layout.ComboMenu',
-        'MasterSol.view.layout.FooterController',
+        'MasterSol.controller.layout.FooterController',
         'MasterSol.view.layout.MenuPanel'
     ],
     //  controller:'opciones',

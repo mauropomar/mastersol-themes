@@ -2,7 +2,7 @@ Ext.define('MasterSol.view.layout.TreeOptions', {
     extend: 'Ext.tree.Panel',
     controller: 'footer',
     xtype: 'tree-options',
-    requires:['MasterSol.store.layout.TreeOptionStore', 'MasterSol.view.layout.FooterController'],
+    requires:['MasterSol.store.layout.TreeOptionStore', 'MasterSol.controller.layout.FooterController'],
     rootVisible: false,
     store: {
         type:'tree_option_store'

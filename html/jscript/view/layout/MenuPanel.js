@@ -3,7 +3,7 @@ Ext.define('MasterSol.view.layout.MenuPanel', {
     requires: [
         'Ext.layout.container.Card',
           'MasterSol.view.layout.TreeOptions',
-        /*  'MasterSol.view.layout.TreeConfig',*/
+         'MasterSol.view.layout.TreeConfig',
         'MasterSol.view.layout.FormUser'
     ],
     xtype: 'menu-panel',
@@ -21,13 +21,13 @@ Ext.define('MasterSol.view.layout.MenuPanel', {
         {
             xtype: 'form-user',
             title: 'Usuario'
-        },/*
+        },
         {
             xtype: 'tree-config',
             title: 'Configuración'
-        }*/
+        }
     ],
-    listeners: {
+   /* listeners: {
         tabchange: 'tabchangeMenu'
-    }
+    }*/
 });
