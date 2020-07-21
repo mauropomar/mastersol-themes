@@ -8,15 +8,12 @@
 Ext.define('MasterSol.view.layout.DataView', {
     extend: 'Ext.panel.Panel',
     autoScroll: true,
-    xtype: 'dataview-principal',
+    xtype: 'dataview-home',
     overflowY: 'auto',
+    layout: 'fit',
     requires: [
-        'Ext.view.View',
-        'Ext.ux.BoxReorderer',
-        'Ext.ux.DataView.Animated',
         'MasterSol.store.layout.DataViewStore'
     ],
-    layout: 'fit',
     items: {
         xtype: 'dataview',
         reference: 'dataview',
@@ -36,15 +33,15 @@ Ext.define('MasterSol.view.layout.DataView', {
             '</tpl>'
         ),
         store: {
-            type: 'store_dataview'
+            type: 'store_dataview_home'
         },
-        listeners: {
+       /* listeners: {
             itemmouseenter: function (view, item) {
                 MasterApp.global.setOptionSelect(item);
             },
             afterrender: 'renderDataView',
             itemcontextmenu: 'showContextMenuDataview',
             itemclick: 'selectAccess'
-        }
+        }*/
     }
 });

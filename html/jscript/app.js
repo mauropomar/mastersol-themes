@@ -1,7 +1,6 @@
-Ext.Loader.setConfig({
-    enabled: true,
-    disableCaching: false
-});
+
+
+
 Ext.application({
     name: 'MasterSol',
     appFolder: 'html/jscript',
@@ -17,6 +16,7 @@ Ext.application({
         var url = window.location.href;
         if (url.indexOf('theme') == -1) {
             MasterApp.getController('MasterSol.controller.login.LoginController').showLogin();
+
         } else {
             Ext.create('MasterSol.view.layout.Viewport');
             this.loadAllOptions();

@@ -1,4 +1,4 @@
-Ext.define('MasterSol.view.layout.HomeController', {
+Ext.define('MasterSol.controller.layout.HomeController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.home',
     recordAccess: null,
@@ -15,7 +15,7 @@ Ext.define('MasterSol.view.layout.HomeController', {
             handleNodeDrop: function (data, record, position) {
                 var nodeTree = data.records[0];
                 if (nodeTree.isLeaf())
-                    Ext.ComponentQuery.query('MainView')[0].controller.addAcess(nodeTree);
+                    this.addAcess(nodeTree);
             }
         });
     },
@@ -69,7 +69,7 @@ Ext.define('MasterSol.view.layout.HomeController', {
     },
 
     insertNode: function (node) {
-        var dataview = Ext.ComponentQuery.query('dataview-principal')[0].down('dataview');
+        var dataview = Ext.ComponentQuery.query('dataview-home')[0].down('dataview');
         var store = dataview.getStore();
         var index = store.findExact('nombre', node.data.text);
         if (index > -1) {
