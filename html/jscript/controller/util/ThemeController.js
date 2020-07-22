@@ -38,6 +38,6 @@ Ext.define('MasterSol.controller.util.ThemeController', {
         if(theme == 'gray' || theme == 'classic'){
             return 'black'
         }
-        return 'white'
+        return 'white';
     }
 })

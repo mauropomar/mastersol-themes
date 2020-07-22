@@ -1,0 +1,24 @@
+$badge-background-color: #cc0000;
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  border-radius: $radius;
+}
+
+.badgeable{
+  @include border-radius(50px);
+  color: white;
+  border-color: darken($badge-background-color, 10%);
+  background-color: $badge-background-color;
+  max-width: 95%;
+  padding: 2px 4px;
+  max-height: 16px;
+  font: 10px helvetica, arial, sans-serif;
+  box-shadow: -0.6px 1px 3px 1px rgba(119, 119, 119, 0.55);
+  -moz-box-shadow: -0.6px 1px 3px 1px rgba(119, 119, 119, 0.55);
+  -webkit-box-shadow: -0.6px 1px 3px 1px rgba(119, 119, 119, 0.55);
+}
+.x-panel-header-title-default .badgeable{
+  float: right;
+}

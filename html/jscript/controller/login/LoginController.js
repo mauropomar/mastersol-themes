@@ -99,7 +99,6 @@ Ext.define('MasterSol.controller.login.LoginController', {
                     MasterApp.globals.setIdRol(idrol);
                     this.configureOptionsByRol(idrol);
                     this.loadOptions();
-                    //   MasterApp.alertas.obtenerAlertasSistema();
                 } else {
                     Ext.MessageBox.alert(
                         'Error!',
@@ -115,7 +114,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
         Ext.ComponentQuery.query('#comborol')[0].getStore().load();
         Ext.ComponentQuery.query('#combolanguage')[0].getStore().load();
         MasterApp.theme.setStyle();
-        MasterApp.alert.getAlert();
+        MasterApp.alert.laodInitAlert();
         this.getAccess();
         this.getOptions();
     },

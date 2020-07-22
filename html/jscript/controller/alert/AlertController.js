@@ -11,9 +11,9 @@ Ext.define('MasterSol.controller.alert.AlertController', {
     },
 
 
-    callAsyncFunction: function () {
+    loadIntervalAlert: function () {
         let intervalid;
-        async function callFunction() {
+        async function callAlerts() {
             intervalid = setInterval(() => {
                 new Promise(function (resolve, reject) {
                 }).then(res => {
@@ -29,18 +29,17 @@ Ext.define('MasterSol.controller.alert.AlertController', {
                 })
             }, 60000)
         }
-        callFunction();
+        callAlerts();
     },
 
-    getAlert: function () {
-        this.callAsyncFunction();
+    laodInitAlert: function () {
+        this.loadIntervalAlert();
         var obt = {
             url: 'php/manager/managerFunctionsEvent.php',
             method: 'GET',
             scope: this,
             success: function (response) {
                 var json = Ext.JSON.decode(response.responseText);
-            //    this.callAsyncFunction();
             }
         };
         Ext.Ajax.request(obt);
