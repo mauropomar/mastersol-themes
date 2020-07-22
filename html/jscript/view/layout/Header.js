@@ -9,7 +9,7 @@ Ext.define('MasterSol.view.layout.Header', {
         id:'tbtext-title',
         text: 'MasterSol ERM',
         style: {
-            color: 'white',
+            color: MasterApp.theme.getTextColor(),
             fontSize: '20px',
             fontWeight: 'bold'
         }
