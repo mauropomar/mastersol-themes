@@ -4,27 +4,27 @@ Ext.define('MasterSol.controller.util.ContainerSectionsController', {
 
     },
 
-    getPanel: function (title, json, tools, height,  name, windowParent) {
+    getPanel: function (title, json, tools, height, name, windowParent) {
         var columns = json.columnas;
         var data = json.datos;
         var tools = json.buttons;
         var atribute = {
-            "section_checked":(json.section_checked)?json.section_checked:false
+            "section_checked": (json.section_checked) ? json.section_checked : false
         };
-        var gridsection = MasterApp.grid.getComponents('', columns, tools, height-30, data, name, windowParent, atribute);
+        var gridsection = MasterApp.gridsections.getComponents('', columns, tools, height - 30, data, name, windowParent, atribute);
         var gridtotal = MasterApp.gridtotal.getComponents('', columns, [], 30, data, 'grid_total');
-        if(!gridtotal.isVisible()){
+        if (!gridtotal.isVisible()) {
             gridtotal.setHeight(0);
-            var height = grid.height + 30;
+            var height = gridsection.height + 30;
             gridsection.setHeight(height);
         }
         return Ext.create('Ext.panel.Panel', {
-            height:height,
-            title:title,
-            items: [gridsection,gridtotal],
-            listeners:{
-                afterrender:function(panel){
-                    gridsection.view.getEl().on('scroll', function(e, t) {
+            height: height,
+            title: title,
+            items: [gridsection, gridtotal],
+            listeners: {
+                afterrender: function (panel) {
+                    gridsection.view.getEl().on('scroll', function (e, t) {
                         gridtotal.view.getEl().dom.scrollLeft = t.scrollLeft;
                     }, gridsection.view.getEl(), {delay: 50});
                 }

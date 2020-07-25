@@ -5,8 +5,14 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
     
     addButtonTools:function () {
-        
+
+    },
+
+    getDataIndex: function (col) {
+        return (col.fk == 1) ? col['n_fk'] : col.dataIndex;
     }
+
+
 
 
 });

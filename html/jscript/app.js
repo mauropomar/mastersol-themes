@@ -26,6 +26,7 @@ Ext.application({
     },
 
     setNameClass:function(MasterApp){
+        MasterApp.util = MasterApp.getController('MasterSol.controller.util.UtilController');
         MasterApp.globals = MasterApp.getController('MasterSol.controller.util.GlobalController');
         MasterApp.login = MasterApp.getController('MasterSol.controller.login.LoginController');
         MasterApp.alert = MasterApp.getController('MasterSol.controller.alert.AlertController');
@@ -33,6 +34,8 @@ Ext.application({
         MasterApp.menu = MasterApp.getController('MasterSol.controller.menu.MenuController');
         MasterApp.tools = MasterApp.getController('MasterSol.controller.util.ToolsController');
         MasterApp.containersections = MasterApp.getController('MasterSol.controller.util.ContainerSectionsController');
+        MasterApp.gridsections = MasterApp.getController('MasterSol.controller.util.GridSectionController');
+        MasterApp.gridtotal = MasterApp.getController('MasterSol.controller.util.GridTotalController');
     }
 
 

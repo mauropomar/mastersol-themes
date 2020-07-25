@@ -62,14 +62,13 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         window.idsection = this.menu.idsection;
         window.idmenu = this.menu.id;
         window.showAt(0, 38);
-        debugger
         MasterApp.tools.setButtons(window, json[0].buttons);
         this.windowParent = window;
         this.panelMenu = window.down('panel').down('container');
         this.generateLevels(json);
      //   this.configurarSecciones(json);
         //   this.obtenerButtons(window);
-        Ext.ComponentQuery.query('#btnEnMosaico')[0].setDisabled(false);
+        Ext.ComponentQuery.query('#btnEnMosaic')[0].setDisabled(false);
         Ext.ComponentQuery.query('#btnEnCascade')[0].setDisabled(false);
     },
     //configurar la cantidad de niveles que va a tener el menu
