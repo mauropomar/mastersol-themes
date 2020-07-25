@@ -85,17 +85,21 @@ Ext.define('MasterSol.controller.menu.MenuController', {
                 if (j == 0) {
                     this.generateSectionPrincipal(json, height);
                 } else {
-                    this.crearTabsPanel(j, height);
+                    this.generateSections(j, height);
                 }
             }
         }
     },
-    //generar seccion principal
+    //generar seccion principal y agregar a la opcion del combo de ventanas que esta en el footer
     generateSectionPrincipal:function(json,height){
         var panel = MasterApp.containersections.getPanel('', json[0], [], height, 'grid-menu', this.windowParent);
         var gridSectionPrincipal = panel.items.items[0];
         MasterApp.globals.setSectionPrincipal(gridSectionPrincipal);
         this.panelMenu.add(panel);
-       // this.addVentanaCombo(json[0]);
+        MasterApp.footer.addWindow(this.menu);
+    },
+
+    generateSections:function(){
+
     }
 })

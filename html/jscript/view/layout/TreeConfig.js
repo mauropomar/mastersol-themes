@@ -1,7 +1,6 @@
 Ext.define('MasterSol.view.layout.TreeConfig', {
     extend: 'Ext.tree.Panel',
     xtype: 'tree-config',
-    controller: 'footer',
     rootVisible: false,
     requires:['MasterSol.store.layout.TreeConfigStore', 'MasterSol.controller.layout.FooterController'],
     store: {

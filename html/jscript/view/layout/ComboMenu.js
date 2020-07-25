@@ -2,10 +2,10 @@ Ext.define('MasterSol.view.layout.ComboMenu', {
     extend: 'Ext.form.field.ComboBox',
     requires: [
         'MasterSol.store.layout.MenuStore',
-        'MasterSol.controller.layout.FooterController'
+     //   'MasterSol.controller.layout.FooterController'
     ],
     xtype: 'combomenu',
-    controller:'footer',
+   // controller:'footer',
     fieldLabel: 'Menú',
     name: 'combomenu',
     store: {
@@ -26,9 +26,9 @@ Ext.define('MasterSol.view.layout.ComboMenu', {
         itemSelector: '.search-item',
         width: 300
     },
-    listeners: {
+   /* listeners: {
         keyup: 'keyUpMenu',
         select:'selectMenu'
 
-    }
+    }*/
 })

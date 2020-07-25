@@ -36,6 +36,7 @@ Ext.application({
         MasterApp.containersections = MasterApp.getController('MasterSol.controller.util.ContainerSectionsController');
         MasterApp.gridsections = MasterApp.getController('MasterSol.controller.util.GridSectionController');
         MasterApp.gridtotal = MasterApp.getController('MasterSol.controller.util.GridTotalController');
+        MasterApp.footer = MasterApp.getController('MasterSol.controller.layout.FooterController');
     }
 
 
