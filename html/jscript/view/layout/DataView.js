@@ -12,7 +12,8 @@ Ext.define('MasterSol.view.layout.DataView', {
     overflowY: 'auto',
     layout: 'fit',
     requires: [
-        'MasterSol.store.layout.DataViewStore'
+        'MasterSol.store.layout.DataViewStore',
+        'MasterSol.controller.menu.MenuController'
     ],
     items: {
         xtype: 'dataview',
@@ -35,13 +36,20 @@ Ext.define('MasterSol.view.layout.DataView', {
         store: {
             type: 'store_dataview_home'
         },
-       /* listeners: {
+        listeners: {
+            scope:this,
             itemmouseenter: function (view, item) {
-                MasterApp.global.setOptionSelect(item);
+              //  MasterApp.global.setOptionSelect(item);
             },
-            afterrender: 'renderDataView',
-            itemcontextmenu: 'showContextMenuDataview',
-            itemclick: 'selectAccess'
-        }*/
+            afterrender: function(view){
+                 MasterApp.getController('MasterSol.controller.layout.HomeController').renderDataView(view);
+            },
+            itemcontextmenu: function(view, rec, node, index, e){
+                MasterApp.getController('MasterSol.controller.layout.HomeController').showContextMenuDataview(view, rec, node, index, e);
+            },
+            itemclick: function(view, rec, node, index, e){
+                MasterApp.getController('MasterSol.controller.menu.MenuController').select(view, rec);
+            },
+        }
     }
 });

@@ -1,7 +1,7 @@
 Ext.define('MasterSol.view.layout.Viewport', {
     extend: 'Ext.container.Viewport',
     xtype: 'MainView',
-    controller: 'home',
+ //   controller: 'home',
     requires: [
         'Ext.layout.container.Border',
         'MasterSol.view.layout.Header',
@@ -13,7 +13,7 @@ Ext.define('MasterSol.view.layout.Viewport', {
         type: 'border'
     },
     items: [{
-        xtype: 'header',
+        xtype: 'toolbar-header',
         id: 'header-panel',
         region: 'north'
     }, {
@@ -25,7 +25,7 @@ Ext.define('MasterSol.view.layout.Viewport', {
             xtype: 'dataview-home'
         }]
     }, {
-        xtype: 'footer',
+        xtype: 'toolbar-footer',
         id: 'footer-panel',
         region: 'south'
     }]

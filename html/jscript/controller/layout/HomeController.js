@@ -1,7 +1,10 @@
 Ext.define('MasterSol.controller.layout.HomeController', {
-    extend: 'Ext.app.ViewController',
+    extend: 'Ext.app.Controller',
     alias: 'controller.home',
-    recordAccess: null,
+    init: function () {
+
+    },
+  //  recordAccess: null,
     renderDataView: function (view) {
         this.setDropConfig(view);
         this.setContextMenu();

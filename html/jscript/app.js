@@ -31,6 +31,8 @@ Ext.application({
         MasterApp.alert = MasterApp.getController('MasterSol.controller.alert.AlertController');
         MasterApp.theme = MasterApp.getController('MasterSol.controller.util.ThemeController');
         MasterApp.menu = MasterApp.getController('MasterSol.controller.menu.MenuController');
+        MasterApp.tools = MasterApp.getController('MasterSol.controller.util.ToolsController');
+        MasterApp.containersections = MasterApp.getController('MasterSol.controller.util.ContainerSectionsController');
     }
 
 

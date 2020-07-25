@@ -4,14 +4,16 @@
 Ext.define('MasterSol.controller.menu.MenuController', {
     extend: 'Ext.app.Controller',
     init: function () {
-        this.menu = {id: null, idsection: null, nombre: ''};
+        this.menu = {id: null, idsection: null, nanme: ''};
         this.json = [];
+        this.windowParent =  null; //variable utilizada para asociar cada seccion o tab a la ventana
+        this.panelMenu = null;
     },
 
     select:function(view, record){
         this.menu.id = record.data.id;
         this.menu.idsection = record.data.sectionId;
-        this.menu.nombre = record.data.nombre;
+        this.menu.name = record.data.nombre;
         this.getData(record);
     },
     //obtiene los datos del menu seleccionado
@@ -47,7 +49,54 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         Ext.Ajax.request(getdata);
     },
 
-    showMenu:function(){
-
+    showMenu:function(json){
+        Ext.ComponentQuery.query('#panel-center')[0].removeAll();
+        Ext.ComponentQuery.query('#panel-center')[0].add(Ext.create('MasterSol.view.menu.Menu'));
+        var panelmenu = Ext.ComponentQuery.query('#panel-menu')[0];
+        var window = Ext.create('MasterSol.view.menu.WindowMenu');
+        var height = panelmenu.getHeight();
+        var width = panelmenu.getWidth();
+        window.setWidth(width);
+        window.setHeight(height);
+        window.setTitle(this.menu.name);
+        window.idsection = this.menu.idsection;
+        window.idmenu = this.menu.id;
+        window.showAt(0, 38);
+        debugger
+        MasterApp.tools.setButtons(window, json[0].buttons);
+        this.windowParent = window;
+        this.panelMenu = window.down('panel').down('container');
+        this.generateLevels(json);
+     //   this.configurarSecciones(json);
+        //   this.obtenerButtons(window);
+        Ext.ComponentQuery.query('#btnEnMosaico')[0].setDisabled(false);
+        Ext.ComponentQuery.query('#btnEnCascade')[0].setDisabled(false);
+    },
+    //configurar la cantidad de niveles que va a tener el menu
+    generateLevels: function (json) {
+        var levels = json[0].niveles;
+        var panel_contenedor = this.panelMenu;
+        var height = panel_contenedor.getHeight();
+        panel_contenedor.removeAll();
+        if (levels < 2) {
+            this.generateSectionPrincipal(json, height);
+        } else {
+            height = height / levels;
+            for (var j = 0; j < levels; j++) {
+                if (j == 0) {
+                    this.generateSectionPrincipal(json, height);
+                } else {
+                    this.crearTabsPanel(j, height);
+                }
+            }
+        }
+    },
+    //generar seccion principal
+    generateSectionPrincipal:function(json,height){
+        var panel = MasterApp.containersections.getPanel('', json[0], [], height, 'grid-menu', this.windowParent);
+        var gridSectionPrincipal = panel.items.items[0];
+        MasterApp.globals.setSectionPrincipal(gridSectionPrincipal);
+        this.panelMenu.add(panel);
+       // this.addVentanaCombo(json[0]);
     }
 })

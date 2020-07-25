@@ -6,21 +6,19 @@
  */
 Ext.define('MasterSol.controller.util.GlobalController', {
         extend: 'Ext.app.Controller',
-        recProd: null,
-        gridProd: null,
-        arrayTotal: [],
-        arrayFilter: [],
-        optionSelect: null,
-        arrayFunctionTotal: [],
-        selEnCascade: false,
-        selEnMosaic: false,
-        idRol: null,
-        constructor: function () {
+        init: function () {
             this.recProd = null;
             this.gridProd = null;
             this.recSection = null;
             this.gridSection = null;
             this.gridSectionPrincipal = null;
+            this.arrayTotal = [];
+            this.arrayFilter = [];
+            this.optionSelect = null;
+            this.arrayFunctionTotal = [];
+            this.selEnCascade = false;
+            this.selEnMosaic = false;
+            this.idRol = null;
         },
         getoptionSelected: function () {
             return this.optionSelect;

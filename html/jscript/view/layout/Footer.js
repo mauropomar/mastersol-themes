@@ -1,6 +1,6 @@
 Ext.define('MasterSol.view.layout.Footer', {
     extend: 'Ext.toolbar.Toolbar',
-    xtype: 'footer',
+    xtype: 'toolbar-footer',
     requires: [
         'MasterSol.view.layout.ComboWindow',
         'MasterSol.view.layout.ComboMenu',
