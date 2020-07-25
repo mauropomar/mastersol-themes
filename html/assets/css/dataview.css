@@ -21,6 +21,8 @@
 .x-center-principal.x-view-item-focused {
     outline: none !important;
     width: 220px !important;
+    height: 160px !important;
+    max-height:160px !important;
     height: auto !important;
     border: none !important;
     float: left !important;
@@ -36,6 +38,7 @@
 .x-center-principal {
     width: 220px !important;
     height: 160px !important;
+    min-height: 160px;
     background-color: white !important;
     border: none !important;
     transition: opacity 0.3s !important;
@@ -77,20 +80,6 @@ span.modulo-nombre {
     font-family: "Minion Pro" !important;
 }
 
-.x-auditoria-principal {
-    width: 80% !important;
-    height: auto !important;
-    background-color: white !important;
-    border: none !important;
-    transition: opacity 0.3s !important;
-    float: left !important;
-    margin: 15px 10px !important;
-    padding: 10px 0px !important;
-    -moz-box-shadow: 1px 1px 6px rgb(163, 163, 163);
-    -webkit-box-shadow: 1px 1px 6px rgb(163, 163, 163);
-    -o-box-shadow: 1px 1px 6px rgb(163, 163, 163);
-    box-shadow: 1px 1px 6px rgb(163, 163, 163);
-}
 
 .x-field-auditoria {
     font-weight: bold;

@@ -41,8 +41,8 @@ Ext.define('MasterSol.controller.layout.HomeController', {
         });
     },
 
-    selectAccess: function (view, record) {
-        Ext.ComponentQuery.query('tree-options')[0].controller.selectAccess(view, record);
+    selectMenu: function (view, record) {
+        MasterApp.menu.select(view, record);
     },
 
     addAcess: function (node) {

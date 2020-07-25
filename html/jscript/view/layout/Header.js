@@ -2,11 +2,11 @@ Ext.define('MasterSol.view.layout.Header', {
     extend: 'Ext.toolbar.Toolbar',
     height: 40,
     xtype: 'header',
-   // requires: ['MasterSol.view.layout.HeaderController', 'MasterSol.view.layout.ComboTemas'],
-   // controller: 'header',
+    requires: [/*'MasterSol.view.layout.HeaderController', 'MasterSol.view.layout.ComboTemas'*/, 'MasterSol.view.plugins.Badgeable'],
+    // controller: 'header',
     items: [{
         xtype: 'tbtext',
-        id:'tbtext-title',
+        id: 'tbtext-title',
         text: 'MasterSol ERM',
         style: {
             color: MasterApp.theme.getTextColor(),
@@ -20,7 +20,7 @@ Ext.define('MasterSol.view.layout.Header', {
             iconCls: 'fa fa-server',
             id: 'btnEnCascada',
             tooltip: 'En Cascada',
-            tooltipType:'title',
+            tooltipType: 'title',
             disabled: true,
             handler: 'enCascada'
         },
@@ -29,7 +29,7 @@ Ext.define('MasterSol.view.layout.Header', {
             iconCls: 'fa fa-columns',
             id: 'btnEnMosaico',
             tooltip: 'En Mosaico',
-            tooltipType:'title',
+            tooltipType: 'title',
             disabled: true,
             handler: 'enMosaico'
         }, /*{
@@ -41,20 +41,21 @@ Ext.define('MasterSol.view.layout.Header', {
             iconCls: 'fa fa-home',
             handler: 'irInicio',
             tooltip: 'Ir a Inicio',
-            tooltipType:'title',
+            tooltipType: 'title',
         },
         {
-            xtype: 'button',
+            xtype:'button',
             iconCls: 'fa fa-bell',
             tooltip: 'Alertas',
-            tooltipType:'title',
-            handler: 'mostrarAlerta'
+            tooltipType: 'title',
+            handler: 'mostrarAlerta',
+            badgeText: '2'
         },
         {
             xtype: 'button',
             iconCls: 'fa fa-sign-out',
             tooltip: 'Cerrar Sesión',
-            tooltipType:'title',
+            tooltipType: 'title',
             handler: 'cerrarSesion'
         }
     ]
