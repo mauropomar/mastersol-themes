@@ -184,7 +184,6 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 tooltip: 'Minimizar',
                 name: 'btn_minimize',
                 handler: function (evt, toolEl, owner, tool) {
-                    var window = owner.up('window');
                     MasterApp.section.minimize(this, evt, toolEl, owner, tool);
                 }
             }, {
@@ -193,8 +192,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 tooltip: 'Restaurar',
                 name: 'btn_restore',
                 handler: function (evt, toolEl, owner, tool) {
-                /*    var window = owner.up('window');
-                    window.getController().restore(this, evt, toolEl, owner, tool);*/
+                    MasterApp.section.restore(this, evt, toolEl, owner, tool);
 
                 }
             }, {
@@ -211,8 +209,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 name: 'btn_maximize',
                 hidden: true,
                 handler: function (evt, toolEl, owner, tool) {
-              /*      var window = owner.up('window');
-                    window.getController().maximizar(this, evt, toolEl, owner, tool);*/
+                    MasterApp.section.maximize(this, evt, toolEl, owner, tool);
                 }
             }, {
                 iconCls: 'fa fa-close',

@@ -22,7 +22,9 @@ Ext.define('MasterSol.view.layout.Header', {
             tooltip: 'En Cascada',
             tooltipType: 'title',
             disabled: true,
-         //   handler: 'enCascada'
+            handler: function () {
+                MasterApp.header.applyCascade();
+            }
         },
         {
             xtype: 'button',
@@ -31,11 +33,10 @@ Ext.define('MasterSol.view.layout.Header', {
             tooltip: 'En Mosaico',
             tooltipType: 'title',
             disabled: true,
-       //     handler: 'enMosaico'
-        }, /*{
-            xtype: 'combotemas',
-            id: 'combotemas'
-        },*/
+            handler: function () {
+                MasterApp.header.applyMosaic();
+            }
+        },
         {
             xtype: 'button',
             iconCls: 'fa fa-home',

@@ -17,6 +17,17 @@ Ext.define('MasterSol.controller.util.UtilController', {
         }
     },
 
+    resizeWindow: function (window, panel) {
+        var height = panel.getHeight();
+        var width = panel.getWidth();
+        window.setWidth(width);
+        window.setHeight(height);
+        window.show();
+        var x = panel.getX();
+        var y = panel.getY();
+        window.setPosition(x, y);
+    },
+
     setWindowSize:function(window){
         var height = Ext.ComponentQuery.query('#panel-menu')[0].getHeight();
         var width = Ext.ComponentQuery.query('#panel-menu')[0].getWidth();

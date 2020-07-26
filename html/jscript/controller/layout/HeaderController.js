@@ -43,7 +43,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             win.isminimize = false;
             var btnMinimize = MasterApp.tools.getBtnTools(win, 'btn_minimize');
             btnMinimize.show();
-            var arrayBtn = MasterApp.tools.getArrayBtn();
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             var btnMaximize = MasterApp.tools.getBtnTools(win, 'btn_restore');
             btnMaximize.hide();
@@ -51,6 +51,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
     },
 
     applyMosaic: function () {
+
         MasterApp.globals.setEnMosaic(true);
         var win;
         var windows = this.getWindows();
@@ -68,7 +69,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             win.setHeight(height);
             win.setWidth(width);
             win.isminimize = false;
-            var arrayBtn = MasterApp.tools.getArrayBtn();
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             var btnMaximize = MasterApp.tools.getBtnTools(win, 'btn_restore');
             btnMaximize.hide();

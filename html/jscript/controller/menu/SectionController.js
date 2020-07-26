@@ -7,7 +7,23 @@ Ext.define('MasterSol.controller.menu.SectionController', {
 
     },
 
-    minimize:function(button, evt, toolEl, owner, tool){
+
+    restore: function (button, evt, toolEl, owner, tool) {
+        var window = owner.up('window');
+        window.expand('', false);
+        window.isminimize = false;
+        button.hide();
+        var btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
+        btn.show();
+        var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+        MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
+        this.adjustOtherWindowsMinimize();
+        var panel = Ext.ComponentQuery.query('#panel-menu')[0];
+        MasterApp.util.resizeWindow(window, panel);
+    },
+
+
+    minimize: function (button, evt, toolEl, owner, tool) {
         var panelMenu = Ext.ComponentQuery.query('#panel-menu')[0];
         var window = owner.up('window');
         window.collapse();
@@ -18,11 +34,25 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         button.hide();
         var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
         btn.show();
-        var arrayBtn = MasterApp.tools.getArrayBtn();
+        var arrayBtn = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
         MasterApp.tools.setVisibleBtn(window, arrayBtn, true);
         window.alignTo(panelMenu, 'bl-bl');
         this.setPositionWindow(window);
         this.adjustOtherWindowsMaximize();
+    },
+
+    maximize: function (button, evt, toolEl, owner, tool) {
+        var window = owner.up('window');
+        button.hide();
+        button.previousSibling().show();
+        var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
+        btn.hide();
+        btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
+        btn.hide();
+        window.expand('', false);
+        window.isminimize = false;
+        var panel = Ext.ComponentQuery.query('MainView')[0];
+        MasterApp.util.resizeWindow(window, panel);
     },
 
     closeWindow: function (window) {
@@ -33,9 +63,9 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             Ext.ComponentQuery.query('#btnEnMosaic')[0].setDisabled(true);
             Ext.ComponentQuery.query('#btnEnCascade')[0].setDisabled(true);
         }
-      /*  this.collapseTabGestion();
         this.adjustOtherWindowsMinimize();
         this.adjustOtherWindowsMaximize();
+        /*     this.collapseTabGestion();
         MasterApp.globales.setRecordSection(null);
         MasterApp.globales.setGridSection(null);
         this.removeOfArrayGlobales(window);*/
@@ -92,12 +122,12 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         for (var j = 0; j < windows.length; j++) {
             var isMosaic = MasterApp.globals.isMosaic();
             if (isMosaic) {
-                Ext.ComponentQuery.query('toolbarheader')[0].controller.enMosaico();
+                MasterApp.header.applyMosaic();
                 return;
             }
-            var isCascade = MasterApp.globales.isCascade();
+            var isCascade = MasterApp.globals.isCascade();
             if (isCascade) {
-                Ext.ComponentQuery.query('toolbarheader')[0].controller.enCascada();
+                MasterApp.header.applyCascade();
             }
         }
     }
