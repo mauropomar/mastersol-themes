@@ -5,7 +5,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     getArrayBtn:function(){
-        var array =  ['btn_maximizar', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+        var array =  ['btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
         return array;
     },
 
@@ -182,7 +182,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             }, {
                 type: 'minimize',
                 tooltip: 'Minimizar',
-                name: 'btn_minimizar',
+                name: 'btn_minimize',
                 handler: function (evt, toolEl, owner, tool) {
                     var window = owner.up('window');
                     MasterApp.section.minimize(this, evt, toolEl, owner, tool);
@@ -208,7 +208,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             }, {
                 iconCls: 'fa fa-square-o',
                 tooltip: 'Maximizar',
-                name: 'btn_maximizar',
+                name: 'btn_maximize',
                 hidden: true,
                 handler: function (evt, toolEl, owner, tool) {
               /*      var window = owner.up('window');

@@ -68,10 +68,10 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         isCascade: function () {
             return this.selEnCascade;
         },
-        isMosaico: function () {
+        isMosaic: function () {
             return this.selEnMosaic;
         },
-        setEnMosaico: function (val) {
+        setEnMosaic: function (val) {
             if (val) {
                 this.selEnMosaic = true;
                 this.selEnCascade = false;
