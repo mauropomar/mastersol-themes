@@ -4,9 +4,26 @@
 Ext.define('MasterSol.controller.menu.SectionController', {
     extend: 'Ext.app.Controller',
     init: function () {
-
+        this.control({
+            'tabpanel[name=tab-menu]': {
+                tabchange: 'tabChangeSection'
+            },
+        })
     },
 
+    tabChangeSection:function(tabPanel, newCard){
+        var gridsection = newCard.down('gridpanel');
+        MasterApp.globals.setGridSection(gridsection);
+        var idparent = newCard.idrecordparent;
+        if (idparent == null)
+            return;
+        var store = gridsection.getStore();
+        if (store.getCount() > 0)
+            return;
+        var window = gridsection.up('window');
+        MasterApp.tools.setButtons(window, gridsection.btnTools);
+        this.obtenerDatos(idpadre, newCard);
+    },
 
     restore: function (button, evt, toolEl, owner, tool) {
         var window = owner.up('window');

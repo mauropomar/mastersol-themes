@@ -66,7 +66,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         this.windowParent = window;
         this.panelMenu = window.down('panel').down('container');
         this.generateLevels(json);
-     //   this.configurarSecciones(json);
+        this.configureSections(json);
         //   this.obtenerButtons(window);
         Ext.ComponentQuery.query('#btnEnMosaic')[0].setDisabled(false);
         Ext.ComponentQuery.query('#btnEnCascade')[0].setDisabled(false);
@@ -99,10 +99,81 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         MasterApp.footer.addWindow(this.menu);
     },
 
-    generateSections:function(){
-
+    generateSections:function(level, height){
+        var tabpanel = Ext.create('Ext.tab.Panel', {
+            height: height,
+            activeTab: 0,
+            split: true,
+            resizable: true,
+            level: level - 1,
+            idsection: this.windowParent.idsection,
+            idmenu: this.windowParent.idmenu,
+            name:'tab-section',
+            border: 1,
+           /* listeners: {
+                scope: this,
+                "tabchange": this.tabChangeSection
+            }*/
+        });
+        this.panelMenu.add(tabpanel);
     },
 
+    // configuracion y creacion de secciones
+    configureSections: function (json) {
+        var items = this.panelMenu.items.items;
+        var tabs = this.getTabsOfPanel(items);
+        var sections = (json[0].children) ? json[0].children : [];
+        for (var i = 0; i < sections.length; i++) {
+            var pos = sections[i].nivel - 1;
+            if (tabs[pos])
+                this.insertSection(sections[i], tabs[pos]);
+        }
+    },
+    // crea una seccion y la agrega al tab
+    insertSection(section, tab) {
+        var title = section.nombre;
+        var height = tab.getHeight() - 50;
+        var containerSection = MasterApp.containersections.getPanel(title, section, [], height, 'grid-section', this.windowParent);
+       tab.add(containerSection);
+    },
+    // activa el primer panel de cada tab.
+    activeFirstTab: function () {
+        var items = this.panelMenu.items.items;
+        var tabs = this.getTabsOfPanel(items);
+        tabs[1].setActiveTab(0);
+    },
+
+    getTabsOfPanel: function (items) {
+        var tabs = [];
+        for (var j = 0; j < items.length; j++) {
+            if (items[j].componentCls === 'x-panel') {
+                tabs.push(items[j])
+            }
+        }
+        return tabs;
+    },
+    // evento cambio de tab
+    tabChangeSection: function (tabPanel, newCard) {
+        var level = tabPanel.level;
+        var panelcont = tabPanel.up('panel');
+        var idpanelcont = panelcont.id;
+        var queryId = '#' + idpanelcont + ' tabpanel';
+        var next = level + 1;
+        if (Ext.ComponentQuery.query(queryId)[next]) {
+            var tabNext = Ext.ComponentQuery.query(queryId)[next];
+            this.addChildOfTab(tabNext, newCard);
+        }
+    },
+    // elimina todas la secciones y agregar las secciones correspondiente al padre
+    addChildOfTab: function (tab, panel) {
+        var childs = (this.json[0].children) ? this.json[0].children : [];
+        tab.removeAll();
+        for (var j = 0; j < childs.length; j++) {
+            if (childs[j].idparent === panel.idsection) {
+                this.insertSection(childs[j], tab);
+            }
+        }
+    },
     //verificar si la ventana existe para que no se repita
     getWindow: function (record) {
         var win = null;
