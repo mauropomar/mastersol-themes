@@ -24,8 +24,8 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
     },
 
     applyCascade: function () {
-        MasterApp.globals.setEnCascade(true);
         var win;
+        MasterApp.globals.setEnCascade(true);
         var windows = this.getWindows();
         var height = Ext.ComponentQuery.query('#panel-menu')[0].getHeight();
         var width = Ext.ComponentQuery.query('#panel-menu')[0].getWidth();
@@ -51,9 +51,8 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
     },
 
     applyMosaic: function () {
-
-        MasterApp.globals.setEnMosaic(true);
         var win;
+        MasterApp.globals.setEnMosaic(true);
         var windows = this.getWindows();
         var height = Ext.ComponentQuery.query('#panel-center')[0].getHeight();
         var width = Ext.ComponentQuery.query('#panel-center')[0].getWidth();
@@ -63,11 +62,11 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         var width = width / windows.length;
         for (var j = 0; j < windows.length; j++) {
             win = windows[j];
+            win.setHeight(height);
+            win.setWidth(width);
             win.setX(posX);
             win.setY(posY);
             posX = width + posX;
-            win.setHeight(height);
-            win.setWidth(width);
             win.isminimize = false;
             var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
