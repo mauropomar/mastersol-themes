@@ -3,12 +3,81 @@
  */
 Ext.define('MasterSol.controller.menu.SectionController', {
     extend: 'Ext.app.Controller',
+    IdRecParent:null,
     init: function () {
         this.control({
-            'tabpanel[name=tab-menu]': {
-                tabchange: 'tabChangeSection'
+            'gridpanel[name=section-principal]': { // matches the view itself
+                itemclick: 'clickSectionPrincipal',
+                itemdblclick: 'dblclickSectionPrincipal',
+           //     columnresize: 'columnresize'
+            },
+            'tabpanel[name=tab-section]': {
+                tabchange:'tabChangeSection'
             },
         })
+    },
+
+    clickSectionPrincipal:function(grid, record){
+        MasterApp.globals.setRecordSection(record);
+        MasterApp.globals.setGridSection(grid.panel);
+        this.IdRecParent = record.data.id;
+        this.loadDataTabActive(grid, record, 0);
+     //   this.limpiarDatosGestion();
+      //  this.obtenerDatosGestion();
+    },
+
+    //activar y obtener los datos de la seccion hija activa
+    loadDataTabActive: function (grid, rec, level) {
+        var windowId = grid.panel.idsection;
+        var tabs = Ext.ComponentQuery.query('tabpanel[idsection=' + windowId + ']');
+        if (tabs[level] && tabs[level].items.items.length > 0) {//si existe el tabs en ese nivel y tiene secciones hijas
+            var panel = tabs[level].getActiveTab();
+            if (!panel) {
+                panel = tabs[level].items.items[0];
+                tabs[level].setActiveTab(0);
+            }
+            this.setIdRecordParent(tabs[level]);
+            this.getData(this.IdRecParent, panel);
+            this.resetAllSectionNotImediatly(tabs, level);
+        }
+        var count = this.getCountSections(grid.panel.idsection, level);
+        var disabled = (count == 0) ? false : true;
+        var btn = MasterApp.tools.getBtnTools(grid, 'btn_trash');
+        btn.setDisabled(disabled);
+    },
+
+    setIdRecordParent: function (tab) {
+        var sections = tab.items.items;
+        for (var j = 0; j < sections.length; j++) {
+            sections[j]['idrecordparent'] = this.IdRecParent;
+        }
+    },
+
+    resetAllSectionNotImediatly:function (tabs, level) {
+        level = level + 1;
+        var tab = tabs[level];
+        if (!tab)
+            return;
+        var paneles = tab.items.items;
+        for (var i = 0; i < paneles.length; i++) {
+            var panel = paneles[i];
+            var gridsection = panel.down('gridpanel');
+            if (panel.down('gridpanel')) {
+                var store = gridsection.getStore();
+                store.removeAll();
+            }
+        }
+    },
+
+    getCountSections:function(windowId, level){
+        var count = 0;
+        var tabs = Ext.ComponentQuery.query('tabpanel[idsection=' + windowId + ']');
+        for (var i = 0; i < tabs.length; i++) {
+            if (tabs[i].level == level) {
+                count = tabs[i].items.items.length;
+            }
+        }
+        return count;
     },
 
     tabChangeSection:function(tabPanel, newCard){
@@ -22,7 +91,36 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             return;
         var window = gridsection.up('window');
         MasterApp.tools.setButtons(window, gridsection.btnTools);
-        this.obtenerDatos(idpadre, newCard);
+        this.getData(idparent, newCard);
+    },
+
+
+    getData:function(idrecordparent, newCard){
+        var mask = new Ext.LoadMask(newCard, {
+            msg: 'Cargando...'
+        });
+        mask.show();
+        var getdata = {
+            url: 'php/manager/getregisters.php',
+            method: 'GET',
+            scope: this,
+            params: {
+                idseccion: newCard.idsection,  //id de la seccion activa que va a cargar los datos
+                idseccionpadre: newCard.idparent, //id del padre
+                idproducto: idrecordparent,
+                filtros: MasterApp.util.getFilterBySection()
+            },
+            success: function (response) {
+                mask.hide();
+                var json = Ext.JSON.decode(response.responseText);
+                var grid = newCard.down('gridpanel');
+                grid.getStore().loadData(json);
+            },
+            failure: function (response) {
+                mask.hide();
+            }
+        };
+        Ext.Ajax.request(getdata);
     },
 
     restore: function (button, evt, toolEl, owner, tool) {

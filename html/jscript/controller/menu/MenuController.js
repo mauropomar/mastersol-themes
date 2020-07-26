@@ -92,7 +92,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
     },
     //generar seccion principal y agregar a la opcion del combo de ventanas que esta en el footer
     generateSectionPrincipal:function(json,height){
-        var panel = MasterApp.containersections.getPanel('', json[0], [], height, 'grid-menu', this.windowParent);
+        var panel = MasterApp.containersections.getPanel('', json[0], [], height, 'section-principal', this.windowParent);
         var gridSectionPrincipal = panel.items.items[0];
         MasterApp.globals.setSectionPrincipal(gridSectionPrincipal);
         this.panelMenu.add(panel);

@@ -9,8 +9,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             title: title,
             btnTools: tools,
             selType: 'checkboxmodel',
-            idSection: windowParent.idsection,
-            idMenu: windowParent.idmenu,
+            idsection: windowParent.idsection,
+            idmenu: windowParent.idmenu,
             name: name,
             section_checked:atributos.section_checked,
             store: this.getStore(columns, data),
@@ -18,9 +18,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             split: true,
             plugins: [{
                 ptype: 'gridfilters'
-            }, /*{
-                ptype: 'gridexporter'
-            }*/],
+            }],
             columns: this.getColumns(columns),
             viewConfig: {
                 loadMask: false,
