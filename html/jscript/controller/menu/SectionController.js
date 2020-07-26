@@ -18,8 +18,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         button.hide();
         var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
         btn.show();
-        var arrayBtn = MasterApp.getArrayBtn();
-        this.setVisibleBtn(window, arrayBtn, true);
+        var arrayBtn = MasterApp.tools.getArrayBtn();
+        MasterApp.tools.setVisibleBtn(window, arrayBtn, true);
         window.alignTo(panelMenu, 'bl-bl');
         this.setPositionWindow(window);
         this.adjustOtherWindowsMaximize();

@@ -11,20 +11,20 @@ Ext.define('MasterSol.view.layout.Footer', {
         xtype: 'button',
         iconCls: 'fa fa-bars',
         menu: [{
-            xtype: 'menu-panel',
+            xtype:'menu-panel',
         }]
     }, {
         xtype: 'tbtext',
         text: 'Menú:',
-        id: 'tbtext_menu'
+        id: 'tbtext_menu',
+        style: {
+            fontWeight:'bold'
+        }
     }, {
         xtype: 'combomenu',
         id: 'combomenu'
     }, '->', {
         xtype: 'combowindow',
-        id: 'combowindow',
-        /*  listeners:{
-              select:'seleccionarVentana'
-          }*/
+        id: 'combowindow'
     }]
 })

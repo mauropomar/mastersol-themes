@@ -20,6 +20,10 @@ Ext.define('MasterSol.controller.util.ThemeController', {
     setFooterStyle: function (theme) {
         var footer = Ext.ComponentQuery.query('#footer-panel')[0];
         footer.el.setStyle('background', '#5FA2DD');
+        Ext.ComponentQuery.query('#tbtext_menu')[0].setStyle({
+            fontWeight:'bold',
+            color:'white'
+        })
     },
 
     getNameTheme: function () {

@@ -23,11 +23,11 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             msg: 'Cargando...'
         });
         mask.show();
-      /*  var window = this.obtenerVentanaExistente(record);
+        var window = this.getWindow(record);
         if (window != null) {
             mask.hide();
             return;
-        }*/
+        }
         var getdata = {
             url: 'php/manager/getsections.php',
             method: 'POST',
@@ -101,5 +101,19 @@ Ext.define('MasterSol.controller.menu.MenuController', {
 
     generateSections:function(){
 
+    },
+
+    //verificar si la ventana existe para que no se repita
+    getWindow: function (record) {
+        var win = null;
+        var windows = Ext.ComponentQuery.query('window[name=window-menu]');
+        for (var j = 0; j < windows.length; j++) {
+            if (windows[j]['idsection'] == record.data.sectionId) {
+                win = windows[j];
+                MasterApp.util.setWindowSize(win);
+                break
+            }
+        }
+        return win;
     }
 })

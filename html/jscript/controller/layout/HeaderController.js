@@ -115,5 +115,37 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             }
         };
         Ext.Ajax.request(close);
-    }
+    },
+
+    showAlerts: function () {
+        var panel = Ext.ComponentQuery.query('viewport')[0];
+        var mask = new Ext.LoadMask(panel, {
+            msg: 'Cargando...'
+        });
+        mask.show();
+        MasterApp.globals.moveColumns = false;
+        var alert = {
+            url: 'php/manager/getsections.php',
+            method: 'POST',
+            scope: this,
+            params: {
+                sectionId: '3a7c9ace-c91b-4a9a-adb5-71f372318a68',
+                alerta_user: true
+            },
+            success: function (response) {
+                mask.hide();
+                var json = Ext.JSON.decode(response.responseText);
+                var controller = MasterApp.menu;
+                controller.menu.id = json[0].id;
+                controller.menu.idsection = json[0].id;
+                controller.menu.name = json[0].nombre;
+                controller.json = json;
+                controller.showMenu(json);
+            },
+            failure: function (response) {
+                mask.hide();
+            }
+        };
+        Ext.Ajax.request(alert);
+    },
 })

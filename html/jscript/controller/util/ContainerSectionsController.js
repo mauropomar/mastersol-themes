@@ -21,6 +21,7 @@ Ext.define('MasterSol.controller.util.ContainerSectionsController', {
         return Ext.create('Ext.panel.Panel', {
             height: height,
             title: title,
+            layout:'fit',
             items: [gridsection, gridtotal],
             listeners: {
                 afterrender: function (panel) {
