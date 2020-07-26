@@ -16,6 +16,8 @@ Ext.define('MasterSol.view.layout.TreeConfig', {
         }
     },
     listeners: {
-        itemclick: 'clickAccessDirect'
+        itemclick:function(tree, record){
+            MasterApp.config.select(record);
+        }
     }
 })

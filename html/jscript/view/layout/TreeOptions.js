@@ -15,9 +15,15 @@ Ext.define('MasterSol.view.layout.TreeOptions', {
             containerScroll: true
         }
     },
-  /*  listeners: {
-        itemclick: 'itemclick',
-        afterrender:'renderTreeOpciones',
-        itemexpand:'itemexpand'
-    }*/
+    listeners: {
+        itemclick: function(tree, record){
+            MasterApp.option.select(record);
+        },
+        afterrender:function(tree){
+            MasterApp.option.render(tree);
+        },
+        itemexpand:function(node){
+            MasterApp.option.expandNode(node);
+        }
+    }
 })

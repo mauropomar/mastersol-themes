@@ -37,7 +37,10 @@ Ext.application({
         MasterApp.gridsections = MasterApp.getController('MasterSol.controller.util.GridSectionController');
         MasterApp.gridtotal = MasterApp.getController('MasterSol.controller.util.GridTotalController');
         MasterApp.header = MasterApp.getController('MasterSol.controller.layout.HeaderController');
+        MasterApp.home = MasterApp.getController('MasterSol.controller.layout.HomeController');
         MasterApp.footer = MasterApp.getController('MasterSol.controller.layout.FooterController');
         MasterApp.section = MasterApp.getController('MasterSol.controller.menu.SectionController');
+        MasterApp.option = MasterApp.getController('MasterSol.controller.layout.OptionController');
+        MasterApp.config = MasterApp.getController('MasterSol.controller.layout.ConfigController');
     }
 });

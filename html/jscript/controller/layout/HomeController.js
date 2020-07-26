@@ -4,7 +4,7 @@ Ext.define('MasterSol.controller.layout.HomeController', {
     init: function () {
 
     },
-  //  recordAccess: null,
+
     renderDataView: function (view) {
         this.setDropConfig(view);
         this.setContextMenu();
@@ -16,9 +16,9 @@ Ext.define('MasterSol.controller.layout.HomeController', {
             ddGroup: 'two-tree-dataview',
             scope: this,
             handleNodeDrop: function (data, record, position) {
-                var nodeTree = data.records[0];
-                if (nodeTree.isLeaf())
-                    this.addAcess(nodeTree);
+                var node = data.records[0];
+                if (node.isLeaf())
+                   MasterApp.home.addMenu(node);
             }
         });
     },
@@ -36,7 +36,7 @@ Ext.define('MasterSol.controller.layout.HomeController', {
             text: 'Eliminar',
             scope: this,
             handler: function (widget, event) {
-                this.deleteAccess();
+                this.deleteMenu();
             }
         });
         this.contextMenu = Ext.create('Ext.menu.Menu', {
@@ -48,13 +48,13 @@ Ext.define('MasterSol.controller.layout.HomeController', {
         MasterApp.menu.select(view, record);
     },
 
-    addAcess: function (node) {
+    addMenu: function (node) {
         var view = Ext.ComponentQuery.query('MainView')[0];
         var mask = new Ext.LoadMask(view, {
             msg: 'Guardando cambios...'
         });
         mask.show();
-        var guardar = {
+        var save = {
             url: '../mastersol/app/data/secciones.json',
             method: 'GET',
             scope: this,
@@ -68,7 +68,7 @@ Ext.define('MasterSol.controller.layout.HomeController', {
                 this.insertNode(node);
             }
         };
-        Ext.Ajax.request(guardar);
+        Ext.Ajax.request(save);
     },
 
     insertNode: function (node) {
@@ -94,7 +94,7 @@ Ext.define('MasterSol.controller.layout.HomeController', {
         store.insert(store.getCount(), newRecord);
     },
 
-    deleteAccess: function () {
+    deleteMenu: function () {
         var record = this.recordAccess;
         Ext.Msg.confirm('Confirmaci&oacute;n', '&iquest;Est&aacute; seguro que desea eliminar la opción seleccionada?', function (conf) {
             if (conf == 'yes') {

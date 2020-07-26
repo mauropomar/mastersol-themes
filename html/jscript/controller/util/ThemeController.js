@@ -26,6 +26,16 @@ Ext.define('MasterSol.controller.util.ThemeController', {
         })
     },
 
+    setStyleWindow:function(window){
+       var header = window.header;
+        var theme = this.getNameTheme();
+        if (theme == 'crisp' || theme == 'crisp-touch') {
+            header.setStyle({
+                backgroundColor: '#5FA2DD'
+            })
+        }
+    },
+
     getNameTheme: function () {
         var theme = '';
         var url = window.location.href;

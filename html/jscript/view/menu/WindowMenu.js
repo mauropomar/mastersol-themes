@@ -30,9 +30,12 @@ Ext.define('MasterSol.view.menu.WindowMenu', {
         }]
     }],
    listeners: {
-        resize: 'resizeWindow',
+       // resize: 'resizeWindow',
         close: function(window){
             MasterApp.section.closeWindow(window);
-        }
-    }
+        },
+       render:function( window , eOpts){
+           MasterApp.theme.setStyleWindow(window);
+       }
+   }
 });

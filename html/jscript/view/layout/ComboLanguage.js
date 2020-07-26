@@ -15,5 +15,5 @@ Ext.define('MasterSol.view.layout.ComboLanguage', {
     queryMode: 'local',
     emptyText: 'Select un idioma...',
     allowBlank:false,
-    blankText:'Debe introducir un menú.'
+    blankText:'Debe introducir un idioma.'
 })
