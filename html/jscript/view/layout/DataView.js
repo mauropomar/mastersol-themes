@@ -48,7 +48,7 @@ Ext.define('MasterSol.view.layout.DataView', {
                 MasterApp.getController('MasterSol.controller.layout.HomeController').showContextMenuDataview(view, rec, node, index, e);
             },
             itemclick: function(view, rec, node, index, e){
-                MasterApp.getController('MasterSol.controller.menu.MenuController').select(view, rec);
+                MasterApp.menu.select(view, rec);
             },
         }
     }

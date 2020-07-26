@@ -26,9 +26,11 @@ Ext.define('MasterSol.view.layout.ComboMenu', {
         itemSelector: '.search-item',
         width: 300
     },
-   /* listeners: {
-        keyup: 'keyUpMenu',
-        select:'selectMenu'
+    listeners: {
+      //  keyup: 'keyUpMenu',
+        select:function(combo, record){
+            MasterApp.footer.selectMenu(combo, record);
+        }
 
-    }*/
+    }
 })

@@ -4,6 +4,19 @@ Ext.define('MasterSol.controller.util.ToolsController', {
 
     },
 
+    getArrayBtn:function(){
+        var array =  ['btn_maximizar', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+        return array;
+    },
+
+    setVisibleBtn: function (window, array, hide) {
+        var btn;
+        for (var i = 0; i < array.length; i++) {
+            btn = this.getBtnTools(window, array[i]);
+            btn.setVisible(!hide);
+        }
+    },
+
     setButtons:function (window, newbuttons) {
         this.removeAll(window);
         this.add(window, newbuttons);
@@ -40,6 +53,17 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         for (var i = 0; i < others.length; i++) {
             header.add(others[i]);
         }
+    },
+
+    //devuelve un boton del tool de la ventana especifico
+    getBtnTools: function (comp, text) {
+        var tools = (comp.xtype === 'window-menu') ? comp.tools : comp.up('window').tools;
+        var btn;
+        for (var j = 0; j < tools.length; j++) {
+            if (tools[j].name == text)
+                btn = tools[j];
+        }
+        return btn;
     },
 
     callFuncion: function (evt, toolEl, owner, button) {
@@ -160,8 +184,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 tooltip: 'Minimizar',
                 name: 'btn_minimizar',
                 handler: function (evt, toolEl, owner, tool) {
-             /*       var window = owner.up('window');
-                    window.getController().minimizar(this, evt, toolEl, owner, tool);*/
+                    var window = owner.up('window');
+                    MasterApp.section.minimize(this, evt, toolEl, owner, tool);
                 }
             }, {
                 iconCls: 'fa fa-expand',

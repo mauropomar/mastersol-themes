@@ -16,14 +16,10 @@ Ext.define('MasterSol.view.layout.ComboWindow', {
             itemclick: function (combo, record, item, index, e) {
                 if (e.target.tagName == 'BUTTON' || e.target.tagName == 'I') {
                     e.preventDefault();
+                    Ext.ComponentQuery.query('#combowindow')[0].reset();
                     combo.store.removeAt(index);
-                    var windows = Ext.ComponentQuery.query('window[name=window-menu]');
-                    for (var j = 0; j < windows.length; j++) {
-                        if (windows[j].getTitle() == record.data.nombre) {
-                            windows[j].close();
-                            Ext.ComponentQuery.query('#combowindow')[0].reset();
-                        }
-                    }
+                    var windows = MasterApp.util.getMenuByName(record.data.name);
+                    windows.close();
                 }
             }
         }
@@ -34,5 +30,10 @@ Ext.define('MasterSol.view.layout.ComboWindow', {
     typeAhead: true,
     hideLabel: true,
     queryMode: 'local',
-    emptyText: 'Select ventana...'
+    emptyText: 'Select ventana...',
+    listeners:{
+        select:function(combo, record){
+            MasterApp.footer.selectWindow(combo, record);
+        }
+    }
 })
