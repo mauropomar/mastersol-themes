@@ -4,6 +4,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/MasterSol/php/Connection/Connection.p
 class RepositoryMenuConfiguration
 {
 
+    /**
+     * @param $params
+     * @return string
+     */
     public function getMenu($params)
     {
         Connection::openConnection();

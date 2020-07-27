@@ -4,6 +4,10 @@ require_once $_SESSION['dir_folder_php'] . 'Connection/Connection.php';
 class RepositoryLanguage
 {
 
+    /**
+     * @param $params
+     * @return string
+     */
     public function getLanguages($params)
     {
         Connection::openConnection();

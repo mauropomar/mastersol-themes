@@ -4,6 +4,10 @@ require_once $_SESSION['dir_folder_php'] .'Connection/Connection.php';
 class RepositoryRol
 {
 
+    /**
+     * @param $params
+     * @return string
+     */
     public function getRoles($params)
     {
         Connection::openConnection();

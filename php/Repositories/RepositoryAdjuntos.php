@@ -4,6 +4,10 @@ require_once $_SESSION['dir_folder_php'] . 'Class/Util.php';
 
 class RepositoryAdjuntos
 {
+    /**
+     * @param $params
+     * @return array
+     */
     public function getAdjuntos($params)
     {
         $result = [];
@@ -15,6 +19,10 @@ class RepositoryAdjuntos
     }
 
 
+    /**
+     * @param $params
+     * @return array
+     */
     public function insertAdjunto($params)
     {
         $result = [];
@@ -53,6 +61,10 @@ class RepositoryAdjuntos
         }
     }
 
+    /**
+     * @param $params
+     * @return array
+     */
     public function deleteAdjunto($params)
     {
         $result = [];
@@ -95,6 +107,10 @@ class RepositoryAdjuntos
         }
     }
 
+    /**
+     * @param $params
+     * @return string
+     */
     public function downloadAdjunto($params)
     {
         Connection::openConnection();

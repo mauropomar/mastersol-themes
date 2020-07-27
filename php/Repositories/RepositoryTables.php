@@ -4,6 +4,10 @@ require_once $_SESSION['dir_folder_php'] . 'Connection\Connection.php';
 class RepositoryTables
 {
 
+    /**
+     * @param $params
+     * @return string
+     */
     public function getTablesProperties($params)
     {
         Connection::openConnection();
@@ -13,6 +17,9 @@ class RepositoryTables
         return $result;
     }
 
+    /**
+     * @return string
+     */
     public function getActions()
     {
         Connection::openConnection();

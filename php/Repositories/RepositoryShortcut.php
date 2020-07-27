@@ -4,6 +4,9 @@ require_once $_SESSION['dir_folder_php'] . 'Connection/Connection.php';
 class RepositoryShortcut
 {
 
+    /**
+     * @return string
+     */
     public function getShortcuts()
     {
         Connection::openConnection();
@@ -13,6 +16,10 @@ class RepositoryShortcut
         return $datos;
     }
 
+    /**
+     * @param $params
+     * @return array
+     */
     public function deleteShortcut($params)
     {
         Connection::openConnection();

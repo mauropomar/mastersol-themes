@@ -4,6 +4,10 @@ require_once $_SESSION['dir_folder_php'] . 'Connection/Connection.php';
 class RepositoryNotas
 {
 
+    /**
+     * @param $params
+     * @return array
+     */
     public function insertNote($params)
     {
         $result = [];
@@ -22,6 +26,10 @@ class RepositoryNotas
         }
     }
 
+    /**
+     * @param $params
+     * @return array
+     */
     public function updateNote($params)
     {
         $result = [];
@@ -41,6 +49,10 @@ class RepositoryNotas
         }
     }
 
+    /**
+     * @param $params
+     * @return array
+     */
     public function deleteNote($params)
     {
         $result = [];
@@ -57,6 +69,10 @@ class RepositoryNotas
         }
     }
 
+    /**
+     * @param $params
+     * @return array|string
+     */
     public function getNotes($params)
     {
         $result = [];

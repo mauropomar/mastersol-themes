@@ -4,6 +4,10 @@ require_once $_SESSION['dir_folder_php'] . 'Connection/Connection.php';
 class RepositoryAuditorias
 {
 
+    /**
+     * @param $params
+     * @return array
+     */
     public function getAuditorias($params)
     {
         $result = [];
@@ -14,6 +18,10 @@ class RepositoryAuditorias
         return ['datos' => json_decode($result)];
     }
 
+    /**
+     * @param $params
+     * @return array
+     */
     public function getFilterAuditorias($params)
     {
         $result = [];

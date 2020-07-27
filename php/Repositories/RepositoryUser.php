@@ -4,6 +4,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/MasterSol/php/Connection/Connection.p
 class RepositoryUser
 {
 
+    /**
+     * @param $params
+     * @return null
+     */
     public function validatingLogin($params)
     {
         Connection::openConnection();
@@ -22,6 +26,10 @@ class RepositoryUser
         return null;
     }
 
+    /**
+     * @param $params
+     * @return array
+     */
     public function managerUserOption($params)
     {
         Connection::openConnection();
@@ -35,6 +43,10 @@ class RepositoryUser
         }
     }
 
+    /**
+     * @param $params
+     * @return string
+     */
     public function getUsers($params)
     {
         Connection::openConnection();

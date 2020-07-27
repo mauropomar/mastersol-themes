@@ -3,15 +3,23 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/MasterSol/php/Repositories/Repository
 
 class User
 {
+    /**
+     * @var RepositoryUser
+     */
     private $repository;
-    private $password;
-    private $usuario;
 
+    /**
+     * User constructor.
+     */
     public function __construct()
     {
         $this->repository = new RepositoryUser();
     }
 
+    /**
+     * @param $params
+     * @return array|null
+     */
     public function funcValidatingLogin($params)
     {
         if (!$this->validatingVariables($params[':user']) || !$this->validatingVariables($params[':passw'])) {
@@ -21,6 +29,10 @@ class User
         }
     }
 
+    /**
+     * @param $variable
+     * @return bool
+     */
     private function validatingVariables($variable)
     {
         if (!isset($variable) && empty($variable)) {
@@ -30,11 +42,19 @@ class User
         }
     }
 
+    /**
+     * @param $params
+     * @return array
+     */
     public function managerUserOption($params)
     {
         return $this->repository->managerUserOption($params);
     }
 
+    /**
+     * @param $params
+     * @return string
+     */
     public function getUsers($params)
     {
         return $this->repository->getUsers($params);

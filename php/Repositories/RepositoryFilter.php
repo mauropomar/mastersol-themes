@@ -5,6 +5,10 @@ require_once $_SESSION['dir_folder_php'] . 'Class/Util.php';
 class RepositoryFilter
 {
 
+    /**
+     * @param $params
+     * @return string
+     */
     public function getFiltersOperators($params)
     {
         Connection::openConnection();
@@ -14,6 +18,10 @@ class RepositoryFilter
         return $result;
     }
 
+    /**
+     * @param $params
+     * @return string
+     */
     public function getFunctionsResume($params)
     {
         Connection::openConnection();
@@ -23,6 +31,10 @@ class RepositoryFilter
         return $result;
     }
 
+    /**
+     * @param $params
+     * @return array
+     */
     public function getResultFiltersOperators($params)
     {
         $result = [];
@@ -32,7 +44,7 @@ class RepositoryFilter
             $operador = Util::get_value_from_array_object($value->idoperador, $value->operadores, 'id', 'nombre');
             if (isset($value->fk) && $value->fk) {
                 if ($operador == 'contiene' && strrchr($value->real_name_in, 'uuid') != false) {
-                    $params['where'] .= 'dat.' . $value->nombrecampo . " = "."'" . $value->idvalor . "'"." AND ";
+                    $params['where'] .= 'dat.' . $value->nombrecampo . " = " . "'" . $value->idvalor . "'" . " AND ";
                 } else if ($value->tipo == 'string' && $operador == 'contiene') {
                     $params['where'] .= 'dat.' . $value->nombrecampo . " ILIKE '%" . str_replace(" ", "%", $value->idvalor) . "%' AND ";
                 }
@@ -78,6 +90,11 @@ class RepositoryFilter
         return ['datos' => json_decode($result)];
     }
 
+    /**
+     * @param $params
+     * @return array
+     * @throws Exception
+     */
     public function getResultFiltersFunctions($params)
     {
         $result = [];

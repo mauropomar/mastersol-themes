@@ -15,11 +15,6 @@ if (isset($_SESSION['user'])) {
     $result = call_user_func_array([$params['name_class'], $params['name_func']], [$params['id_section'], $params['id_register']]);
     $data[0]['data'] = $result;
     echo json_encode($data);
-    // Create and start timer firing after 2 seconds
-    /*$w1 = new EvTimer(5, 2, function () {
-        echo "2 seconds elapsed\n";
-    });*/
-
 } else {
     header("Location: ../../index.php");
 }

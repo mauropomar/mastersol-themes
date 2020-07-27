@@ -12,13 +12,14 @@ if (isset($_SESSION['user'])) {
         $_SESSION['user'] = $_POST['user'];
         $_SESSION['id_capsules'] = $result['id_capsules'];
         $_SESSION['id_organizations'] = $result['id_organizations'];
-        $_SESSION['id_rol'] = 'c2e9de83-6de6-4fe9-b933-3f4b4ec9c359';
+        $_SESSION['id_rol'] = $result['id_rol'];
         $_SESSION['id_user'] = $result['id_user'];
-        $_SESSION['dir_folder_php'] = $_SERVER['DOCUMENT_ROOT'] . '/MasterSol/php/';
+        $_SESSION['dir_folder_php'] = $_SERVER['DOCUMENT_ROOT'] . '/mastersol-app/php/';
         require_once $_SESSION['dir_folder_php'] . 'Repositories/RepositorySections.php';
         $objRepSec = new RepositorySections();
         $objRepSec->createFolderCapsulesMultiple();
         $objRepSec->deleteFunctionBySection();
+//        RepositoryTimeEvent::createEvent1();
         echo json_encode(['success' => true, 'user' => $result['id_user']]);
     } else {
         echo json_encode(['success' => false]);

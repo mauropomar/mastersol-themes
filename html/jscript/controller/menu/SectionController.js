@@ -3,27 +3,32 @@
  */
 Ext.define('MasterSol.controller.menu.SectionController', {
     extend: 'Ext.app.Controller',
-    IdRecParent:null,
+    IdRecParent: null,
     init: function () {
         this.control({
             'gridpanel[name=section-principal]': { // matches the view itself
                 itemclick: 'clickSectionPrincipal',
                 itemdblclick: 'dblclickSectionPrincipal',
-           //     columnresize: 'columnresize'
+                columnresize: 'columnresize'
             },
             'tabpanel[name=tab-section]': {
-                tabchange:'tabChangeSection'
+                tabchange: 'tabChangeSection'
             },
         })
     },
 
-    clickSectionPrincipal:function(grid, record){
+    clickSectionPrincipal: function (grid, record) {
         MasterApp.globals.setRecordSection(record);
         MasterApp.globals.setGridSection(grid.panel);
         this.IdRecParent = record.data.id;
         this.loadDataTabActive(grid, record, 0);
-     //   this.limpiarDatosGestion();
-      //  this.obtenerDatosGestion();
+        //   this.limpiarDatosGestion();
+        //  this.obtenerDatosGestion();
+        MasterApp.magnament.getData();
+    },
+
+    dblclickSectionPrincipal: function (grid, record) {
+        // this.obtenerDatosGestion();
     },
 
     //activar y obtener los datos de la seccion hija activa
@@ -53,7 +58,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         }
     },
 
-    resetAllSectionNotImediatly:function (tabs, level) {
+    resetAllSectionNotImediatly: function (tabs, level) {
         level = level + 1;
         var tab = tabs[level];
         if (!tab)
@@ -69,7 +74,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         }
     },
 
-    getCountSections:function(windowId, level){
+    getCountSections: function (windowId, level) {
         var count = 0;
         var tabs = Ext.ComponentQuery.query('tabpanel[idsection=' + windowId + ']');
         for (var i = 0; i < tabs.length; i++) {
@@ -80,7 +85,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         return count;
     },
 
-    tabChangeSection:function(tabPanel, newCard){
+    tabChangeSection: function (tabPanel, newCard) {
         var gridsection = newCard.down('gridpanel');
         MasterApp.globals.setGridSection(gridsection);
         var idparent = newCard.idrecordparent;
@@ -95,7 +100,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
 
-    getData:function(idrecordparent, newCard){
+    getData: function (idrecordparent, newCard) {
         var mask = new Ext.LoadMask(newCard, {
             msg: 'Cargando...'
         });
@@ -243,6 +248,20 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             var isCascade = MasterApp.globals.isCascade();
             if (isCascade) {
                 MasterApp.header.applyCascade();
+            }
+        }
+    },
+
+    // le pone el mismo ancho de la columna al grid de totales
+    columnresize: function (ct, column, width, eOpts) {
+        var panel = ct.up('panel').up('panel');
+        var grid_total = panel.items.items[1];
+        var columns = grid_total.getColumns();
+        for (var i = 0; i < columns.length; i++) {
+            if (columns[i].dataIndex == column.dataIndex) {
+                var width = column.getWidth();
+                columns[i].setWidth(width);
+                break
             }
         }
     }

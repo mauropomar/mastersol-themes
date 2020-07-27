@@ -98,6 +98,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
                     var idrol = 1;
                     MasterApp.globals.setIdRol(idrol);
                     this.configureOptionsByRol(idrol);
+                    this.setAliasOtherClass();
                     this.loadOptions();
                 } else {
                     Ext.MessageBox.alert(
@@ -115,8 +116,9 @@ Ext.define('MasterSol.controller.login.LoginController', {
         Ext.ComponentQuery.query('#combolanguage')[0].getStore().load();
         MasterApp.theme.setStyle();
         MasterApp.alert.laodInitAlert();
-        this.getAccess();
+        this.getConfigure();
         this.getOptions();
+
     },
     //mostrar u ocultar opciones por rol
     configureOptionsByRol: function (id_rol) {
@@ -126,7 +128,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
         }
     },
 
-    getAccess: function () {
+    getConfigure: function () {
         var obt = {
             url: 'php/manager/getmenuconfiguration.php',
             method: 'GET',
@@ -176,5 +178,15 @@ Ext.define('MasterSol.controller.login.LoginController', {
             },
             scope: this
         });
+    },
+
+    setAliasOtherClass:function(){
+        MasterApp.magnament = MasterApp.getController('MasterSol.controller.magnament.MagnamentController');
+        MasterApp.section = MasterApp.getController('MasterSol.controller.menu.SectionController');
+        MasterApp.alert = MasterApp.getController('MasterSol.controller.alert.AlertController');
+        MasterApp.containersections = MasterApp.getController('MasterSol.controller.util.ContainerSectionsController');
+        MasterApp.gridsections = MasterApp.getController('MasterSol.controller.util.GridSectionController');
+        MasterApp.gridtotal = MasterApp.getController('MasterSol.controller.util.GridTotalController');
+        MasterApp.tools = MasterApp.getController('MasterSol.controller.util.ToolsController');
     }
 });

@@ -1,16 +1,13 @@
-
-
-
 Ext.application({
     name: 'MasterSol',
     appFolder: 'html/jscript',
     launch: function () {
         MasterApp = this;
-        this.setNameClass(this);
+        this.setAliasClass(this);
         this.showPanel();
     },
 
-    showPanel:function() {
+    showPanel: function () {
         var url = window.location.href;
         if (url.indexOf('theme') == -1) {
             MasterApp.login.showLogin();
@@ -21,25 +18,19 @@ Ext.application({
         }
     },
 
-    loadAllOptions:function(){
+    loadAllOptions: function () {
         MasterApp.login.loadOptions();
     },
 
-    setNameClass:function(MasterApp){
+    setAliasClass: function (MasterApp) {
         MasterApp.util = MasterApp.getController('MasterSol.controller.util.UtilController');
+        MasterApp.theme = MasterApp.getController('MasterSol.controller.util.ThemeController');
         MasterApp.globals = MasterApp.getController('MasterSol.controller.util.GlobalController');
         MasterApp.login = MasterApp.getController('MasterSol.controller.login.LoginController');
-        MasterApp.alert = MasterApp.getController('MasterSol.controller.alert.AlertController');
-        MasterApp.theme = MasterApp.getController('MasterSol.controller.util.ThemeController');
         MasterApp.menu = MasterApp.getController('MasterSol.controller.menu.MenuController');
-        MasterApp.tools = MasterApp.getController('MasterSol.controller.util.ToolsController');
-        MasterApp.containersections = MasterApp.getController('MasterSol.controller.util.ContainerSectionsController');
-        MasterApp.gridsections = MasterApp.getController('MasterSol.controller.util.GridSectionController');
-        MasterApp.gridtotal = MasterApp.getController('MasterSol.controller.util.GridTotalController');
         MasterApp.header = MasterApp.getController('MasterSol.controller.layout.HeaderController');
         MasterApp.home = MasterApp.getController('MasterSol.controller.layout.HomeController');
         MasterApp.footer = MasterApp.getController('MasterSol.controller.layout.FooterController');
-        MasterApp.section = MasterApp.getController('MasterSol.controller.menu.SectionController');
         MasterApp.option = MasterApp.getController('MasterSol.controller.layout.OptionController');
         MasterApp.config = MasterApp.getController('MasterSol.controller.layout.ConfigController');
     }
