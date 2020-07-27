@@ -33,5 +33,13 @@ Ext.application({
         MasterApp.footer = MasterApp.getController('MasterSol.controller.layout.FooterController');
         MasterApp.option = MasterApp.getController('MasterSol.controller.layout.OptionController');
         MasterApp.config = MasterApp.getController('MasterSol.controller.layout.ConfigController');
+        MasterApp.alert = MasterApp.getController('MasterSol.controller.alert.AlertController');
+        MasterApp.section = MasterApp.getController('MasterSol.controller.menu.SectionController');
+        MasterApp.containersections = MasterApp.getController('MasterSol.controller.util.ContainerSectionsController');
+        MasterApp.gridsections = MasterApp.getController('MasterSol.controller.util.GridSectionController');
+        MasterApp.gridtotal = MasterApp.getController('MasterSol.controller.util.GridTotalController');
+        MasterApp.tools = MasterApp.getController('MasterSol.controller.util.ToolsController');
+        MasterApp.magnament = MasterApp.getController('MasterSol.controller.magnament.MagnamentController');
+        MasterApp.register = MasterApp.getController('MasterSol.controller.magnament.RegisterController');
     }
 });

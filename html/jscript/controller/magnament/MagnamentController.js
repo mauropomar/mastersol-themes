@@ -4,20 +4,27 @@
 Ext.define('MasterSol.controller.magnament.MagnamentController', {
     extend: 'Ext.app.Controller',
     init: function () {
-
+        this.control({
+            'tabmagnament': {
+                collapse: 'collapse',
+                expand: 'expand',
+                resize: 'resize',
+                tabchange: 'getData'
+            }
+        })
     },
 
     getData: function () {
-        this.cleanAll();
+     //   this.cleanAll();
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         var optionActive = tabMagnament.getActiveTab();
         Ext.ComponentQuery.query('tabmagnament')[0].show();
-        Ext.ComponentQuery.query('tabmagnament')[0].expand(false);
+        Ext.ComponentQuery.query('tabmagnament')[0].expand(true);
         Ext.ComponentQuery.query('tabmagnament')[0].setDisabled(false);
         var rec = MasterApp.globals.getRecordSection();
         optionActive.idrecordsection = rec.data.id;
         if (optionActive.xtype === 'register-view') {
-            MasterApp.register.getAll();
+            MasterApp.register.edit();
             return;
         }
         if (optionActive.xtype === 'filter-view') {
@@ -70,4 +77,16 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             MasterApp.audit.clean();
         }
     },
+
+    resize: function () {
+        MasterApp.util.resizeAllWindow();
+    },
+
+    expand: function () {
+        MasterApp.util.resizeAllWindow();
+    },
+
+    collapse: function () {
+        MasterApp.util.resizeAllWindow();
+    }
 })

@@ -181,12 +181,6 @@ Ext.define('MasterSol.controller.login.LoginController', {
     },
 
     setAliasOtherClass:function(){
-        MasterApp.magnament = MasterApp.getController('MasterSol.controller.magnament.MagnamentController');
-        MasterApp.section = MasterApp.getController('MasterSol.controller.menu.SectionController');
-        MasterApp.alert = MasterApp.getController('MasterSol.controller.alert.AlertController');
-        MasterApp.containersections = MasterApp.getController('MasterSol.controller.util.ContainerSectionsController');
-        MasterApp.gridsections = MasterApp.getController('MasterSol.controller.util.GridSectionController');
-        MasterApp.gridtotal = MasterApp.getController('MasterSol.controller.util.GridTotalController');
-        MasterApp.tools = MasterApp.getController('MasterSol.controller.util.ToolsController');
+
     }
 });

@@ -13,7 +13,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             },
             'tabpanel[name=tab-section]': {
                 tabchange: 'tabChangeSection'
-            },
+            }
         })
     },
 

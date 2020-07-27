@@ -4,6 +4,23 @@ Ext.define('MasterSol.controller.util.UtilController', {
 
     },
 
+    afteredit: function (value, metaData, record) {
+        if (record.data.fk == '1') {
+            return value;
+        }
+        if (record.data.type == 'boolean') {
+            if (value == true || value == 't' || value == 'true') {
+                return '<div style="text-align: center"><img  src="html/assets/icon/others/activo.png"/></div>';
+            } else {
+                return '';
+            }
+        }
+        if ((record.data.type == 'date') && value.indexOf('/') == -1) {
+            return Ext.util.Format.date(value, 'd/m/Y');
+        }
+        return value;
+    },
+
     getDataIndex: function (col) {
         return (col.fk == 1) ? col['n_fk'] : col.dataIndex;
     },
@@ -27,6 +44,29 @@ Ext.define('MasterSol.controller.util.UtilController', {
         var y = panel.getY();
         window.setPosition(x, y);
     },
+
+    resizeAllWindow: function () {
+        var panel = Ext.ComponentQuery.query('#panel-menu')[0];
+        var height = panel.getHeight();
+        var width = panel.getWidth();
+        var windows = Ext.ComponentQuery.query('window[name=window-menu]');
+        for (var i = 0; i < windows.length; i++) {
+            if (!windows[i].isminimize) {
+                windows[i].setWidth(width);
+                windows[i].setHeight(height);
+            }
+        }
+        var toolbar = Ext.ComponentQuery.query('toolbarheader')[0];
+        if (MasterApp.globals.isCascade()) {
+            MasterApp.header.applyCascade();
+        }
+        ;
+        if (MasterApp.globals.isMosaic()) {
+            MasterApp.header.applyMosaic();
+        }
+        ;
+    },
+
 
     setWindowSize:function(window){
         var height = Ext.ComponentQuery.query('#panel-menu')[0].getHeight();
@@ -83,7 +123,22 @@ Ext.define('MasterSol.controller.util.UtilController', {
         return id;
     },
 
+    getIdMenuActive: function () {
+        var grid = MasterApp.globals.getGridSection();
+        var idmenu = grid.up('window').idmenu;
+        return idmenu;
+    },
 
-
-
+    //devuelve el idpadre de la seccion ya sea un principal o no
+    getIdParentSectionActive: function () {
+        var idparent;
+        var gridsection = MasterApp.globals.getGridSection();
+        if (gridsection.name == 'grid-section') {
+            var panel = gridsection.up('panel');
+            idparent= panel.idparent;
+        } else {
+            idparent = 0;
+        }
+        return idparent;
+    },
 });
