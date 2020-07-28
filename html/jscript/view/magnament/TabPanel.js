@@ -8,6 +8,7 @@
 Ext.define('MasterSol.view.magnament.TabPanel', {
     extend: 'Ext.tab.Panel',
     xtype: 'tabmagnament',
+    idmenu:null,
     header:false,
     requires: ['MasterSol.view.magnament.Register',
         /*'MasterSol.view.gestion.FilterView',

@@ -54,10 +54,10 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         var win;
         MasterApp.globals.setEnMosaic(true);
         var windows = this.getWindows();
-        var height = Ext.ComponentQuery.query('#panel-center')[0].getHeight();
-        var width = Ext.ComponentQuery.query('#panel-center')[0].getWidth();
-        var posX = Ext.ComponentQuery.query('#panel-center')[0].getX();
-        var posY = Ext.ComponentQuery.query('#panel-center')[0].getY();
+        var height = Ext.ComponentQuery.query('#panel-menu')[0].getHeight();
+        var width = Ext.ComponentQuery.query('#panel-menu')[0].getWidth();
+        var posX = Ext.ComponentQuery.query('#panel-menu')[0].getX();
+        var posY = Ext.ComponentQuery.query('#panel-menu')[0].getY();
         this.reconfigureWindows(height, width, posX, posY);
         var width = width / windows.length;
         for (var j = 0; j < windows.length; j++) {

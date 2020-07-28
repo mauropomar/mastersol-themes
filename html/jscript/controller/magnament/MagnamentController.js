@@ -14,17 +14,19 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         })
     },
 
-    getData: function () {
-     //   this.cleanAll();
+    getData: function (grid) {
+        var idmenu = grid.idmenu;
+        //   this.cleanAll();
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        tabMagnament.idmenu = idmenu;
         var optionActive = tabMagnament.getActiveTab();
-        Ext.ComponentQuery.query('tabmagnament')[0].show();
-        Ext.ComponentQuery.query('tabmagnament')[0].expand(true);
-        Ext.ComponentQuery.query('tabmagnament')[0].setDisabled(false);
+        tabMagnament.show();
+        tabMagnament.expand(false);
+        tabMagnament.setDisabled(false);
         var rec = MasterApp.globals.getRecordSection();
         optionActive.idrecordsection = rec.data.id;
         if (optionActive.xtype === 'register-view') {
-            MasterApp.register.edit();
+            MasterApp.register.editRegister();
             return;
         }
         if (optionActive.xtype === 'filter-view') {
@@ -78,6 +80,23 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         }
     },
 
+    //llama a la funcion para crear un nuevo registo
+    newRegister: function (window, evt, toolEl, owner, tool) {
+        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        tabMagnament.show();
+        tabMagnament.expand(false);
+        tabMagnament.setDisabled(false);
+        tabMagnament.setActiveTab(0);
+        MasterApp.register.new();
+    },
+
+    isMenuTabMagnament: function (window) {
+        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        if (window.idmenu == tabMagnament.idmenu) {
+            tabMagnament.collapse();
+        }
+    },
+
     resize: function () {
         MasterApp.util.resizeAllWindow();
     },
@@ -87,6 +106,9 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
     },
 
     collapse: function () {
+        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        tabMagnament.idmenu = null;
         MasterApp.util.resizeAllWindow();
     }
+
 })

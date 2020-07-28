@@ -8,14 +8,14 @@ Ext.define('MasterSol.controller.util.UtilController', {
         if (record.data.fk == '1') {
             return value;
         }
-        if (record.data.type == 'boolean') {
+        if (record.data.tipo == 'boolean') {
             if (value == true || value == 't' || value == 'true') {
                 return '<div style="text-align: center"><img  src="html/assets/icon/others/activo.png"/></div>';
             } else {
                 return '';
             }
         }
-        if ((record.data.type == 'date') && value.indexOf('/') == -1) {
+        if ((record.data.tipo == 'date') && value.indexOf('/') == -1) {
             return Ext.util.Format.date(value, 'd/m/Y');
         }
         return value;
@@ -25,7 +25,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         return (col.fk == 1) ? col['n_fk'] : col.dataIndex;
     },
 
-    getMenuByName:function(name){
+    getMenuByName: function (name) {
         var windows = Ext.ComponentQuery.query('window[name=window-menu]');
         for (var j = 0; j < windows.length; j++) {
             if (windows[j].getTitle() == name) {
@@ -46,17 +46,15 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     resizeAllWindow: function () {
+      //  var collapsed = Ext.ComponentQuery.query('tabmagnament')[0].collapsed;
         var panel = Ext.ComponentQuery.query('#panel-menu')[0];
         var height = panel.getHeight();
         var width = panel.getWidth();
-        var windows = Ext.ComponentQuery.query('window[name=window-menu]');
+        var windows = Ext.ComponentQuery.query('window[isminimize=false]');
         for (var i = 0; i < windows.length; i++) {
-            if (!windows[i].isminimize) {
-                windows[i].setWidth(width);
-                windows[i].setHeight(height);
-            }
+            windows[i].setWidth(width);
+            windows[i].setHeight(height);
         }
-        var toolbar = Ext.ComponentQuery.query('toolbarheader')[0];
         if (MasterApp.globals.isCascade()) {
             MasterApp.header.applyCascade();
         }
@@ -67,8 +65,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         ;
     },
 
-
-    setWindowSize:function(window){
+    setWindowSize: function (window) {
         var height = Ext.ComponentQuery.query('#panel-menu')[0].getHeight();
         var width = Ext.ComponentQuery.query('#panel-menu')[0].getWidth();
         var posX = Ext.ComponentQuery.query('#panel-menu')[0].getX();
@@ -135,10 +132,50 @@ Ext.define('MasterSol.controller.util.UtilController', {
         var gridsection = MasterApp.globals.getGridSection();
         if (gridsection.name == 'grid-section') {
             var panel = gridsection.up('panel');
-            idparent= panel.idparent;
+            idparent = panel.idparent;
         } else {
             idparent = 0;
         }
         return idparent;
     },
+
+    getVal: function (rec, value) {
+        if (!value) return value;
+        var type = rec.data.tipo;
+        if (rec.data.fk == 1 && value != null) {
+            value = (Ext.isArray(value)) ? value.join(',') : value;
+            return value;
+        }
+        ;
+        if (type == 'date' && value != null) {
+            if (Ext.isDate(new Date(value))) {
+                var date = new Date(value);
+                date.setHours(0);
+                date.setMinutes(0);
+                return Ext.Date.format(date, 'd/m/Y h:i:s');
+            } else {
+                var idx = value.indexOf('T');
+                if (idx > -1) {
+                    var date = new Date(value);
+                    date.setHours(0);
+                    date.setMinutes(0);
+                    return Ext.Date.format(date, 'd/m/Y h:i:s');
+                }
+            }
+            return value;
+        }
+        if (type == 'boolean') {
+            return (value == 'false' || value == false) ? false : true;
+        }
+        return value;
+    },
+
+    showMessageInfo: function (message) {
+        Ext.Msg.show({
+            title: 'Informaci&oacute;n',
+            msg: message,
+            buttons: Ext.MessageBox.OK,
+            icon: Ext.MessageBox.INFO
+        });
+    }
 });

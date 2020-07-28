@@ -9,19 +9,24 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
 
     },
 
-    add: function (window) {
+    edit: function (editor, obj) {
+        var record = obj.record;
+        if (obj.value === null || obj.value === '') {
+            record.set('valor', record.previousValues.valor);
+        }
+        if (record.data[obj.field] == obj.originalValue)
+            return;
+    },
+
+    new: function (window) {
         Ext.ComponentQuery.query('#btn_insert_register')[0].show();
         Ext.ComponentQuery.query('#btn_save_register')[0].hide();
         var gridsection = MasterApp.globals.getGridSection();
-        if (window.idmenu != gridsection.idmenu) {
-            gridsection = MasterApp.globals.getSectionPrincipalByWindow(window);
-        }
         var columns = gridsection.config.columns;
-        this.addFiles(null, columns);
+        this.addRegister(null, columns);
         this.isEdit = false;
         var grid = Ext.ComponentQuery.query('#register-view')[0];
         grid.focus();
-        var rec = grid.getStore().getAt(0);
         var edit = grid.plugins[0];
         edit.startEditByPosition({
             row: 0,
@@ -30,7 +35,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     },
 
     //agrega filas dinamicamente a grid de registros
-    addFiles: function (rec, columns) {
+    addRegister: function (rec, columns) {
         this.showFieldRequired = false;
         var grid = Ext.ComponentQuery.query('#register-view')[0];
         var store = grid.getStore();
@@ -43,16 +48,16 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             data.push({
                 id: i + 1,
                 name: header,
-                order: i + 1,
+                orden: i + 1,
                 field: columns[i].n_column,
-                idregister: columns[i].idregister,
+                idregistro: columns[i].idregister,
                 id_datatype: columns[i].id_datatype,
                 required: columns[i].required,
-                audit: columns[i].audit,
+                auditable: columns[i].audit,
                 real_name_in: columns[i].real_name_in,
-                type: columns[i].type,
-                val: (rec != null) ? rec.data[dataIndex] : '',
-                parent: 'Generales',
+                tipo: columns[i].type,
+                valor: (rec != null) ? rec.data[dataIndex] : '',
+                padre: 'Generales',
                 fk: columns[i].fk
             })
         }
@@ -60,11 +65,11 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     },
 
     //editar registros
-    edit: function () {
+    editRegister: function () {
         var gridsection = MasterApp.globals.getGridSection();
         var rec = MasterApp.globals.getRecordSection();
         var columns = gridsection.config.columns;
-        this.addFiles(rec, columns);
+        this.addRegister(rec, columns);
         this.isEdit = true;
         Ext.ComponentQuery.query('#btn_insert_register')[0].hide();
         Ext.ComponentQuery.query('#btn_save_register')[0].show();
@@ -85,16 +90,6 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         }
         return (idx > -1) ? false : true;
     },
-
-    showMessageInfo: function (message) {
-        Ext.Msg.show({
-            title: 'Informaci&oacute;n',
-            msg: message,
-            buttons: Ext.MessageBox.OK,
-            icon: Ext.MessageBox.INFO
-        });
-    },
-
     //guarda los cambios del registro seleccionado
     saveChanges: function () {
         var gridsection = MasterApp.globals.getGridSection();
@@ -140,11 +135,13 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
+                    var dat = json.datos;
                     store.commitChanges();
                     if (this.isEdit)
                         this.update(data);
                     else {
-                        this.insert(data, json.id);
+                        var idcreated = json.datos.id;
+                        this.insert(data, idcreated);
                     }
                     this.showFieldRequired = false;
                     grid.getView().refresh();
@@ -160,18 +157,19 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         var obj = {};
         var array = [];
         for (var i = 0; i < data.length; i++) {
-            var field = datos[i]['field'];
-            obj[field] = datos[i]['valor'];
+            var fk = data[i]['fk'];
+            var field = (fk == 1) ? 'n_' + data[i]['field'] : data[i]['field'];
+            obj[field] = data[i]['valor'];
         }
         array.push(obj);
-        var gridsection = MasterApp.globals.getGridSection();
-        var store = gridsection.getStore();
+        var grid = MasterApp.globals.getGridSection();
+        var store = grid.getStore();
         store.insert(store.getCount(), array);
         var total = store.getCount();
         var index = total - 1;
-        gridsection.getSelectionModel().deselectAll();
-        gridsection.getSelectionModel().select(index, true);
-        var record = gridsection.getSelectionModel().getSelection()[0];
+        grid.getSelectionModel().deselectAll();
+        grid.getSelectionModel().select(index, true);
+        var record = grid.getSelectionModel().getSelection()[0];
         record.set('id', idcreated);
         MasterApp.globals.setRecordSection(record);
         Ext.ComponentQuery.query('#btn_insert_register')[0].hide();
@@ -197,15 +195,15 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         for (var j = 0; j < records.length; j++) {
             data.push({
                 id: records[j].data.id,
-                type: records[j].data.type,
+                tipo: records[j].data.tipo,
                 fk: records[j].data.fk,
-                idregister: records[j].data.idregister,
+                idregister: records[j].data.idregistro,
                 id_datatype: records[j].data.id_datatype,
                 real_name_in: records[j].data.real_name_in,
-                audit: records[j].data.audit,
+                auditable: records[j].data.auditable,
                 field: records[j].data.field,
-                idval: records[j].data.idvalor,
-                val: MasterApp.util.getValor(records[j], records[j].data['valor'])
+                idvalor: records[j].data.idvalor,
+                valor: MasterApp.util.getVal(records[j], records[j].data['valor'])
             })
         }
         return data
@@ -219,16 +217,16 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             return;
         }
         ;
-        if (record.data.type == 'number') {
+        if (record.data.tipo == 'number') {
             this.setNumberField(record, column);
         }
-        if (record.data.type == 'string') {
+        if (record.data.tipo == 'string') {
             this.setTextField(column);
         }
-        if (record.data.type == 'boolean') {
+        if (record.data.tipo == 'boolean') {
             this.setCheckbox(column);
         }
-        if (record.data.type == 'date') {
+        if (record.data.tipo == 'date') {
             this.setDateField(record, column);
         }
     },
@@ -337,7 +335,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     setComboFk: function (rec, column) {
         var idsection = MasterApp.util.getIdSectionActive();
         var combo = Ext.create('MasterSol.view.magnament.ComboFk', {
-            multiSelect: (rec.data.type == 'array') ? true : false,
+            multiSelect: (rec.data.tipo == 'array') ? true : false,
             listConfig: {
                 loadingText: 'Buscando...',
                 emptyText: 'No existen opciones....',
@@ -354,13 +352,13 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         var store = combo.getStore();
         store.proxy.url = 'php/manager/getforeignkey.php';
         store.proxy.extraParams = {
-            idregistro: rec.data.idregister,
+            idregistro: rec.data.idregistro,
             idsection: idsection
         };
         var values = rec.data.valor;
         store.load({
                 callback: function (store, records) {
-                    var values = values.split(',');
+                    var values = (values) ? values.split(',') : null;
                     combo.setValue(values);
                 }
             }
@@ -389,7 +387,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             }
         }
         combo.setValue(arrayText.join(','));
-        recGrid.set('val', arrayText.join(','));
-        recGrid.set('idval', arrayId.join(','));
+        recGrid.set('valor', arrayText.join(','));
+        recGrid.set('idvalor', arrayId.join(','));
     }
 })

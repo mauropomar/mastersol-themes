@@ -44,7 +44,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 url: newbuttons[i].url,
                 scope: this,
                 handler: function (evt, toolEl, owner, tool) {
-                    this.callFuncion(evt, toolEl, owner, tool);
+                    this.callFunction(evt, toolEl, owner, tool);
                 }
             }
             header.add(obj);
@@ -66,25 +66,25 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         return btn;
     },
 
-    callFuncion: function (evt, toolEl, owner, button) {
-    /*    var gridSection = MasterApp.globales.getGridSection();
-        var mask = new Ext.LoadMask(gridSection, {
+    callFunction: function (evt, toolEl, owner, button) {
+     var grid = MasterApp.globals.getGridSection();
+        var mask = new Ext.LoadMask(grid, {
             msg: 'Cargando...'
         });
         mask.show();
-        var idMenu = gridSection.idMenu;
-        var idSection = gridSection.idSection;
-        var record = MasterApp.globales.getRecordSection();
+        var idmenu = grid.idmenu;
+        var idsection = grid.idsection;
+        var record = MasterApp.globals.getRecordSection();
         var recordId = (record != null) ? record.data.id : null;
-        var store = gridSection.getStore();
-        var ejecutar = {
+        var store = grid.getStore();
+        var execute = {
             url: 'php/manager/managerfunctions.php',
             method: 'GET',
             scope: this,
             params: {
-                idregistro: recordId,
-                idsection: idSection,
-                idmenu: idMenu,
+                idregister: recordId,
+                idsection: idsection,
+                idmenu: idmenu,
                 url: button.url,
                 name: button.name,
                 action: button.action
@@ -96,7 +96,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 store.loadData(datos);
             }
         };
-        Ext.Ajax.request(ejecutar);*/
+        Ext.Ajax.request(execute);
     },
 
     getButtonsDefaut: function () {
@@ -105,14 +105,16 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             tooltip: 'Refrescar',
             name: 'btn_refresh',
             handler: function (evt, toolEl, owner, tool) {
-              //  var window = owner.up('window');
-              //  window.getController().refreshSectionActive(this, window, evt, toolEl, owner, tool);
+                var window = owner.up('window');
+                MasterApp.section.refreshSectionActive(window);
             }
         }, {
             iconCls: 'fa fa-plus',
             tooltip: 'Agregar',
             name: 'btn_add',
-       //     handler: 'nuevoRegistro'
+            handler: function(){
+                MasterApp.magnament.newRegister();
+            }
         }, {
             iconCls: 'fa fa-edit',
             hidden: true,
@@ -175,8 +177,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 // handler: 'onExpandAll',
                 tooltip: 'Borrar',
                 handler: function (evt, toolEl, owner, tool) {
-                 /*   var window = owner.up('window');
-                    window.getController().borrarFila(this, window, evt, toolEl, owner, tool);*/
+                    var window = owner.up('window');
+                   MasterApp.section.deleteRow(this, window, evt, toolEl, owner, tool);
 
                 }
             }, {

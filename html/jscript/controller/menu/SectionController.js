@@ -22,9 +22,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.globals.setGridSection(grid.panel);
         this.IdRecParent = record.data.id;
         this.loadDataTabActive(grid, record, 0);
-        //   this.limpiarDatosGestion();
-        //  this.obtenerDatosGestion();
-        MasterApp.magnament.getData();
+        MasterApp.magnament.getData(grid.panel);
     },
 
     dblclickSectionPrincipal: function (grid, record) {
@@ -128,6 +126,22 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         Ext.Ajax.request(getdata);
     },
 
+    refreshSectionActive:function(window) {
+        var grid = MasterApp.globals.getGridSection();
+        var panel = grid.up('panel');
+        var idrecordparent = panel.idrecordparent;
+        if (window.idmenu == grid.idmenu) {
+            if (grid.name == 'section-principal')   //si es la seccion principal
+                this.reloadSectionPrincipal(grid);
+            else
+                this.getDataSection(idrecordparent, panel); //si es una seccion hija
+        } else {
+            //devuelve la seccion principal de la ventana actual, en caso de hayan muchas ventanas abiertas
+            grid = MasterApp.globals.getSectionPrincipalByWindow(window);
+            this.reloadSectionPrincipal(grid);
+        }
+    },
+
     restore: function (button, evt, toolEl, owner, tool) {
         var window = owner.up('window');
         window.expand('', false);
@@ -159,6 +173,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         window.alignTo(panelMenu, 'bl-bl');
         this.setPositionWindow(window);
         this.adjustOtherWindowsMaximize();
+        MasterApp.magnament.isMenuTabMagnament(window);
     },
 
     maximize: function (button, evt, toolEl, owner, tool) {
@@ -176,6 +191,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     closeWindow: function (window) {
+        var tabmagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         MasterApp.footer.removeWindowCombo(window);
         window.destroy();
         var windows = Ext.ComponentQuery.query('window-menu');
@@ -185,10 +201,13 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         }
         this.adjustOtherWindowsMinimize();
         this.adjustOtherWindowsMaximize();
-        /*     this.collapseTabGestion();
-        MasterApp.globales.setRecordSection(null);
-        MasterApp.globales.setGridSection(null);
-        this.removeOfArrayGlobales(window);*/
+        MasterApp.globals.setRecordSection(null);
+        MasterApp.globals.setGridSection(null);
+        if(window.idmenu == tabmagnament.idmenu) {  //collapsar el tab de gestion que tiene los datos de la ventana que se cierra
+            tabmagnament.collapse();
+            tabmagnament.hide();
+        }
+      //  this.removeOfArrayGlobales(window);
     },
 
     //posicionar ventana minimizada
@@ -264,5 +283,142 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 break
             }
         }
-    }
+    },
+
+    deleteRow:function(button, window){
+        var gridsection = MasterApp.globals.getGridSection();
+        if (window.idmenu != gridsection.idmenu) {
+            gridsection = MasterApp.globals.getSectionPrincipalByWindow(window);
+        }
+        var hasSelection = gridsection.getSelectionModel().hasSelection();
+        if (!hasSelection) {
+            MasterApp.util.showMessageInfo('Debe seleccionar un registro.');
+            return
+        }
+        ;
+        var selects = gridsection.getSelectionModel().getSelection();
+        var msg = (selects.length == 1)?'el registro seleccionado':'los registros seleccionados.';
+        Ext.Msg.confirm('Confirmaci&oacute;n', '&iquest;Est&aacute; seguro que desea eliminar '+msg+'?', function (conf) {
+            if (conf == 'yes') {
+                var mask = new Ext.LoadMask(gridsection, {
+                    msg: 'Eliminando...'
+                });
+                mask.show();
+                var store = gridsection.getStore();
+                var idsection = MasterApp.util.getIdSectionActive();
+                var data = [];
+                for (var j = 0; j < selects.length; j++) {
+                    data.push(selects[j]['id']);  //los id de los seleccionados
+                }
+                var remove = {
+                    url: 'php/manager/manageregister.php',
+                    method: 'POST',
+                    scope: this,
+                    params: {
+                        idsection: idsection,
+                        id: Ext.encode(data),
+                        accion: '7'
+                    },
+                    success: function (response) {
+                        mask.hide();
+                        var json = Ext.JSON.decode(response.responseText);
+                        if (json.success == true) {
+                            for (var j = 0; j < selects.length; j++) {
+                                store.remove(selects[j]);
+                                this.afterDelete()
+                            }
+                            button.setDisabled(true);
+                        } else {
+                            Ext.Msg.show({
+                                title: 'Informaci&oacute;n',
+                                msg: json.message,
+                                buttons: Ext.MessageBox.OK,
+                                icon: Ext.MessageBox.INFO
+                            });
+                        }
+                    },
+                    failure: function (response) {
+                        mask.hide();
+                    }
+                };
+                Ext.Ajax.request(remove);
+            }
+        }, this);
+    },
+    //despues de eliminar una fila de una seccion deshabilitar las secciones dependientes.
+    afterDelete: function () {
+        MasterApp.magnament.cleanAll();
+        var gridsection = MasterApp.globals.getGridSection();
+        var tabpanel = gridsection.up('tabpanel'); //tab panel actual
+        if (tabpanel) {
+            var level = tabpanel.level + 1;
+            var windowId = gridsection.idsection;
+            var tabs = Ext.ComponentQuery.query('tabpanel[idsection=' + windowId + ']');
+            for (var i = 0; i < tabs.length; i++) {
+                if (tabs[i].level == level) {
+                    var panelActive = tabs[i].getActiveTab();
+                    var grid = panelActive.items.items[0];
+                    grid.getStore().removeAll();
+                }
+            }
+        }
+    },
+
+    //recargar section
+    reloadSectionPrincipal: function (grid) {
+        var mask = new Ext.LoadMask(grid, {
+            msg: 'Cargando...'
+        });
+        mask.show();
+        var load = {
+            url: 'php/manager/getsections.php',
+            method: 'POST',
+            scope: this,
+            params: {
+                sectionId: grid.idsection,
+                filtros: MasterApp.util.getFilterBySection()
+            },
+            success: function (response) {
+                mask.hide();
+                var json = Ext.JSON.decode(response.responseText);
+                var data = json[0].datos;
+                grid.getStore().loadData(data);
+
+            },
+            failure: function (response) {
+                mask.hide();
+            }
+        };
+        Ext.Ajax.request(load);
+    },
+
+    getDataSection: function (idrecordparent, newCard) {
+        var mask = new Ext.LoadMask(newCard, {
+            msg: 'Cargando...'
+        });
+        mask.show();
+        var getData = {
+            url: 'php/manager/getregisters.php',
+            method: 'GET',
+            scope: this,
+            params: {
+                idseccion: newCard.idsection,  //id de la seccion activa que va a cargar los datos
+                idseccionpadre: newCard.idparent, //id del padre
+                idproducto: idrecordparent,
+                filtros: MasterApp.util.getFilterBySection()
+            },
+            success: function (response) {
+                mask.hide();
+                var json = Ext.JSON.decode(response.responseText);
+                var grid = newCard.down('gridpanel');
+                grid.getStore().loadData(json);
+            },
+            failure: function (response) {
+                mask.hide();
+            }
+        };
+        Ext.Ajax.request(getData);
+    },
+
+
 })
