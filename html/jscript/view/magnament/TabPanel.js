@@ -11,28 +11,17 @@ Ext.define('MasterSol.view.magnament.TabPanel', {
     idmenu:null,
     header:false,
     requires: ['MasterSol.view.magnament.Register',
+        'MasterSol.view.magnament.Total',
         /*'MasterSol.view.gestion.FilterView',
-        'MasterSol.view.gestion.TotalView',
+
         'MasterSol.view.gestion.AdjuntoView',
         "MasterSol.view.gestion.NotasView",
         "MasterSol.view.gestion.AuditoriaView"*/],
     items:[{
         xtype:'register-view',
         id:'register-view'
-    },/*{
-        xtype:'filter-view',
-        id:'filter-view'
     },{
         xtype:'total-view',
         id:'total-view'
-    },{
-        xtype:'adjunto-view',
-        id:'adjunto-view'
-    },{
-        xtype:'notas-view',
-        id:'notas-view'
-    },{
-        xtype:'auditoria-view',
-        id:'auditoria-view'
-    }*/]
+    }]
 });

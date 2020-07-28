@@ -21,7 +21,6 @@ Ext.define('MasterSol.controller.util.ContainerSectionsController', {
         return Ext.create('Ext.panel.Panel', {
             height: height,
             title: title,
-            layout:'fit',
             idparent:json.idpadre,
             idsection:json.id,
             items: [gridsection, gridtotal],

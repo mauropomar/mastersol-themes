@@ -1,12 +1,12 @@
 Ext.define('MasterSol.view.magnament.Total', {
     extend: 'Ext.grid.Panel',
     xtype: 'total-view',
-    controller: 'total',
     requires: [
         'Ext.grid.feature.Grouping',
         'MasterSol.store.magnament.TotalStore',
         'Ext.selection.CellModel',
-        'MasterSol.view.magnament.ComboFunction'
+        'MasterSol.view.magnament.ComboFunction',
+        'MasterSol.controller.magnament.TotalController'
     ],
     iconCls: 'fa fa-calculator',
     frame: true,
@@ -29,7 +29,7 @@ Ext.define('MasterSol.view.magnament.Total', {
         dataIndex: 'nombrefuncion',
         flex: 1,
         editor: {
-            xtype: 'combofunction'
+            xtype: 'combo-function'
         }
     }],
     /*   features: [{
@@ -39,12 +39,16 @@ Ext.define('MasterSol.view.magnament.Total', {
     viewConfig: {},
     tbar: [{
         iconCls:'fa fa-check',
-        handler: 'saveChanges',
-        tooltip: 'Save changes'
+        tooltip: 'Guardar Cambios',
+        handler: function () {
+            MasterApp.totals.saveChanges();
+        }
     }, {
         iconCls: 'fa fa-eraser',
         tooltip: 'Limpiar filtro',
-        handler: 'clean'
+        handler: function () {
+           MasterApp.totals.new();
+        }
     },'->',{
         xtype:'tbtext',
         text:'Totales',
@@ -54,6 +58,11 @@ Ext.define('MasterSol.view.magnament.Total', {
         }
     }],
     listeners:{
-        beforeedit:'beforeedit'
+        afterrender:function(){
+            MasterApp.totals = MasterApp.getController('MasterSol.controller.magnament.TotalController');
+        },
+        beforeedit: function (editor, e, eOpts) {
+           MasterApp.totals.beforeedit(editor, e, eOpts)
+        }
     }
 });

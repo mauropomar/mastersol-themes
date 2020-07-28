@@ -34,7 +34,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             return;
         }
         if (optionActive.xtype === 'total-view') {
-            MasterApp.total.getAll();
+            MasterApp.totals.getAll();
             return;
         }
         if (optionActive.xtype === 'adjunt-view') {

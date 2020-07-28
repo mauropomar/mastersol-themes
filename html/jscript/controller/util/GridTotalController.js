@@ -82,11 +82,11 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
                                 icon = 'suma.png';
                             if (operator == "Promedio")
                                 icon = 'promedio.png';
-                            if (operator == "Minimo")
+                            if (operator == "Mínimo")
                                 icon = 'minimo.png';
-                            if (operator == "Maximo")
+                            if (operator == "Maximo" || operator == "M\u00e1ximo")
                                 icon = 'maximo.png';
-                            return MasterApp.util.getTable(icon, value);
+                            return MasterApp.util.getTableIcons(icon, value);
                         }
                         return value;
                     }

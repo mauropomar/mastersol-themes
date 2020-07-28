@@ -177,5 +177,13 @@ Ext.define('MasterSol.controller.util.UtilController', {
             buttons: Ext.MessageBox.OK,
             icon: Ext.MessageBox.INFO
         });
-    }
+    },
+
+    getTableIcons: function (icono, value) {
+        var table = '<table width="100%" border="0">' +
+            '<tr><td class="left-cell"><img src="html/assets/icon/operators/' + icono + '"/></td>' +
+            '<td class="center-cell">&nbsp;</td>' +
+            '<td class="right-cell">' + value + '</td></tr></table>'
+        return table;
+    },
 });
