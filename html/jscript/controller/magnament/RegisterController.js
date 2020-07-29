@@ -84,7 +84,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         if (idx > -1) {
             this.showFieldRequired = true;
             grid.getSelectionModel().select(idx);
-            var name = store.getAt(idx).get('nombre');
+            var name = store.getAt(idx).get('name');
             MasterApp.util.showMessageInfo('El campo con el nombre "' + name + '" es obligatorio.');
             grid.getView().refresh();
         }
@@ -135,7 +135,6 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
-                    var dat = json.datos;
                     store.commitChanges();
                     if (this.isEdit)
                         this.update(data);

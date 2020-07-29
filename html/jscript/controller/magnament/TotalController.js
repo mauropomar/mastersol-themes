@@ -40,7 +40,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         var window = gridSection.up('window');
         for (var j = 0; j < arrayTotal.length; j++) {
             if (arrayTotal[j]['id'] == window.idmenu) {
-                var data = arrayTotal[j]['register'];
+                var data = arrayTotal[j]['registers'];
                 for (var i = 0; i < data.length; i++) {
                     if (data[i]['id'] == idsection) {
                         store.loadData(data[i]['totals']);
@@ -68,7 +68,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         var idparentsection = MasterApp.util.getIdParentSectionActive();
         var record = MasterApp.globals.getRecordSection();
         idrecordsection = record.data.id;
-        var guardar = {
+        var save = {
             url: 'php/manager/getresultfilterfunctions.php',
             method: 'POST',
             scope: this,
@@ -95,7 +95,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                 }
             }
         };
-        Ext.Ajax.request(guardar);
+        Ext.Ajax.request(save);
     },
     //datos que se van a guardar en la base de datos.
     getData: function (store) {
@@ -178,7 +178,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
 
     //configurar arreglo por registro y ventana
     configuredData: function () {
-        var datos = this.getAllData();
+        var data = this.getAllData();
         var idsection = MasterApp.util.getIdSectionActive();
         var gridsection = MasterApp.globals.getGridSection();
         var window = gridsection.up('window');
@@ -188,18 +188,18 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         for (var j = 0; j < array.length; j++) {
             if (array[j]['id'] == window.idmenu) {
                 exists = true;
-                var registers = arrayTotal[j]['registers'];
+                var registers = array[j]['registers'];
                 existsReg = false;
                 for (var i = 0; i < registers.length; i++) {
                     if (registers[i]['id'] == idsection) {
-                        registers[i]['totals'] = datos;
+                        registers[i]['totals'] = data;
                         existsReg = true;
                     }
                 }
                 if (!existsReg) {
                     array[j]['registers'].push({
                         id: idsection,
-                        totals: datos
+                        totals: data
                     })
                 }
             }
@@ -210,7 +210,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                 id: window.idmenu,
                 registers: [{
                     id: idsection,
-                    totales: datos
+                    totals: data
                 }]
             })
         }

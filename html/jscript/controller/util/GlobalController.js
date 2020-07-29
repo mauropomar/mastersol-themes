@@ -15,12 +15,12 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.arrayTotal = [];
             this.arrayFilter = [];
             this.optionSelect = null;
-            this.arrayFunctionTotal = [];
+         //   this.arrayFunctionTotal = [];
             this.selEnCascade = false;
             this.selEnMosaic = false;
             this.idRol = null;
         },
-        getoptionSelected: function () {
+        getOptionSelected: function () {
             return this.optionSelect;
         },
         getArrayTotal: function () {
@@ -59,12 +59,12 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         setGridSection: function (grid) {
             this.gridSection = grid;
         },
-        getArrayFuncionesTotalizar: function () {
+    /*    getArrayFuncionesTotalizar: function () {
             return this.arrayFunctionTotal
         },
         setArrayFuncionesTotalizar: function (array) {
             this.arrayFunctionTotal = array
-        },
+        },*/
         isCascade: function () {
             return this.selEnCascade;
         },

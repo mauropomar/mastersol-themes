@@ -95,6 +95,9 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var window = gridsection.up('window');
         MasterApp.tools.setButtons(window, gridsection.btnTools);
         this.getData(idparent, newCard);
+        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        tabMagnament.idmenu = tabPanel.idmenu;
+        tabMagnament.idsection = newCard.idsection;
     },
 
 
@@ -207,7 +210,23 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             tabmagnament.collapse();
             tabmagnament.hide();
         }
-      //  this.removeOfArrayGlobales(window);
+        this.removeOfArrayGlobals(window);
+    },
+
+    //funcion que cuando se cierra la ventana elimina los arreglos globales de la ventana seleccionada
+    removeOfArrayGlobals: function (window) {
+        var arrayTotals = MasterApp.globals.getArrayTotal();
+        var arrayFilter = MasterApp.globals.getArrayFilter();
+        for (var j = 0; j < arrayTotals.length; j++) {
+            if (window.idmenu == arrayTotals[j]['id']) {
+                arrayTotals.splice(j, 1);
+            }
+        }
+        for (var j = 0; j < arrayFilter.length; j++) {
+            if (window.idmenu == arrayFilter[j]['id']) {
+                arrayFilter.splice(j, 1);
+            }
+        }
     },
 
     //posicionar ventana minimizada
@@ -419,6 +438,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         };
         Ext.Ajax.request(getData);
     },
+
 
 
 })

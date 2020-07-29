@@ -41,6 +41,7 @@ class RepositoryAdjuntos
         $directorioCreando = $resultA[2];
 
         if (!file_exists($directorioCreando)) { //Compruebo si el directorio raiz existe
+            echo $directorioCreando;
             mkdir($directorioCreando); //Crear el directorio anterior si no existe
         }
 

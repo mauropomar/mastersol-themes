@@ -83,6 +83,31 @@ Ext.define('MasterSol.controller.util.UtilController', {
         btnMaximize.hide();
     },
 
+    getTotalsBySection: function () {
+        var idsection = this.getIdSectionActive();
+        var gridsection = MasterApp.globals.getGridSection();
+        var window = gridsection.up('window');
+        var arrayTotals = MasterApp.globals.getArrayTotal();
+        var totals = [];
+        for (var j = 0; j < arrayTotals.length; j++) {
+            if (arrayTotals[j]['id'] == window.idMenu) {
+                var registers = arrayTotals[j]['registers'];
+                for (var i = 0; i < registers.length; i++) {
+                    if (registers[i]['id'] == idsection) {
+                        var array = registers[i]['totals'];
+                        for (var h = 0; h < array.length; h++) {
+                            if (array[h]['nombrefuncion'] != null) {
+                                totals.push(array[h]);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return Ext.encode(totals);
+    },
+
     getFilterBySection: function () {
         var idsection = this.getIdSectionActive();
         var gridSection = MasterApp.globals.getGridSection();
@@ -91,10 +116,10 @@ Ext.define('MasterSol.controller.util.UtilController', {
         var filters = [];
         for (var j = 0; j < arrayFilter.length; j++) {
             if (arrayFilter[j]['idmenu'] == window.idmenu) {
-                var register = arrayFilter[j]['register'];
+                var register = arrayFilter[j]['registers'];
                 for (var i = 0; i < register.length; i++) {
                     if (register[i]['id'] == idsection) {
-                        var array = register[i]['filter'];
+                        var array = register[i]['filters'];
                         for (var h = 0; h < array.length; h++) {
                             if (array[h]['idoperator'] != null) {
                                 filters.push(array[h]);
@@ -186,4 +211,22 @@ Ext.define('MasterSol.controller.util.UtilController', {
             '<td class="right-cell">' + value + '</td></tr></table>'
         return table;
     },
+
+    getValProperty: function (field, property) {
+        var grid = MasterApp.globals.getGridSection();
+        var columns = grid.columns;
+        var index = -1;
+        for (var i = 0; i < columns.length; i++) {
+            var n_field = 'n_' + field;
+            if (columns[i].dataIndex == field || columns[i].dataIndex == n_field) {
+                index = i;
+                break
+            }
+        }
+        var val = (property) ? grid.columns[index][property] : null;
+        val = (val) ? val : null;
+        return val;
+    },
+
+
 });

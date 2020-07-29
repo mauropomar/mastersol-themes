@@ -112,8 +112,9 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             iconCls: 'fa fa-plus',
             tooltip: 'Agregar',
             name: 'btn_add',
-            handler: function(){
-                MasterApp.magnament.newRegister();
+            handler: function(evt, toolEl, owner, tool){
+                var window = owner.up('window');
+                MasterApp.magnament.newRegister(window);
             }
         }, {
             iconCls: 'fa fa-edit',

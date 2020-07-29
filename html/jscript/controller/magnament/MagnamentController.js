@@ -16,9 +16,11 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
 
     getData: function (grid) {
         var idmenu = grid.idmenu;
+        var idsection = grid.idsection;
         //   this.cleanAll();
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         tabMagnament.idmenu = idmenu;
+        tabMagnament.idsection = idsection;
         var optionActive = tabMagnament.getActiveTab();
         tabMagnament.show();
         tabMagnament.expand(false);
@@ -37,8 +39,8 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             MasterApp.totals.getAll();
             return;
         }
-        if (optionActive.xtype === 'adjunt-view') {
-            MasterApp.adjunt.getAll();
+        if (optionActive.xtype === 'attached-view') {
+            MasterApp.attached.getAll();
             return;
         }
         if (optionActive.xtype === 'note-view') {
@@ -67,8 +69,8 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             MasterApp.total.clean();
             return;
         }
-        if (optionActive.xtype === 'adjunt-view') {
-            MasterApp.adjunt.clean();
+        if (optionActive.xtype === 'attached-view') {
+            MasterApp.attached.clean();
             return;
         }
         if (optionActive.xtype === 'note-view') {
@@ -81,7 +83,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
     },
 
     //llama a la funcion para crear un nuevo registo
-    newRegister: function (window, evt, toolEl, owner, tool) {
+    newRegister: function (window) {
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         tabMagnament.show();
         tabMagnament.expand(false);
