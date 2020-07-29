@@ -15,8 +15,8 @@ Ext.define('MasterSol.view.magnament.TabPanel', {
         'MasterSol.view.magnament.Total',
         'MasterSol.view.magnament.Filter',
         'MasterSol.view.magnament.Attached',
-        /* "MasterSol.view.gestion.NotasView",
-         "MasterSol.view.gestion.AuditoriaView"*/],
+         "MasterSol.view.magnament.Note",
+        /* "MasterSol.view.gestion.AuditoriaView"*/],
     items:[{
         xtype:'register-view',
         id:'register-view'
@@ -29,5 +29,8 @@ Ext.define('MasterSol.view.magnament.TabPanel', {
     },{
         xtype:'attached-view',
         id:'attached-view'
+    },{
+        xtype:'note-view',
+        id:'note-view'
     }]
 });

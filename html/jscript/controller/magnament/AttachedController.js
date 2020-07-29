@@ -38,13 +38,13 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     listeners: {
                         scope: this,
                         click: function (me, e, eOpts) {
-                            this.delete(me, e, eOpts);
+                            MasterApp.attached.delete(me, e, eOpts);
                         }
                     }
                 },
                 {
                     xtype: 'label',
-                    padding: 5,
+                    padding: '0 20 0 0',
                     flex: 4,
                     listeners: {
                         render: function (me, eOpts) {
@@ -212,9 +212,9 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                 yes: 'Sí',
                 no: 'No'
             },
-            scope:this,
-            fn:function(text, btn){
-                if(text == 'yes'){
+            scope: this,
+            fn: function (text, btn) {
+                if (text == 'yes') {
                     var idsection = MasterApp.util.getIdSectionActive();
                     var currentform = me.up('form');
                     var mainform = currentform.up('form');
@@ -227,7 +227,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                         params: {
                             'idsection': idsection,
                             'accion': '7',
-                            'idadjunto':me.idComp
+                            'idadjunto': me.idComp
                         },
                         callback: function (options, success, response) {
                             mainform.remove(currentform);
@@ -257,11 +257,13 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                 'accion': '15'
             },
             callback: function (options, success, response) {
+                debugger
                 mask.hide();
+               /* '<a href = ' + response.responseText + ' download>bbnvbn</a>'
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
 
-                }
+                }*/
             }
         };
         Ext.Ajax.request(down);
@@ -329,14 +331,16 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     listeners: {
                         scope: this,
                         click: function (me, e, eOpts) {
-                            this.delete(me, e, eOpts);
+                            MasterApp.attached.delete(me, e, eOpts);
                         }
                     }
                 },
                 {
                     xtype: 'label',
                     width: '85%',
-                    //   padding: 5,
+                    style: {
+                        'margin-left': '5px'
+                    },
                     listeners: {
                         render: function (me, eOpts) {
                             me.setText(file.valor);
@@ -356,7 +360,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     listeners: {
                         scope: this,
                         click: function (me, e, eOpts) {
-                            this.download(me, e, eOpts);
+                            MasterApp.attached.download(me, e, eOpts);
                         }
                     }
                 },
