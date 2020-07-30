@@ -23,7 +23,9 @@ Ext.define("MasterSol.view.magnament.Audit", {
     tbar: [{
         iconCls: 'fa fa-filter',
         tooltip: 'Filtrar',
-       // handler:'showWindow'
+        handler:function(){
+            MasterApp.audit.showWindow();
+        }
     }, '->', {
         xtype: 'tbtext',
         text: 'Auditoría',

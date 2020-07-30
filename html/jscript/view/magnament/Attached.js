@@ -31,7 +31,7 @@ Ext.define("MasterSol.view.magnament.Attached", {
             name: 'file_adjunto',
             style:{
                 marginLeft:'10px',
-                marginTop:MasterApp.theme.getStyleFileButton()
+                marginTop:MasterApp.theme.marginTop('filebutton-attached')
             },
             listeners: {
                 change:function(view, eOpts, value){

@@ -5,25 +5,28 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
         },
 
         showWindow: function () {
-            var window = Ext.create('MasterSol.view.magnament.FilterAudit');
+            var window = Ext.create('MasterSol.view.magnament.FormAudit');
             window.show();
             this.loadfilter();
         },
 
-        filter: function () {
+        onFilter: function () {
+            var window = Ext.ComponentQuery.query('form-audit')[0];
+            var mask = new Ext.LoadMask(window, {
+                msg: 'Filtrando...'
+            });
+            mask.show();
             var grid = Ext.ComponentQuery.query('audit-view')[0];
             var store = grid.getStore();
-            var idsection = MasterApp.util.getIdSectionActive();
-            var idmenu = MasterApp.util.getIdMenuActive();
             var record = MasterApp.globals.getRecordSection();
             idrecordsection = record.data.id;
             var gridsection = MasterApp.globals.getGridSection();
             var window = Ext.ComponentQuery.query('audit-filter')[0];
-            var property = Ext.ComponentQuery.query('#combo_property')[0].getValue();
-            var action = Ext.ComponentQuery.query('#combo_action')[0].getValue();
-            var user = Ext.ComponentQuery.query('#combo_users')[0].getValue();
-            var datestart = Ext.ComponentQuery.query('datefield')[0].getValue();
-            var dateend = Ext.ComponentQuery.query('datefield')[1].getValue();
+            var property = Ext.ComponentQuery.query('#combo-property')[0].getValue();
+            var action = Ext.ComponentQuery.query('#combo-action')[0].getValue();
+            var user = Ext.ComponentQuery.query('#combo-users')[0].getValue();
+            var startdt = Ext.ComponentQuery.query('#startdt')[0].getValue();
+            var enddt = Ext.ComponentQuery.query('#enddt')[0].getValue();
             var idsection = MasterApp.util.getIdSectionActive();
             var idmenu = MasterApp.util.getIdMenuActive();
             var idrecordparent = gridsection.up('panel').idrecordparent;
@@ -31,9 +34,10 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
             var idparentsection = MasterApp.util.getIdParentSectionActive();
             var record = MasterApp.globals.getRecordSection();
             idrecordsection = record.data.id;
-            datestart = Ext.Date.format(datestart, 'm/d/Y');
-            dateend = Ext.Date.format(dateend, 'm/d/Y');
-            if (property === null && action === null && user === null && datestart === '' && dateend === '') {
+            startdt = Ext.Date.format(startdt, 'm/d/Y');
+            enddt = Ext.Date.format(enddt, 'm/d/Y');
+            if (property === null && action === null && user === null && startdt === '' && enddt === '') {
+                mask.hide();
                 Ext.Msg.show({
                     title: 'Informaci&oacute;n',
                     msg: "Debe seleccionar al menos un criterio de b&uacute;squeda.",
@@ -42,10 +46,6 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
                 });
                 return;
             }
-            var mask = new Ext.LoadMask(window, {
-                msg: 'Filtrando...'
-            });
-            mask.show();
             var filter = {
                 url: 'php/manager/getfilterauditorias.php',
                 //url: '../mastersol/app/data/producto.json',
@@ -60,8 +60,8 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
                     'propiedad': property,
                     'accion': action,
                     'usuario': user,
-                    'desde': datestart,
-                    'hasta': dateend
+                    'desde': startdt,
+                    'hasta': enddt
                 },
                 success: function (response) {
                     mask.hide();
@@ -83,17 +83,17 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
 
         loadfilter: function () {
             var idsection = MasterApp.util.getIdSectionActive();
-            var store_property = Ext.ComponentQuery.query('#combo_property')[0].getStore();
+            var store_property = Ext.ComponentQuery.query('#combo-property')[0].getStore();
             store_property.proxy.extraParams = {
                 idsection: idsection
             }
             store_property.load();
-            var store_users = Ext.ComponentQuery.query('#combo_users')[0].getStore();
+            var store_users = Ext.ComponentQuery.query('#combo-users')[0].getStore();
             store_users.load();
         },
 
-        onFormCancel: function () {
-            var window = Ext.ComponentQuery.query('audit-filter')[0];
+        onCancel: function () {
+            var window = Ext.ComponentQuery.query('form-audit')[0];
             window.close();
         },
 
@@ -118,11 +118,11 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
         },
 
         selectDateStart: function (field, newValue, oldValue) {
-            Ext.ComponentQuery.query('#txt_fecha_start')[0].setMinValue(newValue);
+            Ext.ComponentQuery.query('#enddt')[0].setMinValue(newValue);
         },
 
         selectDateEnd: function (field, newValue, oldValue) {
-            Ext.ComponentQuery.query('#txt_fecha_end')[0].setMaxValue(newValue);
+            Ext.ComponentQuery.query('#startdt')[0].setMaxValue(newValue);
         }
     }
 )

@@ -55,11 +55,23 @@ Ext.define('MasterSol.controller.util.ThemeController', {
         return 'white';
     },
 
-    getStyleFileButton:function(){
+    marginTop:function(name){
         var theme = this.getNameTheme();
         if(theme == 'gray' || theme == 'classic'){
-            return '10px';
+            if(name == 'filebutton-attached'){
+                return '10px';
+            }
         }
         return '0px';
+    },
+
+    getHeight:function(name){
+        var theme = this.getNameTheme();
+        if(theme == 'gray' || theme == 'classic'){
+            if(name == 'form-audit'){
+                return 280;
+            }
+        };
+        return 360;
     }
 })
