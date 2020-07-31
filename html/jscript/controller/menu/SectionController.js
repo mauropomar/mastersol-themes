@@ -4,6 +4,7 @@
 Ext.define('MasterSol.controller.menu.SectionController', {
     extend: 'Ext.app.Controller',
     IdRecParent: null,
+    posYFirts: null,
     init: function () {
         this.control({
             'gridpanel[name=section-principal]': { // matches the view itself
@@ -15,8 +16,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 tabchange: 'tabChangeSection'
             },
             'gridpanel[name=grid-section]': { // matches the view itself
-                itemclick: 'itemclickProducto',
-                itemdblclick: 'clickSection',
+                itemclick: 'clickSection',
+                itemdblclick: 'dblclickSection',
                 columnresize: 'columnresize'
             },
         })
@@ -49,25 +50,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.globals.setGridSection(grid.panel);
         MasterApp.globals.setRecordSection(record);
         MasterApp.magnament.getData(grid.panel);
-    },
-
-    itemclickSeccion: function (grid, record) {
-        MasterApp.globales.setGridSection(grid.panel);
-        MasterApp.globales.setRecordSection(record);
-        var nivel = grid.up('tabpanel').nivel + 1;
-        this.lastId = record.data.id;
-        this.cargarDatosTabActive(grid, record, nivel);
-        this.limpiarDatosGestion();
-        this.obtenerDatosGestion();
-        var window = grid.up('window');
-        var panel = grid.up('panel');
-        MasterApp.util.configTools(window, panel.btnTools);
-    },
-
-    itemdblclickSeccion: function (grid, record) {
-        MasterApp.globales.setGridSection(grid.panel);
-        MasterApp.globales.setRecordSection(record);
-        this.obtenerDatosGestion();
     },
 
     //activar y obtener los datos de la seccion hija activa
@@ -216,8 +198,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.tools.setVisibleBtn(window, arrayBtn, true);
         window.alignTo(panelMenu, 'bl-bl');
         this.setPositionWindow(window);
-        this.adjustOtherWindowsMaximize();
         MasterApp.magnament.isMenuTabMagnament(window);
+        this.adjustOtherWindowsMaximize();
     },
 
     maximize: function (button, evt, toolEl, owner, tool) {

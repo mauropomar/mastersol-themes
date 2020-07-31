@@ -30,6 +30,7 @@ Ext.define('MasterSol.view.menu.Menu', {
         }]
     }, {
         xtype: 'tabmagnament',
+        id:'tabmagnament',
         region: 'east',
         collapsible: true,
         collapseMode: 'mini',

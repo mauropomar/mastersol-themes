@@ -22,6 +22,9 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         Ext.ComponentQuery.query('#btn_insert_register')[0].show();
         Ext.ComponentQuery.query('#btn_save_register')[0].hide();
         var gridsection = MasterApp.globals.getGridSection();
+        if(gridsection.idmenu != window.idmenu){
+            gridsection = MasterApp.globals.getSectionPrincipalByWindow(window)
+        }
         var columns = gridsection.config.columns;
         this.addRegister(null, columns);
         this.isEdit = false;
