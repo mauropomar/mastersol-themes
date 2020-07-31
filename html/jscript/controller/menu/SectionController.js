@@ -13,7 +13,12 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             },
             'tabpanel[name=tab-section]': {
                 tabchange: 'tabChangeSection'
-            }
+            },
+            'gridpanel[name=grid-section]': { // matches the view itself
+                itemclick: 'itemclickProducto',
+                itemdblclick: 'clickSection',
+                columnresize: 'columnresize'
+            },
         })
     },
 
@@ -26,7 +31,43 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     dblclickSectionPrincipal: function (grid, record) {
-        // this.obtenerDatosGestion();
+        MasterApp.magnament.getData(grid.panel);
+    },
+
+    clickSection: function (grid, record) {
+        MasterApp.globals.setGridSection(grid.panel);
+        MasterApp.globals.setRecordSection(record);
+        var level = grid.up('tabpanel').level + 1;
+        this.loadDataTabActive(grid, record, level);
+        MasterApp.magnament.getData(grid.panel);
+        var window = grid.up('window');
+        var panel = grid.up('panel');
+        MasterApp.tools.setButtons(window, panel.btnTools);
+    },
+
+    dblclickSection: function (grid, record) {
+        MasterApp.globals.setGridSection(grid.panel);
+        MasterApp.globals.setRecordSection(record);
+        MasterApp.magnament.getData(grid.panel);
+    },
+
+    itemclickSeccion: function (grid, record) {
+        MasterApp.globales.setGridSection(grid.panel);
+        MasterApp.globales.setRecordSection(record);
+        var nivel = grid.up('tabpanel').nivel + 1;
+        this.lastId = record.data.id;
+        this.cargarDatosTabActive(grid, record, nivel);
+        this.limpiarDatosGestion();
+        this.obtenerDatosGestion();
+        var window = grid.up('window');
+        var panel = grid.up('panel');
+        MasterApp.util.configTools(window, panel.btnTools);
+    },
+
+    itemdblclickSeccion: function (grid, record) {
+        MasterApp.globales.setGridSection(grid.panel);
+        MasterApp.globales.setRecordSection(record);
+        this.obtenerDatosGestion();
     },
 
     //activar y obtener los datos de la seccion hija activa

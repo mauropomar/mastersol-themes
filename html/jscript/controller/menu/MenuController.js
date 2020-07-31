@@ -4,7 +4,7 @@
 Ext.define('MasterSol.controller.menu.MenuController', {
     extend: 'Ext.app.Controller',
     init: function () {
-        this.menu = {id: null, idsection: null, nanme: ''};
+        this.menu = {id: null, idsection: null, name: ''};
         this.json = [];
         this.windowParent = null; //variable utilizada para asociar cada seccion o tab a la ventana
         this.panelMenu = null;
