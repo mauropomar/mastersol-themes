@@ -26,9 +26,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         var header = window.getHeader();
         var tools = window.getHeader().tools;
         for (var i = 0; i < tools.length; i++) {
-            var query = 'name=' + tools[i]['name'];
-            var btn = '[' + query + ']';
-            header.remove(Ext.ComponentQuery.query(btn)[0]);
+            var query = '#' + tools[i]['id'];
+            header.remove(Ext.ComponentQuery.query(query)[0]);
         }
     },
 
