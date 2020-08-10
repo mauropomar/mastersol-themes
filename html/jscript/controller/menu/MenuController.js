@@ -45,7 +45,6 @@ Ext.define('MasterSol.controller.menu.MenuController', {
                 } else {
                     MasterApp.util.showMessageInfo('Este menú no tiene secciones disponibles.');
                 }
-
             },
             failure: function (response) {
                 mask.hide();
@@ -54,7 +53,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         Ext.Ajax.request(getdata);
     },
 
-    showMenu: function (json) {
+    showMenu: function (json, isAlert = false) {
         Ext.ComponentQuery.query('#panel-center')[0].removeAll();
         Ext.ComponentQuery.query('#panel-center')[0].add(Ext.create('MasterSol.view.menu.Menu'));
         var panelmenu = Ext.ComponentQuery.query('#panel-menu')[0];
@@ -66,6 +65,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         window.setTitle(this.menu.name);
         window.idsection = this.menu.idsection;
         window.idmenu = this.menu.id;
+        window.isAlert = isAlert;
         window.showAt(0, 38);
         MasterApp.tools.setButtons(window, json[0].buttons);
         this.windowParent = window;

@@ -15,6 +15,7 @@ Ext.define('MasterSol.view.menu.WindowMenu', {
     autoScroll: true,
     closeAction:'destroy',
     layout: 'fit',
+    isAlert:false,
    // tools:this.tools,
     items: [{
         xtype: 'panel',

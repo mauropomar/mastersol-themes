@@ -140,7 +140,8 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
                 controller.menu.idsection = json[0].id;
                 controller.menu.name = json[0].nombre;
                 controller.json = json;
-                controller.showMenu(json);
+                controller.showMenu(json, true);
+          //      Ext.ComponentQuery.query('#register-view')[0].hide();
             },
             failure: function (response) {
                 mask.hide();

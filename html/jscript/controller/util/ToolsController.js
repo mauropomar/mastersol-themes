@@ -48,7 +48,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             }
             header.add(obj);
         }
-        var others = this.getButtonsDefaut();
+        var others = this.getButtonsDefaut(window);
         for (var i = 0; i < others.length; i++) {
             header.add(others[i]);
         }
@@ -98,7 +98,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         Ext.Ajax.request(execute);
     },
 
-    getButtonsDefaut: function () {
+    getButtonsDefaut: function (win) {
         return [{
             iconCls: 'fa fa-refresh',
             tooltip: 'Refrescar',
@@ -110,6 +110,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         }, {
             iconCls: 'fa fa-plus',
             tooltip: 'Agregar',
+            hidden:win.isAlert,
             name: 'btn_add',
             handler: function(evt, toolEl, owner, tool){
                 var window = owner.up('window');
