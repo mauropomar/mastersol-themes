@@ -180,6 +180,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.adjustOtherWindowsMinimize();
         var panel = Ext.ComponentQuery.query('#panel-menu')[0];
         MasterApp.util.resizeWindow(window, panel);
+        MasterApp.tools.showButtonsNotDefault(window, true);
     },
 
 
@@ -200,6 +201,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.setPositionWindow(window);
         MasterApp.magnament.isMenuTabMagnament(window);
         this.adjustOtherWindowsMaximize();
+        MasterApp.tools.showButtonsNotDefault(window, false);
     },
 
     maximize: function (button, evt, toolEl, owner, tool) {

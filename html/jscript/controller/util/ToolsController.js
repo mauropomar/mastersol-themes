@@ -39,6 +39,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 iconCls: newbuttons[i].iconCls,
                 name: newbuttons[i].name,
                 enable: newbuttons[i].enable,
+                default:false,
                 tooltip: newbuttons[i].tooltip,
                 url: newbuttons[i].url,
                 scope: this,
@@ -98,10 +99,21 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         Ext.Ajax.request(execute);
     },
 
+    showButtonsNotDefault:function(window, show){
+        var tools = window.tools;
+        for (var j = 0; j < tools.length; j++) {
+            if (!tools[j].default){
+                var query = '#' + tools[j]['id'];
+                Ext.ComponentQuery.query(query)[0].setVisible(show);
+            }
+        }
+    },
+
     getButtonsDefaut: function (win) {
         return [{
             iconCls: 'fa fa-refresh',
             tooltip: 'Refrescar',
+            default:true,
             name: 'btn_refresh',
             handler: function (evt, toolEl, owner, tool) {
                 var window = owner.up('window');
@@ -111,6 +123,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             iconCls: 'fa fa-plus',
             tooltip: 'Agregar',
             hidden:win.isAlert,
+            default:true,
             name: 'btn_add',
             handler: function(evt, toolEl, owner, tool){
                 var window = owner.up('window');
@@ -119,16 +132,19 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         }, {
             iconCls: 'fa fa-edit',
             hidden: true,
+            default:true,
             // handler: 'onExpandAll',
             tooltip: 'Editar'
         }, {
             iconCls: 'fa fa-print',
             name: 'btn_print',
+            default:true,
             //    handler: 'onExpandAll',
             tooltip: 'Imprimir'
         }, {
             iconCls: 'fa fa-download',
             name: 'btn_download',
+            default:true,
             //  handler: 'onExpandAll',
             listeners: {
                 'render': function (c) {
@@ -173,9 +189,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         }
             , {
                 iconCls: 'fa fa-trash',
-                //disabled: true,
                 name: 'btn_trash',
-                // handler: 'onExpandAll',
+                default:true,
                 tooltip: 'Borrar',
                 handler: function (evt, toolEl, owner, tool) {
                     var window = owner.up('window');
@@ -185,6 +200,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             }, {
                 type: 'minimize',
                 tooltip: 'Minimizar',
+                default:true,
                 name: 'btn_minimize',
                 handler: function (evt, toolEl, owner, tool) {
                     MasterApp.section.minimize(this, evt, toolEl, owner, tool);
@@ -193,6 +209,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 iconCls: 'fa fa-expand',
                 hidden: true,
                 tooltip: 'Restaurar',
+                default:true,
                 name: 'btn_restore',
                 handler: function (evt, toolEl, owner, tool) {
                     MasterApp.section.restore(this, evt, toolEl, owner, tool);
@@ -201,6 +218,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             }, {
                 iconCls: 'fa fa-clone',
                 name: 'btn_clone',
+                default:true,
                 hidden: true,
                 handler: function (evt, toolEl, owner, tool) {
                  /*   var window = owner.up('window');
@@ -210,6 +228,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 iconCls: 'fa fa-square-o',
                 tooltip: 'Maximizar',
                 name: 'btn_maximize',
+                default:true,
                 hidden: true,
                 handler: function (evt, toolEl, owner, tool) {
                     MasterApp.section.maximize(this, evt, toolEl, owner, tool);
@@ -217,6 +236,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             }, {
                 iconCls: 'fa fa-close',
                 tooltip: 'Cerrar',
+                default:true,
                 name: 'btn_close',
                 handler: function (evt, toolEl, owner, tool) {
                    var window = owner.up('window');

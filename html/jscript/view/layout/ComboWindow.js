@@ -6,7 +6,7 @@ Ext.define('MasterSol.view.layout.ComboWindow', {
     xtype: 'combowindow',
     fieldLabel: 'Ventana',
     name: 'combowindow',
-    tpl: new Ext.XTemplate('<tpl for=".">', '<div class="x-boundlist-item">', '<button  class="x-btn-delete-ventana"><i style="top:50%;left:50%" class="fa fa-trash fa-1x"></i></button>', '{name}', '</div>', '</tpl>'),
+    tpl: new Ext.XTemplate('<tpl for=".">', '<div class="x-boundlist-item">', '<button  class="x-btn-delete-ventana"><i style="top:50%;left:50%" class="fa fa-times fa-1x"></i></button>', '{name}', '</div>', '</tpl>'),
     store: {
         type: 'store_window'
     },
