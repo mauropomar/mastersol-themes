@@ -21,10 +21,10 @@ Ext.define('MasterSol.controller.util.ContainerSectionsController', {
         return Ext.create('Ext.panel.Panel', {
             height: height,
             title: title,
-            idparent:json.idpadre,
-            idsection:json.id,
+            idparent: json.idpadre,
+            idsection: json.id,
             items: [gridsection, gridtotal],
-            idrecordparent:null,
+            idrecordparent: null,
             listeners: {
                 afterrender: function (panel) {
                     gridsection.view.getEl().on('scroll', function (e, t) {
