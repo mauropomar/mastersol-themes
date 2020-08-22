@@ -72,7 +72,6 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         this.panelMenu = window.down('panel').down('container');
         this.generateLevels(json);
         this.configureSections(json);
-        //   this.obtenerButtons(window);
         Ext.ComponentQuery.query('#btnEnMosaic')[0].setDisabled(false);
         Ext.ComponentQuery.query('#btnEnCascade')[0].setDisabled(false);
     },

@@ -37,7 +37,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     clickSection: function (grid, record) {
-       MasterApp.globals.setGridSection(grid.panel);
+        MasterApp.globals.setGridSection(grid.panel);
         MasterApp.globals.setRecordSection(record);
         var level = grid.up('tabpanel').level + 1;
         this.loadDataTabActive(grid, record, level);
@@ -110,6 +110,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     tabChangeSection: function (tabPanel, newCard) {
         var gridsection = newCard.down('gridpanel');
         MasterApp.globals.setGridSection(gridsection);
+        this.addEventClickTabSection(tabPanel, newCard);
         this.findChildOfSection(tabPanel, newCard);
         var idparent = newCard.idrecordparent;
         if (idparent == null)
@@ -126,7 +127,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         tabMagnament.idsectionmag = newCard.idsection;
     },
 
-    findChildOfSection:function(tabPanel, newCard){
+    findChildOfSection: function (tabPanel, newCard) {
         var level = tabPanel.level;
         var panelcont = tabPanel.up('panel');
         var idpanelcont = panelcont.id;
@@ -166,7 +167,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         Ext.Ajax.request(getdata);
     },
 
-    refreshSectionActive:function(window) {
+    refreshSectionActive: function (window) {
         var grid = MasterApp.globals.getGridSection();
         var panel = grid.up('panel');
         var idrecordparent = panel.idrecordparent;
@@ -245,7 +246,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.adjustOtherWindowsMaximize();
         MasterApp.globals.setRecordSection(null);
         MasterApp.globals.setGridSection(null);
-        if(window.idmenu == tabmagnament.idmenu) {  //collapsar el tab de gestion que tiene los datos de la ventana que se cierra
+        if (window.idmenu == tabmagnament.idmenu) {  //collapsar el tab de gestion que tiene los datos de la ventana que se cierra
             tabmagnament.collapse();
             tabmagnament.hide();
         }
@@ -343,7 +344,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         }
     },
 
-    deleteRow:function(button, window){
+    deleteRow: function (button, window) {
         var gridsection = MasterApp.globals.getGridSection();
         if (window.idmenu != gridsection.idmenu) {
             gridsection = MasterApp.globals.getSectionPrincipalByWindow(window);
@@ -355,8 +356,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         }
         ;
         var selects = gridsection.getSelectionModel().getSelection();
-        var msg = (selects.length == 1)?'el registro seleccionado':'los registros seleccionados.';
-        Ext.Msg.confirm('Confirmaci&oacute;n', '&iquest;Est&aacute; seguro que desea eliminar '+msg+'?', function (conf) {
+        var msg = (selects.length == 1) ? 'el registro seleccionado' : 'los registros seleccionados.';
+        Ext.Msg.confirm('Confirmaci&oacute;n', '&iquest;Est&aacute; seguro que desea eliminar ' + msg + '?', function (conf) {
             if (conf == 'yes') {
                 var mask = new Ext.LoadMask(gridsection, {
                     msg: 'Eliminando...'
@@ -477,7 +478,14 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         };
         Ext.Ajax.request(getData);
     },
-
-
-
+    // funcion para capturar el click en el tab seleccionados para tenerlo como referencia
+    addEventClickTabSection: function (tabPanel, newCard) {
+        var comp = tabPanel.getEl();
+        comp.on('click', function () {
+            var idtab = comp.id;
+            var sectionActive = Ext.ComponentQuery.query('#' + idtab)[0].getActiveTab();
+            var gridsection = sectionActive.down('gridpanel');
+            MasterApp.globals.setGridSection(gridsection);
+        }, comp);
+    }
 })
