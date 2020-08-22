@@ -36,7 +36,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     clickSection: function (grid, record) {
-        MasterApp.globals.setGridSection(grid.panel);
+       MasterApp.globals.setGridSection(grid.panel);
         MasterApp.globals.setRecordSection(record);
         var level = grid.up('tabpanel').level + 1;
         this.loadDataTabActive(grid, record, level);
@@ -109,20 +109,33 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     tabChangeSection: function (tabPanel, newCard) {
         var gridsection = newCard.down('gridpanel');
         MasterApp.globals.setGridSection(gridsection);
+        this.findChildOfSection(tabPanel, newCard);
         var idparent = newCard.idrecordparent;
         if (idparent == null)
             return;
         var store = gridsection.getStore();
         if (store.getCount() > 0)
             return;
+
         var window = gridsection.up('window');
         MasterApp.tools.setButtons(window, gridsection.btnTools);
         this.getData(idparent, newCard);
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         tabMagnament.idmenu = tabPanel.idmenu;
-        tabMagnament.idsection = newCard.idsection;
+        tabMagnament.idsectionmag = newCard.idsection;
     },
 
+    findChildOfSection:function(tabPanel, newCard){
+        var level = tabPanel.level;
+        var panelcont = tabPanel.up('panel');
+        var idpanelcont = panelcont.id;
+        var queryId = '#' + idpanelcont + ' tabpanel';
+        var next = level + 1;
+        if (Ext.ComponentQuery.query(queryId)[next]) {
+            var tabNext = Ext.ComponentQuery.query(queryId)[next];
+            MasterApp.menu.addChildOfTab(tabNext, newCard);
+        }
+    },
 
     getData: function (idrecordparent, newCard) {
         var mask = new Ext.LoadMask(newCard, {

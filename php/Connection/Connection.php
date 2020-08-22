@@ -3,7 +3,7 @@
 define('NAME_SERVER', isset($_POST['NAME_SERVER']) ? $_POST['NAME_SERVER'] : 'localhost');
 define('NAME_USER', isset($_POST['NAME_USER']) ? $_POST['NAME_USER'] : 'postgres');
 define('PASSWORD', isset($_POST['PASSWORD']) ? $_POST['PASSWORD'] : 'root');
-define('NAME_DATABASE', isset($_POST['NAME_DATABASE']) ? $_POST[''] : 'mastersol1');
+define('NAME_DATABASE', isset($_POST['NAME_DATABASE']) ? $_POST[''] : 'mastersol');
 define('PORT', isset($_POST['PORT']) ? $_POST['PORT'] : '5435');
 
 class Connection

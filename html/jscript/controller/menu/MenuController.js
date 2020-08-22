@@ -114,11 +114,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             idsection: this.windowParent.idsection,
             idmenu: this.windowParent.idmenu,
             name: 'tab-section',
-            border: 1,
-            /* listeners: {
-                 scope: this,
-                 "tabchange": this.tabChangeSection
-             }*/
+            border: 1
         });
         this.panelMenu.add(tabpanel);
     },
@@ -157,24 +153,12 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         }
         return tabs;
     },
-    // evento cambio de tab
-    tabChangeSection: function (tabPanel, newCard) {
-        var level = tabPanel.level;
-        var panelcont = tabPanel.up('panel');
-        var idpanelcont = panelcont.id;
-        var queryId = '#' + idpanelcont + ' tabpanel';
-        var next = level + 1;
-        if (Ext.ComponentQuery.query(queryId)[next]) {
-            var tabNext = Ext.ComponentQuery.query(queryId)[next];
-            this.addChildOfTab(tabNext, newCard);
-        }
-    },
     // elimina todas la secciones y agregar las secciones correspondiente al padre
     addChildOfTab: function (tab, panel) {
         var childs = (this.json[0].children) ? this.json[0].children : [];
         tab.removeAll();
         for (var j = 0; j < childs.length; j++) {
-            if (childs[j].idparent === panel.idsection) {
+            if (childs[j].idpadre === panel.idsection) {
                 this.insertSection(childs[j], tab);
             }
         }
