@@ -14,6 +14,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             },
             'tabpanel[name=tab-section]': {
                 tabchange: 'tabChangeSection'
+
             },
             'gridpanel[name=grid-section]': { // matches the view itself
                 itemclick: 'clickSection',
