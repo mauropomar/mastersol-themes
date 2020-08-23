@@ -4,12 +4,11 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
 
     },
 
-    getComponents(title, columns, tools, height, data, name, windowParent, atributos) {
+    getComponents(section, columns, tools, height, data, name, windowParent, atributos) {
         return Ext.create('Ext.grid.Panel', {
-            title: title,
             btnTools: tools,
             selType: 'checkboxmodel',
-            idsection: windowParent.idsection,
+            idsection: section.id,
             idmenu: windowParent.idmenu,
             name: name,
             section_checked:atributos.section_checked,

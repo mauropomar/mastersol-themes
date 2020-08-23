@@ -18,12 +18,12 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
     },
 
     getAll: function () {
+        var grid = Ext.ComponentQuery.query('total-view')[0];
+        var store = grid.getStore();
         var idsection = MasterApp.util.getIdSectionActive();
         var idmenu = MasterApp.util.getIdMenuActive();
         if (this.checkData())
             return;
-        var grid = Ext.ComponentQuery.query('total-view')[0];
-        var store = grid.getStore();
         store.proxy.extraParams = {
             idmenu: idmenu,
             idsection: idsection
@@ -42,8 +42,9 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
             if (arrayTotal[j]['id'] == window.idmenu) {
                 var data = arrayTotal[j]['registers'];
                 for (var i = 0; i < data.length; i++) {
-                    if (data[i]['id'] == idsection) {
-                        store.loadData(data[i]['totals']);
+                    var totals = data[i]['totals'];
+                    if (data[i]['id'] == idsection && totals.length > 0) {
+                        store.loadData(totals);
                         exists = true;
                     }
                 }
@@ -170,7 +171,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
     hideGridTotals: function (gridsection) {
         var panel = gridsection.up('panel');
         var grid = panel.items.items[1];
-        var height = gridsection.getHeight() + 30;
+        var height = gridsection.getHeight() + 15;
         gridsection.setHeight(height);
         grid.setHeight(0);
         grid.setVisible(false);
@@ -247,6 +248,23 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
     clean: function () {
         var grid = Ext.ComponentQuery.query('#total-view')[0];
         grid.getStore().removeAll();
+    },
+
+    cleanArrayData:function(){
+        var idsection = MasterApp.util.getIdSectionActive();
+        var gridsection = MasterApp.globals.getGridSection();
+        var window = gridsection.up('window');
+        var array = MasterApp.globals.getArrayTotal();
+        for (var j = 0; j < array.length; j++) {
+            if (array[j]['id'] == window.idmenu) {
+                var registers = array[j]['registers'];
+                for (var i = 0; i < registers.length; i++) {
+                    if (registers[i]['id'] == idsection) {
+                        registers[i]['totals'] = [];
+                    }
+                }
+            }
+        };
     },
 
     specialKey: function (field, e) {

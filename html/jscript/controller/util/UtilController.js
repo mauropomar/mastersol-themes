@@ -46,7 +46,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     resizeAllWindow: function () {
-      //  var collapsed = Ext.ComponentQuery.query('tabmagnament')[0].collapsed;
+        //  var collapsed = Ext.ComponentQuery.query('tabmagnament')[0].collapsed;
         var panel = Ext.ComponentQuery.query('#panel-menu')[0];
         var height = panel.getHeight();
         var width = panel.getWidth();
@@ -162,6 +162,15 @@ Ext.define('MasterSol.controller.util.UtilController', {
             idparent = 0;
         }
         return idparent;
+    },
+
+    //devuelve el idpadre de la seccion ya sea un principal o no
+    getGridTotal: function () {
+        var parent;
+        var gridsection = MasterApp.globals.getGridSection();
+        parent = gridsection.up('panel');
+        var gridtotal = parent.items.items[1];
+        return gridtotal;
     },
 
     getVal: function (rec, value) {

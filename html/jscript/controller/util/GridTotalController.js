@@ -5,7 +5,7 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
         this.hidden = true;
     },
 
-    getComponents(title, columns, tools, height, data, name) {
+    getComponents(section, columns, tools, height, data, name) {
         this.grid = Ext.create('Ext.grid.Panel', {
             store: this.getStore(columns, data),
             name: name,
@@ -16,6 +16,7 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
             border: 1,
             split: true,
             columns: this.getColumns(columns),
+            idsection:section.id,
             selModel: {
                 type: 'cellmodel'
             },

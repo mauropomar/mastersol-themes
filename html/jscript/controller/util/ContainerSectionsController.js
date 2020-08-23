@@ -11,8 +11,8 @@ Ext.define('MasterSol.controller.util.ContainerSectionsController', {
         var atribute = {
             "section_checked": (json.section_checked) ? json.section_checked : false
         };
-        var gridsection = MasterApp.gridsections.getComponents('', columns, tools, height - 15, data, name, windowParent, atribute);
-        var gridtotal = MasterApp.gridtotal.getComponents('', columns, [], 15, data, 'grid_total');
+        var gridsection = MasterApp.gridsections.getComponents(json, columns, tools, height - 15, data, name, windowParent, atribute);
+        var gridtotal = MasterApp.gridtotal.getComponents(json, columns, [], 15, data, 'grid_total');
         if (!gridtotal.isVisible()) {
             gridtotal.setHeight(0);
             var height = height + 15;

@@ -110,7 +110,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             split: true,
             resizable: true,
             level: level - 1,
-            idsection: this.windowParent.idsection,
+           // idsection: this.windowParent.idsection,
             idmenu: this.windowParent.idmenu,
             name: 'tab-section',
             border: 1

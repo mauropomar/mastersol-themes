@@ -55,8 +55,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
 
     //activar y obtener los datos de la seccion hija activa
     loadDataTabActive: function (grid, rec, level) {
-        var windowId = grid.panel.idsection;
-        var tabs = Ext.ComponentQuery.query('tabpanel[idsection=' + windowId + ']');
+        var windowId = grid.panel.idmenu;
+        var tabs = Ext.ComponentQuery.query('tabpanel[idmenu=' + windowId + ']');
         if (tabs[level] && tabs[level].items.items.length > 0) {//si existe el tabs en ese nivel y tiene secciones hijas
             var panel = tabs[level].getActiveTab();
             if (!panel) {
@@ -112,13 +112,13 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.globals.setGridSection(gridsection);
         this.addEventClickTabSection(tabPanel, newCard);
         this.findChildOfSection(tabPanel, newCard);
+        MasterApp.magnament.getData(gridsection);
         var idparent = newCard.idrecordparent;
         if (idparent == null)
             return;
         var store = gridsection.getStore();
         if (store.getCount() > 0)
             return;
-
         var window = gridsection.up('window');
         MasterApp.tools.setButtons(window, gridsection.btnTools);
         this.getData(idparent, newCard);

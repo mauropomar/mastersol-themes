@@ -9,9 +9,31 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
                 collapse: 'collapse',
                 expand: 'expand',
                 resize: 'resize',
-                tabchange: 'getData'
+                tabchange: 'tabChange'
             }
         })
+    },
+
+    tabChange:function(tabPanel, newCard){
+        if (newCard.xtype === 'filter-view') {
+            MasterApp.filter.getAll();
+            return;
+        }
+        if (newCard.xtype === 'total-view') {
+            MasterApp.totals.getAll();
+            return;
+        }
+        if (newCard.xtype === 'attached-view') {
+            MasterApp.attached.getAll();
+            return;
+        }
+        if (newCard.xtype === 'note-view') {
+            MasterApp.note.getAll();
+            return;
+        }
+        if (newCard.xtype === 'audit-view') {
+            MasterApp.audit.getAll();
+        }
     },
 
     getData: function (grid) {
