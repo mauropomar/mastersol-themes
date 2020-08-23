@@ -8,7 +8,7 @@
 Ext.define('MasterSol.view.magnament.TabPanel', {
     extend: 'Ext.tab.Panel',
     xtype: 'tabmagnament',
-    idmenu:null,
+    idmenumag:null,
     idsectionmag:null,
     header:false,
     requires: [

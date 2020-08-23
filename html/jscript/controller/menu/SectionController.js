@@ -123,7 +123,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.tools.setButtons(window, gridsection.btnTools);
         this.getData(idparent, newCard);
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
-        tabMagnament.idmenu = tabPanel.idmenu;
+        tabMagnament.idmenumag = tabPanel.idmenu;
         tabMagnament.idsectionmag = newCard.idsection;
     },
 
@@ -246,7 +246,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.adjustOtherWindowsMaximize();
         MasterApp.globals.setRecordSection(null);
         MasterApp.globals.setGridSection(null);
-        if (window.idmenu == tabmagnament.idmenu) {  //collapsar el tab de gestion que tiene los datos de la ventana que se cierra
+        if (window.idmenu == tabmagnament.idmenumag) {  //collapsar el tab de gestion que tiene los datos de la ventana que se cierra
             tabmagnament.collapse();
             tabmagnament.hide();
         }

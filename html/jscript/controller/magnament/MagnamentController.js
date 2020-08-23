@@ -40,7 +40,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         var idmenu = grid.idmenu;
         var idsection = grid.idsection;
         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
-        tabMagnament.idmenu = idmenu;
+        tabMagnament.idmenumag = idmenu;
         tabMagnament.idsectionmag = idsection;
         var optionActive = tabMagnament.getActiveTab();
         tabMagnament.show();
@@ -120,8 +120,8 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
 
     isMenuTabMagnament: function (window) {
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
-        if (window.idmenu == tabMagnament.idmenu) {
-            tabMagnament.idmenu = null;
+        if (window.idmenu == tabMagnament.idmenumag) {
+            tabMagnament.idmenumag = null;
             tabMagnament.idsectionmag = null;
             tabMagnament.hide();
             //  tabMagnament.setDisabled(true);
@@ -139,7 +139,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
 
     collapse: function () {
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
-        tabMagnament.idmenu = null;
+        tabMagnament.idmenumag = null;
         MasterApp.util.resizeAllWindow();
     }
 
