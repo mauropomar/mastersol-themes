@@ -15,6 +15,9 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             'tabpanel[name=tab-section]': {
                 tabchange: 'tabChangeSection'
             },
+            'panel[name=panel_section]': {
+                resize: 'resizeSection'
+            },
             'gridpanel[name=grid-section]': { // matches the view itself
                 itemclick: 'clickSection',
                 itemdblclick: 'dblclickSection',
@@ -486,5 +489,13 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             var gridsection = sectionActive.down('gridpanel');
             MasterApp.globals.setGridSection(gridsection);
         }, comp);
+    },
+
+    resizeSection: function (panel, info, eOpts) {
+        var gridsection = panel.items.items[0];
+        var gridtotal = panel.items.items[1];
+        var height = panel.getHeight();
+        height = (gridtotal.isVisible()) ? height - 30 : height;
+        gridsection.setHeight(height);
     }
 })

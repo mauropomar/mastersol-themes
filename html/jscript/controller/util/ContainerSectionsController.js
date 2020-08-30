@@ -19,6 +19,7 @@ Ext.define('MasterSol.controller.util.ContainerSectionsController', {
             gridsection.setHeight(height);
         }
         return Ext.create('Ext.panel.Panel', {
+            name:'panel_section',
             height: height,
             title: title,
             idparent: json.idpadre,
