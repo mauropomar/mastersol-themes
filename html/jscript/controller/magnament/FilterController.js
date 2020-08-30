@@ -119,7 +119,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             return;
         }
         ;
-        var save = {
+        var filter = {
             url: 'php/manager/getresultfilteroperators.php',
             method: 'POST',
             scope: this,
@@ -147,7 +147,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                     }
             }
         };
-        Ext.Ajax.request(save);
+        Ext.Ajax.request(filter);
     },
 
     new: function () {

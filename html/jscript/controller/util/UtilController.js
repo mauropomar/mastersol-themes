@@ -90,13 +90,13 @@ Ext.define('MasterSol.controller.util.UtilController', {
         var arrayTotals = MasterApp.globals.getArrayTotal();
         var totals = [];
         for (var j = 0; j < arrayTotals.length; j++) {
-            if (arrayTotals[j]['id'] == window.idMenu) {
+            if (arrayTotals[j]['id'] == window.idmenu) {
                 var registers = arrayTotals[j]['registers'];
                 for (var i = 0; i < registers.length; i++) {
                     if (registers[i]['id'] == idsection) {
                         var array = registers[i]['totals'];
                         for (var h = 0; h < array.length; h++) {
-                            if (array[h]['nombrefuncion'] != null) {
+                            if (array[h]['nombrefuncion'] != null && array[h]['nombrefuncion'] != '') {
                                 totals.push(array[h]);
                             }
                         }
@@ -115,13 +115,13 @@ Ext.define('MasterSol.controller.util.UtilController', {
         var arrayFilter = MasterApp.globals.getArrayFilter();
         var filters = [];
         for (var j = 0; j < arrayFilter.length; j++) {
-            if (arrayFilter[j]['idmenu'] == window.idmenu) {
+            if (arrayFilter[j]['id'] == window.idmenu) {
                 var register = arrayFilter[j]['registers'];
                 for (var i = 0; i < register.length; i++) {
                     if (register[i]['id'] == idsection) {
                         var array = register[i]['filters'];
                         for (var h = 0; h < array.length; h++) {
-                            if (array[h]['idoperator'] != null) {
+                            if (array[h]['idoperador'] != null) {
                                 filters.push(array[h]);
                             }
                         }
