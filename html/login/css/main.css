@@ -526,3 +526,9 @@ iframe {
     padding-right: 15px;
   }
 }
+
+.message_login {
+  color: white;
+  text-align: center;
+  padding-left: 10px;
+}

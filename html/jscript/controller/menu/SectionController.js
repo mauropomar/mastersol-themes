@@ -200,7 +200,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.tools.showButtonsNotDefault(window, true);
     },
 
-
     minimize: function (button, evt, toolEl, owner, tool) {
         var panelMenu = Ext.ComponentQuery.query('#panel-menu')[0];
         var window = owner.up('window');

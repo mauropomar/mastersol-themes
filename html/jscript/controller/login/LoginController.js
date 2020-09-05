@@ -47,6 +47,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
             '</span></div><div class="wrap-input100 validate-input m-b-10" data-validate = "Password is required">' +
             '<input class="input100" type="password" name="pass" placeholder="Password" id="pass_login"><span class="focus-input100"></span>' +
             '<span class="symbol-input100"><i class="fa fa-lock"></i></span></div>' +
+            '<div class="message_login" id="message_login"></div>'+
             '<div class="container-login100-form-btn p-t-10"><button class="login100-form-btn" type="button" onclick=MasterApp.getController("MasterSol.controller.login.LoginController").validateLogin();>Login</button></div>' +
             '</a></div></form></div></div></div>'
         return html;
@@ -55,7 +56,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
     validateLogin: function () {
         var user = Ext.get('user_login').dom.value;
         var pass = Ext.get('pass_login').dom.value;
-        //   var div_mensaje = Ext.get('mensaje_login');
+        var div_message = Ext.get('message_login');
         var message = "";
         //   var icono = "exclamation.png";
         if (user == "" && pass == "") {
@@ -68,7 +69,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
             message = "Introduzca la contrase&ntilde;a";
         }
         if (message != "") {
-            //  div_mensaje.dom.innerHTML = mensaje_validado;
+            div_message.dom.innerHTML = message;
             return;
         } else {
             this.auth(user, pass);
@@ -101,10 +102,9 @@ Ext.define('MasterSol.controller.login.LoginController', {
                     this.setAliasOtherClass();
                     this.loadOptions();
                 } else {
-                    Ext.MessageBox.alert(
-                        'Error!',
-                        'Usuario o contraseña incorrecta.'
-                    );
+                    var div_message = Ext.get('message_login');
+                    var message = "Usuario o contraseña incorrecta";
+                    div_message.dom.innerHTML = message;
                 }
             }
         };
