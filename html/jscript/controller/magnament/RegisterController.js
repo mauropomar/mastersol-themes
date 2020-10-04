@@ -290,7 +290,12 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             format: 'd/m/Y',
             name: 'fieldRegister',
             listeners: {
-                specialkey: this.specialKey
+                specialkey: this.specialKey,
+                focus:function(f){
+                    var value = f.getValue();
+                    value = (value == null)?new Date(rec.data.valor):value;
+                    f.setValue(value);
+                }
             }
         });
         if (rec.data.min) {
@@ -360,7 +365,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         var values = rec.data.valor;
         store.load({
                 callback: function (store, records) {
-                    var values = (values) ? values.split(',') : null;
+                    var values = (values) ? values.split(',') : combo.getValue();
                     combo.setValue(values);
                 }
             }
