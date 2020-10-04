@@ -477,7 +477,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             }
         });
         var store = combo.getStore();
-        var values = (Ext.isArray(rec.data.valor1)) ? rec.data.valor1.join(',') : '';
+        var values = (Ext.isArray(rec.data.valor1)) ? rec.data.valor1.join(',') : rec.data.valor1;
         rec.set('valor1', values);
         store.proxy.url = 'php/manager/getforeignkey.php';
         store.proxy.extraParams = {
@@ -486,8 +486,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         };
         store.load({
                 callback: function (store, records) {
-                    var vals = values.split(',');
-                    combo.setValue(vals);
+                    var values = (values) ? values.split(',') : combo.getValue();
+                    combo.setValue(values);
                 }
             }
         );
