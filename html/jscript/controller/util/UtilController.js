@@ -77,10 +77,14 @@ Ext.define('MasterSol.controller.util.UtilController', {
         window.setWidth(width);
         window.expand('', false);
         window.isminimize = false;
-        var arrayBtn = MasterApp.tools.getArrayBtn();
+        var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
+        btn.hide();
+        var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
         MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
-        var btnMaximize = MasterApp.tools.getBtnTools(window, 'btn_restore');
-        btnMaximize.hide();
+        MasterApp.section.adjustOtherWindowsMinimize();
+        var panel = Ext.ComponentQuery.query('#panel-menu')[0];
+        MasterApp.util.resizeWindow(window, panel);
+        MasterApp.tools.showButtonsNotDefault(window, true);
     },
 
     getTotalsBySection: function () {
