@@ -163,6 +163,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
             rec.commit();
         });
         var gridsection = MasterApp.globals.getGridSection();
+        gridsection.getStore().reload();
         var window = gridsection.up('window');
         this.cleanArrayData(window);
         this.hideGridTotals(gridsection);
@@ -236,9 +237,9 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
             }
         }
         if (!gridtotal.isVisible()) {
-            var height = gridsection.getHeight() - 30;
+            var height = gridsection.getHeight() - 40;
             gridsection.setHeight(height);
-            gridtotal.setHeight(30);
+            gridtotal.setHeight(40);
             gridtotal.show();
         }
         gridtotal.getView().refresh();

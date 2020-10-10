@@ -162,7 +162,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var gridsection = MasterApp.globals.getGridSection();
         var window = gridsection.up('window');
         this.cleanArrayData(window);
-        MasterApp.section.refreshSectionActive(1, window);
+        MasterApp.section.refreshSectionActive(window);
     },
 
     cleanArrayData:function(window){
