@@ -83,7 +83,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
         });
         Mask.show();
         var auth = {
-            url: 'php/authentication.php',
+            url: 'session/login',
             method: 'POST',
             scope: this,
             params: {
@@ -130,7 +130,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
 
     getConfigure: function () {
         var obt = {
-            url: 'php/manager/getmenuconfiguration.php',
+            url: 'app/menuconfiguration',
             method: 'GET',
             scope: this,
             success: function (response) {
@@ -152,7 +152,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
 
     getOptions: function () {
         var obt = {
-            url: 'php/manager/getmenusoption.php',
+            url: 'app/menusoption',
             method: 'GET',
             scope: this,
             success: function (response) {

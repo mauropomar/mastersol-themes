@@ -29,7 +29,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             return;
         }
         var getdata = {
-            url: 'php/manager/getsections.php',
+            url: 'app/sections',
             method: 'POST',
             scope: this,
             params: {

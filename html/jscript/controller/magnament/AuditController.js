@@ -47,7 +47,7 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
                 return;
             }
             var filter = {
-                url: 'php/manager/getfilterauditorias.php',
+                url: 'app/filterauditorias',
                 //url: '../mastersol/app/data/producto.json',
                 method: 'GET',
                 scope: this,

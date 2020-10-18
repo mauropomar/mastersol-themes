@@ -5,7 +5,7 @@ Ext.define('MasterSol.store.magnament.PropertyStore', {
     autoLoad: false,
     proxy: {
         type: 'ajax',
-        url: 'php/manager/getproperties.php',
+        url: 'app/getproperties',
         reader: {
             type: 'json',
             rootProperty: ''

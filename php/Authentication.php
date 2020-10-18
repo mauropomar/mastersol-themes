@@ -14,7 +14,7 @@ if (isset($_SESSION['user'])) {
         $_SESSION['id_organizations'] = $result['id_organizations'];
         $_SESSION['id_rol'] = $result['id_rol'];
         $_SESSION['id_user'] = $result['id_user'];
-        $_SESSION['dir_folder_php'] = $_SERVER['DOCUMENT_ROOT'] . '/mastersol-app/php/';
+        $_SESSION['dir_folder_php'] = $_SERVER['DOCUMENT_ROOT'] . '/MasterSol/php/';
         require_once $_SESSION['dir_folder_php'] . 'Repositories/RepositorySections.php';
         $objRepSec = new RepositorySections();
         $objRepSec->createFolderCapsulesMultiple();

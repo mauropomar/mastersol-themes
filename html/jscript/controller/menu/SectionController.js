@@ -147,7 +147,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         });
         mask.show();
         var getdata = {
-            url: 'php/manager/getregisters.php',
+            url: 'app/getregisters',
             method: 'GET',
             scope: this,
             params: {
@@ -371,7 +371,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                     data.push(selects[j]['id']);  //los id de los seleccionados
                 }
                 var remove = {
-                    url: 'php/manager/manageregister.php',
+                    url: 'app/crudregister',
                     method: 'POST',
                     scope: this,
                     params: {
@@ -431,7 +431,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         });
         mask.show();
         var load = {
-            url: 'php/manager/getsections.php',
+            url: 'app/sections',
             method: 'POST',
             scope: this,
             params: {
@@ -458,7 +458,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         });
         mask.show();
         var getData = {
-            url: 'php/manager/getregisters.php',
+            url: 'app/getregisters',
             method: 'GET',
             scope: this,
             params: {

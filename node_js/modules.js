@@ -1,0 +1,36 @@
+var users = require('./repositories/users')
+var languages = require('./repositories/languages')
+var shortcut = require('./repositories/shortcut')
+var menuconfiguration = require('./repositories/menuconfiguration')
+var menusoption = require('./repositories/menuoption')
+var roles = require('./repositories/roles')
+var sections = require('./repositories/sections')
+var register = require('./repositories/register')
+var filters = require('./repositories/filters')
+var adjuntos = require('./repositories/adjuntos')
+var notes = require('./repositories/notes')
+var auditorias = require('./repositories/auditorias')
+var tables = require('./repositories/tables')
+var functions = require('./repositories/functions')
+var enum_datatype = require('./enum/enum_datatype')
+var utiles = require('./util/util')
+
+const objAll = {}
+
+objAll.users = users
+objAll.languages = languages
+objAll.shortcut = shortcut
+objAll.menuconfiguration = menuconfiguration
+objAll.menusoption = menusoption
+objAll.roles = roles
+objAll.sections = sections
+objAll.register = register
+objAll.filters = filters
+objAll.adjuntos = adjuntos
+objAll.notes = notes
+objAll.auditorias = auditorias
+objAll.enum_datatype = enum_datatype
+objAll.utiles = utiles
+objAll.tables = tables
+objAll.functions = functions
+module.exports = objAll

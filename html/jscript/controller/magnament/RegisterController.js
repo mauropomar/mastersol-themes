@@ -121,7 +121,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             action = '14';
         }
         var save = {
-            url: 'php/manager/manageregister.php',
+            url: 'app/crudregister',
             method: 'POST',
             scope: this,
             params: {
@@ -357,7 +357,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         combo.arrayId = [];
         combo.arrayText = [];
         var store = combo.getStore();
-        store.proxy.url = 'php/manager/getforeignkey.php';
+        store.proxy.url = 'app/foreignkey';
         store.proxy.extraParams = {
             idregistro: rec.data.idregistro,
             idsection: idsection

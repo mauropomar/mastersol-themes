@@ -70,7 +70,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         var record = MasterApp.globals.getRecordSection();
         idrecordsection = record.data.id;
         var save = {
-            url: 'php/manager/getresultfilterfunctions.php',
+            url: 'app/resultfilterfunctions',
             method: 'POST',
             scope: this,
             params: {

@@ -58,7 +58,7 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
         idrecordsection = record.data.id;
         var action = (form.idNota == null) ? '13' : '14';
         var save = {
-            url: 'php/manager/managernotes.php',
+            url: 'app/crudnotes',
             method: 'POST',
             scope: this,
             params: {
@@ -107,7 +107,7 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
         var idsection = MasterApp.util.getIdSectionActive();
         var idmenu = MasterApp.util.getIdMenuActive();
         var obtener = {
-            url: 'php/manager/getnotes.php',
+            url: 'app/notes',
             method: 'GET',
             scope: this,
             params: {
@@ -148,8 +148,7 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
                 var lbl = currentform.down('label')
                 var idsection = MasterApp.util.getIdSectionActive();
                 var remove = {
-                    //url: '../mastersol/app/data/adjuntos.json',
-                    url: 'php/manager/managernotes.php',
+                    url: 'app/crudnotes',
                     method: 'POST',
                     scope: this,
                     params: {

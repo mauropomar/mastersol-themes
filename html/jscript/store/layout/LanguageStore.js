@@ -5,7 +5,7 @@ Ext.define('MasterSol.store.layout.LanguageStore', {
     autoLoad: false,
     proxy: {
         type: 'ajax',
-        url: 'php/manager/getlanguages.php',
+        url: 'app/languages',
         reader: {
             type: 'json',
             rootProperty: ''

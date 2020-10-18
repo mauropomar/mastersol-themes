@@ -2,12 +2,15 @@
 //Connection data to the database
 define('NAME_SERVER', isset($_POST['NAME_SERVER']) ? $_POST['NAME_SERVER'] : 'localhost');
 define('NAME_USER', isset($_POST['NAME_USER']) ? $_POST['NAME_USER'] : 'postgres');
-define('PASSWORD', isset($_POST['PASSWORD']) ? $_POST['PASSWORD'] : 'root');
+define('PASSWORD', isset($_POST['PASSWORD']) ? $_POST['PASSWORD'] : 'postgres');
 define('NAME_DATABASE', isset($_POST['NAME_DATABASE']) ? $_POST[''] : 'mastersol');
 define('PORT', isset($_POST['PORT']) ? $_POST['PORT'] : '5435');
 
 class Connection
 {
+    /**
+     * @var
+     */
     private static $connection;
 
     //Open connection
@@ -43,6 +46,13 @@ class Connection
     }
 
     //Execute query
+
+    /**
+     * @param $query
+     * @param string $result_type
+     * @param array $params
+     * @return string
+     */
     public static function executeQuery($query, $result_type = 'all', $params = [])
     {
         $resultQuery = self::$connection->prepare($query . '--', array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));

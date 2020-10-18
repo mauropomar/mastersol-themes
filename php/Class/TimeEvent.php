@@ -4,14 +4,17 @@ require_once $_SESSION['dir_folder_php'] . 'Repositories/RepositoryTimeEvent.php
 
 class TimeEvent
 {
-    private $repository;
-
-    /**
-     * TimeEvent constructor.
-     */
-    public function __construct()
+    public function __construct($i)
     {
-        $this->repository = new RepositoryTimeEvent();
+        $this->i = $i;
     }
 
+    public function run()
+    {
+        while (true) {
+            echo $this->i;
+            sleep(5);
+        }
+    }
 }
+

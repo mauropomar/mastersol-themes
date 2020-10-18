@@ -5,7 +5,7 @@ Ext.define('MasterSol.store.layout.MenuStore', {
     autoLoad: false,
     proxy: {
         type: 'ajax',
-        url: 'php/manager/getfiltermenus.php',
+        url: 'app/filtermenus',
         reader: {
             type: 'json',
             rootProperty: ''

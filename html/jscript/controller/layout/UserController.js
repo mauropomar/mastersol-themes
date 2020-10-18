@@ -14,7 +14,7 @@ Ext.define('MasterSol.controller.layout.UserController', {
         var language = Ext.ComponentQuery.query('#combolanguage')[0].getValue();
         var rol = Ext.ComponentQuery.query('#comborol')[0].getValue();
         var save = {
-            url: 'php/manager/manageroptionuser.php',
+            url: 'app/insoptionuser',
             method: 'POST',
             scope: this,
             params: {

@@ -10,7 +10,7 @@ Ext.define('MasterSol.store.magnament.FilterStore', {
     autoLoad: false,
     proxy: {
         type: 'ajax',
-        url: 'php/manager/getFiltersOperators.php',
+        url: 'app/filtersoperators',
         reader: {
             type: 'json',
             rootProperty: ''

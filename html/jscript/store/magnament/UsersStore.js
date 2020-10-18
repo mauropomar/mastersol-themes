@@ -5,7 +5,7 @@ Ext.define('MasterSol.store.magnament.UsersStore', {
     autoLoad: true,
     proxy: {
         type: 'ajax',
-        url: 'php/manager/getusers.php',
+        url: 'app/getusers',
         reader: {
             type: 'json',
             rootProperty: ''

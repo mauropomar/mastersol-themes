@@ -1,30 +1,30 @@
 <?php
 session_start();
-require_once $_SESSION['dir_folder_php'] . 'Repositories/RepositoryTimeEvent.php';
-require_once $_SESSION['dir_folder_php'] . 'Class/Util.php';
-require $_SESSION['dir_folder_php'] . 'vendor/autoload.php';
-
-use React\EventLoop\Factory;
-
-$objTE = new RepositoryTimeEvent();
-$result = $objTE->getTimeEvents();
-$params = [];
-$ids = [];
-
-//if (!is_null($result)) {
-//    foreach ($result as $index => $val) {
-//        Util::imprimirValor($val);
-//        $val->time = $val->each_any_minutes * 5;
-//        RepositoryTimeEvent::createEvent($val);
-//    }
-//}
-//$paramsA['ids'] = "{" . implode(',', $ids) . "}";
-//$objTE->updateRunTimeEvents($paramsA);
-var_dump($params);
-
-echo 'finnn';
+//require_once $_SESSION['dir_folder_php'] . 'Repositories/RepositoryTimeEvent.php';
+//require_once $_SESSION['dir_folder_php'] . 'Class/Util.php';
+//require_once $_SESSION['dir_folder_php'] . 'Class/TimeEvent.php';
+require_once 'E:\XAMPP\htdocs\MasterSol\php\vendor/autoload.php';
 
 
-
-
-
+//use Amp\Loop;
+//
+//$watcherId = Loop::repeat(5000, function () {
+//    echo 'Repeat' . PHP_EOL;
+//});
+//
+//Loop::delay(15000, function () use ($watcherId) {
+//    echo 'Pausing watcher' . PHP_EOL;
+//    Loop::disable($watcherId);
+//});
+///*
+//Loop::delay(2000, function () use ($watcherId) {
+//    echo 'Resuming watcher' . PHP_EOL;
+//    Loop::enable($watcherId);
+//});*/
+//
+//echo "echo1\n";
+//echo "echo2\n";
+//echo "echo3\n";
+//echo "echo4\n";
+//
+//Loop::run();

@@ -8,7 +8,7 @@ Ext.define('MasterSol.store.magnament.FunctionStore', {
     }],
     proxy: {
         type: 'ajax',
-        url: 'php/manager/getfunctionsresume.php',
+        url: 'app/functionsresume',
         reader: {
             type: 'json',
             rootProperty: ''

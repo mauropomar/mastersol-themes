@@ -20,7 +20,7 @@ Ext.define('MasterSol.controller.alert.AlertController', {
                     resolve('something')
                 }).then(res => {
                     var obtener = {
-                        url: 'php/manager/managerFunctionsEvent.php',
+                        url: 'app/managerfunctionsevent',
                         method: 'GET',
                         scope: this,
                         success: function (response) {
@@ -39,7 +39,7 @@ Ext.define('MasterSol.controller.alert.AlertController', {
 
     laodInitAlert: function () {
         var obt = {
-            url: 'php/manager/managerFunctionsEvent.php',
+            url: 'app/managerfunctionsevent',
             method: 'GET',
             scope: this,
             success: function (response) {

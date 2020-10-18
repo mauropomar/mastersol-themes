@@ -131,7 +131,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         var idsection = MasterApp.util.getIdSectionActive();
         var idmenu = MasterApp.util.getIdMenuActive();
         var getdata = {
-            url: 'php/manager/getadjuntos.php',
+            url: 'app/adjuntos',
             method: 'GET',
             scope: this,
             params: {
@@ -189,7 +189,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         formData.append('filename', filename);
         formData.append('file_adjunto', file);
         Ext.Ajax.request({
-            url: 'php/manager/manageradjunto.php',
+            url: 'app/crudadjunto',
             rawData: formData,
             headers: {'Content-Type': null},
             scope: this,
@@ -221,7 +221,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     var lbl = currentform.down('label');
                     this.fileslist.pop(lbl.text);
                     var del = {
-                        url: 'php/manager/manageradjunto.php',
+                        url: 'app/crudadjunto',
                         method: 'POST',
                         scope: this,
                         params: {
@@ -248,7 +248,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         });
         mask.show();
         var down = {
-            url: 'php/manager/manageradjunto.php',
+            url: 'app/crudadjunto',
             method: 'POST',
             scope: this,
             params: {

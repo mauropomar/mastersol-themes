@@ -1,1 +1,13 @@
-/base_datos/
+# Cache and logs
+/*.log
+
+# Managed by IDE
+/nbproject/
+/.idea
+/.sencha
+/resources/files/*
+
+#Files by Project
+/Capsules
+/node_modules
+/ext-6.2.0

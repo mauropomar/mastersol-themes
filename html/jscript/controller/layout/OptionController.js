@@ -27,7 +27,7 @@ Ext.define('MasterSol.controller.layout.OptionController', {
         };
         node.set('icon', 'html/assets/icons/others/blue-loading.gif');
         var getchild = {
-            url: 'php/manager/getmenusoption.php',
+            url: 'app/menusoption',
             method: 'GET',
             scope: this,
             params: {

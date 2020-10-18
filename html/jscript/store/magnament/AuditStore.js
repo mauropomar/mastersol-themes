@@ -4,7 +4,7 @@ Ext.define('MasterSol.store.magnament.AuditStore', {
     model:'MasterSol.model.magnament.AuditModel',
     proxy: {
         type: 'ajax',
-        url: 'php/manager/getauditorias.php',
+        url: 'app/auditorias',
         reader: {
             type: 'json',
             rootProperty: 'datos'

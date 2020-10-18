@@ -99,7 +99,7 @@ Ext.define('MasterSol.controller.layout.HomeController', {
         Ext.Msg.confirm('Confirmaci&oacute;n', '&iquest;Est&aacute; seguro que desea eliminar la opción seleccionada?', function (conf) {
             if (conf == 'yes') {
                 var eliminar = {
-                    url: 'php/manager/managerShortcut.php',
+                    url: 'app/delshortcut',
                     method: 'POST',
                     scope: this,
                     params: {

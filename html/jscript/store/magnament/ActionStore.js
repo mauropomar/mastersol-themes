@@ -5,7 +5,7 @@ Ext.define('MasterSol.store.magnament.ActionStore', {
     autoLoad: true,
     proxy: {
         type: 'ajax',
-        url: 'php/manager/getactions.php',
+        url: 'app/actions',
         reader: {
             type: 'json',
             rootProperty: ''

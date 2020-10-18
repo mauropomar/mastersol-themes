@@ -5,7 +5,7 @@ Ext.define('MasterSol.store.layout.DataViewStore', {
     autoLoad: true,
     proxy: {
         type: 'ajax',
-        url: 'php/manager/getshortcut.php',
+        url: 'app/shortcut',
         reader: {
             type: 'json',
             rootProperty: ''

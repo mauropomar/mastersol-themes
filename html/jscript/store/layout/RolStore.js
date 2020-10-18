@@ -5,7 +5,7 @@ Ext.define('MasterSol.store.layout.RolStore', {
     autoLoad: false,
     proxy: {
         type: 'ajax',
-        url: 'php/manager/getroles.php',
+        url: 'app/roles',
         reader: {
             type: 'json',
             rootProperty: ''

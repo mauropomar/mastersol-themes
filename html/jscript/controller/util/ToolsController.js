@@ -78,7 +78,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         var recordId = (record != null) ? record.data.id : null;
         var store = grid.getStore();
         var execute = {
-            url: 'php/manager/managerfunctions.php',
+            url: 'app/managerfunctions',
             method: 'GET',
             scope: this,
             params: {

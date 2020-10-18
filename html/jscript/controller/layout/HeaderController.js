@@ -125,7 +125,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         mask.show();
         MasterApp.globals.moveColumns = false;
         var alert = {
-            url: 'php/manager/getsections.php',
+            url: 'app/sections',
             method: 'POST',
             scope: this,
             params: {

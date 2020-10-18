@@ -120,7 +120,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         }
         ;
         var filter = {
-            url: 'php/manager/getresultfilteroperators.php',
+            url: 'app/resultfilteroperators',
             method: 'POST',
             scope: this,
             params: {
@@ -479,7 +479,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var store = combo.getStore();
         var values = (Ext.isArray(rec.data.valor1)) ? rec.data.valor1.join(',') : rec.data.valor1;
         rec.set('valor1', values);
-        store.proxy.url = 'php/manager/getforeignkey.php';
+        store.proxy.url = 'app/foreignkey';
         store.proxy.extraParams = {
             idregistro: rec.data.idregistro,
             idsection: idsection
