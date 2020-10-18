@@ -131,20 +131,20 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                 'idmenu': idmenu,
                 'accion': '2',
                 'data': Ext.encode(data),
-                'totales':MasterApp.util.getTotalsBySection()
+                'totales': MasterApp.util.getTotalsBySection()
             },
             callback: function (options, success, response) {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
-                    var data = json.datos;
-                    if (data != null) {
-                        this.configuredData();
-                        store.commitChanges();
-                        gridsection.getStore().loadData(data);
-                    } else {
-                        MasterApp.util.showMessageInfo('No existen datos con ese criterio de búsqueda.');
-                        gridsection.getStore().removeAll();
-                    }
+                var data = json.datos;
+                if (data != null) {
+                    this.configuredData();
+                    store.commitChanges();
+                    gridsection.getStore().loadData(data);
+                } else {
+                    MasterApp.util.showMessageInfo('No existen datos con ese criterio de búsqueda.');
+                    gridsection.getStore().removeAll();
+                }
             }
         };
         Ext.Ajax.request(filter);
@@ -165,7 +165,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         MasterApp.section.refreshSectionActive(window);
     },
 
-    cleanArrayData:function(window){
+    cleanArrayData: function (window) {
         var arrayFilter = MasterApp.globals.getArrayFilter();
         var idsection = MasterApp.util.getIdSectionActive();
         for (var j = 0; j < arrayFilter.length; j++) {
@@ -235,8 +235,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             var d = this.getIdOperator(rec, valor1);
             var idoperator = d[0];
             var cantparam = d[1];
-            var real_name_in = MasterApp.util.getValProperty(rec.data.nombrecampo,'real_name_in');
-            var real_name_out = MasterApp.util.getValProperty(rec.data.nombrecampo,'real_name_out');
+            var real_name_in = MasterApp.util.getValProperty(rec.data.nombrecampo, 'real_name_in');
+            var real_name_out = MasterApp.util.getValProperty(rec.data.nombrecampo, 'real_name_out');
             if (idoperator) {
                 data.push({
                     idregister: rec.data.idregistro,
@@ -247,8 +247,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                     idoperador: idoperator,
                     operadores: rec.data.operadores,
                     idvalor: rec.data.idvalor,
-                    real_name_in:real_name_in,
-                    real_name_out:real_name_out,
+                    real_name_in: real_name_in,
+                    real_name_out: real_name_out,
                     valor1: valor1,
                     valor2: valor2,
                     cantparam: cantparam
@@ -302,10 +302,10 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
     //devuelve el operador
     getOperator: function (rec, val) {
         var operator = null;
-        var operators = (rec.data.operadores) ? rec.data.operadores: new Array();
+        var operators = (rec.data.operadores) ? rec.data.operadores : new Array();
         if (val != null && val != '' && operators.length > 0) {
             operator = (rec.data.operador) ? rec.data.operador : '=';
-            rec.set('operador',operator);
+            rec.set('operador', operator);
         }
         return operator;
     },
@@ -464,7 +464,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
     setComboFk: function (rec, column) {
         var idsection = MasterApp.util.getIdSectionActive();
         var combo = Ext.create('MasterSol.view.magnament.ComboFk', {
-            multiSelect: (rec.data.tipo == 'array') ? true : false,
+            //   multiSelect: (rec.data.tipo == 'array') ? true : false,
+            multiSelect: true,
             listConfig: {
                 loadingText: 'Buscando...',
                 emptyText: 'No existen opciones....',
