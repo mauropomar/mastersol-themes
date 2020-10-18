@@ -20,6 +20,7 @@ Ext.define('MasterSol.view.layout.ComboWindow', {
                     combo.store.removeAt(index);
                     var windows = MasterApp.util.getMenuByName(record.data.name);
                     windows.close();
+                    combo.reset();
                 }
             }
         }
