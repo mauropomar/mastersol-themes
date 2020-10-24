@@ -31,7 +31,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         store.load();
     },
 
-    checkData:function(){
+    checkData: function () {
         var exists = false;
         var store = Ext.ComponentQuery.query('#total-view')[0].getStore();
         var arrayTotal = MasterApp.globals.getArrayTotal();
@@ -101,7 +101,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
     //datos que se van a guardar en la base de datos.
     getData: function (store) {
         var data = [];
-        store.each(function(rec){
+        store.each(function (rec) {
             var idfuncion = this.getIdFunction(rec);
             if (idfuncion != null) {
                 data.push({
@@ -113,7 +113,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                     funciones: rec.data.funciones
                 })
             }
-        },this);
+        }, this);
         return data
     },
 
@@ -236,12 +236,12 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                 }
             }
         }
-        if (!gridtotal.isVisible()) {
-            var height = gridsection.getHeight() - 40;
-            gridsection.setHeight(height);
-            gridtotal.setHeight(40);
-            gridtotal.show();
-        }
+        //if (gridtotal.isVisible()) {
+        var height = gridsection.getHeight() - 40;
+        gridsection.setHeight(height);
+        gridtotal.setHeight(40);
+        gridtotal.show();
+        //  }
         gridtotal.getView().refresh();
         gridtotal.getView().focusRow(0);
     },
@@ -251,7 +251,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         grid.getStore().removeAll();
     },
 
-    cleanArrayData:function(){
+    cleanArrayData: function () {
         var idsection = MasterApp.util.getIdSectionActive();
         var gridsection = MasterApp.globals.getGridSection();
         var window = gridsection.up('window');
@@ -265,7 +265,8 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                     }
                 }
             }
-        };
+        }
+        ;
     },
 
     specialKey: function (field, e) {

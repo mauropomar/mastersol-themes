@@ -14,7 +14,9 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             section_checked:atributos.section_checked,
             store: this.getStore(columns, data),
             height: height,
-            split: true,
+      //      split: true,
+            region:'center',
+            autoScroll: true,
             plugins: [{
                 ptype: 'gridfilters'
             }],

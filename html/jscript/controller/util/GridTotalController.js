@@ -13,8 +13,9 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
             columnLines: true,
             hideHeaders: true,
             scrollable: false,
+            region:'south',
             border: 1,
-            split: true,
+         //   split: true,
             columns: this.getColumns(columns),
             idsection:section.id,
             selModel: {
@@ -29,7 +30,7 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
                 loadingText: 'Cargando...'
             }
         })
-        this.grid.hidden = this.hidden;
+     //   this.grid.hidden = this.hidden;
         return this.grid
     },
 

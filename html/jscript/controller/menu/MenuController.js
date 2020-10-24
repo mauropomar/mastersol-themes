@@ -25,6 +25,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         mask.show();
         var window = this.getWindow(record);
         if (window != null) {
+            window.toFront()
             mask.hide();
             return;
         }

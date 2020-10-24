@@ -106,7 +106,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         idrecordsection = record.data.id;
         if (data.length == 0) {
             var idx = store.findBy(function (rec, id) {
-                return (rec.data.operador == null && rec.data.valor1 != null)
+                return (rec.data.operador == null && (rec.data.valor1 !== null && rec.data.valor1 !== ''))
             });
             grid.getSelectionModel().select(idx);
             Ext.Msg.show({
@@ -226,10 +226,9 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
     //conforma arreglo de filtros a guardar
     getData: function (store) {
         var data = [];
-        var records = store.getModifiedRecords();
         var rec;
-        for (var j = 0; j < records.length; j++) {
-            rec = records[j];
+        store.each(function(record){
+            rec = record;
             var valor1 = MasterApp.util.getVal(rec, rec.data.valor1);
             var valor2 = MasterApp.util.getVal(rec, rec.data.valor2);
             var d = this.getIdOperator(rec, valor1);
@@ -254,7 +253,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                     cantparam: cantparam
                 })
             }
-        }
+        }, this);
         return data
     },
 
@@ -291,7 +290,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var idoperator = null;
         var cantparam = 1;
         var operators = (rec.data.operadores) ? rec.data.operadores : new Array();
-        if (val != null && val != '' && operators.length > 0) {
+        if (val !== null && val !== '' && operators.length > 0) {
             var operator = (rec.data.operador) ? rec.data.operador : '=';
             idoperator = this.getOperatorDefault(rec.data.operadores, operator);
             cantparam = this.getCantParam(rec.data.operadores, operator);
@@ -527,7 +526,14 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
     //seleccionar operador
     selectOperator: function (combo, record) {
         var grid = Ext.ComponentQuery.query('#filter-view')[0];
-        var sel = grid.getSelectionModel().getSelection()[0];
+        var selModel = grid.getSelectionModel();
+        var index = selModel.selectionStartIdx;
+        var sel = selModel.getSelection()[0];
         sel.set('cantparam', record.data.cantidadparam);
+        var edit = grid.plugins[0];
+        edit.startEditByPosition({
+            row: index,
+            column: 2
+        });
     }
 })
