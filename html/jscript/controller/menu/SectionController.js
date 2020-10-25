@@ -8,9 +8,10 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     init: function () {
         this.control({
             'gridpanel[name=section-principal]': { // matches the view itself
-                itemclick: 'clickSectionPrincipal',
-                itemdblclick: 'dblclickSectionPrincipal',
-                columnresize: 'columnresize'
+                cellclick: 'clickSectionPrincipal',
+                celldblclick: 'dblclickSectionPrincipal',
+                columnresize: 'columnresize',
+               // celldblclick: 'celldblclick'
             },
             'tabpanel[name=tab-section]': {
                 tabchange: 'tabChangeSection'
@@ -19,14 +20,14 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 resize: 'resizeSection'
             },
             'gridpanel[name=grid-section]': { // matches the view itself
-                itemclick: 'clickSection',
-                itemdblclick: 'dblclickSection',
+                cellclick: 'clickSection',
+                celldblclick: 'dblclickSection',
                 columnresize: 'columnresize'
             },
         })
     },
 
-    clickSectionPrincipal: function (grid, record) {
+    clickSectionPrincipal: function (grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
         MasterApp.globals.setRecordSection(record);
         MasterApp.globals.setGridSection(grid.panel);
         this.IdRecParent = record.data.id;
@@ -34,8 +35,15 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.magnament.getData(grid.panel);
     },
 
-    dblclickSectionPrincipal: function (grid, record) {
+    dblclickSectionPrincipal: function (grid, td, cellIndex, record) {
         MasterApp.magnament.getData(grid.panel);
+        var columns = grid.grid.columns;
+        var dataIndex = columns[cellIndex]['dataIndex'];
+        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        var activeTab = tabMagnament.getActiveTab();
+        if(activeTab.xtype == 'register-view'){
+            MasterApp.register.setFocusCell(dataIndex);
+        }
     },
 
     clickSection: function (grid, record) {

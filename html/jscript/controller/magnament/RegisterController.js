@@ -396,5 +396,20 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         combo.setValue(arrayText.join(','));
         recGrid.set('valor', arrayText.join(','));
         recGrid.set('idvalor', arrayId.join(','));
+    },
+   // cuando se edita la seccion pone como editable la columna seleccionada.
+    setFocusCell:function(dataIndex){
+        var grid = Ext.ComponentQuery.query('#register-view')[0];
+        var store = grid.getStore();
+        var index = store.findBy(function(rec, ide){
+             return (rec.data.name.toLowerCase() == dataIndex.toLowerCase())
+        });
+        if(index == -1)
+            return;
+        var edit = grid.plugins[0];
+        edit.startEditByPosition({
+            row: index,
+            column: 1
+        });
     }
 })

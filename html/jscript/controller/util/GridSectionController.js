@@ -7,15 +7,15 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
     getComponents(section, columns, tools, height, data, name, windowParent, atributos) {
         return Ext.create('Ext.grid.Panel', {
             btnTools: tools,
-            selType: 'checkboxmodel',
+            selType: (atributos.section_checked) ? 'checkboxmodel' : null,
             idsection: section.id,
             idmenu: windowParent.idmenu,
             name: name,
-            section_checked:atributos.section_checked,
+            section_checked: atributos.section_checked,
             store: this.getStore(columns, data),
             height: height,
-      //      split: true,
-            region:'center',
+            //      split: true,
+            region: 'center',
             autoScroll: true,
             plugins: [{
                 ptype: 'gridfilters'
@@ -27,7 +27,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             },
             listeners: {
                 'columnmove': function (ct, column, from, to, event) {
-               //     MasterApp.util.moveColumn(ct, column, from, to, event)
+                    //     MasterApp.util.moveColumn(ct, column, from, to, event)
                 }
             }
         })
@@ -111,7 +111,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         dataIndex: MasterApp.util.getDataIndex(cols[i]),
                         width: cols[i].width,
                         text: cols[i].text,
-                       // align: cols[i].align,
+                        // align: cols[i].align,
                         functions: cols[i].funcion,
                         type: cols[i].type,
                         sortable: cols[i].sortable,
@@ -137,7 +137,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         dataIndex: MasterApp.util.getDataIndex(cols[i]),
                         width: cols[i].width,
                         text: cols[i].text,
-                       // align: cols[i].align,
+                        // align: cols[i].align,
                         functions: cols[i].funcion,
                         type: cols[i].type,
                         sortable: cols[i].sortable,
@@ -162,7 +162,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         dataIndex: MasterApp.util.getDataIndex(cols[i]),
                         width: cols[i].width,
                         text: cols[i].text,
-                      //  align: cols[i].align,
+                        //  align: cols[i].align,
                         functions: cols[i].funcion,
                         type: cols[i].type,
                         sortable: cols[i].sortable,
