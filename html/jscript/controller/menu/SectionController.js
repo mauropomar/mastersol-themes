@@ -36,14 +36,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     dblclickSectionPrincipal: function (grid, td, cellIndex, record) {
-        MasterApp.magnament.getData(grid.panel);
-        var columns = grid.grid.columns;
-        var dataIndex = columns[cellIndex]['dataIndex'];
-        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
-        var activeTab = tabMagnament.getActiveTab();
-        if(activeTab.xtype == 'register-view'){
-            MasterApp.register.setFocusCell(dataIndex);
-        }
+        MasterApp.magnament.getData(grid.panel, cellIndex);
     },
 
     clickSection: function (grid, record) {
@@ -57,10 +50,10 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.tools.setButtons(window, panel.btnTools);
     },
 
-    dblclickSection: function (grid, record) {
+    dblclickSection: function (grid, td, cellIndex, record) {
         MasterApp.globals.setGridSection(grid.panel);
         MasterApp.globals.setRecordSection(record);
-        MasterApp.magnament.getData(grid.panel);
+        MasterApp.magnament.getData(grid.panel, cellIndex);
     },
 
     //activar y obtener los datos de la seccion hija activa

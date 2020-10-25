@@ -36,7 +36,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         }
     },
 
-    getData: function (grid) {
+    getData: function (grid, columnIndex) {
         var idmenu = grid.idmenu;
         var idsection = grid.idsection;
         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
@@ -54,7 +54,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         else
             tabMagnament.child('#register-view').tab.show();
         if (optionActive.xtype === 'register-view') {
-            MasterApp.register.editRegister();
+            MasterApp.register.editRegister(columnIndex);
             return;
         }
         if (optionActive.xtype === 'filter-view') {
