@@ -7,7 +7,6 @@
  */
 Ext.define('MasterSol.view.layout.DataView', {
     extend: 'Ext.panel.Panel',
-    autoScroll: true,
     xtype: 'dataview-home',
     overflowY: 'auto',
     layout: 'fit',

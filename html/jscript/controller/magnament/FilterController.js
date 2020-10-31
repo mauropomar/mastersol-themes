@@ -84,6 +84,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                         column: 1
                     });
                 }
+                if (MasterApp.globals.actionKeyCrtlF)
+                    MasterApp.filter.setFocusCell();
             }
         });
     },
@@ -227,7 +229,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
     getData: function (store) {
         var data = [];
         var rec;
-        store.each(function(record){
+        store.each(function (record) {
             rec = record;
             var valor1 = MasterApp.util.getVal(rec, rec.data.valor1);
             var valor2 = MasterApp.util.getVal(rec, rec.data.valor2);
@@ -535,5 +537,29 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             row: index,
             column: 2
         });
+    },
+
+    // cuando se edita la seccion pone como editable la columna seleccionada.
+    setFocusCell: function () {
+        MasterApp.globals.actionKeyCrtlF = false;
+        var gridsection = MasterApp.globals.getGridSection();
+        var selModel = gridsection.getSelectionModel();
+        var columnIndex = selModel.navigationModel.previousColumnIndex;
+        var dataIndex = gridsection.columns[columnIndex].text;
+        var grid = Ext.ComponentQuery.query('#filter-view')[0];
+        var store = grid.getStore();
+        var index = store.findBy(function (rec, ide) {
+            return (rec.data.nombrecampo.toLowerCase() == dataIndex.toLowerCase())
+        });
+        if (index == -1)
+            return;
+        var grid = Ext.ComponentQuery.query('#filter-view')[0];
+        var edit = grid.plugins[0];
+        grid.plugins[0].cancelEdit();
+        edit.startEditByPosition({
+            row: index,
+            column: 1
+        });
+        grid.columns[1].getEditor().expand();
     }
 })
