@@ -85,7 +85,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                     });
                 }
                 if (MasterApp.globals.actionKeyCrtlF)
-                    MasterApp.filter.setFocusCell();
+                    MasterApp.filter.findIndexSetFocusField();
             }
         });
     },
@@ -541,25 +541,35 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
 
     // cuando se edita la seccion pone como editable la columna seleccionada.
     setFocusCell: function () {
-        MasterApp.globals.actionKeyCrtlF = false;
+        var grid = Ext.ComponentQuery.query('#filter-view')[0];
+        var store = grid.getStore();
+        store.load({
+            scope:this,
+            callback:function(){
+                this.findIndexSetFocusField();
+            }
+        });
+    },
+    // buscar el campo que se le va a desplegar en dependecia de la columna seleccionado
+    //en la seccion
+    findIndexSetFocusField:function(){
         var gridsection = MasterApp.globals.getGridSection();
         var selModel = gridsection.getSelectionModel();
         var columnIndex = selModel.navigationModel.previousColumnIndex;
         var dataIndex = gridsection.columns[columnIndex].text;
-        var grid = Ext.ComponentQuery.query('#filter-view')[0];
-        var store = grid.getStore();
+        var gridfilter = Ext.ComponentQuery.query('#filter-view')[0];
+        var store = gridfilter.getStore();
         var index = store.findBy(function (rec, ide) {
             return (rec.data.nombrecampo.toLowerCase() == dataIndex.toLowerCase())
         });
         if (index == -1)
             return;
-        var grid = Ext.ComponentQuery.query('#filter-view')[0];
-        var edit = grid.plugins[0];
-        grid.plugins[0].cancelEdit();
+        var edit = gridfilter.plugins[0];
         edit.startEditByPosition({
             row: index,
             column: 1
         });
-        grid.columns[1].getEditor().expand();
+        gridfilter.columns[1].getEditor().expand();
+        MasterApp.globals.actionKeyCrtlF = false;
     }
 })

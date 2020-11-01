@@ -514,7 +514,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                     MasterApp.globals.actionKeyCrtlF = true;
                     var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
                     var activeTab = tabMagnament.getActiveTab();
-                     Ext.ComponentQuery.query('#filter-view')[0].focus();
                     if(activeTab.xtype == 'filter-view'){
                         MasterApp.filter.setFocusCell();
                     }else{
