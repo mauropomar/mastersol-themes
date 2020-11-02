@@ -4,7 +4,7 @@ var utf8 = require('utf8')
 
 var config_bd = {
     user: 'postgres',
-    password: 'postgres',
+    password: 'root',
     host: 'localhost',
     database: 'mastersol',
     port: 5435
