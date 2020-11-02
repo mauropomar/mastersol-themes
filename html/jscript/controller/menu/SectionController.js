@@ -11,6 +11,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 cellclick: 'clickSectionPrincipal',
                 celldblclick: 'dblclickSectionPrincipal',
                 columnresize: 'columnresize',
+                afterrender:'afterrender'
                // celldblclick: 'celldblclick'
             },
             'tabpanel[name=tab-section]': {
@@ -497,5 +498,29 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var height = panel.getHeight();
         height = (gridtotal.isVisible()) ? height - 30 : height;
         gridsection.setHeight(height);
+    },
+
+    afterrender:function(panel){
+        this.actionKey(panel);
+    },
+
+    actionKey:function(panel){
+        Ext.create('Ext.util.KeyMap', {
+            target: Ext.getBody(),
+            binding: [{
+                key: "f",
+                ctrl:true,
+                fn: function(e){
+                    MasterApp.globals.actionKeyCrtlF = true;
+                    var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+                    var activeTab = tabMagnament.getActiveTab();
+                    if(activeTab.xtype == 'filter-view'){
+                        MasterApp.filter.setFocusCell();
+                    }else{
+                        tabMagnament.setActiveTab(1);
+                    }
+                }
+            }]
+        });
     }
 })

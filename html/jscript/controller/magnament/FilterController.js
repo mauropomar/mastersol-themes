@@ -84,6 +84,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                         column: 1
                     });
                 }
+                if (MasterApp.globals.actionKeyCrtlF)
+                    MasterApp.filter.findIndexSetFocusField();
             }
         });
     },
@@ -227,7 +229,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
     getData: function (store) {
         var data = [];
         var rec;
-        store.each(function(record){
+        store.each(function (record) {
             rec = record;
             var valor1 = MasterApp.util.getVal(rec, rec.data.valor1);
             var valor2 = MasterApp.util.getVal(rec, rec.data.valor2);
@@ -535,5 +537,39 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             row: index,
             column: 2
         });
+    },
+
+    // cuando se edita la seccion pone como editable la columna seleccionada.
+    setFocusCell: function () {
+        var grid = Ext.ComponentQuery.query('#filter-view')[0];
+        var store = grid.getStore();
+        store.load({
+            scope:this,
+            callback:function(){
+                this.findIndexSetFocusField();
+            }
+        });
+    },
+    // buscar el campo que se le va a desplegar en dependecia de la columna seleccionado
+    //en la seccion
+    findIndexSetFocusField:function(){
+        var gridsection = MasterApp.globals.getGridSection();
+        var selModel = gridsection.getSelectionModel();
+        var columnIndex = selModel.navigationModel.previousColumnIndex;
+        var dataIndex = gridsection.columns[columnIndex].text;
+        var gridfilter = Ext.ComponentQuery.query('#filter-view')[0];
+        var store = gridfilter.getStore();
+        var index = store.findBy(function (rec, ide) {
+            return (rec.data.nombrecampo.toLowerCase() == dataIndex.toLowerCase())
+        });
+        if (index == -1)
+            return;
+        var edit = gridfilter.plugins[0];
+        edit.startEditByPosition({
+            row: index,
+            column: 1
+        });
+        gridfilter.columns[1].getEditor().expand();
+        MasterApp.globals.actionKeyCrtlF = false;
     }
 })

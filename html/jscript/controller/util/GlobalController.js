@@ -19,6 +19,7 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.selEnCascade = false;
             this.selEnMosaic = false;
             this.idRol = null;
+            this.actionKeyCrtlF = false;
         },
         getOptionSelected: function () {
             return this.optionSelect;
