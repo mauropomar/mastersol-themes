@@ -31,4 +31,6 @@ app.use(BodyParser.urlencoded({extended: false}))
 //add the router
 app.use('/session', router_login);
 app.use('/app', router_app);
-app.listen(8080)
+app.listen(8080, ()=>{
+    console.log("Servidor corriendo por el puerto 8080")
+})
