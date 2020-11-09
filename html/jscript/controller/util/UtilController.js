@@ -241,5 +241,18 @@ Ext.define('MasterSol.controller.util.UtilController', {
         return val;
     },
 
+    setAplyMaxLine: function(){
+        var gridsection = MasterApp.globals.getGridSection();
+        var maxLine = gridsection.max_line;
+        if(maxLine == 0)
+            return;
+        var countRow = gridsection.getStore().getCount();
+        var disabled = (maxLine >= countRow)?true:false;
+        var window = gridsection.up('window');
+        var btn = MasterApp.tools.getBtnTools(window , 'btn_add');
+        btn.setDisabled(disabled);
+
+    }
+
 
 });

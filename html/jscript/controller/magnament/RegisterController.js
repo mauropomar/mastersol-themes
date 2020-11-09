@@ -22,7 +22,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         Ext.ComponentQuery.query('#btn_insert_register')[0].show();
         Ext.ComponentQuery.query('#btn_save_register')[0].hide();
         var gridsection = MasterApp.globals.getGridSection();
-        if(gridsection.idmenu != window.idmenu){
+        if (gridsection.idmenu != window.idmenu) {
             gridsection = MasterApp.globals.getSectionPrincipalByWindow(window)
         }
         var columns = gridsection.config.columns;
@@ -219,6 +219,11 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     },
 
     beforeedit: function (editor, e, eOpts) {
+        var gridsection = MasterApp.globals.getGridSection();
+        if(gridsection.read_only){
+            e.cancel = true;
+            return;
+        }
         var record = e.record;
         var column = Ext.ComponentQuery.query('#register-view')[0].columns[1];
         if (record.data.fk == '1') {
@@ -298,9 +303,9 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             name: 'fieldRegister',
             listeners: {
                 specialkey: this.specialKey,
-                focus:function(f){
+                focus: function (f) {
                     var value = f.getValue();
-                    value = (value == null)?new Date(rec.data.valor):value;
+                    value = (value == null) ? new Date(rec.data.valor) : value;
                     f.setValue(value);
                 }
             }
@@ -404,14 +409,14 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         recGrid.set('valor', arrayText.join(','));
         recGrid.set('idvalor', arrayId.join(','));
     },
-   // cuando se edita la seccion pone como editable la columna seleccionada.
-    setFocusCell:function(dataIndex){
+    // cuando se edita la seccion pone como editable la columna seleccionada.
+    setFocusCell: function (dataIndex) {
         var grid = Ext.ComponentQuery.query('#register-view')[0];
         var store = grid.getStore();
-        var index = store.findBy(function(rec, ide){
-             return (rec.data.name.toLowerCase() == dataIndex.toLowerCase())
+        var index = store.findBy(function (rec, ide) {
+            return (rec.data.name.toLowerCase() == dataIndex.toLowerCase())
         });
-        if(index == -1)
+        if (index == -1)
             return;
         var edit = grid.plugins[0];
         edit.startEditByPosition({

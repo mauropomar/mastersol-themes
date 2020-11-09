@@ -102,6 +102,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         MasterApp.globals.setSectionPrincipal(gridSectionPrincipal);
         this.panelMenu.add(panel);
         MasterApp.footer.addWindow(this.menu);
+        MasterApp.util.setAplyMaxLine();
     },
 
     generateSections: function (level, height) {

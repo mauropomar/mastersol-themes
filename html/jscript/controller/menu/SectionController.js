@@ -34,6 +34,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.IdRecParent = record.data.id;
         this.loadDataTabActive(grid, record, 0);
         MasterApp.magnament.getData(grid.panel);
+
     },
 
     dblclickSectionPrincipal: function (grid, td, cellIndex, record) {
@@ -45,6 +46,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.globals.setRecordSection(record);
         var level = grid.up('tabpanel').level + 1;
         this.loadDataTabActive(grid, record, level);
+        MasterApp.util.setAplyMaxLine();
         MasterApp.magnament.getData(grid.panel);
         var window = grid.up('window');
         var panel = grid.up('panel');
@@ -57,7 +59,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.magnament.getData(grid.panel, cellIndex);
     },
 
-    //activar y obtener los datos de la seccion hija activa
+    // activar y obtener los datos de la seccion hija activa
     loadDataTabActive: function (grid, rec, level) {
         var windowId = grid.panel.idmenu;
         var tabs = Ext.ComponentQuery.query('tabpanel[idmenu=' + windowId + ']');
@@ -129,6 +131,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         tabMagnament.idmenumag = tabPanel.idmenu;
         tabMagnament.idsectionmag = newCard.idsection;
+        MasterApp.util.setAplyMaxLine();
     },
 
     findChildOfSection: function (tabPanel, newCard) {
@@ -163,6 +166,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 var json = Ext.JSON.decode(response.responseText);
                 var grid = newCard.down('gridpanel');
                 grid.getStore().loadData(json);
+                MasterApp.util.setAplyMaxLine();
             },
             failure: function (response) {
                 mask.hide();
