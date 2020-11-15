@@ -11,7 +11,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
 
     edit: function (editor, obj) {
         var record = obj.record;
-        if (obj.value === null || obj.value === '') {
+        if ((obj.value === null || obj.value === '') && record.previousValues) {
             record.set('valor', record.previousValues.valor);
         }
         if (record.data[obj.field] == obj.originalValue)
@@ -151,6 +151,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                     else {
                         var idcreated = json.datos.id;
                         this.insert(data, idcreated);
+                        gridsection.max_line ++;
                     }
                     this.showFieldRequired = false;
                     grid.getView().refresh();
@@ -305,7 +306,8 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 specialkey: this.specialKey,
                 focus: function (f) {
                     var value = f.getValue();
-                    value = (value == null) ? new Date(rec.data.valor) : value;
+                    value = (value == null || value == '') ? new Date(rec.data.valor) : value;
+                    value = (value == 'Invalid Date')?null:value;
                     f.setValue(value);
                 }
             }

@@ -22,6 +22,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         var store = grid.getStore();
         var idsection = MasterApp.util.getIdSectionActive();
         var idmenu = MasterApp.util.getIdMenuActive();
+        this.configureButtons();
         if (this.checkData())
             return;
         store.proxy.extraParams = {
@@ -290,5 +291,13 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                 column: 1
             })
         }
+    },
+
+    configureButtons:function(){
+        var gridsection = MasterApp.globals.getGridSection();
+        var store_section = gridsection.getStore();
+        var disabled = (store_section.getCount() == 0)?true:false;
+        Ext.ComponentQuery.query('#total-view toolbar button')[0].setDisabled(disabled);
+        Ext.ComponentQuery.query('#total-view toolbar button')[1].setDisabled(disabled);
     }
 })

@@ -251,7 +251,6 @@ Ext.define('MasterSol.controller.util.UtilController', {
         var window = gridsection.up('window');
         var btn = MasterApp.tools.getBtnTools(window , 'btn_add');
         btn.setDisabled(disabled);
-
     }
 
 

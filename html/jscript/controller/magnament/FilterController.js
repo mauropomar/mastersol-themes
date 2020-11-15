@@ -68,6 +68,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var idmenu = MasterApp.util.getIdMenuActive();
         if (this.checkData())
             return;
+        this.configureButtons();
         var grid = Ext.ComponentQuery.query('#filter-view')[0];
         var store = grid.getStore();
         store.proxy.extraParams = {
@@ -105,7 +106,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var idregisterparent = (idrecordparent) ? idrecordparent : 0;
         var idparentsection = MasterApp.util.getIdParentSectionActive();
         var record = MasterApp.globals.getRecordSection();
-        idrecordsection = record.data.id;
+        idrecordsection = (record != null)?record.data.id:null;
         if (data.length == 0) {
             var idx = store.findBy(function (rec, id) {
                 return (rec.data.operador == null && (rec.data.valor1 !== null && rec.data.valor1 !== ''))
@@ -571,5 +572,13 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         });
         gridfilter.columns[1].getEditor().expand();
         MasterApp.globals.actionKeyCrtlF = false;
+    },
+
+    configureButtons:function(){
+        var gridsection = MasterApp.globals.getGridSection();
+        var store_section = gridsection.getStore();
+        var disabled = (store_section.getCount() == 0)?true:false;
+        Ext.ComponentQuery.query('#filter-view toolbar button')[0].setDisabled(disabled);
+        Ext.ComponentQuery.query('#filter-view toolbar button')[1].setDisabled(disabled);
     }
 })

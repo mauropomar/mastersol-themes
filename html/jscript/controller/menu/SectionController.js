@@ -32,6 +32,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.globals.setRecordSection(record);
         MasterApp.globals.setGridSection(grid.panel);
         this.IdRecParent = record.data.id;
+        MasterApp.util.setAplyMaxLine();
         this.loadDataTabActive(grid, record, 0);
         MasterApp.magnament.getData(grid.panel);
 
@@ -41,7 +42,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.magnament.getData(grid.panel, cellIndex);
     },
 
-    clickSection: function (grid, record) {
+    clickSection: function (grid, td, cellIndex, record) {
         MasterApp.globals.setGridSection(grid.panel);
         MasterApp.globals.setRecordSection(record);
         var level = grid.up('tabpanel').level + 1;
