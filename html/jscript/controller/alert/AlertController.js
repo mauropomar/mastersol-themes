@@ -25,7 +25,7 @@ Ext.define('MasterSol.controller.alert.AlertController', {
                         scope: this,
                         success: function (response) {
                             counted++;
-                            Ext.ComponentQuery.query('#btn-alert')[0].setTooltip('Esta alerta es la numero:'+counted);
+                            Ext.ComponentQuery.query('#btn-alert')[0].setTooltip(counted);
                          //   var json = Ext.JSON.decode(response.responseText);
                         }
                     };

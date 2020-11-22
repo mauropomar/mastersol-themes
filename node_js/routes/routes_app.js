@@ -1,7 +1,9 @@
-var express = require("express")
-var router = express.Router()
-const objects = require('../modules')
-var app = express()
+var express = require("express");
+var router = express.Router();
+var fs = require('fs');
+var stream = require('stream');
+const objects = require('../modules');
+var app = express();
 
 /*Obtener lenguajes*/
 router.get('/languages', async function (req, res) {
@@ -98,8 +100,14 @@ router.get('/adjuntos', async function (req, res) {
 /*CRUD adjuntos*/
 router.post('/crudadjunto', async function (req, res) {
     var result;
-    console.log(req)
     console.log(req.body)
+  /*  var Readable = stream.Readable;
+    var imgBuffer = Buffer.from(req.body.file, 'base64');
+    var s = new Readable();
+    s.push(imgBuffer);
+    s.push(null)
+    s.pipe(fs.createWriteStream(req.body.filename));*/
+   // console.log(req.body)
     if (req.body.accion === '13') { //Insert
         result = await objects.adjuntos.insertAdjunto(req)
     } else if (req.body.accion === '7') { //Delete

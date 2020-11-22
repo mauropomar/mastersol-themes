@@ -180,27 +180,63 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         }
         var formData = new FormData();
         var file = view.fileInputEl.dom.files[0];
-        formData.append('idsection', idsection);
-        formData.append('idseccionpadre', idparentsection);
-        formData.append('idpadreregistro', idregisterparent);
-        formData.append('idregister', idrecordsection);
-        formData.append('idmenu', idmenu);
-        formData.append('accion', action);
-        formData.append('filename', filename);
-        formData.append('file_adjunto', file);
-        Ext.Ajax.request({
-            url: 'app/crudadjunto',
-            rawData: formData,
-            headers: {'Content-Type': null},
-            scope: this,
-            success: function (response) {
-                mask.hide();
-                var json = Ext.JSON.decode(response.responseText);
-                if (json.success == true) {
-                    this.addOneFile(json, filename);
-                }
+        var reader = new FileReader();
+        reader.onloadend = function (event) {
+            var binaryString = '',
+                bytes = new Uint8Array(event.target.result),
+                length = bytes.byteLength,
+                i,
+                base64String;
+            for (var i = 0; i < length; i++) {
+                binaryString += String.fromCharCode(bytes[i]);
             }
-        });
+            base64String = btoa(binaryString);
+            Ext.Ajax.request({
+                url: 'app/crudadjunto',
+                method: 'POST',
+                params: {
+                    idsection:idsection,
+                    idseccionpadre:idparentsection,
+                    idpadreregistro:idregisterparent,
+                    idregister:idrecordsection,
+                    idmenu:idmenu,
+                    accion:action,
+                    filename:filename,
+                    file: base64String
+                },
+                scope: this,
+                success: function (response) {
+                    mask.hide();
+                    var json = Ext.JSON.decode(response.responseText);
+                    if (json.success == true) {
+                        this.addOneFile(json, filename);
+                    }
+                }
+            })
+        }
+        reader.readAsArrayBuffer(file)
+
+        /*   formData.append('idsection', idsection);
+           formData.append('idseccionpadre', idparentsection);
+           formData.append('idpadreregistro', idregisterparent);
+           formData.append('idregister', idrecordsection);
+           formData.append('idmenu', idmenu);
+           formData.append('accion', action);
+           formData.append('filename', filename);
+           formData.append('file_adjunto', file);
+           Ext.Ajax.request({
+               url: 'app/crudadjunto',
+               rawData: formData,
+               headers: {'Content-Type': null},
+               scope: this,
+               success: function (response) {
+                   mask.hide();
+                   var json = Ext.JSON.decode(response.responseText);
+                   if (json.success == true) {
+                       this.addOneFile(json, filename);
+                   }
+               }
+           });*/
     },
 
     delete: function (me, e, eOpts) {
@@ -259,11 +295,11 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
             callback: function (options, success, response) {
                 debugger
                 mask.hide();
-               /* '<a href = ' + response.responseText + ' download>bbnvbn</a>'
-                var json = Ext.JSON.decode(response.responseText);
-                if (json.success == true) {
+                /* '<a href = ' + response.responseText + ' download>bbnvbn</a>'
+                 var json = Ext.JSON.decode(response.responseText);
+                 if (json.success == true) {
 
-                }*/
+                 }*/
             }
         };
         Ext.Ajax.request(down);

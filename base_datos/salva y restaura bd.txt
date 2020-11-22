@@ -1,0 +1,5 @@
+Backup Base datos:
+C:\Program Files\PostgreSQL\12\bin>pg_dump --file="E:\XAMPP\htdocs\MasterSol\base_datos\MasterSol15022020.backup" --format=c --verbose --clean --create --superuser=postgres --if-exists --dbname="mastersol" --port=5435 --username=postgres --password='postgres'
+
+Restore Base datos:
+C:\Program Files\PostgreSQL\12\bin>pg_restore --dbname="mastersol_copia" --verbose --username=postgres --password --port=5435 --clean --create --superuser=postgres "E:\XAMPP\htdocs\MasterSol\base_datos\MasterSol23012020.backup"
