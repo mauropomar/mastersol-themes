@@ -10,6 +10,7 @@ Ext.define('MasterSol.view.layout.MenuPanel', {
     style: 'background-color:#dfe8f6;',
     width: 300,
     height: 400,
+    layout:'fit',
     defaults: {
         bodyPadding: 15
     },
@@ -27,7 +28,9 @@ Ext.define('MasterSol.view.layout.MenuPanel', {
             title: 'Configuración'
         }
     ],
-   /* listeners: {
-        tabchange: 'tabchangeMenu'
-    }*/
+    listeners: {
+        tabchange: function(tab, panel){
+            MasterApp.footer.tabchange(tab, panel);
+        }
+    }
 });

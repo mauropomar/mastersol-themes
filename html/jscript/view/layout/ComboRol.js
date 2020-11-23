@@ -13,7 +13,7 @@ Ext.define('MasterSol.view.layout.ComboRol', {
     displayField: 'nombre',
     typeAhead: true,
     queryMode: 'local',
-    emptyText: 'Select un rol...',
+    emptyText: 'Seleccione un rol...',
     allowBlank:false,
     blankText:'Debe introducir un rol.'
 })

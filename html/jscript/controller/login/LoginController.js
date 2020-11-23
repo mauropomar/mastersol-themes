@@ -37,18 +37,18 @@ Ext.define('MasterSol.controller.login.LoginController', {
     getHtml: function () {
         var html =
             '<div class="limiter"> ' +
-            '<div class="container-login100" style="background-image: url(html/login/images/fondo.jpg);">' +
-            '<div class="wrap-login100 p-t-190 p-b-30"><form class="login100-form validate-form">' +
+            '<div class="container-login100" style="background-color: #0c5460;">' +
+            '<div class="wrap-login100 p-t-50 p-b-30"><form class="login100-form validate-form">' +
             '<div class="login100-form-avatar"><img src="html/login/images/avatar-02.png" alt="AVATAR"></div>' +
             '<span class="login100-form-title p-t-20 p-b-45">Bienvenido</span>' +
             '<div class="wrap-input100 validate-input m-b-10" data-validate = "Username is required">' +
-            '<input class="input100" type="text" name="username" placeholder="Username" id="user_login">' +
+            '<input class="input100" type="text" name="username" placeholder="Usuario" id="user_login">' +
             '<span class="focus-input100"></span><span class="symbol-input100"><i class="fa fa-user"></i>' +
             '</span></div><div class="wrap-input100 validate-input m-b-10" data-validate = "Password is required">' +
-            '<input class="input100" type="password" name="pass" placeholder="Password" id="pass_login"><span class="focus-input100"></span>' +
+            '<input class="input100" type="password" name="pass" placeholder="Contraseña" id="pass_login"><span class="focus-input100"></span>' +
             '<span class="symbol-input100"><i class="fa fa-lock"></i></span></div>' +
             '<div class="message_login" id="message_login"></div>'+
-            '<div class="container-login100-form-btn p-t-10"><button class="login100-form-btn" type="button" onclick=MasterApp.getController("MasterSol.controller.login.LoginController").validateLogin();>Login</button></div>' +
+            '<div class="container-login100-form-btn p-t-10"><button class="login100-form-btn" type="button" onclick=MasterApp.getController("MasterSol.controller.login.LoginController").validateLogin();>Entrar</button></div>' +
             '</a></div></form></div></div></div>'
         return html;
     },
@@ -116,7 +116,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
         Ext.ComponentQuery.query('#combolanguage')[0].getStore().load();
         MasterApp.theme.setStyle();
         MasterApp.alert.laodInitAlert();
-        this.getConfigure();
+     //   this.getConfigure();
         this.getOptions();
 
     },

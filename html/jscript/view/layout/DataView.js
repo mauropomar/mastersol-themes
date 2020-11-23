@@ -20,6 +20,10 @@ Ext.define('MasterSol.view.layout.DataView', {
         name: 'principal',
         itemSelector: 'div.x-center-principal',
         trackOver: false,
+        viewConfig: {
+            loadMask: false,
+            loadingText: 'Cargando...'
+        },
         tpl: Ext.create('Ext.XTemplate',
             '<tpl for=".">',
             '<div class="x-center-principal">',

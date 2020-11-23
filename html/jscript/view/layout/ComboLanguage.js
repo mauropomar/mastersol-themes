@@ -13,7 +13,7 @@ Ext.define('MasterSol.view.layout.ComboLanguage', {
     displayField: 'nombre',
     typeAhead: true,
     queryMode: 'local',
-    emptyText: 'Select un idioma...',
+    emptyText: 'Seleccione un idioma...',
     allowBlank:false,
     blankText:'Debe introducir un idioma.'
 })

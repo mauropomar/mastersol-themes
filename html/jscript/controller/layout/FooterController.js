@@ -4,6 +4,13 @@ Ext.define('MasterSol.controller.layout.FooterController', {
 
         },
 
+        tabchange: function (tab, panel) {
+            if (panel.xtype == 'tree-config')
+                MasterApp.login.getConfigure();
+            if (panel.xtype == 'tree-options')
+                MasterApp.login.getOptions();
+        },
+
         clickAccessDirect: function (tree, record) {
             if (record.isLeaf()) {
                 var controller = Ext.ComponentQuery.query('tree-options')[0].controller;
@@ -14,7 +21,8 @@ Ext.define('MasterSol.controller.layout.FooterController', {
             } else {
                 // MasterApp.util.showMessageInfo('Debe seleccionar una opción a último nivel');
             }
-        },
+        }
+        ,
         tabChangeMenu: function (tabPanel, newCard) {
             if (newCard.xtype == 'tree-opciones') {
                 // MasterApp.getController('MasterSol.view.login.LoginController').obtenerOpciones();
@@ -22,7 +30,8 @@ Ext.define('MasterSol.controller.layout.FooterController', {
             if (newCard.xtype == 'tree-config') {
                 //  MasterApp.getController('MasterSol.view.login.LoginController').obtenerAccesos();
             }
-        },
+        }
+        ,
         //seleccionar menu en el combo de busqueda de menu
         selectMenu: function (combo, record) {
             var controller = MasterApp.menu;
@@ -31,18 +40,20 @@ Ext.define('MasterSol.controller.layout.FooterController', {
             controller.menu.name = record.data.nombre;
             controller.getData(record);
             combo.reset();
-        },
-       //seleccionar menu en el combo de ventana expandiendo
-         selectWindow:function(combo, record){
-             var panelmenu = Ext.ComponentQuery.query('#panel-menu')[0];
-             var window = MasterApp.util.getMenuByName(record.data.name);
-             var height = panelmenu.getHeight();
-             var width = panelmenu.getWidth();
-             window.setWidth(width);
-             window.setHeight(height);
-             window.setPosition(0, 38);
-             window.toFront();
-         },
+        }
+        ,
+        //seleccionar menu en el combo de ventana expandiendo
+        selectWindow: function (combo, record) {
+            var panelmenu = Ext.ComponentQuery.query('#panel-menu')[0];
+            var window = MasterApp.util.getMenuByName(record.data.name);
+            var height = panelmenu.getHeight();
+            var width = panelmenu.getWidth();
+            window.setWidth(width);
+            window.setHeight(height);
+            window.setPosition(0, 38);
+            window.toFront();
+        }
+        ,
 
         addWindow: function (menu) {
             var combo = Ext.ComponentQuery.query('#combowindow')[0];
@@ -53,7 +64,8 @@ Ext.define('MasterSol.controller.layout.FooterController', {
                 name: menu.name
             });
             store.insert(count, rec);
-        },
+        }
+        ,
         //borrar el menu del combo de ventana
         removeWindowCombo: function (window) {
             var combo = Ext.ComponentQuery.query('#combowindow')[0];

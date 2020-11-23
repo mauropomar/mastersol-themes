@@ -19,7 +19,7 @@ Ext.define('MasterSol.view.layout.ComboMenu', {
     enableKeyEvents: true,
     matchFieldWidth: false,
     minChars: 2,
-    emptyText: 'Select a opción...',
+    emptyText: 'Seleccione una opción...',
     listConfig: {
         loadingText: 'Buscando...',
         emptyText: 'No existen opciones....',

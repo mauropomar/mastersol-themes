@@ -31,7 +31,7 @@ Ext.define('MasterSol.view.layout.ComboWindow', {
     typeAhead: true,
     hideLabel: true,
     queryMode: 'local',
-    emptyText: 'Select ventana...',
+    emptyText: 'Seleccione una ventana...',
     listeners:{
         select:function(combo, record){
             MasterApp.footer.selectWindow(combo, record);
