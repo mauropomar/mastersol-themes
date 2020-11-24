@@ -24,7 +24,12 @@ Ext.define('MasterSol.controller.layout.UserController', {
             },
             success: function (response) {
                 mask.hide();
-             //   var json = Ext.JSON.decode(response.responseText);
+                var json = Ext.JSON.decode(response.responseText);
+                if (json.success == true) {
+                    Ext.toast('Los datos del usuario fueron guardados con éxito.');
+                }else{
+                    MasterApp.util.showMessageInfo(json.message);
+                }
             }
         };
         Ext.Ajax.request(save);
