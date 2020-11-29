@@ -241,16 +241,27 @@ Ext.define('MasterSol.controller.util.UtilController', {
         return val;
     },
 
-    setAplyMaxLine: function(){
+    setAplyMaxLine: function () {
         var gridsection = MasterApp.globals.getGridSection();
         var maxLine = gridsection.max_line;
-        if(maxLine == 0)
+        if (maxLine == 0)
             return;
         var countRow = gridsection.getStore().getCount();
-        var disabled = (maxLine >= countRow)?true:false;
+        var disabled = (maxLine >= countRow) ? true : false;
         var window = gridsection.up('window');
-        var btn = MasterApp.tools.getBtnTools(window , 'btn_add');
+        var btn = MasterApp.tools.getBtnTools(window, 'btn_add');
         btn.setDisabled(disabled);
+    },
+
+    isWindowExpand: function (win) {
+        var widthParent = Ext.ComponentQuery.query('#panel-menu')[0].getWidth();
+        var heightParent = Ext.ComponentQuery.query('#panel-menu')[0].getHeight();
+        var widthWindow = win.getWidth();
+        var heightWindow = win.getHeight();
+        if (widthParent == widthWindow && heightParent == heightWindow)
+            return true;
+        else
+            return false;
     }
 
 

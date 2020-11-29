@@ -4,8 +4,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
 
     },
 
-    getArrayBtn:function(){
-        var array =  ['btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+    getArrayBtn: function () {
+        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
         return array;
     },
 
@@ -13,11 +13,12 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         var btn;
         for (var i = 0; i < array.length; i++) {
             btn = this.getBtnTools(window, array[i]);
-            btn.setVisible(!hide);
+            if (btn)
+                btn.setVisible(!hide);
         }
     },
 
-    setButtons:function (window, newbuttons) {
+    setButtons: function (window, newbuttons) {
         this.removeAll(window);
         this.add(window, newbuttons);
     },
@@ -39,7 +40,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 iconCls: newbuttons[i].iconCls,
                 name: newbuttons[i].name,
                 enable: newbuttons[i].enable,
-                default:false,
+                default: false,
                 tooltip: newbuttons[i].tooltip,
                 url: newbuttons[i].url,
                 scope: this,
@@ -67,7 +68,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     callFunction: function (evt, toolEl, owner, button) {
-     var grid = MasterApp.globals.getGridSection();
+        var grid = MasterApp.globals.getGridSection();
         var mask = new Ext.LoadMask(grid, {
             msg: 'Cargando...'
         });
@@ -99,10 +100,10 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         Ext.Ajax.request(execute);
     },
 
-    showButtonsNotDefault:function(window, show){
+    showButtonsNotDefault: function (window, show) {
         var tools = window.tools;
         for (var j = 0; j < tools.length; j++) {
-            if (!tools[j].default){
+            if (!tools[j].default) {
                 var query = '#' + tools[j]['id'];
                 Ext.ComponentQuery.query(query)[0].setVisible(show);
             }
@@ -113,7 +114,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         return [{
             iconCls: 'fa fa-refresh',
             tooltip: 'Refrescar',
-            default:true,
+            default: true,
             name: 'btn_refresh',
             handler: function (evt, toolEl, owner, tool) {
                 var window = owner.up('window');
@@ -122,29 +123,29 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         }, {
             iconCls: 'fa fa-plus',
             tooltip: 'Agregar',
-            hidden:win.isAlert,
-            default:true,
+            hidden: win.isAlert,
+            default: true,
             name: 'btn_add',
-            handler: function(evt, toolEl, owner, tool){
+            handler: function (evt, toolEl, owner, tool) {
                 var window = owner.up('window');
                 MasterApp.magnament.newRegister(window);
             }
         }, {
             iconCls: 'fa fa-edit',
             hidden: true,
-            default:true,
+            default: true,
             // handler: 'onExpandAll',
             tooltip: 'Editar'
         }, {
             iconCls: 'fa fa-print',
             name: 'btn_print',
-            default:true,
+            default: true,
             //    handler: 'onExpandAll',
             tooltip: 'Imprimir'
         }, {
             iconCls: 'fa fa-download',
             name: 'btn_download',
-            default:true,
+            default: true,
             //  handler: 'onExpandAll',
             listeners: {
                 'render': function (c) {
@@ -154,33 +155,33 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         items: [{
                             xtype: 'button',
                             tooltip: 'Exportar a excel',
-                        //    cls: 'x-button-menu-modulo',
+                            //    cls: 'x-button-menu-modulo',
                             scope: this,
                             iconCls: 'fa fa-file-excel-o',
                             handler: function (evt, toolEl, owner, tool) {
-                           /*     var window = this.up('window');
-                                var grid = MasterApp.globales.getSectionPrincipalByWindow(window);
-                                MasterApp.getController('MasterSol.controller.genericas.GridController').downloadExcelXml(false, grid);*/
+                                /*     var window = this.up('window');
+                                     var grid = MasterApp.globales.getSectionPrincipalByWindow(window);
+                                     MasterApp.getController('MasterSol.controller.genericas.GridController').downloadExcelXml(false, grid);*/
                             }
                         }, {
                             xtype: 'button',
                             tooltip: 'Exportar a word',
-                        //    cls: 'x-button-menu',
+                            //    cls: 'x-button-menu',
                             iconCls: 'fa fa-file-word-o'
                         }, {
                             xtype: 'button',
                             tooltip: 'Exportar a pdf',
-                        //    cls: 'x-button-menu',
+                            //    cls: 'x-button-menu',
                             iconCls: 'fa fa-file-pdf-o'
                         }, {
                             xtype: 'button',
                             tooltip: 'Exportar a odt',
-                      //      cls: 'x-button-menu',
+                            //      cls: 'x-button-menu',
                             iconCls: 'fa fa-file-text-o'
                         }, {
                             xtype: 'button',
                             tooltip: 'Exportar a cvs',
-                        //    cls: 'x-button-menu',
+                            //    cls: 'x-button-menu',
                             iconCls: 'fa fa-file-zip-o'
                         }]
                     })
@@ -190,17 +191,17 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             , {
                 iconCls: 'fa fa-trash',
                 name: 'btn_trash',
-                default:true,
+                default: true,
                 tooltip: 'Borrar',
                 handler: function (evt, toolEl, owner, tool) {
                     var window = owner.up('window');
-                   MasterApp.section.deleteRow(this, window, evt, toolEl, owner, tool);
+                    MasterApp.section.deleteRow(this, window, evt, toolEl, owner, tool);
 
                 }
             }, {
                 type: 'minimize',
                 tooltip: 'Minimizar',
-                default:true,
+                default: true,
                 name: 'btn_minimize',
                 handler: function (evt, toolEl, owner, tool) {
                     MasterApp.section.minimize(this, evt, toolEl, owner, tool);
@@ -209,7 +210,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 iconCls: 'fa fa-expand',
                 hidden: true,
                 tooltip: 'Restaurar',
-                default:true,
+                default: true,
                 name: 'btn_restore',
                 handler: function (evt, toolEl, owner, tool) {
                     MasterApp.section.restore(this, evt, toolEl, owner, tool);
@@ -218,17 +219,17 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             }, {
                 iconCls: 'fa fa-clone',
                 name: 'btn_clone',
-                default:true,
+                default: true,
                 hidden: true,
                 handler: function (evt, toolEl, owner, tool) {
-                 /*   var window = owner.up('window');
-                    window.getController().restoreDefault(this, evt, toolEl, owner, tool);*/
+                    /*   var window = owner.up('window');
+                       window.getController().restoreDefault(this, evt, toolEl, owner, tool);*/
                 }
             }, {
                 iconCls: 'fa fa-square-o',
                 tooltip: 'Maximizar',
                 name: 'btn_maximize',
-                default:true,
+                default: true,
                 hidden: true,
                 handler: function (evt, toolEl, owner, tool) {
                     MasterApp.section.maximize(this, evt, toolEl, owner, tool);
@@ -236,10 +237,10 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             }, {
                 iconCls: 'fa fa-close',
                 tooltip: 'Cerrar',
-                default:true,
+                default: true,
                 name: 'btn_close',
                 handler: function (evt, toolEl, owner, tool) {
-                   var window = owner.up('window');
+                    var window = owner.up('window');
                     window.close();
                 }
             }];

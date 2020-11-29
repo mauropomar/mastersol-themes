@@ -22,14 +22,14 @@ Ext.define('MasterSol.view.magnament.Register', {
     columns: [{
         text: 'Nombre',
         dataIndex:'name',
-        flex: 2,
+        flex: 1,
         renderer: function (value, metaData, record) {
             return MasterApp.register.renderName(value, metaData, record);
         }
     }, {
         text:'Valor',
         dataIndex:'valor',
-        flex: 1,
+        flex: 2,
         editor: {
             xtype: 'textfield',
         },

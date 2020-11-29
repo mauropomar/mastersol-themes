@@ -224,7 +224,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.setPositionWindow(window);
         MasterApp.magnament.isMenuTabMagnament(window);
         this.adjustOtherWindowsMaximize();
-        MasterApp.tools.showButtonsNotDefault(window, false);
+        MasterApp.tools.showButtonsNotDefault(window, true);
     },
 
     maximize: function (button, evt, toolEl, owner, tool) {
@@ -503,6 +503,12 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var height = panel.getHeight();
         height = (gridtotal.isVisible()) ? height - 30 : height;
         gridsection.setHeight(height);
+    },
+
+    resizeWindow:function(win){
+        var arrayBtn = ['btn_restore'];
+        var isExpanded = MasterApp.util.isWindowExpand(win);
+        MasterApp.tools.setVisibleBtn(win, arrayBtn, isExpanded);
     },
 
     afterrender:function(panel){

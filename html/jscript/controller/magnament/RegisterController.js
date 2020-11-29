@@ -361,7 +361,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 loadingText: 'Buscando...',
                 emptyText: 'No existen opciones....',
                 itemSelector: '.search-item',
-                width: 150
+                width:column.cellWidth
             },
             listeners: {
                 scope: this,

@@ -32,7 +32,9 @@ Ext.define('MasterSol.view.menu.WindowMenu', {
         }]
     }],
    listeners: {
-       // resize: 'resizeWindow',
+        resize: function(window){
+            MasterApp.section.resizeWindow(window);
+        },
         close: function(window){
             MasterApp.section.closeWindow(window);
         },
