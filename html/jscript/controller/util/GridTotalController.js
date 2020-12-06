@@ -13,11 +13,11 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
             columnLines: true,
             hideHeaders: true,
             scrollable: false,
-            region:'south',
+            region: 'south',
             border: 1,
-         //   split: true,
+            //   split: true,
             columns: this.getColumns(columns),
-            idsection:section.id,
+            idsection: section.id,
             selModel: {
                 type: 'cellmodel'
             },
@@ -30,7 +30,7 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
                 loadingText: 'Cargando...'
             }
         })
-     //   this.grid.hidden = this.hidden;
+        //   this.grid.hidden = this.hidden;
         return this.grid
     },
 
@@ -61,9 +61,7 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
     },
 
     getColumns(cols) {
-        var columns = [{
-            xtype: 'rownumberer'
-        }];
+        var columns = [];
         for (var i = 0; i < cols.length; i++) {
             if (cols[i].funcion) {
                 this.hidden = false;
@@ -90,6 +88,7 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
                                 icon = 'maximo.png';
                             return MasterApp.util.getTableIcons(icon, value);
                         }
+                        value = null;
                         return value;
                     }
                 })

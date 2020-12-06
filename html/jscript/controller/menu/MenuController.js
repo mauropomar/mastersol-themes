@@ -161,6 +161,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         for (var j = 0; j < childs.length; j++) {
             if (childs[j].idpadre === panel.idsection) {
                 this.insertSection(childs[j], tab);
+                break;
             }
         }
     },

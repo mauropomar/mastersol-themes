@@ -16,7 +16,7 @@ Ext.define("MasterSol.view.magnament.Attached", {
         tooltip: 'Save changes'
     },'->',{
         xtype:'tbtext',
-        text:'Adjunto',
+        text:'Adjuntos',
         style: {
             fontSize:'15px',
             fontWeight:'bold'

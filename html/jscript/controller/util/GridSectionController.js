@@ -179,7 +179,10 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         n_column: cols[i].n_column,
                         fk: cols[i].fk,
                         filter: {
-                            type: 'date'
+                            type: 'date',
+                            beforeText:'Antes',
+                            afterText:'Déspues',
+                            onText: '='
                         },
                         renderer: function (value, record) {
                             if (value != null) {

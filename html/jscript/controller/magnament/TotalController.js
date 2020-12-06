@@ -5,6 +5,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
     },
 
     beforeedit: function (editor, obj, eOpts) {
+        Ext.ComponentQuery.query('total-view toolbar button')[0].setDisabled(false);
         this.loadFunctions(obj);
     },
 
@@ -164,7 +165,6 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
             rec.commit();
         });
         var gridsection = MasterApp.globals.getGridSection();
-        gridsection.getStore().reload();
         var window = gridsection.up('window');
         this.cleanArrayData(window);
         this.hideGridTotals(gridsection);
@@ -177,6 +177,20 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         gridsection.setHeight(height);
         grid.setHeight(0);
         grid.setVisible(false);
+        this.cleanDataTotal(grid);
+    },
+
+    cleanDataTotal(grid){
+        var store = grid.getStore();
+        var record = store.getAt(0);
+        var columns = grid.columns;
+        for (var i = 0; i < columns.length; i++) {
+            record.set(columns[i].dataIndex, 0);
+            columns[i]['funcion'] = undefined;
+        }
+        record.commit();
+        Ext.ComponentQuery.query('total-view toolbar button')[0].setDisabled(true);
+        Ext.ComponentQuery.query('total-view toolbar button')[1].setDisabled(true);
     },
 
     //configurar arreglo por registro y ventana
@@ -245,6 +259,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         //  }
         gridtotal.getView().refresh();
         gridtotal.getView().focusRow(0);
+        Ext.ComponentQuery.query('total-view toolbar button')[1].setDisabled(false);
     },
 
     clean: function () {
