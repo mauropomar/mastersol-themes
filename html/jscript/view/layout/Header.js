@@ -22,6 +22,7 @@ Ext.define('MasterSol.view.layout.Header', {
             tooltip: 'En Cascada',
             tooltipType: 'title',
             disabled: true,
+            width:40,
             handler: function () {
                 MasterApp.header.applyCascade();
             }
@@ -33,6 +34,7 @@ Ext.define('MasterSol.view.layout.Header', {
             tooltip: 'En Mosaico',
             tooltipType: 'title',
             disabled: true,
+            width:40,
             handler: function () {
                 MasterApp.header.applyMosaic();
             }
@@ -43,6 +45,7 @@ Ext.define('MasterSol.view.layout.Header', {
             handler: 'irInicio',
             tooltip: 'Ir a Inicio',
             tooltipType: 'title',
+            width:40,
             handler: function () {
                 MasterApp.header.goHome();
             }
@@ -53,7 +56,8 @@ Ext.define('MasterSol.view.layout.Header', {
             tooltip: 'Alertas',
             id:'btn-alert',
             tooltipType: 'title',
-         //   badgeText: '.',
+            badgeText:'100',
+            width:40,
             handler: function () {
                 MasterApp.header.showAlerts();
             }
@@ -63,6 +67,7 @@ Ext.define('MasterSol.view.layout.Header', {
             iconCls: 'fa fa-sign-out',
             tooltip: 'Cerrar Sesión',
             tooltipType: 'title',
+            width:40,
             handler: function () {
                 MasterApp.header.logout();
             }

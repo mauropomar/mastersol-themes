@@ -13,10 +13,10 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
     getNote: function (id) {
         return Ext.create('Ext.form.Panel', {
             frame: false,
-            border: 0,
+            border: 1,
             padding: 2,
+            resizable:true,
             idNota: id,
-            margin: '20',
             tools: [{
                 iconCls: 'fa fa-save',
                 hidden: true,

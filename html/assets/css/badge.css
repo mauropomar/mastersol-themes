@@ -1,14 +1,16 @@
-.abp-badge {
+.x-badge {
   position: relative;
   overflow: visible;
 }
 
-.abp-badge[data-abp-badge]:after {
-  content: attr(data-abp-badge);
+.x-badge[data-badge-text]:after {
+  content: attr(data-badge-text);
   position: absolute;
-  font-size: 10px;
-  top: -6px;
-  right: 2px;
+  display: block;
+  font-size: 7px;
+  bottom: 1px;
+  z-index: 1;
+  left: 1px;
   width: auto;
   font-weight: bold;
   color: white;
@@ -25,14 +27,14 @@
   box-shadow: rgba(0, 0, 0, 0.3) 0 0.1em 0.1em;
 }
 
-.abp-badge.green-badge[data-abp-badge]:after {
+.x-badge.green-badge[data-badge-text]:after {
   background-color: #0C0;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #1AFF1A), color-stop(3%, #00E600), color-stop(100%, #00B300));
   background-image: -webkit-linear-gradient(top, #1AFF1A,#00E600 3%,#00B300);
   background-image: linear-gradient(top, #1AFF1A,#00E600 3%,#00B300);
 }
 
-.abp-badge.blue-badge[data-abp-badge]:after {
+.x-badge.blue-badge[data-badge-text]:after {
   background-color: #00C;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #1A1AFF), color-stop(3%, #0000E6), color-stop(100%, #0000B3));
   background-image: -webkit-linear-gradient(top, #1A1AFF,#0000E6 3%,#0000B3);
@@ -44,6 +46,6 @@
   overflow: visible;
 }
 
-.x-tab-closable.abp-badge[data-abp-badge]:after {
+.x-tab-closable.x-badge[data-badge-text]:after {
   right: 16px;
 }

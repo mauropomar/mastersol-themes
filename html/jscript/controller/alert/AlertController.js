@@ -47,7 +47,7 @@ Ext.define('MasterSol.controller.alert.AlertController', {
             success: function (response) {
                 //   var json = Ext.JSON.decode(response.responseText);
                 this.loadIntervalAlert();
-                Ext.ComponentQuery.query('#btn-alert')[0].setBadgeText('.');
+               // Ext.ComponentQuery.query('#btn-alert')[0].setBadgeText('');
             }
         };
         Ext.Ajax.request(obt);
