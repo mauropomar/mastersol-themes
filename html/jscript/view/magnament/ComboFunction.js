@@ -10,6 +10,9 @@ Ext.define('MasterSol.view.magnament.ComboFunction', {
         type: 'store-function'
     },
     listeners: {
-        specialKey: 'specialKey'
+        specialKey: 'specialKey',
+        beforequery: function(record){
+            record.query = new RegExp(record.query, 'ig');
+        }
     }
 })

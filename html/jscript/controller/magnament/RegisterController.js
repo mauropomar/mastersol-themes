@@ -365,7 +365,10 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             },
             listeners: {
                 scope: this,
-                collapse: this.collapseFk
+                collapse: this.collapseFk,
+                beforequery: function(record){
+                    record.query = new RegExp(record.query, 'ig');
+                }
             }
         });
         combo.arrayId = [];
