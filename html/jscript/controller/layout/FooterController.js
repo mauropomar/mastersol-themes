@@ -48,12 +48,18 @@ Ext.define('MasterSol.controller.layout.FooterController', {
             var window = MasterApp.util.getMenuByName(record.data.name);
             var height = panelmenu.getHeight();
             var width = panelmenu.getWidth();
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+            MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
+            var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
+            btn.hide();
             window.setWidth(width);
             window.setHeight(height);
+            window.expand('', false);
+            window.isminimize = false;
             window.setPosition(0, 38);
             window.toFront();
-        }
-        ,
+            combo.reset();
+        },
 
         addWindow: function (menu) {
             var combo = Ext.ComponentQuery.query('#combowindow')[0];
