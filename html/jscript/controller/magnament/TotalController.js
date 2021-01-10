@@ -180,7 +180,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         this.cleanDataTotal(grid);
     },
 
-    cleanDataTotal(grid){
+    cleanDataTotal(grid) {
         var store = grid.getStore();
         var record = store.getAt(0);
         var columns = grid.columns;
@@ -251,12 +251,11 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                 }
             }
         }
-        //if (gridtotal.isVisible()) {
-        var height = gridsection.getHeight() - 40;
+        var height_theme = (MasterApp.theme.isShortTheme()) ? 25 : 40;
+        var height = gridsection.getHeight() - height_theme;
         gridsection.setHeight(height);
-        gridtotal.setHeight(40);
+        gridtotal.setHeight(height_theme);
         gridtotal.show();
-        //  }
         gridtotal.getView().refresh();
         gridtotal.getView().focusRow(0);
         Ext.ComponentQuery.query('total-view toolbar button')[1].setDisabled(false);
@@ -308,10 +307,10 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         }
     },
 
-    configureButtons:function(){
+    configureButtons: function () {
         var gridsection = MasterApp.globals.getGridSection();
         var store_section = gridsection.getStore();
-        var disabled = (store_section.getCount() == 0)?true:false;
+        var disabled = (store_section.getCount() == 0) ? true : false;
         Ext.ComponentQuery.query('#total-view toolbar button')[0].setDisabled(disabled);
         Ext.ComponentQuery.query('#total-view toolbar button')[1].setDisabled(disabled);
     }

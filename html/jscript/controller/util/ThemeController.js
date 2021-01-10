@@ -21,13 +21,13 @@ Ext.define('MasterSol.controller.util.ThemeController', {
         var footer = Ext.ComponentQuery.query('#footer-panel')[0];
         footer.el.setStyle('background', '#5FA2DD');
         Ext.ComponentQuery.query('#tbtext_menu')[0].setStyle({
-            fontWeight:'bold',
-            color:'white'
+            fontWeight: 'bold',
+            color: 'white'
         })
     },
 
-    setStyleWindow:function(window){
-       var header = window.header;
+    setStyleWindow: function (window) {
+        var header = window.header;
         var theme = this.getNameTheme();
         if (theme == 'crisp' || theme == 'crisp-touch') {
             header.setStyle({
@@ -47,31 +47,38 @@ Ext.define('MasterSol.controller.util.ThemeController', {
         return theme;
     },
 
-    getTextColor:function(){
+    getTextColor: function () {
         var theme = this.getNameTheme();
-        if(theme == 'gray' || theme == 'classic'){
+        if (theme == 'gray' || theme == 'classic') {
             return 'black'
         }
         return 'white';
     },
 
-    marginTop:function(name){
+    marginTop: function (name) {
         var theme = this.getNameTheme();
-        if(theme == 'gray' || theme == 'classic'){
-            if(name == 'filebutton-attached'){
+        if (theme == 'gray' || theme == 'classic') {
+            if (name == 'filebutton-attached') {
                 return '10px';
             }
         }
         return '0px';
     },
 
-    getHeight:function(name){
+    getHeight: function (name) {
         var theme = this.getNameTheme();
-        if(theme == 'gray' || theme == 'classic'){
-            if(name == 'form-audit'){
+        if (theme == 'gray' || theme == 'classic') {
+            if (name == 'form-audit') {
                 return 280;
             }
-        };
+        }
+        ;
         return 360;
+    },
+
+    isShortTheme: function () {
+        var theme = this.getNameTheme();
+        return (theme == 'gray' || theme == 'classic')
     }
+
 })
