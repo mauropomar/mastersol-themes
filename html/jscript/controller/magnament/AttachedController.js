@@ -261,7 +261,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                         method: 'POST',
                         scope: this,
                         params: {
-                            'idsection': idsection,
+                            'idsection':  idsection,
                             'accion': '7',
                             'idadjunto': me.idComp
                         },
