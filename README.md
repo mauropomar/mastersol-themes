@@ -1,7 +1,7 @@
 ## MASTERSOL-APP
 
 ### Instalar el paquete npm en la pc
-### Instalar dependencias en la carpeta node_js
+### Instalar dependencias
 
 `$ npm install`
 
