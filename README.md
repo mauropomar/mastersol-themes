@@ -12,3 +12,9 @@
 ####- mastersol-app\ext-6.2.0\\examples\classic\shared\include-ext
 
 ####- mastersol-app\ext-6.2.0\\examples\classic\shared\options-toolbar
+
+### Ejecutar el sistema dentro de la carpeta node_js
+
+`$ node server`
+
+#### El sistema estara corriendo en esta url: localhost:8080
