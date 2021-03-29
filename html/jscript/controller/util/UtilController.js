@@ -45,9 +45,9 @@ Ext.define('MasterSol.controller.util.UtilController', {
         window.setPosition(x, y);
     },
 
-    resizeAllWindow: function () {
+     resizeAllWindow: function () {
         //  var collapsed = Ext.ComponentQuery.query('tabmagnament')[0].collapsed;
-        var panel = Ext.ComponentQuery.query('#panel-menu')[0];
+        var panel = Ext.ComponentQuery.query('#panel-center')[0];
         var height = panel.getHeight();
         var width = panel.getWidth();
         var windows = Ext.ComponentQuery.query('window[isminimize=false]');
@@ -66,10 +66,10 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     setWindowSize: function (window) {
-        var height = Ext.ComponentQuery.query('#panel-menu')[0].getHeight();
-        var width = Ext.ComponentQuery.query('#panel-menu')[0].getWidth();
-        var posX = Ext.ComponentQuery.query('#panel-menu')[0].getX();
-        var posY = Ext.ComponentQuery.query('#panel-menu')[0].getY();
+        var height = Ext.ComponentQuery.query('#panel-center')[0].getHeight();
+        var width = Ext.ComponentQuery.query('#panel-center')[0].getWidth();
+        var posX = Ext.ComponentQuery.query('#panel-center')[0].getX();
+        var posY = Ext.ComponentQuery.query('#panel-center')[0].getY();
         window.setX(posX);
         window.setY(posY);
         posX = width + posX;
@@ -82,7 +82,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
         MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
         MasterApp.section.adjustOtherWindowsMinimize();
-        var panel = Ext.ComponentQuery.query('#panel-menu')[0];
+        var panel = Ext.ComponentQuery.query('#panel-center')[0];
         MasterApp.util.resizeWindow(window, panel);
         MasterApp.tools.showButtonsNotDefault(window, true);
     },
@@ -254,8 +254,8 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     isWindowExpand: function (win) {
-        var widthParent = Ext.ComponentQuery.query('#panel-menu')[0].getWidth();
-        var heightParent = Ext.ComponentQuery.query('#panel-menu')[0].getHeight();
+        var widthParent = Ext.ComponentQuery.query('#panel-center')[0].getWidth();
+        var heightParent = Ext.ComponentQuery.query('#panel-center')[0].getHeight();
         var widthWindow = win.getWidth();
         var heightWindow = win.getHeight();
         if (widthParent == widthWindow && heightParent == heightWindow)

@@ -8,11 +8,9 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
     },
 
     goHome: function () {
-        this.hideAllWindowsMenu();
-        Ext.ComponentQuery.query('#panel-center')[0].removeAll();
-        Ext.ComponentQuery.query('#panel-center')[0].add(Ext.create('MasterSol.view.layout.DataView'));
         Ext.ComponentQuery.query('#combomenu')[0].reset();
         Ext.ComponentQuery.query('#combowindow')[0].getStore().removeAll();
+        this.collapseAllWindow();
     },
 
     hideAllWindowsMenu: function () {
@@ -27,10 +25,10 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         var win;
         MasterApp.globals.setEnCascade(true);
         var windows = this.getWindows();
-        var height = Ext.ComponentQuery.query('#panel-menu')[0].getHeight();
-        var width = Ext.ComponentQuery.query('#panel-menu')[0].getWidth();
-        var posX = Ext.ComponentQuery.query('#panel-menu')[0].getX();
-        var posY = Ext.ComponentQuery.query('#panel-menu')[0].getY();
+        var height = Ext.ComponentQuery.query('#panel-center')[0].getHeight();
+        var width = Ext.ComponentQuery.query('#panel-center')[0].getWidth();
+        var posX = Ext.ComponentQuery.query('#panel-center')[0].getX();
+        var posY = Ext.ComponentQuery.query('#panel-center')[0].getY();
         this.reconfigureWindows(height, width, posX, posY);
         var height = height / windows.length;
         for (var j = 0; j < windows.length; j++) {
@@ -47,17 +45,19 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             var btnMaximize = MasterApp.tools.getBtnTools(win, 'btn_restore');
             btnMaximize.hide();
+            MasterApp.tools.showButtonsNotDefault(win, true);
         }
+
     },
 
     applyMosaic: function () {
         var win;
         MasterApp.globals.setEnMosaic(true);
         var windows = this.getWindows();
-        var height = Ext.ComponentQuery.query('#panel-menu')[0].getHeight();
-        var width = Ext.ComponentQuery.query('#panel-menu')[0].getWidth();
-        var posX = Ext.ComponentQuery.query('#panel-menu')[0].getX();
-        var posY = Ext.ComponentQuery.query('#panel-menu')[0].getY();
+        var height = Ext.ComponentQuery.query('#panel-center')[0].getHeight();
+        var width = Ext.ComponentQuery.query('#panel-center')[0].getWidth();
+        var posX = Ext.ComponentQuery.query('#panel-center')[0].getX();
+        var posY = Ext.ComponentQuery.query('#panel-center')[0].getY();
         this.reconfigureWindows(height, width, posX, posY);
         var width = width / windows.length;
         for (var j = 0; j < windows.length; j++) {
@@ -72,6 +72,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             var btnMaximize = MasterApp.tools.getBtnTools(win, 'btn_restore');
             btnMaximize.hide();
+            MasterApp.tools.showButtonsNotDefault(win, true);
         }
     },
 
@@ -148,5 +149,25 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             }
         };
         Ext.Ajax.request(alert);
+    },
+
+    collapseAllWindow: function(){
+        var windows = this.getWindows();
+        for (var j = 0; j < windows.length; j++) {
+            var panelMenu = Ext.ComponentQuery.query('#panel-center')[0];
+            windows[j].collapse();
+            windows[j].isminimize = true;
+            winWidth = windows[j].getWidth();
+            winHeight = windows[j].getHeight();
+            windows[j].setWidth(300);
+            var btn = MasterApp.tools.getBtnTools(windows[j], 'btn_restore');
+            btn.show();
+            var arrayBtn = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+            MasterApp.tools.setVisibleBtn(windows[j], arrayBtn, true);
+            windows[j].alignTo(panelMenu, 'bl-bl');
+            MasterApp.section.setPositionWindow(windows[j]);
+            MasterApp.magnament.isMenuTabMagnament(windows[j]);
+            MasterApp.tools.showButtonsNotDefault(windows[j], false);
+        }
     },
 })

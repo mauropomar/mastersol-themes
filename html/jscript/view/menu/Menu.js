@@ -11,7 +11,7 @@ Ext.define('MasterSol.view.menu.Menu', {
     requires: [
         'Ext.layout.container.Border',
         'MasterSol.view.layout.DataView',
-        'MasterSol.view.magnament.TabPanel'
+    //    'MasterSol.view.magnament.TabPanel'
     ],
     layout: {
         type: 'border'
@@ -23,19 +23,10 @@ Ext.define('MasterSol.view.menu.Menu', {
         xtype: 'panel',
         region: 'center',
         id: 'panel-menu',
-        width: '70%',
+     //   width: '70%',
         layout: 'fit',
         items: [{
             xtype: 'dataview-home'
         }]
-    }, {
-        xtype: 'tabmagnament',
-        id:'tabmagnament',
-        region: 'east',
-        collapsible: true,
-        collapseMode: 'mini',
-        hidden: true,
-        collapsed: true,
-        width: '30%',
     }]
 });

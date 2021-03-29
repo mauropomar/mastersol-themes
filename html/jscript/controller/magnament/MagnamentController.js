@@ -140,7 +140,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
     collapse: function () {
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         tabMagnament.idmenumag = null;
-        MasterApp.util.resizeAllWindow();
+     //   MasterApp.util.resizeAllWindow();
     }
 
 })

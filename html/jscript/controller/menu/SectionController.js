@@ -202,13 +202,13 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
         MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
         this.adjustOtherWindowsMinimize();
-        var panel = Ext.ComponentQuery.query('#panel-menu')[0];
+        var panel = Ext.ComponentQuery.query('#panel-center')[0];
         MasterApp.util.resizeWindow(window, panel);
         MasterApp.tools.showButtonsNotDefault(window, true);
     },
 
     minimize: function (button, evt, toolEl, owner, tool) {
-        var panelMenu = Ext.ComponentQuery.query('#panel-menu')[0];
+        var panelMenu = Ext.ComponentQuery.query('#panel-center')[0];
         var window = owner.up('window');
         window.collapse();
         window.isminimize = true;
@@ -224,7 +224,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.setPositionWindow(window);
         MasterApp.magnament.isMenuTabMagnament(window);
         this.adjustOtherWindowsMaximize();
-        MasterApp.tools.showButtonsNotDefault(window, true);
+        MasterApp.tools.showButtonsNotDefault(window, false);
     },
 
     maximize: function (button, evt, toolEl, owner, tool) {
@@ -239,6 +239,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         window.isminimize = false;
         var panel = Ext.ComponentQuery.query('MainView')[0];
         MasterApp.util.resizeWindow(window, panel);
+        MasterApp.tools.showButtonsNotDefault(window, true);
     },
 
     closeWindow: function (window) {

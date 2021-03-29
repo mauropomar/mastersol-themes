@@ -33,6 +33,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     add: function (window, newbuttons) {
+        if(newbuttons == null)
+            return;
         var header = window.getHeader();
         for (var i = 0; i < newbuttons.length; i++) {
             var obj = {

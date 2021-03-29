@@ -55,9 +55,9 @@ Ext.define('MasterSol.controller.menu.MenuController', {
     },
 
     showMenu: function (json, isAlert = false) {
-        Ext.ComponentQuery.query('#panel-center')[0].removeAll();
-        Ext.ComponentQuery.query('#panel-center')[0].add(Ext.create('MasterSol.view.menu.Menu'));
-        var panelmenu = Ext.ComponentQuery.query('#panel-menu')[0];
+     //   Ext.ComponentQuery.query('#panel-center')[0].removeAll();
+     //   Ext.ComponentQuery.query('#panel-center')[0].add(Ext.create('MasterSol.view.menu.Menu'));
+        var panelmenu = Ext.ComponentQuery.query('#panel-center')[0];
         var window = Ext.create('MasterSol.view.menu.WindowMenu');
         var height = panelmenu.getHeight();
         var width = panelmenu.getWidth();
