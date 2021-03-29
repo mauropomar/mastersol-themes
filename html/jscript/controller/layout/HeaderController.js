@@ -162,7 +162,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             windows[j].setWidth(300);
             var btn = MasterApp.tools.getBtnTools(windows[j], 'btn_restore');
             btn.show();
-            var arrayBtn = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+            var arrayBtn = ['btn_minimize','btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
             MasterApp.tools.setVisibleBtn(windows[j], arrayBtn, true);
             windows[j].alignTo(panelMenu, 'bl-bl');
             MasterApp.section.setPositionWindow(windows[j]);
