@@ -45,7 +45,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         window.setPosition(x, y);
     },
 
-     resizeAllWindow: function () {
+    resizeAllWindow: function () {
         //  var collapsed = Ext.ComponentQuery.query('tabmagnament')[0].collapsed;
         var panel = Ext.ComponentQuery.query('#panel-center')[0];
         var height = panel.getHeight();
@@ -262,6 +262,22 @@ Ext.define('MasterSol.controller.util.UtilController', {
             return true;
         else
             return false;
+    },
+
+    setStyleWindow(panel) {
+        var window = panel.up('window');
+        var idSelWindow = window.id;
+        window.setStyle({
+            borderColor: '#e87b48'
+        });
+        var windows = Ext.ComponentQuery.query('window[isminimize=false]');
+        for (var i = 0; i < windows.length; i++) {
+            if (windows[i].id != idSelWindow) {
+                windows[i].setStyle({
+                    borderColor: 'transparent'
+                });
+            }
+        }
     }
 
 

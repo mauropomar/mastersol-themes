@@ -11,8 +11,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 cellclick: 'clickSectionPrincipal',
                 celldblclick: 'dblclickSectionPrincipal',
                 columnresize: 'columnresize',
-                afterrender:'afterrender'
-               // celldblclick: 'celldblclick'
+                afterrender: 'afterrender'
+                // celldblclick: 'celldblclick'
             },
             'tabpanel[name=tab-section]': {
                 tabchange: 'tabChangeSection'
@@ -34,8 +34,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.IdRecParent = record.data.id;
         MasterApp.util.setAplyMaxLine();
         this.loadDataTabActive(grid, record, 0);
+        MasterApp.util.setStyleWindow(grid.panel);
         MasterApp.magnament.getData(grid.panel);
-
     },
 
     dblclickSectionPrincipal: function (grid, td, cellIndex, record) {
@@ -48,6 +48,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var level = grid.up('tabpanel').level + 1;
         this.loadDataTabActive(grid, record, level);
         MasterApp.util.setAplyMaxLine();
+        MasterApp.util.setStyleWindow(grid.panel);
         MasterApp.magnament.getData(grid.panel);
         var window = grid.up('window');
         var panel = grid.up('panel');
@@ -506,29 +507,39 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         gridsection.setHeight(height);
     },
 
-    resizeWindow:function(win){
+    resizeWindow: function (win) {
+        var widthPanel = Ext.ComponentQuery.query('#panel-center')[0].getWidth() / 2.5;
+        var width = win.getWidth();
         var arrayBtn = ['btn_restore'];
         var isExpanded = MasterApp.util.isWindowExpand(win);
         MasterApp.tools.setVisibleBtn(win, arrayBtn, isExpanded);
+        arrayBtn = ['btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+        if(widthPanel >= width){
+            MasterApp.tools.setVisibleBtn(win, arrayBtn, true);
+            MasterApp.tools.showButtonsNotDefault(win, false);
+        }else{
+            MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
+            MasterApp.tools.showButtonsNotDefault(win, true);
+        }
     },
 
-    afterrender:function(panel){
+    afterrender: function (panel) {
         this.actionKey(panel);
     },
 
-    actionKey:function(panel){
+    actionKey: function (panel) {
         Ext.create('Ext.util.KeyMap', {
             target: Ext.getBody(),
             binding: [{
                 key: "f",
-                ctrl:true,
-                fn: function(e){
+                ctrl: true,
+                fn: function (e) {
                     MasterApp.globals.actionKeyCrtlF = true;
                     var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
                     var activeTab = tabMagnament.getActiveTab();
-                    if(activeTab.xtype == 'filter-view'){
+                    if (activeTab.xtype == 'filter-view') {
                         MasterApp.filter.setFocusCell();
-                    }else{
+                    } else {
                         tabMagnament.setActiveTab(1);
                     }
                 }
