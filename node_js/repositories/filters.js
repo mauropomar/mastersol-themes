@@ -54,7 +54,7 @@ const getResultFiltersFunctions = async (req, objects) => {
     params_parse.forEach(function (item, index, arr) {
         valor = resultAux[index]
         if (resultAux[index].indexOf('-') !== -1) { //if date
-            valor = moment(resultAux[index], "YYYY-MM-DD' H:m:s").format('DD/MM/YYYY')
+            valor = moment(resultAux[index], "YYYY-MM-DD' H:m:s").format('DD/MM/YYYY H:m:s')
         }
         resultF.push({
             'dataIndex': item.nombrecampo,
