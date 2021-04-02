@@ -41,7 +41,7 @@ Ext.define('MasterSol.controller.util.ThemeController', {
         var url = window.location.href;
         var idx = url.indexOf('=');
         if (idx == -1)
-            theme = 'tripton';
+            theme = 'classic';
         else
             theme = url.substring(idx + 1, url.length);
         return theme;
