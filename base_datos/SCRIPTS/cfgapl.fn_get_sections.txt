@@ -1,0 +1,63 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_sections
+(
+  IN  id_sections  uuid,
+  IN  id_rol       uuid,
+  IN  "start"      integer = 0,
+  IN  "limit"      integer = 20,
+  IN  id_user      uuid    = NULL::uuid
+)
+RETURNS jsonb AS
+$$
+declare
+res_data jsonb = null; name_table varchar; datos record; val boolean;
+niveles integer; recc record; id_section uuid = $1; alert_user boolean = false;
+begin
+   
+   /*Para comprobar si es la section de alerts_data, entonces cambiar el idsection por el de la tabla "users"*/
+   IF $1 = 'e989a9d3-1abc-4164-ae37-0403675297a0' THEN
+     SELECT sc.id INTO id_section FROM cfgapl.sections sc 
+     JOIN cfgapl.tables tb on(sc.id_tables = tb.id)
+     WHERE tb.n_table = 'users' AND tb.n_schema = 'security';
+     alert_user = true;
+   END IF;   
+   --BEGIN
+    select jsonb_agg(rowset.*) INTO res_data from(           
+    SELECT scp.id,scp.namex as nombre,cfgapl.fn_max_level_by_parent(id_section,'cfgapl.sections') as niveles,
+    scp.id_parent as idpadre,
+    CASE WHEN tbp.n_schema = 'cfgapl' AND tbp.n_table = 'sections_buttons' THEN true ELSE false END as "section_checked",
+    CASE WHEN tbp.n_schema = 'alerts' AND tbp.n_table = 'alerts_data' THEN true ELSE false END as "alerts_checked", 
+    CASE WHEN tbp.n_schema = 'cfgapl' AND tbp.n_table = 'time_event_functions' THEN true ELSE false END as "time_event",
+    cfgapl.fn_execute_function(scp.fn_hide) AS hidden,
+    cfgapl.fn_execute_function(scp.fn_read_only) AS read_only, scp.max_lines,
+      /*Obteniendo las columnas de la seccion*/                   
+      cfgapl.fn_columns_by_section(id_section,$2) as columnas,           
+      
+      /*Obteniendo los hijos de la seccion*/
+      cfgapl.fn_children_by_section(id_section,$2) as children,
+            
+      --Se obtienes los datos de la section
+      cfgapl.fn_data_by_section(id_section,$2,tbp.n_schema||'.'||tbp.n_table,$3,$4,alert_user,$5) as datos,
+      
+      --Se obtiene los botones de la seccion
+      cfgapl.fn_get_sections_buttons(id_section,$2) as buttons
+      
+    FROM cfgapl.sections scp
+    JOIN cfgapl.tables tbp on (scp.id_tables = tbp.id)
+    JOIN security.rol_sections rss on (scp.id = rss.id_sections)
+    WHERE scp.id = id_section AND rss.id_rol = $2 AND cfgapl.fn_execute_function(scp.fn_hide) = false
+     )rowset;
+  --EXCEPTION WHEN OTHERS THEN
+   --res_data = to_json('ERROR: Ocurrio un error interno en el sistema.');
+  --END;
+        
+  return res_data;
+end
+$$
+LANGUAGE 'plpgsql'
+COST 1;
+
+ALTER FUNCTION cfgapl.fn_get_sections(uuid, uuid, integer, integer, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_get_sections(uuid, uuid, integer, integer, uuid)
+  IS 'Returning consultation to return the data of section it.';
