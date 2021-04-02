@@ -58,7 +58,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             return;
         }
         if (optionActive.xtype === 'filter-view') {
-            MasterApp.filter.getAll();
+            MasterApp.filter.getAll(columnIndex);
             return;
         }
         if (optionActive.xtype === 'total-view') {
@@ -146,7 +146,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
     resetTitle:function(){
         Ext.ComponentQuery.query('#tbtext_magnament_note')[0].setText('Notas');
         Ext.ComponentQuery.query('#tbtext_magnament_register')[0].setText('Register');
-        Ext.ComponentQuery.query('#tbtext_magnament_attach')[0].setText('Adjuntos');
+        Ext.ComponentQuery.query('#tbtext_magnament_attached')[0].setText('Adjuntos');
         Ext.ComponentQuery.query('#tbtext_magnament_note')[0].setText('Notas');
         Ext.ComponentQuery.query('#tbtext_magnament_total')[0].setText('Totales');
         Ext.ComponentQuery.query('#tbtext_magnament_filter')[0].setText('Filtros');

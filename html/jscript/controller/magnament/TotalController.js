@@ -30,7 +30,19 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
             idmenu: idmenu,
             idsection: idsection
         };
-        store.load();
+        store.load({
+            callback: function () {
+                var edit = grid.getPlugin();
+                if (this.getCount() > 0) {
+                    var n_column = MasterApp.util.getNColumnSection();
+                    var index = this.findExact('nombrecampo', n_column);
+                    edit.startEditByPosition({
+                        row: index,
+                        column: 1
+                    });
+                }
+            }
+        });
         var title = MasterApp.util.getTitleSectionSelected();
         Ext.ComponentQuery.query('#tbtext_magnament_total')[0].setText('Totales: ' + title);
     },

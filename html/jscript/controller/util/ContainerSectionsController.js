@@ -13,11 +13,11 @@ Ext.define('MasterSol.controller.util.ContainerSectionsController', {
         };
         var gridsection = MasterApp.gridsections.getComponents(json, columns, tools, height - 15, data, name, windowParent, atribute);
         var gridtotal = MasterApp.gridtotal.getComponents(json, columns, [], 15, data, 'grid_total');
-      //  if (!gridtotal.isVisible()) {
+        if (!gridtotal.isVisible()) {
             gridtotal.setHeight(0);
             var height = height;
             gridsection.setHeight(height);
-      //  }
+        }
         return Ext.create('Ext.panel.Panel', {
             name:'panel_section',
             height: height,

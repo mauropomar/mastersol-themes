@@ -63,7 +63,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         store.loadData(data);
     },
 
-    getAll: function (window) {
+    getAll: function () {
         var idsection = MasterApp.util.getIdSectionActive();
         var idmenu = MasterApp.util.getIdMenuActive();
         if (this.checkData())
@@ -74,14 +74,16 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         store.proxy.extraParams = {
             idmenu: idmenu,
             idsection: idsection
-        }
+        };
         store.load({
             callback: function () {
                 grid.focus();
-                var edit = grid.plugins[0];
+                var edit = grid.getPlugin();
                 if (this.getCount() > 0) {
+                    var n_column = MasterApp.util.getNColumnSection();
+                    var index = this.findExact('nombrecampo', n_column);
                     edit.startEditByPosition({
-                        row: 0,
+                        row: index,
                         column: 1
                     });
                 }

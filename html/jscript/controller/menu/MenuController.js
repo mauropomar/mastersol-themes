@@ -107,13 +107,14 @@ Ext.define('MasterSol.controller.menu.MenuController', {
 
     generateSections: function (level, height) {
         var tabpanel = Ext.create('Ext.tab.Panel', {
-            height: height,
+           // height: height,
             activeTab: 0,
             split: true,
             resizable: true,
             level: level - 1,
             idmenu: this.windowParent.idmenu,
             name: 'tab-section',
+            layout:'fit',
             border: 1
         });
         this.panelMenu.add(tabpanel);

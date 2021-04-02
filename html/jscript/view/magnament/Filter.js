@@ -13,10 +13,10 @@ Ext.define('MasterSol.view.magnament.Filter', {
     iconCls: 'fa fa-filter',
     frame: true,
     idrecordSection: null,
-    plugins: {
+    plugins: [{
         ptype: 'cellediting',
         clicksToEdit: 1
-    },
+    }],
     store: {
         type: 'store-filter'
     },

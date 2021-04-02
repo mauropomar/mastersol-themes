@@ -24,6 +24,7 @@ Ext.define('MasterSol.view.layout.Viewport', {
         items: [{
             id: 'panel-center',
             region: 'center',
+            width: '70%',
             layout: 'fit',
             items: [{
                 xtype: 'dataview-home'
@@ -35,6 +36,8 @@ Ext.define('MasterSol.view.layout.Viewport', {
             collapsible: true,
             collapseMode: 'mini',
             hidden: true,
+            resize:true,
+            split:true,
             collapsed: true,
             width: '30%',
         }]

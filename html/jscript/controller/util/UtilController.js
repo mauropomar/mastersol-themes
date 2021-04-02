@@ -34,13 +34,13 @@ Ext.define('MasterSol.controller.util.UtilController', {
         }
     },
 
-    getTitleSectionSelected(){
-       var section = MasterApp.globals.getGridSection().up('panel');
-       if(section.title == ''){
-          var window = section.up('window');
-          return window.title;
-       }
-       return section.title;
+    getTitleSectionSelected() {
+        var section = MasterApp.globals.getGridSection().up('panel');
+        if (section.title == '') {
+            var window = section.up('window');
+            return window.title;
+        }
+        return section.title;
     },
 
     resizeWindow: function (window, panel) {
@@ -260,6 +260,12 @@ Ext.define('MasterSol.controller.util.UtilController', {
         return table;
     },
 
+    getNColumnSection() {
+        var section = MasterApp.globals.getGridSection();
+        var n_column = section.columns[section.colSelected]['n_column'];
+        return n_column;
+    },
+
     getValProperty: function (field, property) {
         var grid = MasterApp.globals.getGridSection();
         var columns = grid.columns;
@@ -322,13 +328,14 @@ Ext.define('MasterSol.controller.util.UtilController', {
             for (var i = 0; i < containers.length; i++) {
                 var tab = containers[i];
                 if (tab.card.idsection && (tab.card.idsection !== newCard.idsection && tab.card.idsection !== newCard.idparent)) {
-                    document.getElementById(tab.id).style.borderTop = 'transparent';
+                    if (document.getElementById(tab.id))
+                        document.getElementById(tab.id).style.borderTop = 'transparent';
                 }
             }
         } else {
             for (var j = 0; j < containers.length; j++) {
                 var tab = containers[j];
-                if (tab.card.idsection)
+                if (tab.card.idsection && document.getElementById(tab.id))
                     document.getElementById(tab.id).style.borderTop = 'transparent';
             }
         }
