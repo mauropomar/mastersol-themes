@@ -83,6 +83,9 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             row: columnIndex,
             column: 1
         });
+        var title = MasterApp.util.getTitleSectionSelected();
+        Ext.ComponentQuery.query('#tbtext_magnament_register')[0].setText('Register: ' + title);
+
     },
 
     isValid: function () {

@@ -28,7 +28,7 @@ Ext.define('MasterSol.controller.alert.AlertController', {
                             counted++;
                             var text = 'Hay ' + counted + ' alertas nuevas';
                             Ext.ComponentQuery.query('#btn-alert')[0].setTooltip(text);
-                            //   var json = Ext.JSON.decode(response.responseText);
+                            Ext.ComponentQuery.query('#btn-alert')[0].setBadgeText(counted);
                         }
                     };
                     Ext.Ajax.request(obtener);

@@ -69,8 +69,9 @@ Ext.define('MasterSol.view.magnament.Register', {
     }, '->', {
         xtype: 'tbtext',
         text: 'Registro',
+        id:'tbtext_magnament_register',
         style: {
-            fontSize: '15px',
+            fontSize: '10px',
             fontWeight: 'bold'
         }
     }],

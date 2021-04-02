@@ -52,8 +52,9 @@ Ext.define('MasterSol.view.magnament.Total', {
     },'->',{
         xtype:'tbtext',
         text:'Totales',
+        id:'tbtext_magnament_total',
         style: {
-            fontSize:'15px',
+            fontSize:'10px',
             fontWeight:'bold'
         }
     }],

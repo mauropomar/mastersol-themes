@@ -120,6 +120,8 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 this.setNotas(json);
+                var title = MasterApp.util.getTitleSectionSelected();
+                Ext.ComponentQuery.query('#tbtext_magnament_note')[0].setText('Notas: ' + title);
             },
             failure: function (response) {
                 mask.hide();
