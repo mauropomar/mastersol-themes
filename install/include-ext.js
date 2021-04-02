@@ -40,7 +40,7 @@
     var scriptEls = document.getElementsByTagName('script'),
         scriptPath = scriptEls[scriptEls.length - 1].src,
         rtl = getQueryParam('rtl'),
-        themeName = (getQueryParam('theme') || 'triton').replace(/^([-A-Za-z]*)(.*)/, '$1'),
+        themeName = (getQueryParam('theme') || 'classic').replace(/^([-A-Za-z]*)(.*)/, '$1'),
         includeCSS = !hasOption('nocss', scriptPath),
         useDebug = hasOption('debug'),
         hasOverrides = !hasOption('nooverrides', scriptPath) && !!{

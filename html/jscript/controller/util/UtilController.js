@@ -296,7 +296,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         window.setStyle({
             borderColor: '#e87b48'
         });
-        var windows = Ext.ComponentQuery.query('window[isminimize=false]');
+        var windows = Ext.ComponentQuery.query('window');
         for (var i = 0; i < windows.length; i++) {
             if (windows[i].id != idSelWindow) {
                 windows[i].setStyle({

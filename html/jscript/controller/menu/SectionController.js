@@ -162,7 +162,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 var json = Ext.JSON.decode(response.responseText);
                 var grid = newCard.down('gridpanel');
                 grid.getStore().loadData(json);
-                MasterApp.util.setAplyMaxLine();
+            //    MasterApp.util.setAplyMaxLine();
                 MasterApp.util.setStyleSection(newCard);
             },
             failure: function (response) {

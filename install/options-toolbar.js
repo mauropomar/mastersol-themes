@@ -13,7 +13,7 @@
     }
 
     var scriptTags = document.getElementsByTagName('script'),
-        defaultTheme = 'triton',
+        defaultTheme = 'classic',
         defaultRtl = false,
         i = scriptTags.length,
         requires = [
@@ -55,7 +55,6 @@
             break;
         }
     }
-
     Ext.themeName = theme = getQueryParam('theme') || defaultTheme;
 
     rtl = getQueryParam('rtl') || defaultRtl;
@@ -143,12 +142,12 @@
                     store: Ext.create('Ext.data.Store', {
                         fields: ['value', 'name'],
                         data: [
-                            {value: 'triton', name: 'Triton'},
+                            {value: 'classic', name: 'Classic'},
                             {value: 'neptune', name: 'Neptune'},
                             {value: 'neptune-touch', name: 'Neptune Touch'},
                             {value: 'crisp', name: 'Crisp'},
                             {value: 'crisp-touch', name: 'Crisp Touch'},
-                            {value: 'classic', name: 'Classic'},
+                            {value: 'triton', name: 'Triton'},
                             {value: 'gray', name: 'Gray'},
                             {value: 'aria', name: 'ARIA'}
                         ]
