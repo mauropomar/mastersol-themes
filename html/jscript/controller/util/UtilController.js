@@ -176,8 +176,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     getContainerSections() {
-        var queryId = 'panel[name=panel_section]';
-        var containerSections = Ext.ComponentQuery.query(queryId);
+        var containerSections = Ext.ComponentQuery.query('tab[title!=null]');
         return containerSections;
     },
 
@@ -308,14 +307,14 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     setStyleSection(newCard) {
-        newCard.setStyle({'borderColor':'#cb0b0b'});
-        /*  newCard.setStyle({border:'#e84868'});*/
+        document.getElementById(newCard.tab.id).style.borderTop = '2px solid #49db32';
         var containers = this.getContainerSections();
-        /* for(var i = 0; i < containers.length; i++){
-             if(containers[i].idsection !== newCard.idsection){
-                 containers[i].dom.style.borderColor = 'transparent';
-             }
-         }*/
+        for (var i = 0; i < containers.length; i++) {
+            var tab = containers[i];
+            if (tab.card.idsection && (tab.card.idsection !== newCard.idsection && tab.card.idsection !== newCard.idparent)) {
+                document.getElementById(tab.id).style.borderTop = 'transparent';
+            }
+        }
     }
 
 
