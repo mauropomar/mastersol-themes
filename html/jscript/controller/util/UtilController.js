@@ -168,20 +168,26 @@ Ext.define('MasterSol.controller.util.UtilController', {
         return idparent;
     },
 
-    getTabsOfWindow(window, onlyShow = true){
+    getTabsOfWindow(window, onlyShow = true) {
         var idwindow = window.id;
-        var queryId = (onlyShow)?'#' + idwindow + ' tabpanel[hidden=false]':'#' + idwindow + ' tabpanel';
+        var queryId = (onlyShow) ? '#' + idwindow + ' tabpanel[hidden=false]' : '#' + idwindow + ' tabpanel';
         var tabs = Ext.ComponentQuery.query(queryId);
         return tabs;
     },
 
-    getSectionById(window, idsection){
+    getContainerSections() {
+        var queryId = 'panel[name=panel_section]';
+        var containerSections = Ext.ComponentQuery.query(queryId);
+        return containerSections;
+    },
+
+    getSectionById(window, idsection) {
         var idwindow = window.id;
         var queryId = '#' + idwindow + ' gridpanel';
         var childs = Ext.ComponentQuery.query(queryId);
         var section = null;
-        for(var j = 0; j < childs.length; j++){
-            if(childs[j]['idsection'] == idsection){
+        for (var j = 0; j < childs.length; j++) {
+            if (childs[j]['idsection'] == idsection) {
                 section = childs[j];
                 break;
             }
@@ -299,6 +305,18 @@ Ext.define('MasterSol.controller.util.UtilController', {
                 });
             }
         }
+    },
+
+    setStyleSection(newCard) {
+        newCard.setStyle({'borderColor':'#cb0b0b'});
+        /*  newCard.setStyle({border:'#e84868'});*/
+        var containers = this.getContainerSections();
+        /* for(var i = 0; i < containers.length; i++){
+             if(containers[i].idsection !== newCard.idsection){
+                 containers[i].dom.style.borderColor = 'transparent';
+             }
+         }*/
     }
+
 
 });
