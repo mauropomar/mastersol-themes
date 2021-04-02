@@ -49,9 +49,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.util.setAplyMaxLine();
         MasterApp.util.setStyleWindow(grid.panel);
         MasterApp.magnament.getData(grid.panel);
-        var window = grid.up('window');
-        var panel = grid.up('panel');
-        MasterApp.tools.setButtons(window, panel.btnTools);
     },
 
     dblclickSection: function (grid, td, cellIndex, record) {
@@ -166,6 +163,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 var grid = newCard.down('gridpanel');
                 grid.getStore().loadData(json);
                 MasterApp.util.setAplyMaxLine();
+                MasterApp.util.setStyleSection(newCard);
             },
             failure: function (response) {
                 mask.hide();

@@ -25,7 +25,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         mask.show();
         var window = this.getWindow(record);
         if (window != null) {
-            window.toFront()
+            window.toFront();
             mask.hide();
             return;
         }
@@ -203,12 +203,24 @@ Ext.define('MasterSol.controller.menu.MenuController', {
     },
 
     setHeightTabs: function (window, nivel) {
-        var height = window.getHeight() / nivel;
         var p = MasterApp.globals.getPanelPrincipalByWindow(window);
-        p.setHeight(height);
         var tabs = MasterApp.util.getTabsOfWindow(window);
+        var heightPanel, heightTabs;
+        if (tabs.length == 1) {
+            heightPanel = '45%';
+            heightTabs = '55%';
+        }
+        if (tabs.length == 2){
+            heightPanel = '30%';
+            heightTabs = '35%';
+        }
+        if (tabs.length == 3){
+            heightPanel = '25%';
+            heightTabs = '25%';
+        }
+        p.setHeight(heightPanel);
         for (var i = 0; i < tabs.length; i++) {
-            tabs[i].setHeight(height);
+            tabs[i].setHeight(heightTabs);
         }
     }
 })
