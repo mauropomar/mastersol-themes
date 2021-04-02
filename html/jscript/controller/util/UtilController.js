@@ -34,6 +34,15 @@ Ext.define('MasterSol.controller.util.UtilController', {
         }
     },
 
+    getTitleSectionSelected(){
+       var section = MasterApp.globals.getGridSection().up('panel');
+       if(section.title == ''){
+          var window = section.up('window');
+          return window.title;
+       }
+       return section.title;
+    },
+
     resizeWindow: function (window, panel) {
         var height = panel.getHeight();
         var width = panel.getWidth();
@@ -307,12 +316,20 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     setStyleSection(newCard) {
-        document.getElementById(newCard.tab.id).style.borderTop = '2px solid #49db32';
         var containers = this.getContainerSections();
-        for (var i = 0; i < containers.length; i++) {
-            var tab = containers[i];
-            if (tab.card.idsection && (tab.card.idsection !== newCard.idsection && tab.card.idsection !== newCard.idparent)) {
-                document.getElementById(tab.id).style.borderTop = 'transparent';
+        if (newCard) {
+            document.getElementById(newCard.tab.id).style.borderTop = '2px solid #49db32';
+            for (var i = 0; i < containers.length; i++) {
+                var tab = containers[i];
+                if (tab.card.idsection && (tab.card.idsection !== newCard.idsection && tab.card.idsection !== newCard.idparent)) {
+                    document.getElementById(tab.id).style.borderTop = 'transparent';
+                }
+            }
+        } else {
+            for (var j = 0; j < containers.length; j++) {
+                var tab = containers[j];
+                if (tab.card.idsection)
+                    document.getElementById(tab.id).style.borderTop = 'transparent';
             }
         }
     }

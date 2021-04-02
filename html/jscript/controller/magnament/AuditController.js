@@ -115,6 +115,8 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
                 idmenu: idmenu
             };
             store.load();
+            var title = MasterApp.util.getTitleSectionSelected();
+            Ext.ComponentQuery.query('#tbtext_magnament_audit')[0].setText('Auditoría: ' + title);
         },
 
         selectDateStart: function (field, newValue, oldValue) {

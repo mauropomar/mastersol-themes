@@ -29,9 +29,10 @@ Ext.define("MasterSol.view.magnament.Audit", {
     }, '->', {
         xtype: 'tbtext',
         text: 'Auditoría',
+        id:'tbtext_magnament_audit',
         style: {
-            fontSize: '15px',
-            fontWeight: 'bold'
+            fontSize:'10px',
+            fontWeight:'bold'
         }
     }],
     /* bbar: Ext.create('Ext.PagingToolbar', {

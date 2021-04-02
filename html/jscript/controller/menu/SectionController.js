@@ -76,6 +76,9 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var disabled = (count == 0) ? false : true;
         var btn = MasterApp.tools.getBtnTools(grid, 'btn_trash');
         btn.setDisabled(disabled);
+        if(!tabs[level]){
+            MasterApp.util.setStyleSection();
+        }
     },
 
     setIdRecordParent: function (tab) {

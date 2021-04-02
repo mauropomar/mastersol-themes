@@ -56,7 +56,7 @@ Ext.define('MasterSol.view.layout.Header', {
             tooltip: 'Alertas',
             id:'btn-alert',
             tooltipType: 'title',
-            badgeText:'100',
+            badgeText:'',
             width:40,
             handler: function () {
                 MasterApp.header.showAlerts();

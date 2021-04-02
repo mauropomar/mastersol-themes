@@ -29,8 +29,10 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         store.proxy.extraParams = {
             idmenu: idmenu,
             idsection: idsection
-        }
+        };
         store.load();
+        var title = MasterApp.util.getTitleSectionSelected();
+        Ext.ComponentQuery.query('#tbtext_magnament_total')[0].setText('Totales: ' + title);
     },
 
     checkData: function () {

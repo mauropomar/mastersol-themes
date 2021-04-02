@@ -87,6 +87,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                 }
                 if (MasterApp.globals.actionKeyCrtlF)
                     MasterApp.filter.findIndexSetFocusField();
+                var title = MasterApp.util.getTitleSectionSelected();
+                Ext.ComponentQuery.query('#tbtext_magnament_filter')[0].setText('Filter: ' + title);
             }
         });
     },
@@ -106,7 +108,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var idregisterparent = (idrecordparent) ? idrecordparent : 0;
         var idparentsection = MasterApp.util.getIdParentSectionActive();
         var record = MasterApp.globals.getRecordSection();
-        idrecordsection = (record != null)?record.data.id:null;
+        idrecordsection = (record != null) ? record.data.id : null;
         if (data.length == 0) {
             var idx = store.findBy(function (rec, id) {
                 return (rec.data.operador == null && (rec.data.valor1 !== null && rec.data.valor1 !== ''))
@@ -477,7 +479,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             listeners: {
                 scope: this,
                 collapse: this.collapseFk,
-                beforequery: function(record){
+                beforequery: function (record) {
                     record.query = new RegExp(record.query, 'ig');
                 }
             }
@@ -548,15 +550,15 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var grid = Ext.ComponentQuery.query('#filter-view')[0];
         var store = grid.getStore();
         store.load({
-            scope:this,
-            callback:function(){
+            scope: this,
+            callback: function () {
                 this.findIndexSetFocusField();
             }
         });
     },
     // buscar el campo que se le va a desplegar en dependecia de la columna seleccionado
     //en la seccion
-    findIndexSetFocusField:function(){
+    findIndexSetFocusField: function () {
         var gridsection = MasterApp.globals.getGridSection();
         var selModel = gridsection.getSelectionModel();
         var columnIndex = selModel.navigationModel.previousColumnIndex;
@@ -577,10 +579,10 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         MasterApp.globals.actionKeyCrtlF = false;
     },
 
-    configureButtons:function(){
+    configureButtons: function () {
         var gridsection = MasterApp.globals.getGridSection();
         var store_section = gridsection.getStore();
-        var disabled = (store_section.getCount() == 0)?true:false;
+        var disabled = (store_section.getCount() == 0) ? true : false;
         Ext.ComponentQuery.query('#filter-view toolbar button')[0].setDisabled(disabled);
         Ext.ComponentQuery.query('#filter-view toolbar button')[1].setDisabled(disabled);
     }

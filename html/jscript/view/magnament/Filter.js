@@ -79,8 +79,9 @@ Ext.define('MasterSol.view.magnament.Filter', {
     }, '->', {
         xtype: 'tbtext',
         text: 'Filtrar',
+        id:'tbtext_magnament_filter',
         style: {
-            fontSize: '15px',
+            fontSize: '10px',
             fontWeight: 'bold'
         }
     }],

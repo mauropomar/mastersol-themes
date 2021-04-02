@@ -17,8 +17,9 @@ Ext.define("MasterSol.view.magnament.Attached", {
     },'->',{
         xtype:'tbtext',
         text:'Adjuntos',
+        id:'tbtext_magnament_attached',
         style: {
-            fontSize:'15px',
+            fontSize:'10px',
             fontWeight:'bold'
         }
     }],

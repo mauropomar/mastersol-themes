@@ -19,8 +19,9 @@ Ext.define("MasterSol.view.magnament.Note", {
     },'->',{
         xtype:'tbtext',
         text:'Notas',
+        id:'tbtext_magnament_note',
         style: {
-            fontSize:'15px',
+            fontSize:'10px',
             fontWeight:'bold'
         }
     }],

@@ -14,7 +14,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         })
     },
 
-    tabChange:function(tabPanel, newCard){
+    tabChange: function (tabPanel, newCard) {
         if (newCard.xtype === 'filter-view') {
             MasterApp.filter.getAll();
             return;
@@ -47,7 +47,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         tabMagnament.expand(false);
         tabMagnament.setDisabled(false);
         var rec = MasterApp.globals.getRecordSection();
-        optionActive.idrecordsection = (rec !== null)?rec.data.id:null;
+        optionActive.idrecordsection = (rec !== null) ? rec.data.id : null;
         var window = grid.up('window');
         if (window.isAlert)
             tabMagnament.child('#register-view').tab.hide();
@@ -140,7 +140,17 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
     collapse: function () {
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         tabMagnament.idmenumag = null;
-     //   MasterApp.util.resizeAllWindow();
+        this.resetTitle();
+    },
+
+    resetTitle:function(){
+        Ext.ComponentQuery.query('#tbtext_magnament_note')[0].setText('Notas');
+        Ext.ComponentQuery.query('#tbtext_magnament_register')[0].setText('Register');
+        Ext.ComponentQuery.query('#tbtext_magnament_attach')[0].setText('Adjuntos');
+        Ext.ComponentQuery.query('#tbtext_magnament_note')[0].setText('Notas');
+        Ext.ComponentQuery.query('#tbtext_magnament_total')[0].setText('Totales');
+        Ext.ComponentQuery.query('#tbtext_magnament_filter')[0].setText('Filtros');
+
     }
 
 })

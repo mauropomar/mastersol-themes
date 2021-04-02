@@ -148,6 +148,8 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     this.fileslist = [];
                     this.addComponent(data);
                 }
+                var title = MasterApp.util.getTitleSectionSelected();
+                Ext.ComponentQuery.query('#tbtext_magnament_attached')[0].setText('Adjuntos: ' + title);
             },
             failure: function (response) {
                 mask.hide();
