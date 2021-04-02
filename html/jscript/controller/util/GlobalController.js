@@ -15,7 +15,7 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.arrayTotal = [];
             this.arrayFilter = [];
             this.optionSelect = null;
-         //   this.arrayFunctionTotal = [];
+            //   this.arrayFunctionTotal = [];
             this.selEnCascade = false;
             this.selEnMosaic = false;
             this.idRol = null;
@@ -54,18 +54,22 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         getSectionPrincipalByWindow: function (window) {
             return window.down('gridpanel');
         },
+        getPanelPrincipalByWindow: function (window) {
+            var p = this.getSectionPrincipalByWindow(window);
+            return p.up('panel');
+        },
         setRecordSection: function (rec) {
             this.recSection = rec;
         },
         setGridSection: function (grid) {
             this.gridSection = grid;
         },
-    /*    getArrayFuncionesTotalizar: function () {
-            return this.arrayFunctionTotal
-        },
-        setArrayFuncionesTotalizar: function (array) {
-            this.arrayFunctionTotal = array
-        },*/
+        /*    getArrayFuncionesTotalizar: function () {
+                return this.arrayFunctionTotal
+            },
+            setArrayFuncionesTotalizar: function (array) {
+                this.arrayFunctionTotal = array
+            },*/
         isCascade: function () {
             return this.selEnCascade;
         },

@@ -36,7 +36,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         }
     },
 
-    getData: function (grid, columnIndex) {
+    getData: function (grid, columnIndex = 1) {
         var idmenu = grid.idmenu;
         var idsection = grid.idsection;
         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
@@ -47,7 +47,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         tabMagnament.expand(false);
         tabMagnament.setDisabled(false);
         var rec = MasterApp.globals.getRecordSection();
-        optionActive.idrecordsection = rec.data.id;
+        optionActive.idrecordsection = (rec !== null)?rec.data.id:null;
         var window = grid.up('window');
         if (window.isAlert)
             tabMagnament.child('#register-view').tab.hide();

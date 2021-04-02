@@ -12,7 +12,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 celldblclick: 'dblclickSectionPrincipal',
                 columnresize: 'columnresize',
                 afterrender: 'afterrender'
-                // celldblclick: 'celldblclick'
             },
             'tabpanel[name=tab-section]': {
                 tabchange: 'tabChangeSection'
@@ -63,7 +62,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
 
     // activar y obtener los datos de la seccion hija activa
     loadDataTabActive: function (grid, rec, level) {
-        var windowId = grid.panel.idmenu;
+        var windowId = (grid.panel)?grid.panel.idmenu:grid.idmenu;
+        var idsection = (grid.panel)?grid.panel.idsection:grid.idsection;
         var tabs = Ext.ComponentQuery.query('tabpanel[idmenu=' + windowId + ']');
         if (tabs[level] && tabs[level].items.items.length > 0) {//si existe el tabs en ese nivel y tiene secciones hijas
             var panel = tabs[level].getActiveTab();
@@ -75,7 +75,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             this.getData(this.IdRecParent, panel);
             this.resetAllSectionNotImediatly(tabs, level);
         }
-        var count = this.getCountSections(grid.panel.idsection, level);
+        var count = this.getCountSections(idsection, level);
         var disabled = (count == 0) ? false : true;
         var btn = MasterApp.tools.getBtnTools(grid, 'btn_trash');
         btn.setDisabled(disabled);
@@ -124,17 +124,14 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var idparent = newCard.idrecordparent;
         if (idparent == null)
             return;
-        var store = gridsection.getStore();
-        if (store.getCount() > 0)
-            return;
         var window = gridsection.up('window');
-        MasterApp.tools.setButtons(window, gridsection.btnTools);
+        //    MasterApp.tools.setButtons(window, gridsection.btnTools);
         this.getData(idparent, newCard);
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         tabMagnament.idmenumag = tabPanel.idmenu;
         tabMagnament.idsectionmag = newCard.idsection;
         MasterApp.util.setAplyMaxLine();
-    },
+       },
 
     findChildOfSection: function (tabPanel, newCard) {
         var level = tabPanel.level;
@@ -514,10 +511,10 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var isExpanded = MasterApp.util.isWindowExpand(win);
         MasterApp.tools.setVisibleBtn(win, arrayBtn, isExpanded);
         arrayBtn = ['btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
-        if(widthPanel >= width){
+        if (widthPanel >= width) {
             MasterApp.tools.setVisibleBtn(win, arrayBtn, true);
             MasterApp.tools.showButtonsNotDefault(win, false);
-        }else{
+        } else {
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             MasterApp.tools.showButtonsNotDefault(win, true);
         }

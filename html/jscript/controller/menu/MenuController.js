@@ -55,8 +55,8 @@ Ext.define('MasterSol.controller.menu.MenuController', {
     },
 
     showMenu: function (json, isAlert = false) {
-     //   Ext.ComponentQuery.query('#panel-center')[0].removeAll();
-     //   Ext.ComponentQuery.query('#panel-center')[0].add(Ext.create('MasterSol.view.menu.Menu'));
+        //   Ext.ComponentQuery.query('#panel-center')[0].removeAll();
+        //   Ext.ComponentQuery.query('#panel-center')[0].add(Ext.create('MasterSol.view.menu.Menu'));
         var panelmenu = Ext.ComponentQuery.query('#panel-center')[0];
         var window = Ext.create('MasterSol.view.menu.WindowMenu');
         var height = panelmenu.getHeight();
@@ -112,7 +112,6 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             split: true,
             resizable: true,
             level: level - 1,
-           // idsection: this.windowParent.idsection,
             idmenu: this.windowParent.idmenu,
             name: 'tab-section',
             border: 1
@@ -124,26 +123,35 @@ Ext.define('MasterSol.controller.menu.MenuController', {
     configureSections: function (json) {
         var items = this.panelMenu.items.items;
         var tabs = this.getTabsOfPanel(items);
+        var window = tabs[0].up('window');
+        window.childs = items;
+        window.tabs = tabs;
         var sections = (json[0].children) ? json[0].children : [];
         for (var i = 0; i < sections.length; i++) {
             var pos = sections[i].nivel - 1;
             if (tabs[pos])
                 this.insertSection(sections[i], tabs[pos]);
         }
+        if (json[0].niveles > 2) {
+            this.setHeightTabs(window, 2);
+        }
     },
     // crea una seccion y la agrega al tab
     insertSection(section, tab) {
         var title = section.nombre;
-        var height = tab.getHeight() - 50;
+        var height = tab.getHeight();
         var containerSection = MasterApp.containersections.getPanel(title, section, [], height, 'grid-section', this.windowParent);
         tab.add(containerSection);
+        if (section.nivel >= 3) {
+            tab.hide();
+        }
     },
     // activa el primer panel de cada tab.
-    activeFirstTab: function () {
-        var items = this.panelMenu.items.items;
-        var tabs = this.getTabsOfPanel(items);
-        tabs[1].setActiveTab(0);
-    },
+    /* activeFirstTab: function () {
+         var items = this.panelMenu.items.items;
+         var tabs = this.getTabsOfPanel(items);
+      //   tabs[1].setActiveTab(0);
+     }*/
 
     getTabsOfPanel: function (items) {
         var tabs = [];
@@ -156,13 +164,28 @@ Ext.define('MasterSol.controller.menu.MenuController', {
     },
     // elimina todas la secciones y agregar las secciones correspondiente al padre
     addChildOfTab: function (tab, panel) {
+        var level, tabs;
         var childs = (this.json[0].children) ? this.json[0].children : [];
         tab.removeAll();
+        var insert = false;
         for (var j = 0; j < childs.length; j++) {
             if (childs[j].idpadre === panel.idsection) {
                 this.insertSection(childs[j], tab);
+                insert = true;
                 break;
             }
+        }
+        var window = tab.up('window');
+        if (insert) {
+            tab.show();
+            tabs = MasterApp.util.getTabsOfWindow(window);
+            level = tabs.length;
+            this.setHeightTabs(window, level + 1);
+        } else {
+            tab.hide();
+            tabs = MasterApp.util.getTabsOfWindow(window);
+            level = tabs.length;
+            this.setHeightTabs(window, level + 1);
         }
     },
     //verificar si la ventana existe para que no se repita
@@ -177,5 +200,15 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             }
         }
         return win;
+    },
+
+    setHeightTabs: function (window, nivel) {
+        var height = window.getHeight() / nivel;
+        var p = MasterApp.globals.getPanelPrincipalByWindow(window);
+        p.setHeight(height);
+        var tabs = MasterApp.util.getTabsOfWindow(window);
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].setHeight(height);
+        }
     }
 })

@@ -168,6 +168,27 @@ Ext.define('MasterSol.controller.util.UtilController', {
         return idparent;
     },
 
+    getTabsOfWindow(window, onlyShow = true){
+        var idwindow = window.id;
+        var queryId = (onlyShow)?'#' + idwindow + ' tabpanel[hidden=false]':'#' + idwindow + ' tabpanel';
+        var tabs = Ext.ComponentQuery.query(queryId);
+        return tabs;
+    },
+
+    getSectionById(window, idsection){
+        var idwindow = window.id;
+        var queryId = '#' + idwindow + ' gridpanel';
+        var childs = Ext.ComponentQuery.query(queryId);
+        var section = null;
+        for(var j = 0; j < childs.length; j++){
+            if(childs[j]['idsection'] == idsection){
+                section = childs[j];
+                break;
+            }
+        }
+        return section;
+    },
+
     //devuelve el idpadre de la seccion ya sea un principal o no
     getGridTotal: function () {
         var parent;
@@ -279,6 +300,5 @@ Ext.define('MasterSol.controller.util.UtilController', {
             }
         }
     }
-
 
 });
