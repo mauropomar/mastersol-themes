@@ -262,7 +262,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
 
     getNColumnSection() {
         var section = MasterApp.globals.getGridSection();
-        var n_column = section.columns[section.colSelected]['n_column'];
+        var n_column = (section.colSelected !== null)? section.columns[section.colSelected]['n_column']:null;
         return n_column;
     },
 
@@ -274,10 +274,10 @@ Ext.define('MasterSol.controller.util.UtilController', {
             var n_field = 'n_' + field;
             if (columns[i].dataIndex == field || columns[i].dataIndex == n_field) {
                 index = i;
-                break
+                break;
             }
         }
-        var val = (property) ? grid.columns[index][property] : null;
+        var val = (property && index > -1) ? grid.columns[index][property] : null;
         val = (val) ? val : null;
         return val;
     },

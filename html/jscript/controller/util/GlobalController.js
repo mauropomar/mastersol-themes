@@ -62,8 +62,10 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.recSection = rec;
         },
         setGridSection: function (grid, colSel = null) {
-            this.gridSection = grid;
-            this.gridSection['colSelected'] = colSel;
+            if(grid != null) {
+                this.gridSection = grid;
+                this.gridSection['colSelected'] = colSel;
+            }
         },
         /*    getArrayFuncionesTotalizar: function () {
                 return this.arrayFunctionTotal

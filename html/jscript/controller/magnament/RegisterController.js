@@ -32,7 +32,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         grid.focus();
         var edit = grid.plugins[0];
         edit.startEditByPosition({
-            row: 3,
+            row: 0,
             column: 1
         });
     },

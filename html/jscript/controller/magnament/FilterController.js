@@ -79,12 +79,12 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             callback: function () {
                 grid.focus();
                 var edit = grid.getPlugin();
-                if (this.getCount() > 0) {
-                    var n_column = MasterApp.util.getNColumnSection();
+                var n_column = MasterApp.util.getNColumnSection();
+                if (this.getCount() > 0 && n_column != null) {
                     var index = this.findExact('nombrecampo', n_column);
                     edit.startEditByPosition({
                         row: index,
-                        column: 1
+                        column: 2
                     });
                 }
                 if (MasterApp.globals.actionKeyCrtlF)

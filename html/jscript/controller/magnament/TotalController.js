@@ -33,8 +33,8 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         store.load({
             callback: function () {
                 var edit = grid.getPlugin();
-                if (this.getCount() > 0) {
-                    var n_column = MasterApp.util.getNColumnSection();
+                var n_column = MasterApp.util.getNColumnSection();
+                if (this.getCount() > 0 && n_column != null) {
                     var index = this.findExact('nombrecampo', n_column);
                     edit.startEditByPosition({
                         row: index,
