@@ -149,7 +149,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                     store.commitChanges();
                     gridsection.getStore().loadData(data);
                 } else {
-                    MasterApp.util.showMessageInfo('No existen datos con ese criterio de búsqueda.');
+                    MasterApp.util.showMessageInfo(json.message);
                     gridsection.getStore().removeAll();
                 }
             }
@@ -238,27 +238,29 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             rec = record;
             var valor1 = MasterApp.util.getVal(rec, rec.data.valor1);
             var valor2 = MasterApp.util.getVal(rec, rec.data.valor2);
-            var d = this.getIdOperator(rec, valor1);
-            var idoperator = d[0];
-            var cantparam = d[1];
-            var real_name_in = MasterApp.util.getValProperty(rec.data.nombrecampo, 'real_name_in');
-            var real_name_out = MasterApp.util.getValProperty(rec.data.nombrecampo, 'real_name_out');
-            if (idoperator) {
-                data.push({
-                    idregister: rec.data.idregistro,
-                    nombrecampo: rec.data.nombrecampo,
-                    idtipodato: rec.data.idtipodato,
-                    tipo: rec.data.tipo,
-                    fk: rec.data.fk,
-                    idoperador: idoperator,
-                    operadores: rec.data.operadores,
-                    idvalor: rec.data.idvalor,
-                    real_name_in: real_name_in,
-                    real_name_out: real_name_out,
-                    valor1: valor1,
-                    valor2: valor2,
-                    cantparam: cantparam
-                })
+            if (valor1) {
+                var d = this.getIdOperator(rec, valor1);
+                var idoperator = d[0];
+                var cantparam = d[1];
+                var real_name_in = MasterApp.util.getValProperty(rec.data.nombrecampo, 'real_name_in');
+                var real_name_out = MasterApp.util.getValProperty(rec.data.nombrecampo, 'real_name_out');
+                if (idoperator && valor1) {
+                    data.push({
+                        idregister: rec.data.idregistro,
+                        nombrecampo: rec.data.nombrecampo,
+                        idtipodato: rec.data.idtipodato,
+                        tipo: rec.data.tipo,
+                        fk: rec.data.fk,
+                        idoperador: idoperator,
+                        operadores: rec.data.operadores,
+                        idvalor: rec.data.idvalor,
+                        real_name_in: real_name_in,
+                        real_name_out: real_name_out,
+                        valor1: valor1,
+                        valor2: valor2,
+                        cantparam: cantparam
+                    })
+                }
             }
         }, this);
         return data
@@ -298,9 +300,10 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var cantparam = 1;
         var operators = (rec.data.operadores) ? rec.data.operadores : new Array();
         if (val !== null && val !== '' && operators.length > 0) {
-            var operator = (rec.data.operador) ? rec.data.operador : '=';
+            var operator = (rec.data.operador) ? rec.data.operador : rec.data.operadores[0]['nombre'];
             idoperator = this.getOperatorDefault(rec.data.operadores, operator);
             cantparam = this.getCantParam(rec.data.operadores, operator);
+            rec.set('operador', operator);
         }
         return new Array(idoperator, cantparam);
     },
@@ -310,7 +313,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var operator = null;
         var operators = (rec.data.operadores) ? rec.data.operadores : new Array();
         if (val != null && val != '' && operators.length > 0) {
-            operator = (rec.data.operador) ? rec.data.operador : '=';
+            operator = (rec.data.operador) ? rec.data.operador : rec.data.operadores[0]['nombre'];
             rec.set('operador', operator);
         }
         return operator;
