@@ -22,10 +22,10 @@ BEGIN
 	SELECT cfgapl.sections.fn_first_filter into fn_first_filter from cfgapl.sections where id = $1;
 	IF fn_first_filter is not null and fn_first_filter <> '' THEN
 	   --Ejecutar funcion first_filter
-	   EXECUTE 'SELECT '|| fn_first_filter || '('||quote_literal($3)||','||quote_literal($2)||','||quote_literal($7)||','||quote_literal($4)||','||quote_literal($5)||')' INTO res_data;	    
+	   EXECUTE 'SELECT jsonb_agg(rowset.*) FROM(SELECT * FROM '|| fn_first_filter || '('||quote_literal($1)||','||quote_literal($2)||','||quote_literal($7)||','||quote_literal($4)||','||quote_literal($5)||'))rowset ' INTO res_data;	    	   
 	ELSIF fn_filter is not null and fn_filter <> '' THEN
 		--Ejecutar funcion filter
-	   EXECUTE 'SELECT '|| fn_filter || '('||quote_literal($3)||','||quote_literal($2)||','||quote_literal($7)||','||quote_literal($4)||','||quote_literal($5)||')' INTO res_data;	 		
+	   EXECUTE 'SELECT jsonb_agg(rowset.*) FROM(SELECT * FROM '|| fn_filter || '('||quote_literal($1)||','||quote_literal($2)||','||quote_literal($7)||','||quote_literal($4)||','||quote_literal($5)||'))rowset ' INTO res_data;	 			   
 	ELSE
 		--Devolver listado completo
 		IF $6 = true THEN

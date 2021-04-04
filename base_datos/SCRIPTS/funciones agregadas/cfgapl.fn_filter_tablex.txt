@@ -6,19 +6,19 @@ CREATE OR REPLACE FUNCTION cfgapl.fn_filter_tablex
   IN  "start"     integer = 0,
   IN  "limit"     integer = 20
 )
-RETURNS jsonb AS
+RETURNS TABLE (active boolean, id uuid, id_organizations uuid, imported boolean, nombre varchar, orderx int) AS
 $$
-declare
-res_data jsonb = null;
-name_table varchar = $1;
-begin
+DECLARE
+	reg RECORD;	
+	name_table varchar = '';
+BEGIN	
 	SELECT tb.n_schema||'.'||tb.n_table into name_table from cfgapl.sections s JOIN cfgapl.tables tb on tb.id = s.id_tables where s.id = $1;
 
-    EXECUTE 'SELECT jsonb_agg(rowset.*) FROM(SELECT dat.* FROM '|| name_table ||' dat WHERE dat.nombre ilike ''%tarea%'' OFFSET '|| $4 ||' LIMIT '|| $5 ||' )rowset ' INTO res_data;
-    return res_data; 
-end
+    RETURN QUERY SELECT dat.active, dat.id, dat.id_organizations, dat.imported, dat.nombre, dat.orderx FROM public.tablex dat WHERE dat.nombre ilike '%tarea%' OFFSET $4 LIMIT $5;
+END;
 $$
-LANGUAGE 'plpgsql';
+LANGUAGE 'plpgsql'
+COST 100;
 
-ALTER FUNCTION cfgapl.fn_filter_tablex(varchar, uuid, uuid, integer, integer)
+ALTER FUNCTION cfgapl.fn_first_filter_tablex(uuid, uuid, uuid, integer, integer)
   OWNER TO postgres;
