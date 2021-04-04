@@ -27,7 +27,7 @@ const getFunctionsResume = async (req) => {
 
 const getResultFiltersOperators = async (req, objects) => {
     const params_filter = getParamsResultFilter(req, objects)
-    const query = "SELECT cfgapl.fn_get_result_filter_operators($1,$2,$3)"
+    const query = "SELECT cfgapl.fn_get_result_filter_operators($1,$2,$3,$4)"
     const result = await pool.executeQuery(query, params_filter)
     if (result.success === false) {
         return result
@@ -118,6 +118,7 @@ function getParamsResultFilter(req, objects) {
     result.push(req.body.idsection)
     result.push(req.session.id_rol)
     result.push(" WHERE " + where.join(" AND "))
+    result.push(req.session.id_user)
     return result
 }
 
