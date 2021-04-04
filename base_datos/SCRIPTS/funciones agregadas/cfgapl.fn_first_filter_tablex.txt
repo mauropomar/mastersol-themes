@@ -1,6 +1,6 @@
 CREATE OR REPLACE FUNCTION cfgapl.fn_first_filter_tablex
 (
-  IN  table_name  varchar = ''::character varying,
+  IN  id_section  uuid    = NULL::uuid,
   IN  id_rol      uuid    = NULL::uuid,
   IN  id_user     uuid    = NULL::uuid,
   IN  "start"     integer = 0,
@@ -12,6 +12,8 @@ declare
 res_data jsonb = null;
 name_table varchar = $1;
 begin
+	SELECT tb.n_schema||'.'||tb.n_table into name_table from cfgapl.sections s JOIN cfgapl.tables tb on tb.id = s.id_tables where s.id = $1;
+
     EXECUTE 'SELECT jsonb_agg(rowset.*) FROM(SELECT dat.* FROM '|| name_table ||' dat WHERE dat.nombre ilike ''%tarea1%'' OFFSET '|| $4 ||' LIMIT '|| $5 ||' )rowset ' INTO res_data;
     return res_data; 
 end
