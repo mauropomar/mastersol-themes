@@ -1,6 +1,6 @@
-const {Pool} = require('pg')
-const ConPgSQL = {}
-var utf8 = require('utf8')
+const {Pool} = require('pg');
+const ConPgSQL = {};
+var utf8 = require('utf8');
 
 var config_bd = {
     user: 'postgres',
