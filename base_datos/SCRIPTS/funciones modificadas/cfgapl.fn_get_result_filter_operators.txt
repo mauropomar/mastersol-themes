@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION cfgapl.fn_get_result_filter_operators
   IN  idsection  uuid,
   IN  idrol      uuid,
   IN  where_aux  varchar,
-  IN  id_user     uuid
+  IN  id_user    uuid   
 )
 RETURNS json AS
 $$
@@ -23,8 +23,8 @@ begin
 	 JOIN cfgapl.tables tb on(sc.id_tables = tb.id)
 	 JOIN security.rol_sections rsc on rsc.id_sections = sc.id   
 	 WHERE sc.id = $1 AND rsc.id_rol = $2; 
-	 sqlSelect = sqlSelect || cfgapl.fn_return_value_fk($1,$2);	
 	 
+	 sqlSelect = sqlSelect || cfgapl.fn_return_value_fk($1,$2);		 
 
 	--Buscar fn_filter y first_filter de la seccion para proceder condicionalmente
 	SELECT cfgapl.sections.fn_filter into fn_filter from cfgapl.sections where id = $1;
@@ -41,7 +41,7 @@ begin
 		sqlEjec = 'SELECT json_agg(rowset.*) FROM (' || sqlSelect || ' FROM '|| result_sections.name_table || ' dat ' || $3 || ')rowset;'; 	
 
 	END IF;
-	
+		
 	BEGIN
 		 EXECUTE(sqlEjec) INTO result_data;
 		 EXCEPTION WHEN OTHERS THEN 
@@ -54,5 +54,5 @@ end
 $$
 LANGUAGE 'plpgsql';
 
-ALTER FUNCTION cfgapl.fn_get_result_filter_operators(uuid, uuid, varchar)
+ALTER FUNCTION cfgapl.fn_get_result_filter_operators(uuid, uuid, varchar, uuid)
   OWNER TO postgres;

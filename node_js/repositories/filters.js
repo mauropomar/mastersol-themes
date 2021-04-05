@@ -96,11 +96,11 @@ function getParamsResultFilter(req, objects) {
                 } else if (item.tipo === 'boolean' && operador.nombre === '=') {
                     valor = item.valor1 ? 'true' : 'false';
                     where.push(' dat.' + item.nombrecampo + " = " + valor);
-                } else if (item.tipo === 'number' && operador.nombre === '=') {
+                } else if (item.tipo === 'number' && operador.nombre === '=' && item.valor1) {
                     where.push(' dat.' + item.nombrecampo + " = " + item.valor1);
-                } else if (item.tipo === 'number' && operador.nombre === '>') {
+                } else if (item.tipo === 'number' && operador.nombre === '>' && item.valor1) {
                     where.push(' dat.' + item.nombrecampo + " > " + item.valor1);
-                } else if (item.tipo === 'number' && operador.nombre === '<') {
+                } else if (item.tipo === 'number' && operador.nombre === '<' && item.valor1) {
                     where.push(' dat.' + item.nombrecampo + " < " + item.valor1);
                 } else if (item.tipo === 'date' && operador.nombre === '=') {
                     date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
