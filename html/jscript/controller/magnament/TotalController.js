@@ -126,7 +126,8 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                     tipodato: rec.data.tipodato,
                     idfuncion: idfuncion,
                     nombrefuncion: rec.data.nombrefuncion,
-                    funciones: rec.data.funciones
+                    funciones: rec.data.funciones,
+                    idregistro: rec.data.idregistro
                 })
             }
         }, this);
@@ -145,7 +146,8 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                 tipodato: rec.data.tipodato,
                 idfuncion: this.getIdFunction(rec),
                 nombrefuncion: rec.data.nombrefuncion,
-                funciones: rec.data.funciones
+                funciones: rec.data.funciones,
+                idregistro: rec.data.idregistro
             })
         }, this)
         return datos;
@@ -265,14 +267,16 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                 }
             }
         }
-        var height_theme = (MasterApp.theme.isShortTheme()) ? 25 : 40;
-        var height = gridsection.getHeight() - height_theme;
-        gridsection.setHeight(height);
-        gridtotal.setHeight(height_theme);
-        gridtotal.show();
-        gridtotal.getView().refresh();
-        gridtotal.getView().focusRow(0);
-        Ext.ComponentQuery.query('total-view toolbar button')[1].setDisabled(false);
+        if (gridtotal.getHeight() == 0) {
+            var height_theme = (MasterApp.theme.isShortTheme()) ? 25 : 40;
+            var height = gridsection.getHeight() - height_theme;
+            gridsection.setHeight(height);
+            gridtotal.setHeight(height_theme);
+            gridtotal.show();
+            gridtotal.getView().refresh();
+            gridtotal.getView().focusRow(0);
+            Ext.ComponentQuery.query('total-view toolbar button')[1].setDisabled(false);
+        }
     },
 
     clean: function () {

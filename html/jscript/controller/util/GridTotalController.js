@@ -65,7 +65,7 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
             if (cols[i].funcion) {
                 this.hidden = false;
             }
-            if (!cols[i].hidden) {
+            if (!cols[i].hidden && cols[i].dataIndex !== 'created' && cols[i].dataIndex !== 'modified') {
                 columns.push({
                     dataIndex: MasterApp.util.getDataIndex(cols[i]),
                     width: cols[i].width,
