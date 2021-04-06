@@ -115,6 +115,7 @@ function getParamsResultFilter(req, objects) {
             }
         }
     })
+
     result.push(req.body.idsection)
     result.push(req.session.id_rol)
     result.push(" WHERE " + where.join(" AND "))
