@@ -283,14 +283,14 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                 idtipodato: rec.data.idtipodato,
                 tipo: rec.data.tipo,
                 fk: rec.data.fk,
-                idoperador: idoperator,
-                operador: this.getOperator(rec, valor1),
+                idoperador: (valor1) ? idoperator : null,
+                operador: (valor1) ? this.getOperator(rec, valor1) : null,
                 operadores: rec.data.operadores,
                 idvalor: rec.data.idvalor,
                 valor1: valor1,
                 valor2: valor2,
                 cantparam: cantparam
-            })
+            });
         }, this)
         return datos;
     },
@@ -303,7 +303,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             var operator = (rec.data.operador) ? rec.data.operador : rec.data.operadores[0]['nombre'];
             idoperator = this.getOperatorDefault(rec.data.operadores, operator);
             cantparam = this.getCantParam(rec.data.operadores, operator);
-            rec.set('operador', operator);
+            if (val)
+                rec.set('operador', operator);
         }
         return new Array(idoperator, cantparam);
     },
@@ -314,7 +315,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var operators = (rec.data.operadores) ? rec.data.operadores : new Array();
         if (val != null && val != '' && operators.length > 0) {
             operator = (rec.data.operador) ? rec.data.operador : rec.data.operadores[0]['nombre'];
-            rec.set('operador', operator);
+            if (val)
+                rec.set('operador', operator);
         }
         return operator;
     },
