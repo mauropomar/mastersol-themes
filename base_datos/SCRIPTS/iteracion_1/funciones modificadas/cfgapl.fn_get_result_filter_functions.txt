@@ -1,0 +1,51 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_result_filter_functions
+(
+  IN  id_section  uuid,
+  IN  id_rol      uuid,
+  IN  fields      varchar[],
+  IN  functions   varchar[],
+  IN  where_aux  varchar
+)
+RETURNS varchar[] AS
+$$
+declare
+result_datas varchar[]; result_sections record;
+sqlEjec varchar; name_table varchar;
+enteros integer[];
+campos varchar[] = $3; funciones varchar[] = $4;
+valor json;
+str_where varchar = '';
+begin
+ SELECT REPLACE($5, 'dat.', '') into str_where;
+ 
+ FOR i IN 0..array_length(campos,1) LOOP
+     
+  IF funciones[i] = 'Contar' THEN   
+   SELECT cfgapl.fn_count($1,campos[i], str_where) INTO valor;
+       result_datas[i] = valor;
+   --return array_to_json(result_datas); 
+  ELSEIF funciones[i] = 'Promedio' THEN
+   SELECT cfgapl.fn_average($1,campos[i], str_where) INTO valor;
+      result_datas[i] = valor;
+   --return array_to_json(result_datas); 
+  ELSEIF funciones[i] = 'Sumar' THEN
+   SELECT cfgapl.fn_sum($1,campos[i], str_where) INTO valor;
+       result_datas[i] = valor;
+   --return array_to_json(result_datas); 
+  ELSEIF funciones[i] = 'Máximo' THEN
+   SELECT cfgapl.fn_max($1,campos[i], str_where)  INTO valor;
+    result_datas[i] = valor; 
+  ELSEIF funciones[i] = 'Mínimo' THEN
+   SELECT cfgapl.fn_min($1,campos[i], str_where) INTO valor;
+    result_datas[i] = valor;
+  END IF; 
+ END LOOP;
+ 
+ return result_datas;
+ 
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_result_filter_functions(uuid, uuid, varchar[], varchar[])
+  OWNER TO postgres;
