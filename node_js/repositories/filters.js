@@ -1,6 +1,7 @@
 const pool = require('../connection/server-db')
 const moment = require('moment')
 const objFilter = {}
+
 const getFiltersOperators = async (req) => {
     const params = [req.query.idsection]
     const query = "SELECT cfgapl.fn_get_filters_operators($1)"
@@ -26,22 +27,65 @@ const getFunctionsResume = async (req) => {
 }
 
 const getResultFiltersOperators = async (req, objects) => {
+    //Si hay totales, invocar a getTotalsFilterFunction para traerlos
+    const parse_totales = JSON.parse(req.body.totales);
+    var result_totals = [];
     const params_filter = getParamsResultFilter(req, objects)
     const query = "SELECT cfgapl.fn_get_result_filter_operators($1,$2,$3,$4)"
-    const result = await pool.executeQuery(query, params_filter)
-    if (result.success === false) {
-        return result
-    } else if (result.rows[0].fn_get_result_filter_operators == null) {
+    const result_filter = await pool.executeQuery(query, params_filter)
+    if (result_filter.success === false) {
+        return result_filter
+    } else if (result_filter.rows[0].fn_get_result_filter_operators == null) {
         return []
     }
-    return result.rows[0].fn_get_result_filter_operators
+
+    if (parse_totales.length !== 0) {
+        result_totals = await getTotalsFilterFunction(req.body.data, req.body.totales, objects, req)
+    }
+
+    return {'success': true, 'datos': result_filter.rows[0].fn_get_result_filter_operators, 'totales': result_totals}
 }
 
 const getResultFiltersFunctions = async (req, objects) => {
-    const params_parse = JSON.parse(req.body.data);
-    const params_filter_fn = getParamsResultFunctions(req, objects, params_parse)
-    const query = "SELECT cfgapl.fn_get_result_filter_functions($1,$2,$3,$4)"
-    const result = await pool.executeQuery(query, params_filter_fn)
+    const params_parse_data = JSON.parse(req.body.data);
+    const params_parse_filtros = JSON.parse(req.body.filtros);
+    var resultF = [], valor;
+    const result = [];
+    if(params_parse_data.length > 0) {
+        const params_filter_fn = getParamsResultFunctions(req, objects, params_parse_data, params_parse_filtros)
+        const query = "SELECT cfgapl.fn_get_result_filter_functions($1,$2,$3,$4,$5)"
+        const result = await pool.executeQuery(query, params_filter_fn)
+
+        if (result.success === false) {
+            return result
+        } else if (result.rows[0].fn_get_result_filter_functions == null) {
+            return []
+        }
+        const resultAux = result.rows[0].fn_get_result_filter_functions
+
+        params_parse_data.forEach(function (item, index, arr) {
+            valor = resultAux[index]
+            if (resultAux[index].indexOf('-') !== -1) { //if date
+                valor = moment(resultAux[index], "YYYY-MM-DD' H:m:s").format('DD/MM/YYYY H:m:s')
+            }
+            resultF.push({
+                'dataIndex': item.nombrecampo,
+                'funcion': item.nombrefuncion,
+                'valor': valor
+            })
+        })
+    }
+
+    return {'success': true, 'datos': resultF}
+}
+
+const getTotalsFilterFunction = async (filtros, totales, objects, req) => {
+    const params_parse_data = JSON.parse(totales);
+    const params_parse_filtros = JSON.parse(filtros);
+
+    const params_filter_fn = getParamsResultFunctions(req, objects, params_parse_data, params_parse_filtros)
+    const query = "SELECT cfgapl.fn_get_result_filter_functions($1,$2,$3,$4,$5)"
+    const result = await pool.executeQuery(query, params_filter_fn);
 
     if (result.success === false) {
         return result
@@ -51,7 +95,7 @@ const getResultFiltersFunctions = async (req, objects) => {
 
     const resultAux = result.rows[0].fn_get_result_filter_functions
     var resultF = [], valor;
-    params_parse.forEach(function (item, index, arr) {
+    params_parse_data.forEach(function (item, index, arr) {
         valor = resultAux[index]
         if (resultAux[index].indexOf('-') !== -1) { //if date
             valor = moment(resultAux[index], "YYYY-MM-DD' H:m:s").format('DD/MM/YYYY H:m:s')
@@ -63,6 +107,7 @@ const getResultFiltersFunctions = async (req, objects) => {
         })
     })
     return {'success': true, 'datos': resultF}
+
 }
 
 function getParamsResultFilter(req, objects) {
@@ -123,17 +168,70 @@ function getParamsResultFilter(req, objects) {
     return result
 }
 
-function getParamsResultFunctions(req, objects, params_parse) {
-    var result = [], fields = [], functions = []
-    params_parse.forEach(function (item, index, arr) {
+function getParamsResultFunctions(req, objects, params_parse_data, params_parse_filtros) {
+    var result = [], fields = [], functions = [],
+    where = [], operador = "", date_start = "", date_end = "", valor = false;
+    params_parse_data.forEach(function (item, index, arr) {
         fields.push(item.nombrecampo);
         functions.push(item.nombrefuncion);
+    })
+
+    params_parse_filtros.forEach(function (item, index, arr) {
+        operador = "";
+        date_start = "";
+        date_end = "";
+        valor = false;
+        operador = objects.utiles.findByElementInArray(item.operadores, item.idoperador)
+        if (item.fk) {
+            if (operador.nombre === 'contiene') {
+                where.push(' dat.' + item.nombrecampo + " = " + "'" + item.idvalor + "'");
+            } else if (item.tipo === 'string' && operador.nombre === 'contiene') {
+                where.push(' dat.' + item.nombrecampo + " ILIKE '%" + item.idvalor.replace(/\s/g, "%") + "%'");
+            }
+        } else {
+            if (item.cantparam === 2) {
+                if (item.tipo === 'date' && operador.nombre === 'entre' && item.valor1 && item.valor2) {
+                    date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD') + ' 00:00:00'
+                    date_end = moment(item.valor2, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD') + ' 23:59:59'
+                    where.push(' dat.' + item.nombrecampo + " BETWEEN '" + date_start + "' AND " + "'" + date_end + "'");
+                }
+            } else {
+                if (operador.nombre === 'contiene') {
+                    where.push(' dat.' + item.nombrecampo + " ILIKE '%" + item.valor1.replace(/\s/g, "%") + "%'");
+                } else if (item.tipo === 'string' && operador.nombre === 'contiene') {
+                    where.push(' dat.' + item.nombrecampo + " ILIKE '%" + item.valor1.replace(/\s/g, "%") + "%'");
+                } else if (item.tipo === 'boolean' && operador.nombre === '=') {
+                    valor = item.valor1 ? 'true' : 'false';
+                    where.push(' dat.' + item.nombrecampo + " = " + valor);
+                } else if (item.tipo === 'number' && operador.nombre === '=' && item.valor1) {
+                    where.push(' dat.' + item.nombrecampo + " = " + item.valor1);
+                } else if (item.tipo === 'number' && operador.nombre === '>' && item.valor1) {
+                    where.push(' dat.' + item.nombrecampo + " > " + item.valor1);
+                } else if (item.tipo === 'number' && operador.nombre === '<' && item.valor1) {
+                    where.push(' dat.' + item.nombrecampo + " < " + item.valor1);
+                } else if (item.tipo === 'date' && operador.nombre === '=') {
+                    date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
+                    where.push(item.nombrecampo + " ='" + date_start + "'");
+                } else if (item.tipo === 'date' && operador.nombre === '>') {
+                    date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
+                    where.push(' dat.' + item.nombrecampo + " > '" + date_start + "'");
+                } else if (item.tipo === 'date' && operador.nombre === '<') {
+                    date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
+                    where.push(' dat.' + item.nombrecampo + " < '" + date_start + "'");
+                }
+            }
+        }
     })
 
     result.push(req.body.idsection)
     result.push(req.session.id_rol)
     result.push("{" + fields.join(',') + "}")
     result.push("{" + functions.join(',') + "}")
+    if(where.length !== 0)
+        where = " WHERE " + where.join(" AND ")
+    else
+        where = "";
+    result.push(where)
     return result
 }
 

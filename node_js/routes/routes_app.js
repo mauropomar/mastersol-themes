@@ -195,7 +195,7 @@ router.post('/resultfilteroperators', async function (req, res) {
     if (result.success === false) {
         return res.json(result)
     } else {
-        return res.json({'success': true, 'datos': result})
+        return res.json({'success': true, 'datos': result.datos, 'totales': result.totales})
     }
 })
 
