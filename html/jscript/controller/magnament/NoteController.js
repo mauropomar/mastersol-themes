@@ -1,5 +1,6 @@
 Ext.define('MasterSol.controller.magnament.NoteController', {
     extend: 'Ext.app.Controller',
+    isLoading: false,
     control: {
         'textarea[name=textarea-note]': { // matches the view itself
             change: 'changeTextArea'
@@ -15,16 +16,18 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
             frame: false,
             border: 1,
             padding: 2,
-            resizable:true,
+            resizable: true,
             idNota: id,
             tools: [{
                 iconCls: 'fa fa-save',
                 hidden: true,
+                tooltip:'Guardar Cambios',
                 listeners: {
                     click: this.saveChanges
                 }
             }, {
                 iconCls: 'fa fa-trash',
+                tooltip:'Borrar',
                 listeners: {
                     click: this.delete
                 }
@@ -42,8 +45,10 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
     },
 
     saveChanges(b) {
+        b.setDisabled(true);
         var gridsection = MasterApp.globals.getGridSection();
         var form = b.up('form');
+        document.getElementById(form.id).style.border = 'transparent';
         var textarea = form.down('textarea');
         var mask = new Ext.LoadMask(form, {
             msg: 'Guardando...'
@@ -75,7 +80,8 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
-
+                    form.idNota = json.datos;
+                    b.setDisabled(false);
                 } else {
                     MasterApp.util.showMessageInfo(json.message);
                 }
@@ -95,6 +101,8 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
             Ext.ComponentQuery.query('#' + idbutton)[0].show();
         else
             Ext.ComponentQuery.query('#' + idbutton)[0].hide();
+        if (!this.isLoading)
+            document.getElementById(form.id).style.border = '2px solid red';
     },
 
     getAll: function () {
@@ -130,6 +138,7 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
         Ext.Ajax.request(obtener);
     },
     setNotas: function (datos) {
+        this.isLoading = true;
         Ext.ComponentQuery.query('note-view')[0].removeAll();
         for (var i = 0; i < datos.length; i++) {
             var idnote = datos[i]['id'];
@@ -140,6 +149,7 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
             var idbutton = form.down('textarea').up('form').tools[0].id;
             Ext.ComponentQuery.query('#' + idbutton)[0].hide();
         }
+        this.isLoading = false;
     },
 
     delete: function (me, e, eOpts) {
