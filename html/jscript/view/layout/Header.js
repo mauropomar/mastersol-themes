@@ -2,8 +2,7 @@ Ext.define('MasterSol.view.layout.Header', {
     extend: 'Ext.toolbar.Toolbar',
     height: 40,
     xtype: 'toolbar-header',
-    requires: [/*'MasterSol.view.layout.HeaderController', 'MasterSol.view.layout.ComboTemas'*/, 'MasterSol.view.plugins.Badgeable'],
-    // controller: 'header',
+    requires: ['MasterSol.view.plugins.Badgeable'],
     items: [{
         xtype: 'tbtext',
         id: 'tbtext-title',
@@ -22,7 +21,7 @@ Ext.define('MasterSol.view.layout.Header', {
             tooltip: 'En Cascada',
             tooltipType: 'title',
             disabled: true,
-            width:40,
+            width: 40,
             handler: function () {
                 MasterApp.header.applyCascade();
             }
@@ -34,7 +33,7 @@ Ext.define('MasterSol.view.layout.Header', {
             tooltip: 'En Mosaico',
             tooltipType: 'title',
             disabled: true,
-            width:40,
+            width: 40,
             handler: function () {
                 MasterApp.header.applyMosaic();
             }
@@ -45,7 +44,7 @@ Ext.define('MasterSol.view.layout.Header', {
             handler: 'irInicio',
             tooltip: 'Ir a Inicio',
             tooltipType: 'title',
-            width:40,
+            width: 40,
             handler: function () {
                 MasterApp.header.goHome();
             }
@@ -54,10 +53,10 @@ Ext.define('MasterSol.view.layout.Header', {
             xtype: 'button',
             iconCls: 'fa fa-bell',
             tooltip: 'Alertas',
-            id:'btn-alert',
+            id: 'btn-alert',
             tooltipType: 'title',
-            badgeText:'',
-            width:40,
+            badgeText: '',
+            width: 40,
             handler: function () {
                 MasterApp.header.showAlerts();
             }
@@ -67,7 +66,7 @@ Ext.define('MasterSol.view.layout.Header', {
             iconCls: 'fa fa-sign-out',
             tooltip: 'Cerrar Sesión',
             tooltipType: 'title',
-            width:40,
+            width: 40,
             handler: function () {
                 MasterApp.header.logout();
             }

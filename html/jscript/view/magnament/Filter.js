@@ -4,7 +4,9 @@ Ext.define('MasterSol.view.magnament.Filter', {
     requires: [
         'MasterSol.store.magnament.FilterStore',
         'Ext.selection.CellModel',
-        'MasterSol.view.magnament.ComboSign'
+        'MasterSol.view.magnament.ComboSign',
+        'MasterSol.view.plugins.DateTimeField',
+        'MasterSol.view.plugins.DateTimePicker'
     ],
     /*  features: [{
           ftype: 'grouping',

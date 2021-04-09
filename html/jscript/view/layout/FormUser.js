@@ -31,5 +31,5 @@ Ext.define('MasterSol.view.layout.FormUser', {
     }, {
         xtype: 'combolanguage',
         id: 'combolanguage'
-    }]
+    }, ]
 });
