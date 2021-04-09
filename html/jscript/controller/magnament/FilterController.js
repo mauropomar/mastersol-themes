@@ -51,6 +51,9 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         if (record.data.tipo == 'date') {
             this.setDateField(record, column);
         }
+        if (record.data.tipo == 'timestamp without time zone') {
+            this.setDateTimeField(record, column);
+        }
     },
 
     // en dependencia del tipo de datos cargar los filtros correspondientes
@@ -400,6 +403,22 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         column.setEditor(edit);
     },
 
+    setDateTimeField: function (rec, column) {
+        var edit = Ext.create('MasterSol.view.plugins.DateTime');
+        var date = '';
+        if (column.dataIndex === 'valor1') {
+            date = (rec.data.valor2) ? new Date(rec.data.valor2) : '';
+            edit.setMaxValue(date);
+        }
+        ;
+        if (column.dataIndex === 'valor2') {
+            date = (rec.data.valor1) ? new Date(rec.data.valor1) : '';
+            edit.setMinValue(date);
+        }
+        ;
+        column.setEditor(edit);
+    },
+
     specialKey: function (field, e) {
         var grid = Ext.ComponentQuery.query('#filter-view')[0];
         var store = grid.getStore();
@@ -466,6 +485,10 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         }
         if (record.data.tipo == 'date') {
             var retval = Ext.util.Format.date(value, 'd/m/Y');
+            return retval;
+        }
+        if (record.data.tipo == 'timestamp without time zone') {
+            var retval = Ext.util.Format.date(value, 'd/m/Y h:i:s');
             return retval;
         }
         return value;
