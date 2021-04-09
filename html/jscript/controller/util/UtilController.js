@@ -237,6 +237,9 @@ Ext.define('MasterSol.controller.util.UtilController', {
             }
             return value;
         }
+        if (type == 'timestamp without time zone' && value != null) {
+            return Ext.Date.format(value, 'd/m/Y h:i:s');
+        }
         if (type == 'boolean') {
             return (value == 'false' || value == false) ? false : true;
         }
