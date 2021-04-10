@@ -1,0 +1,1 @@
+ALTER TABLE security.footprints ALTER COLUMN oldvalue  DROP  NOT NULL
