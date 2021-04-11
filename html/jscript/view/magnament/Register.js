@@ -29,7 +29,7 @@ Ext.define('MasterSol.view.magnament.Register', {
     }, {
         text:'Valor',
         dataIndex:'valor',
-        flex: 2,
+        flex: 3,
         editor: {
             xtype: 'textfield',
         },

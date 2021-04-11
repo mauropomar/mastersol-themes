@@ -51,7 +51,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         if (record.data.tipo == 'date') {
             this.setDateField(record, column);
         }
-        if (record.data.tipo == 'timestamp without time zone') {
+        if (record.data.tipo == 'datetime') {
             this.setDateTimeField(record, column);
         }
     },
@@ -487,7 +487,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             var retval = Ext.util.Format.date(value, 'd/m/Y');
             return retval;
         }
-        if (record.data.tipo == 'timestamp without time zone') {
+        if (record.data.tipo == 'datetime') {
             var retval = Ext.util.Format.date(value, 'd/m/Y h:i:s');
             return retval;
         }

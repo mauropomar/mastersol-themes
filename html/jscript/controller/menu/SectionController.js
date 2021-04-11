@@ -35,6 +35,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.loadDataTabActive(grid, record, 0);
         MasterApp.util.setStyleWindow(grid.panel);
         MasterApp.magnament.getData(grid.panel);
+        MasterApp.tools.setButtons();
     },
 
     dblclickSectionPrincipal: function (grid, td, cellIndex, record) {
@@ -50,6 +51,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.util.setAplyMaxLine();
         MasterApp.util.setStyleWindow(grid.panel);
         MasterApp.magnament.getData(grid.panel);
+        MasterApp.tools.setButtons();
     },
 
     dblclickSection: function (grid, td, cellIndex, record) {
@@ -60,24 +62,26 @@ Ext.define('MasterSol.controller.menu.SectionController', {
 
     // activar y obtener los datos de la seccion hija activa
     loadDataTabActive: function (grid, rec, level) {
-        var windowId = (grid.panel)?grid.panel.idmenu:grid.idmenu;
-        var idsection = (grid.panel)?grid.panel.idsection:grid.idsection;
+        var windowId = (grid.panel) ? grid.panel.idmenu : grid.idmenu;
+        var idsection = (grid.panel) ? grid.panel.idsection : grid.idsection;
         var tabs = Ext.ComponentQuery.query('tabpanel[idmenu=' + windowId + ']');
         if (tabs[level] && tabs[level].items.items.length > 0) {//si existe el tabs en ese nivel y tiene secciones hijas
             var panel = tabs[level].getActiveTab();
             if (!panel) {
                 panel = tabs[level].items.items[0];
-           //     tabs[level].setActiveTab(0);
             }
-            this.setIdRecordParent(tabs[level]);
-            this.getData(this.IdRecParent, panel);
-            this.resetAllSectionNotImediatly(tabs, level);
+            // se verifica que la sesion que se esta seleccionando tenga hijo
+            if (grid.panel.idsection == panel.idparent) {
+                this.setIdRecordParent(tabs[level]);
+                this.getData(this.IdRecParent, panel);
+                this.resetAllSectionNotImediatly(tabs, level);
+            }
         }
+
         var count = this.getCountSections(idsection, level);
         var disabled = (count == 0) ? false : true;
         var btn = MasterApp.tools.getBtnTools(grid, 'btn_trash');
-        btn.setDisabled(disabled);
-        if(!tabs[level]){
+        if (!tabs[level]) {
             MasterApp.util.setStyleSection();
         }
     },
@@ -132,7 +136,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         tabMagnament.idmenumag = tabPanel.idmenu;
         tabMagnament.idsectionmag = newCard.idsection;
         MasterApp.util.setAplyMaxLine();
-       },
+    },
 
     findChildOfSection: function (tabPanel, newCard) {
         var level = tabPanel.level;
@@ -166,7 +170,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 var json = Ext.JSON.decode(response.responseText);
                 var grid = newCard.down('gridpanel');
                 grid.getStore().loadData(json);
-            //    MasterApp.util.setAplyMaxLine();
                 MasterApp.util.setStyleSection(newCard);
             },
             failure: function (response) {
@@ -216,15 +219,13 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         winHeight = window.getHeight();
         window.setWidth(300);
         button.hide();
-        var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
-        btn.show();
-        var arrayBtn = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
-        MasterApp.tools.setVisibleBtn(window, arrayBtn, true);
         window.alignTo(panelMenu, 'bl-bl');
         this.setPositionWindow(window);
         MasterApp.magnament.isMenuTabMagnament(window);
         this.adjustOtherWindowsMaximize();
-        MasterApp.tools.showButtonsNotDefault(window, false);
+        /*   MasterApp.tools.showButtonsNotDefault(window, false);
+           var btn = MasterApp.tools.getBtnTools(window, 'btn_refresh');
+           btn.hide();*/
     },
 
     maximize: function (button, evt, toolEl, owner, tool) {

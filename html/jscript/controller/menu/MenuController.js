@@ -68,7 +68,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         window.idmenu = this.menu.id;
         window.isAlert = isAlert;
         window.showAt(0, 38);
-        MasterApp.tools.setButtons(window, json[0].buttons);
+        MasterApp.tools.setButtonsInit(window, json[0].buttons);
         this.windowParent = window;
         this.panelMenu = window.down('panel').down('container');
         this.generateLevels(json);

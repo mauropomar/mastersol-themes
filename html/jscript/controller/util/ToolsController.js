@@ -1,11 +1,11 @@
 Ext.define('MasterSol.controller.util.ToolsController', {
     extend: 'Ext.app.Controller',
     init: function () {
-
+        this.lastIdSectionSelct = null;
     },
 
     getArrayBtn: function () {
-        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print'];
         return array;
     },
 
@@ -18,24 +18,43 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         }
     },
 
-    setButtons: function (window, newbuttons) {
+    setButtons: function () {
+        var grid = MasterApp.globals.getGridSection();
+        var idsection = grid.idsection;
+        if (grid) {
+            var window = grid.up('window');
+            if (idsection !== this.lastIdSectionSelct) {
+                var newTools = grid.btnTools;
+                this.removeAll(window);
+                this.add(window, newTools);
+                this.lastIdSectionSelct = idsection;
+            }
+        }
+    },
+
+    setButtonsInit: function (window, newbuttons) {
         this.removeAll(window);
-        this.add(window, newbuttons);
+        this.add(window, newbuttons, true);
+
     },
 
     removeAll: function (window) {
         var header = window.getHeader();
         var tools = window.getHeader().tools;
-        for (var i = 0; i < tools.length; i++) {
+        for (var i = tools.length - 1; i >= 0; i--) {
             var query = '#' + tools[i]['id'];
-            header.remove(Ext.ComponentQuery.query(query)[0]);
+            if (tools[i].url) {
+                header.remove(Ext.ComponentQuery.query(query)[0]);
+                tools.splice(i, 1);
+            }
         }
     },
 
-    add: function (window, newbuttons) {
-        if(newbuttons == null)
+    add: function (window, newbuttons, addDefault) {
+        if (newbuttons == null)
             return;
         var header = window.getHeader();
+        var array = [];
         for (var i = 0; i < newbuttons.length; i++) {
             var obj = {
                 action: newbuttons[i].action,
@@ -49,12 +68,15 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 handler: function (evt, toolEl, owner, tool) {
                     this.callFunction(evt, toolEl, owner, tool);
                 }
-            }
-            header.add(obj);
+            };
+            array.push(obj);
         }
-        var others = this.getButtonsDefaut(window);
-        for (var i = 0; i < others.length; i++) {
-            header.add(others[i]);
+        header.add(1, array);
+        if (addDefault) {
+            var others = this.getButtonsDefaut(window);
+            for (var i = 0; i < others.length; i++) {
+                header.add(others[i]);
+            }
         }
     },
 
@@ -107,22 +129,16 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         for (var j = 0; j < tools.length; j++) {
             if (!tools[j].default) {
                 var query = '#' + tools[j]['id'];
-                Ext.ComponentQuery.query(query)[0].setVisible(show);
+                if (Ext.ComponentQuery.query(query)[0])
+                    Ext.ComponentQuery.query(query)[0].setVisible(show);
+                else
+                    console.log(tools[j]['name']);
             }
         }
     },
 
     getButtonsDefaut: function (win) {
         return [{
-            iconCls: 'fa fa-refresh',
-            tooltip: 'Refrescar',
-            default: true,
-            name: 'btn_refresh',
-            handler: function (evt, toolEl, owner, tool) {
-                var window = owner.up('window');
-                MasterApp.section.refreshSectionActive(window);
-            }
-        }, {
             iconCls: 'fa fa-plus',
             tooltip: 'Agregar',
             hidden: win.isAlert,

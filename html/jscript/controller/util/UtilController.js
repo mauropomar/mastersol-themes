@@ -237,7 +237,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
             }
             return value;
         }
-        if (type == 'timestamp without time zone' && value != null) {
+        if (type == 'datetime' && value != null) {
             return Ext.Date.format(value, 'd/m/Y h:i:s');
         }
         if (type == 'boolean') {
@@ -265,7 +265,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
 
     getNColumnSection() {
         var section = MasterApp.globals.getGridSection();
-        var n_column = (section.colSelected !== null)? section.columns[section.colSelected]['n_column']:null;
+        var n_column = (section.colSelected !== null) ? section.columns[section.colSelected]['n_column'] : null;
         return n_column;
     },
 
