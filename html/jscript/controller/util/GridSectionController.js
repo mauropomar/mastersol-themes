@@ -14,8 +14,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             section_checked: atributos.section_checked,
             store: this.getStore(columns, data),
             height: height,
-            max_line:section.max_lines,
-            read_only:section.read_only,
+            max_line: section.max_lines,
+            read_only: section.read_only,
             region: 'center',
             autoScroll: true,
             plugins: [{
@@ -77,6 +77,11 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                             type: 'boolean',
                             yesText: 'Verdadero',
                             noText: 'Falso'
+                        },
+                        listeners: {
+                            beforecheckchange: function (me, rowIndex, checked, record, e, eOpts) {
+                                return false;
+                            }
                         }
                     })
                 }
@@ -180,8 +185,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         fk: cols[i].fk,
                         filter: {
                             type: 'date',
-                            beforeText:'Antes',
-                            afterText:'Déspues',
+                            beforeText: 'Antes',
+                            afterText: 'Déspues',
                             onText: '='
                         },
                         renderer: function (value, record) {
