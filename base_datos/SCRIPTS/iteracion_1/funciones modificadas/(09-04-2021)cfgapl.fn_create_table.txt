@@ -1,0 +1,143 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_create_table()
+RETURNS trigger AS
+$$
+declare
+  rec_table     record;
+  id_user uuid;
+begin
+SELECT id INTO id_user FROM security.users WHERE userx = trim(session_user::TEXT);
+
+IF NEW.namex is not null THEN     
+  IF NEW.n_schema is NULL THEN 
+     NEW.n_schema= 'public';
+  ELSE
+     NEW.n_schema=translate(lower(NEW.n_schema),'áúóéíñ!"#$%&/()=?¡¿+*[]}{-.,\+0123456789ü ^Ç_:;<>"','');
+     BEGIN
+      IF NOT EXISTS(select id from cfgapl.schemes where namex = NEW.n_schema) THEN  
+       INSERT INTO cfgapl.schemes(namex,id_capsules) VALUES (NEW.n_schema,NEW.id_capsules);
+       EXECUTE('CREATE SCHEMA '|| NEW.n_schema ||' AUTHORIZATION postgres');
+      END IF;
+     EXCEPTION when duplicate_schema then
+      return NEW;
+     END;
+  END IF;   
+  
+  ALTER TABLE cfgapl.tables_properties DISABLE TRIGGER ALL; 
+  ALTER TABLE cfgapl.tables_indexes DISABLE TRIGGER ALL;
+  ALTER TABLE cfgapl.tables_foreignkeys DISABLE TRIGGER ALL;
+  ALTER TABLE cfgapl.tables_triggers DISABLE TRIGGER ALL;
+  
+  BEGIN  
+   Execute ('CREATE TABLE '||NEW.n_schema||'."'||NEW.n_table||'" ('||
+   'id               uuid NOT NULL DEFAULT gen_random_uuid(),'||
+   'id_organizations uuid NOT NULL DEFAULT ''b37ac1cb-93db-435a-bb2a-76f6b2fef10e'','||
+   'active           boolean NOT NULL DEFAULT true,'||
+   'imported         boolean NOT NULL DEFAULT false,'||
+   'created          timestamp WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,'||
+   'modified         timestamp WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,'|| 
+   'creator          uuid NULL,'||
+   'modifier         uuid NULL,'||
+   'CONSTRAINT '||NEW.n_schema||'_'||NEW.n_table||'_id_pk '||
+    'PRIMARY KEY (id) '||
+    'WITH (FILLFACTOR =100), '||  
+    'CONSTRAINT '||NEW.n_schema||'_'||NEW.n_table||'_id_organizations_fk '||
+    'FOREIGN KEY (id_organizations) '||
+    'REFERENCES entities.organizations(id) '||
+    'ON DELETE RESTRICT '||
+    'ON UPDATE CASCADE'||
+   ') WITH (OIDS = FALSE,FILLFACTOR = 50);');
+  EXCEPTION WHEN OTHERS THEN END;
+  
+  INSERT INTO cfgapl.tables_properties (id_tables, namex, n_column, description, id_datatype, nonull, dec_count,auditable,default_value, id_capsules, creator, modifier) 
+   VALUES (NEW.id,'id',              'id',              'Unique identifier of the table',                '0baf5340-6c72-4f9f-8f19-01d53ce3c412',true,null,true,'gen_random_uuid()',NEW.id_capsules, id_user, id_user),
+          (NEW.id,'id_organizations','id_organizations','Organizaion identifier',                        '0baf5340-6c72-4f9f-8f19-01d53ce3c412',true,null,true,  null,               NEW.id_capsules, id_user, id_user),
+          (NEW.id,'active',          'active',          'Define if the record is active',                '612759bb-ef62-400e-bd18-3308d6746f46',true,null,true,  null,               NEW.id_capsules, id_user, id_user),
+          (NEW.id,'imported',        'imported',        'Define if the record was imported',             '612759bb-ef62-400e-bd18-3308d6746f46',true,null,true,  'FALSE',            NEW.id_capsules, id_user, id_user),
+          (NEW.id,'created',         'created',         'Register the record date and time was created', '52d289f4-4548-4ffa-a4d6-faabd4b802d6',true,null,true,  'CURRENT_TIMESTAMP',NEW.id_capsules, id_user, id_user),
+          (NEW.id,'modified',        'modified',        'Register the last date and time record updated','52d289f4-4548-4ffa-a4d6-faabd4b802d6',true,null,true,  'CURRENT_TIMESTAMP',NEW.id_capsules, id_user, id_user),
+          (NEW.id,'creator',         'creator',         'Register the user that create the record',		 '0baf5340-6c72-4f9f-8f19-01d53ce3c412',false,null,true, null,				 NEW.id_capsules, id_user, id_user),
+          (NEW.id,'modifier',        'modifier',        'Register the user that modified the record',	 '0baf5340-6c72-4f9f-8f19-01d53ce3c412',false,null,true, null,				 NEW.id_capsules, id_user, id_user)
+		  ;            
+  
+  INSERT INTO cfgapl.tables_indexes
+    (id_tables, namex, description, is_pk,is_unique, n_names_tables_properties, creator, modifier)
+    VALUES
+    (NEW.id,NEW.n_schema||'_'||NEW.n_table||'_id_pk','Primary index of table '||NEW.n_table, true,true,'{id}', id_user, id_user);
+
+  INSERT INTO cfgapl.tables_foreignkeys
+    (id_tables, namex, description, local_fields, foreign_fields, foreign_table_schema, foreign_table, rule_update, rule_delete, creator, modifier)
+  VALUES
+    (NEW.id,NEW.n_schema||'_'||NEW.n_table||'_id_organizations_fk','Organizations foreign key','{id_organizations}','{id}', 'entities', 'organizations', 'CASCADE', 'RESTRICT', id_user, id_user);
+    
+  If NEW.has_tree Then
+     Execute ('alter table '||NEW.n_schema||'."'||NEW.n_table||'" add column id_parent uuid ,add column path ltree');
+     INSERT INTO cfgapl.tables_properties (id_tables, namex, n_column, description, id_datatype,nonull, dec_count, auditable,default_value, id_capsules, creator, modifier) 
+     VALUES 
+      (NEW.id,'id_parent','id_parent','Parent record identifier','0baf5340-6c72-4f9f-8f19-01d53ce3c412',true,null,true,null,NEW.id_capsules, id_user, id_user),
+      (NEW.id,'path','path','Path of the Tree','7358cc08-d2fa-4444-a818-9528c6259bc3',true,null,true,null,NEW.id_capsules, id_user, id_user);
+     Execute ('ALTER TABLE '||NEW.n_schema||'.'||NEW.n_table||
+              ' ADD CONSTRAINT '||NEW.n_schema||'_'||NEW.n_table||'_id_parent_fk '||
+              ' FOREIGN KEY (id_parent) '||
+              ' REFERENCES '||NEW.n_schema||'.'||NEW.n_table||'(id) '||
+              ' ON DELETE RESTRICT '||
+              ' ON UPDATE CASCADE');      
+     Execute ('CREATE TRIGGER '||NEW.n_schema||'_'||NEW.n_table||'_auid_fn_update_tree_node_after_delete '||
+              'AFTER DELETE '||
+              'ON '||NEW.n_schema||'.'||NEW.n_table||' '||
+              'FOR EACH ROW '||
+              'EXECUTE PROCEDURE public.fn_update_tree_node_after_delete()');
+  
+     Execute ('CREATE TRIGGER '||NEW.n_schema||'_'||NEW.n_table||'_bdiu_fn_add_udt_del_tree_path '||
+              'BEFORE UPDATE OR INSERT OR DELETE '||
+              'ON '||NEW.n_schema||'.'||NEW.n_table||' '||
+              'FOR EACH ROW '||
+              'EXECUTE PROCEDURE public.fn_add_udt_del_tree_path()');
+     INSERT INTO cfgapl.tables_triggers
+       (id_capsules, id_tables, namex, description, event_manipulation, event_object_schema, action_statement, action_orientation, action_timing,function_sql, creator, modifier)
+     VALUES
+       (NEW.id_capsules,NEW.id,NEW.n_schema||'_'||NEW.n_table||'_auid_fn_update_tree_node_after_delete', 'Trigger for delete node', 'DELETE', NEW.n_schema, 'EXECUTE PROCEDURE fn_update_tree_node_after_delete()', 'ROW', 'AFTER','', id_user, id_user),
+       (NEW.id_capsules,NEW.id,NEW.n_schema||'_'||NEW.n_table||'_bdiu_fn_add_udt_del_tree_path', 'Trigger to insert or update path node', 'UPDATE OR INSERT OR DELETE', NEW.n_schema, 'EXECUTE PROCEDURE fn_add_udt_del_tree_path()', 'ROW', 'BEFORE','', id_user, id_user);
+  End If;
+  
+  If NEW.has_order Then
+    BEGIN
+     Execute ('alter table '||NEW.n_schema||'."'||NEW.n_table||'" add column  orderx serial NOT NULL;');
+     INSERT INTO cfgapl.tables_properties (id_tables, namex, n_column, description, id_datatype, 
+                                        nonull, dec_count, auditable,default_value, id_capsules, creator, modifier) 
+     VALUES 
+     (NEW.id,'orderx','orderx','Record order','27698fa8-0c93-4117-9636-abc7fe65f183',true,null,true,null,NEW.id_capsules, id_user, id_user);     
+    EXCEPTION WHEN duplicate_column THEN END; 
+     Execute ('CREATE TRIGGER '||NEW.n_schema||'_'||NEW.n_table||'_bi_public_fn_return_last_order_trg '||
+              'BEFORE INSERT '||
+              'ON '||NEW.n_schema||'."'||NEW.n_table||'" '||
+              'FOR EACH ROW '||
+              'EXECUTE PROCEDURE public.fn_return_last_order();');
+     
+     INSERT INTO cfgapl.tables_triggers
+       (id_capsules, id_tables, namex, description, event_manipulation, event_object_schema, action_statement, action_orientation, action_timing,function_sql, creator, modifier)
+     VALUES
+       (NEW.id_capsules,NEW.id,NEW.n_schema||'_'||NEW.n_table||'_bi_public_fn_return_last_order_trg', 'Trigger for aggregate order', 'INSERT', NEW.n_schema, 'EXECUTE PROCEDURE fn_return_last_order()', 'ROW', 'BEFORE','', id_user, id_user);     
+  End If;
+  
+  Execute ('ALTER TABLE '||NEW.n_schema||'."'||NEW.n_table||'" OWNER TO postgres;');
+  
+  Execute ('COMMENT ON TABLE '||NEW.n_schema||'."'||NEW.n_table||'" IS '''||'Store data for "'||COALESCE(NEW.description,'Unknown')||'"''');
+
+  ALTER TABLE cfgapl.tables_properties ENABLE TRIGGER ALL;
+  ALTER TABLE cfgapl.tables_indexes ENABLE TRIGGER ALL;
+  ALTER TABLE cfgapl.tables_foreignkeys ENABLE TRIGGER ALL;
+  ALTER TABLE cfgapl.tables_triggers ENABLE TRIGGER ALL;
+         
+  return NEW;
+ELSE
+ return null;
+END IF;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_create_table()
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_create_table()
+  IS 'Create table for data storage';

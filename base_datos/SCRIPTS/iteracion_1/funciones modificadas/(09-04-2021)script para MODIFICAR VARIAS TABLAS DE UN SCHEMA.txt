@@ -1,0 +1,15 @@
+do $$
+declare selectrow record;
+begin
+for selectrow in
+    select 'ALTER TABLE '|| t.schemaname || '.'|| t.mytable || ' ADD COLUMN creator uuid NULL, 
+    ADD COLUMN modifier uuid NULL;' as script 
+   from (select schemaname, tablename as mytable from  pg_tables where schemaname  ='security') t
+loop
+    begin
+        execute selectrow.script;
+        EXCEPTION WHEN duplicate_column THEN CONTINUE;
+    END;
+end loop;
+end;
+$$;

@@ -45,6 +45,7 @@ const deleteRegister = async (req) => {
     const params_parse = JSON.parse(req.body.id);
     const ids = "{" + params_parse.join(',') + "}"
     const params_delete = [req.body.idsection, ids, req.session.id_user]
+    //-----Eliminar despues de actualizar modifier
     const query = "SELECT cfgapl.fn_delete_register($1,$2,$3)"
     const result = await pool.executeQuery(query, params_delete)
     if (result.success === false) {
@@ -95,6 +96,9 @@ const getParamsInsert = (req) => {
             }
         }
     })
+    //Adjuntar a arreglos de columnas y valores el creator
+    columnasInsertAux.push('creator')
+    valuesInsertAux.push("'" + req.session.id_user + "'")
 
     result.push(req.body.idsection)
     result.push(columnasInsertAux.join(','))
@@ -134,11 +138,16 @@ const getParamsUpdate = (req) => {
             } else if (item.tipo === 'boolean') {
                 valor = item.valor ? 'true' : 'false';
                 valuesInsertAux.push(item.field + " = " + valor)
+            } else if (item.tipo === 'date' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone') {
+                valuesInsertAux.push(item.field + " = '" + item.valor + "'")
             } else {
                 valuesInsertAux.push(item.field + " = " + item.valor)
             }
         }
     })
+    //Adjuntar el mofifier
+    valuesInsertAux.push("modifier = '" + req.session.id_user + "'" )
 
     result.push(req.body.idsection)
     result.push(valuesInsertAux.join(','))

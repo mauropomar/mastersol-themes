@@ -1,0 +1,72 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_delete_register
+(
+  IN  idsection  uuid,
+  IN  id         uuid[],
+  IN  iduser     uuid  
+)
+RETURNS varchar AS
+$$
+declare
+cont integer = 1;
+ids uuid[] = $2;
+id_user uuid = $3;
+sqlDelete varchar;
+sqlUpdate varchar;
+table_delete varchar;
+id_delete varchar;
+rec_section record;
+begin
+
+
+IF not $1 is null THEN
+  SELECT tb.n_schema,tb.n_table INTO rec_section
+  FROM cfgapl.sections s
+  JOIN cfgapl.tables tb on(s.id_tables = tb.id)
+  WHERE s.id = $1;
+
+  WHILE cont <  array_length(ids,1) + 1 LOOP
+  sqlUpdate = CONCAT('UPDATE ',rec_section.n_schema,'.',rec_section.n_table, ' SET modifier = ''',id_user,''' WHERE id = ''',ids[cont],'''');  
+  sqlDelete = CONCAT('DELETE FROM ',rec_section.n_schema,'.',rec_section.n_table, ' WHERE id = ''',ids[cont],'''');
+   BEGIN
+	EXECUTE(sqlUpdate); 
+   END;
+   BEGIN
+    EXECUTE(sqlDelete);
+   EXCEPTION when others then 
+    IF array_length(ids,1) > 1 THEN
+    id_delete =  'ERROR: Ocurrio un error al eliminar uno de los elementos porque otros objetos dependen de el.';  
+    ELSE
+    GET STACKED DIAGNOSTICS id_delete = MESSAGE_TEXT; 
+    END IF;
+   END;
+   cont = cont + 1;
+  END LOOP;
+ELSE 
+ /*Eliminando accesos directos*/
+ SELECT tb.n_schema,tb.n_table,s.id INTO rec_section
+  FROM cfgapl.sections s
+  JOIN cfgapl.tables tb on(s.id_tables = tb.id)
+  WHERE tb.n_table = 'shortcut';
+   sqlUpdate = CONCAT('UPDATE ',rec_section.n_schema,'.',rec_section.n_table, ' SET modifier = ''',id_user,''' WHERE id = ''',ids[1],'''');   
+   sqlDelete = CONCAT('DELETE FROM ',rec_section.n_schema,'.',rec_section.n_table, ' WHERE id = ''',ids[1],'''');
+   BEGIN
+	EXECUTE(sqlUpdate);  
+   END;   
+   BEGIN       
+    EXECUTE(sqlDelete);
+   EXCEPTION when others then  
+    GET STACKED DIAGNOSTICS id_delete = MESSAGE_TEXT;     
+   END;
+
+END IF;
+
+return 'ERROR: '||id_delete;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_delete_register(uuid, uuid[], uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_delete_register(uuid, uuid[], uuid)
+  IS 'Delete the products (sections,tables,etc...)';
