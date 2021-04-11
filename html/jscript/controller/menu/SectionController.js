@@ -70,6 +70,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             if (!panel) {
                 panel = tabs[level].items.items[0];
             }
+            // se verifica que la sesion que se esta seleccionando tenga hijo
             if (grid.panel.idsection == panel.idparent) {
                 this.setIdRecordParent(tabs[level]);
                 this.getData(this.IdRecParent, panel);
