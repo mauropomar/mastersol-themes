@@ -30,20 +30,19 @@ const getResultFiltersOperators = async (req, objects) => {
     //Si hay totales, invocar a getTotalsFilterFunction para traerlos
     const parse_totales = JSON.parse(req.body.totales);
     var result_totals = [];
+    var result_datos = [];
     const params_filter = getParamsResultFilter(req, objects)
     const query = "SELECT cfgapl.fn_get_result_filter_operators($1,$2,$3,$4)"
     const result_filter = await pool.executeQuery(query, params_filter)
-    if (result_filter.success === false) {
-        return result_filter
-    } else if (result_filter.rows[0].fn_get_result_filter_operators == null) {
-        return []
+    if (result_filter.rows[0].fn_get_result_filter_operators != null) {
+        result_datos  = result_filter.rows[0].fn_get_result_filter_operators
     }
 
     if (parse_totales.length !== 0) {
         result_totals = await getTotalsFilterFunction(req.body.data, req.body.totales, objects, req)
     }
 
-    return {'success': true, 'datos': result_filter.rows[0].fn_get_result_filter_operators, 'totales': result_totals}
+    return {'success': true, 'datos': result_datos, 'totales': result_totals}
 }
 
 const getResultFiltersFunctions = async (req, objects) => {
@@ -122,7 +121,21 @@ function getParamsResultFilter(req, objects) {
         operador = objects.utiles.findByElementInArray(item.operadores, item.idoperador)
         if (item.fk) {
             if (operador.nombre === 'contiene' && item.real_name_in.lastIndexOf('uuid') !== -1) {
-                where.push(' dat.' + item.nombrecampo + " = " + "'" + item.idvalor + "'");
+                //Formatear el where para cuando se seleccione más de un valor tipo uuid
+                let arrvalores = item.idvalor.split(',');
+                if(arrvalores.length === 1)
+                    where.push(' dat.' + item.nombrecampo + " = " + "'" + item.idvalor + "'");
+                else{
+                    let cadenaWhere = '(';
+                    let largo = arrvalores.length;
+                    for (i=0;i<largo;i++) {
+                        cadenaWhere += ' dat.' + item.nombrecampo + " = " + "'" + arrvalores[i] + "'";
+                        if(i < largo - 1)
+                            cadenaWhere += ' OR ';
+                    }
+                    cadenaWhere += ')';
+                    where.push(cadenaWhere);
+                }
             } else if (item.tipo === 'string' && operador.nombre === 'contiene') {
                 where.push(' dat.' + item.nombrecampo + " ILIKE '%" + item.idvalor.replace(/\s/g, "%") + "%'");
             }
