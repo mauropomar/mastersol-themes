@@ -295,7 +295,6 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                 'accion': '15'
             },
             callback: function (options, success, response) {
-                debugger
                 mask.hide();
                 /* '<a href = ' + response.responseText + ' download>bbnvbn</a>'
                  var json = Ext.JSON.decode(response.responseText);

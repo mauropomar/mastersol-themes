@@ -103,7 +103,6 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         var record = MasterApp.globals.getRecordSection();
         var recordId = (record != null) ? record.data.id : null;
         var store = grid.getStore();
-        debugger
         var execute = {
             url: 'app/executebuttons',
             method: 'GET',
