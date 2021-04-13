@@ -1,0 +1,21 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_trigger_update_field_php_name()
+RETURNS trigger AS
+$$
+begin        
+   IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+    IF TG_TABLE_SCHEMA = 'cfgapl' AND TG_TABLE_NAME = 'sections_buttons' THEN
+     NEW.js_name = 'btn_'||substring(NEW.id_capsules::text,1,6)||'_'||replace(NEW.id::text,'-','');
+    ELSE
+     NEW.js_name = 'te_'||NEW.identifier;
+    END IF;  
+   END IF;
+   return NEW;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_trigger_update_field_php_name()
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_trigger_update_field_php_name()
+  IS 'Actualizar campo php_name en la tabla sections buttons una vex creado el directorio';

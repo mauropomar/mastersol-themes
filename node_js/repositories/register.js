@@ -1,5 +1,6 @@
 const pool = require('../connection/server-db')
 const moment = require('moment')
+const fs = require('fs')
 const objCrudRegister = {}
 const getForeignkey = async (req) => {
     const params = [req.query.idsection, req.query.idregistro, req.session.id_rol]
@@ -23,7 +24,9 @@ const insertRegister = async (req, objects) => {
         return []
     }
 
-    if (req.body.section_checked === 'true' || result.rows[0].fn_insert_register.name_table === 'time_event_functions') {
+    if (req.body.section_checked === 'true' ||
+        result.rows[0].fn_insert_register.name_table === 'capsules' ||
+        result.rows[0].fn_insert_register.name_table === 'sections_buttons') {
         objects.sections.generateFilesBySection(req, result);
     }
     return result.rows[0].fn_insert_register
@@ -45,6 +48,31 @@ const deleteRegister = async (req) => {
     const params_parse = JSON.parse(req.body.id);
     const ids = "{" + params_parse.join(',') + "}"
     const params_delete = [req.body.idsection, ids, req.session.id_user]
+    //Si se elimina un botón, borrar el .js asociado
+    const param_section = [req.body.idsection]
+    const resultSeccion = await pool.executeQuery('SELECT cfgapl.sections.namex FROM cfgapl.sections WHERE id = $1', param_section)
+    if(resultSeccion && resultSeccion.rows[0].namex == 'Sec_sections_buttons'){
+        var idsEliminar = req.body.id
+        idsEliminar = idsEliminar.replace('[', '')
+        idsEliminar = idsEliminar.replace(']', '')
+        idsEliminar = idsEliminar.replace('"', '')
+        idsEliminar = idsEliminar.replace('"', '')
+        arrEliminar = idsEliminar.split(',')
+        for(i=0;i<arrEliminar.length;i++){
+            const param_button = [arrEliminar[i]]
+            const resultButton = await pool.executeQuery('SELECT but.id_capsules, but.js_name FROM cfgapl.sections_buttons but ' +
+                'WHERE id = $1', param_button)
+            if(resultButton) {
+                let direccion = global.appRootApp + '\\capsules\\' + 'c_' + resultButton.rows[0].id_capsules + '\\node_js\\buttons\\' + resultButton.rows[0].js_name + '.js';
+                fs.unlink(direccion, (err => {
+                    if (err) console.log(err);
+                    else {
+                        console.log("Archivo borrado");
+                    }
+                }));
+            }
+        }
+    }
     //-----Eliminar despues de actualizar modifier
     const query = "SELECT cfgapl.fn_delete_register($1,$2,$3)"
     const result = await pool.executeQuery(query, params_delete)
@@ -53,6 +81,7 @@ const deleteRegister = async (req) => {
     } else if (result.rows[0].fn_delete_register == null) {
         return []
     }
+
     return result.rows[0].fn_delete_register
 }
 

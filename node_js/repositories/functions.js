@@ -21,12 +21,12 @@ const generateFunctionsTimeEvents = async (req, objects) => {
 
     for (const time of time_events) {
         cron.schedule('*/' + time.each_any_minutes + ' * */' + time.each_any_days + ',1 * *', () => {
-            console.log('tarea ejecutada')
-            objModule = require("../../Capsules/" + time.capsule_name + "/JS/" + "te_" + time.identifier)
-            objModule["te_" + time.identifier]()
+            //console.log('tarea ejecutada')
+            //objModule = require("../../capsules/" + time.capsule_name + "/JS/" + "te_" + time.identifier)
+            //objModule["te_" + time.identifier]()
         })
     }
-    console.log(time_events)
+    //console.log(time_events)
 }
 
 const getTimeEvent = async () => {

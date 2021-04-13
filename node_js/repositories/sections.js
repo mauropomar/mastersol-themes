@@ -23,24 +23,43 @@ const getSections = async (req) => {
 const generateFilesBySection = (req, result) => {
     var params = {}
     var datos_inserted = result.rows[0].fn_insert_register
-    params.time_event = datos_inserted.name_table == 'time_event_functions' ? true : false;
+    params.is_capsule = datos_inserted.name_table == 'capsules' ? true : false;
     params.id_section = datos_inserted.id_section;
     params.id = datos_inserted.id;
     params.name_section = datos_inserted.name_section;
     params.id_capsules = datos_inserted.id_capsules;
-    params.name_button = datos_inserted.namex.toLowerCase();
-    if (params.time_event !== false) {
-        params.identifier = datos_inserted.identifier;
-    }
-    console.log(datos_inserted.id_capsules)
-    console.log(datos_inserted.id_capsules.replace(/-/g, ''))
-    params.dirRaizCapsule = global.appRootApp + '\\Capsules\\';
-    params.dirCapsule = params.dirRaizCapsule + datos_inserted.id_capsules.replace(/-/g, '');
-    params.dirJs = params.dirCapsule + '\\JS\\';
-    params.dirImages = params.dirCapsule + '\\Images\\';
-    params.nameFileJS = params.time_event === false ? 'btn_' + params.id_section.replace(/-/g, '_') + '.js' : 'te_' + params.identifier + '.js'
-    params.nameFunc = params.time_event === false ? 'btn_' + params.name_button.toLowerCase() : 'te_' + params.identifier
-    params.dirFileJS = params.dirJs + params.nameFileJS
+    params.js_name = datos_inserted.js_name;
+    params.dirRaizCapsule = global.appRootApp + '\\capsules\\';
+    //Estructura de directorios
+    //1er nivel
+    if(params.is_capsule)
+        params.dirCapsule = params.dirRaizCapsule + 'c_' + params.id;
+    else
+        params.dirCapsule = params.dirRaizCapsule + 'c_' + params.id_capsules;
+    //2do nivel
+    params.dirHtml = params.dirCapsule + '\\html\\';
+    params.dirNodeJs = params.dirCapsule + '\\node_js\\';
+    params.dirSql = params.dirCapsule + '\\sql\\';
+    //3er nivel
+    params.dirAssets = params.dirHtml + '\\assets\\';
+    params.dirScript = params.dirHtml + '\\script\\';
+    params.dirButtons = params.dirNodeJs + '\\buttons\\';
+    params.dirFunctions = params.dirNodeJs + '\\functions\\';
+    params.dirFunctionsSql = params.dirSql + '\\functions\\';
+    params.dirViews= params.dirSql + '\\views\\';
+    params.dirTables= params.dirSql + '\\tables\\';
+    //4to nivel
+    params.dirCss = params.dirAssets + '\\css\\';
+    params.dirIcon = params.dirAssets + '\\icon\\';
+    params.dirController = params.dirScript + '\\controller\\';
+    params.dirStore = params.dirScript + '\\store\\';
+    params.dirModel = params.dirScript + '\\model\\';
+    params.dirViewScript = params.dirScript + '\\view\\';
+
+
+    params.nameFileJS = params.is_capsule === false ? params.js_name + '.js' : 'te_' + params.identifier + '.js'
+    params.nameFunc = params.is_capsule === false ? params.js_name : 'te_' + params.identifier
+    params.dirFileJS = params.dirButtons + params.nameFileJS
 
     createDirectory(req, params);
 }
@@ -49,21 +68,89 @@ const createDirectory = (req, params) => {
     //Creando directorios
     fs.mkdir(params.dirCapsule, {recursive: true}, (err) => {
         if (!err) {
-            if (!err) {
-                //Creando directorio de JS en la capsula y seccion correspondiente
-                fs.mkdir(params.dirJs, {recursive: true}, (err) => {
-                    if (!err) {
+            //Creando directorios
+            fs.mkdir(params.dirHtml, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirNodeJs, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirSql, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirAssets, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirScript, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirButtons, {recursive: true}, (err) => {
+                if (!err) {
+                    if(params.is_capsule === false)
                         createFileJs(req, params)
-                    }
-                });
+                }
+            });
+            fs.mkdir(params.dirFunctions, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirFunctionsSql, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirViews, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirTables, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirCss, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirIcon, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirController, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirStore, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirModel, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
+            fs.mkdir(params.dirViewScript, {recursive: true}, (err) => {
+                if (err) {
+                    return err;
+                }
+            });
 
-                //Creando directorio de Images en la capsula y seccion correspondiente
-                fs.mkdir(params.dirImages, {recursive: true}, (err) => {
-                    if (err) {
-                        return err;
-                    }
-                });
-            }
         }
     });
 }
@@ -73,13 +160,13 @@ const createFileJs = (req, params) => {
     var fileJs = "",
         comentario_file = "",
         function_file = ""
-    const body_function = " const params = [] \n const query = \" \" \n const result = await pool.executeQuery(query, params)"
-    if (params.time_event === false) {
-        comentario_file = salto_linea + "/*Start " + params.nameFunc + "\n * Debe retornarse: \n* 0 - Sin acción \n* 1 - Refrescar Tupla \n* 2 - Refrescar Sección \n* Y un texto\n */" + salto_linea;
-        function_file = comentario_file + "const " + params.nameFunc + " = async (id_section,id_register) => { " + salto_linea + body_function + salto_linea + " return 0;" + salto_linea + "} " + salto_linea
+    const body_function = " const params = [] \n const query = \"\" \n const result = await pool.executeQuery(query, params)"
+    if (params.is_capsule === false) {
+        comentario_file = salto_linea + "/*Start " + params.nameFunc + "\n * Debe retornarse: \n* type:0 - Sin acción \n* type:1 - value es una cadena de caracteres \n* type:2 - value es 0 (Refrescar Sección) \n* type:3 value devuelve un json de un registro de la sección activa \n* type:4 value devuelve un json de todos los registros de la sección \n */" + salto_linea;
+        function_file = comentario_file + "const " + params.nameFunc + " = async (id_section,id_register,id_button,id_user,id_rol) => { " + salto_linea + body_function + salto_linea + " return {'btn':id_button, type: 0, value: ''};" + salto_linea + "} " + salto_linea
     } else {
-        comentario_file = salto_linea + "/*Start " + params.nameFunc + "\n * Debe retornarse: \n* 0 - Sin acción */" + salto_linea;
-        function_file = comentario_file + "function " + params.nameFunc + "() { " + salto_linea + body_function + salto_linea + " return 0;" + salto_linea + "} " + salto_linea
+        comentario_file = salto_linea + "/*Start " + params.nameFunc + "\n * Debe retornarse: \n* type:0 - Sin acción */" + salto_linea;
+        function_file = comentario_file + "function " + params.nameFunc + "() { " + salto_linea + body_function + salto_linea + " return {'btn':id_button, type: 0, value: ''};" + salto_linea + "} " + salto_linea
     }
 
     const export_func_file = " module.exports." + params.nameFunc + " = " + params.nameFunc

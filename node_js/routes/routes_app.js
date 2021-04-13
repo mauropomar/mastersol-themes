@@ -184,8 +184,12 @@ router.post('/crudregister', async function (req, res) {
 
     if (result.success === false) {
         return res.json(result)
-    } else {
-        return res.json({'success': true, 'datos': result})
+    }
+    else if (req.body.accion === '7' && result.includes('ERROR')){
+        return res.json({'success': false, 'datos': result, 'message': result})
+    }
+    else {
+        return res.json({'success': true, 'datos': result, 'message': ''})
     }
 
 })
