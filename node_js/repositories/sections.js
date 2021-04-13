@@ -169,9 +169,9 @@ const createFileJs = (req, params) => {
         function_file = comentario_file + "function " + params.nameFunc + "() { " + salto_linea + body_function + salto_linea + " return {'btn':id_button, type: 0, value: ''};" + salto_linea + "} " + salto_linea
     }
 
-    const export_func_file = " module.exports." + params.nameFunc + " = " + params.nameFunc
+    const export_func_file = " module.exports.function = " + params.nameFunc
     if (!fs.existsSync(params.dirFileJS)) {
-        const require_file = " const pool = require('../../../node_js/connection/server-db') "
+        const require_file = " const pool = require('../../../../node_js/connection/server-db') "
         fileJs = fs.createWriteStream(params.dirFileJS, {
             flags: 'a' // conservar los archivos antiguos
         })

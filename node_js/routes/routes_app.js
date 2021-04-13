@@ -236,4 +236,18 @@ router.get('/managerfunctionsevent', async function (req, res) {
     res.json({'data': result})
 })
 
+router.post('/executebuttons', async function (req, res) {
+    var result = await objects.functions.executeFunctionsButtons(req, objects)
+    res.json({'data': result})
+})
+
+router.get('/executebuttons', async function (req, res) {
+    var result = await objects.functions.executeFunctionsButtons(req, objects)
+    if (result.success === false) {
+        return res.json(result)
+    } else {
+        return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value})
+    }
+})
+
 module.exports = router
