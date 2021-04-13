@@ -62,6 +62,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 name: newbuttons[i].name,
                 enable: newbuttons[i].enable,
                 default: false,
+                id:newbuttons[i].id,
                 tooltip: newbuttons[i].tooltip,
                 url: newbuttons[i].url,
                 scope: this,
@@ -102,15 +103,16 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         var record = MasterApp.globals.getRecordSection();
         var recordId = (record != null) ? record.data.id : null;
         var store = grid.getStore();
+        debugger
         var execute = {
-            url: 'app/managerfunctions',
+            url: 'app/executebuttons',
             method: 'GET',
             scope: this,
             params: {
                 idregister: recordId,
                 idsection: idsection,
                 idmenu: idmenu,
-                url: button.url,
+                idbutton: button.id,
                 name: button.name,
                 action: button.action
             },
