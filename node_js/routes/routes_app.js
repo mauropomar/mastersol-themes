@@ -100,13 +100,12 @@ router.get('/adjuntos', async function (req, res) {
 /*CRUD adjuntos*/
 router.post('/crudadjunto', async function (req, res) {
     var result;
-    console.log(req.body)
-  /*  var Readable = stream.Readable;
+    var Readable = stream.Readable;
     var imgBuffer = Buffer.from(req.body.file, 'base64');
     var s = new Readable();
     s.push(imgBuffer);
     s.push(null)
-    s.pipe(fs.createWriteStream(req.body.filename));*/
+    s.pipe(fs.createWriteStream(req.body.filename));
    // console.log(req.body)
     if (req.body.accion === '13') { //Insert
         result = await objects.adjuntos.insertAdjunto(req)

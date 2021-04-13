@@ -1,0 +1,5 @@
+INSERT INTO cfgapl.general (variable, value, description) 
+VALUES 
+('dir_icons', 'resources/icons', 'Dirección donde se almacenan los iconos'),
+('dir_images', 'resources/images', 'Dirección donde se almacenan las imágenes'),
+('dir_attach', '../../resources/files', 'Dirección donde se almacenan los adjuntos');
