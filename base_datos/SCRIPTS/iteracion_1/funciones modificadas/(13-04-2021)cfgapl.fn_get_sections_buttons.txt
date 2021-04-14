@@ -21,7 +21,7 @@ begin
       JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
       JOIN cfgapl.sections_properties scpr on (scpr.id_tables_properties = tbp.id)      
       WHERE sc.id = $1 AND rs.id_rol = $2 
-      GROUP BY scb.id_section,scb.namex,scb.actions,scb.orderx,scb.image,scb.fn_enable,scb.js_name,scb.id_capsules,sc.namex 
+      GROUP BY scb.id, scb.id_section,scb.namex,scb.actions,scb.orderx,scb.image,scb.fn_enable,scb.js_name,scb.id_capsules,sc.namex 
       ORDER BY scb.orderx)rowset;
   ELSE 
       --Se lista de las tablas sections_buttons y time_event_functions
@@ -34,7 +34,7 @@ begin
       LEFT JOIN cfgapl.tables tb on (sc.id_tables = tb.id)
       LEFT JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
       LEFT JOIN cfgapl.sections_properties scpr on (scpr.id_tables_properties = tbp.id)
-      GROUP BY scb.id_section,scb.namex,scb.orderx,scb.id_capsules,sc.namex,identifier
+      GROUP BY scb.id, scb.id_section,scb.namex,scb.orderx,scb.id_capsules,sc.namex,identifier
       ORDER BY scb.orderx)
       
       UNION ALL
@@ -44,7 +44,7 @@ begin
       FROM cfgapl.time_event_functions tevf
       LEFT JOIN cfgapl.sections sc on(sc.id = tevf.id_section)
       LEFT JOIN security.rol_sections rs on (sc.id = rs.id_sections)
-      GROUP BY tevf.id_section,tevf.namex,tevf.orderx,tevf.id_capsules,sc.namex,identifier
+      GROUP BY tevf.id, tevf.id_section,tevf.namex,tevf.orderx,tevf.id_capsules,sc.namex,identifier
       ORDER BY tevf.orderx))rowset; 
   END IF;
   
