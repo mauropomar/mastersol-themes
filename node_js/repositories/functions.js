@@ -42,9 +42,9 @@ const getTimeEvent = async () => {
 }
 
 const executeFunctionsButtons = async (req, objects) => {
-    let idbutton = req.body.idbutton != '' ? req.body.idbutton : null
-    let idsection = req.body.idsection
-    let idregister = req.body.idregister
+    let idbutton = req.query.idbutton != '' ? req.query.idbutton : null
+    let idsection = req.query.idsection
+    let idregister = req.query.idregister
     let iduser = req.session.id_user
     let idrol = req.session.id_rol
     var success = false;
@@ -58,8 +58,7 @@ const executeFunctionsButtons = async (req, objects) => {
             let requireDir = '../../capsules/' + 'c_' + resultButton.rows[0].id_capsules + '/node_js/buttons/' + resultButton.rows[0].js_name
             const operacion = require(requireDir)
             result = await operacion.function(idsection, idregister, idbutton, iduser, idrol)
-
-            if (result && result.success === true)
+            if (result)
                 success = true;
 
         }
