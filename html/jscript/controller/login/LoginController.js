@@ -116,8 +116,6 @@ Ext.define('MasterSol.controller.login.LoginController', {
         Ext.ComponentQuery.query('#combolanguage')[0].getStore().load();
         MasterApp.theme.setStyle();
         MasterApp.alert.laodInitAlert();
-     //   this.getConfigure();
-        this.getOptions();
 
     },
     //mostrar u ocultar opciones por rol
@@ -128,48 +126,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
         }
     },
 
-    getConfigure: function () {
-        var obt = {
-            url: 'app/menuconfiguration',
-            method: 'GET',
-            scope: this,
-            success: function (response) {
-                var json = Ext.JSON.decode(response.responseText);
-                if (json.length > 0) {
-                    var root = {
-                        text: 'Opciones',
-                        id: 'opciones',
-                        expanded: true,
-                        children: json
-                    };
-                    var store = Ext.ComponentQuery.query('tree-config')[0].store;
-                    store.setRootNode(root);
-                }
-            }
-        };
-        Ext.Ajax.request(obt);
-    },
 
-    getOptions: function () {
-        var obt = {
-            url: 'app/menusoption',
-            method: 'GET',
-            scope: this,
-            success: function (response) {
-                var json = Ext.JSON.decode(response.responseText);
-                if (json.length > 0) {
-                    var root = {
-                        text: 'Opciones',
-                        expanded: true,
-                        children: json
-                    };
-                    var store = Ext.ComponentQuery.query('tree-options')[0].store;
-                    store.setRootNode(root);
-                }
-            }
-        };
-        Ext.Ajax.request(obt);
-    },
 
     actionKey: function () {
         Ext.create('Ext.util.KeyNav', Ext.ComponentQuery.query('#view_login')[0].getEl(), {

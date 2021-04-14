@@ -4,11 +4,18 @@ Ext.define('MasterSol.controller.layout.FooterController', {
 
         },
 
+        expandMenu: function () {
+            Ext.ComponentQuery.query('menu-panel')[0].setActiveTab(0);
+            MasterApp.option.getOptions();
+        },
+
         tabchange: function (tab, panel) {
+            if (panel.xtype == 'form-user')
+                MasterApp.user.loadFields();
             if (panel.xtype == 'tree-config')
-                MasterApp.login.getConfigure();
+                MasterApp.config.getConfigure();
             if (panel.xtype == 'tree-options')
-                MasterApp.login.getOptions();
+                MasterApp.option.getOptions();
         },
 
         clickAccessDirect: function (tree, record) {
@@ -17,20 +24,9 @@ Ext.define('MasterSol.controller.layout.FooterController', {
                 controller.record.id = record.data.id;
                 controller.record.nombre = record.data.text;
                 controller.record.idsection = record.data.sectionId;
-                // controller.obtenerProducto(record);
-            } else {
-                // MasterApp.util.showMessageInfo('Debe seleccionar una opción a último nivel');
             }
         }
-        ,
-        tabChangeMenu: function (tabPanel, newCard) {
-            if (newCard.xtype == 'tree-opciones') {
-                // MasterApp.getController('MasterSol.view.login.LoginController').obtenerOpciones();
-            }
-            if (newCard.xtype == 'tree-config') {
-                //  MasterApp.getController('MasterSol.view.login.LoginController').obtenerAccesos();
-            }
-        }
+
         ,
         //seleccionar menu en el combo de busqueda de menu
         selectMenu: function (combo, record) {

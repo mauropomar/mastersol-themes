@@ -8,8 +8,6 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
     },
 
     goHome: function () {
-        Ext.ComponentQuery.query('#combomenu')[0].reset();
-        Ext.ComponentQuery.query('#combowindow')[0].getStore().removeAll();
         this.collapseAllWindow();
     },
 

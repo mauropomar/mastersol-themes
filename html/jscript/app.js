@@ -29,6 +29,7 @@ Ext.application({
         MasterApp.login = MasterApp.getController('MasterSol.controller.login.LoginController');
         MasterApp.menu = MasterApp.getController('MasterSol.controller.menu.MenuController');
         MasterApp.header = MasterApp.getController('MasterSol.controller.layout.HeaderController');
+        MasterApp.user = MasterApp.getController('MasterSol.controller.layout.UserController');
         MasterApp.home = MasterApp.getController('MasterSol.controller.layout.HomeController');
         MasterApp.footer = MasterApp.getController('MasterSol.controller.layout.FooterController');
         MasterApp.option = MasterApp.getController('MasterSol.controller.layout.OptionController');

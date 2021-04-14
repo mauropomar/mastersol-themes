@@ -9,12 +9,10 @@ Ext.define('MasterSol.view.layout.FormUser', {
     extend: 'Ext.form.Panel',
     xtype: 'form-user',
     requires: ['MasterSol.view.layout.ComboRol',
-        'MasterSol.view.layout.ComboLanguage',
-        'MasterSol.controller.layout.UserController'
+        'MasterSol.view.layout.ComboLanguage'
     ],
     frame: true,
     bodyPadding: 10,
-    controller: 'user',
     defaults: {
         labelAlign: 'top',
         anchor: '100%',
@@ -23,7 +21,9 @@ Ext.define('MasterSol.view.layout.FormUser', {
     tbar: [{
         xtype: 'button',
         iconCls: 'fa fa-save',
-        handler: 'save'
+        handler: function(){
+            MasterApp.user.save();
+        }
     }],
     items: [{
         xtype: 'comborol',
