@@ -42,24 +42,27 @@ const getTimeEvent = async () => {
 }
 
 const executeFunctionsButtons = async (req, objects) => {
-    let idbutton = req.body.idbutton
+    let idbutton = req.body.idbutton != '' ? req.body.idbutton : null
     let idsection = req.body.idsection
     let idregister = req.body.idregister
     let iduser = req.session.id_user
     let idrol = req.session.id_rol
-    const param_button = [idbutton]
-    const resultButton = await pool.executeQuery('SELECT but.id_capsules, but.js_name FROM cfgapl.sections_buttons but ' +
-        'WHERE id = $1', param_button)
+    var success = false;
     var result = []
-    var success = true;
-    if(resultButton) {
-        let requireDir = '../../capsules/' + 'c_' + resultButton.rows[0].id_capsules + '/node_js/buttons/' + resultButton.rows[0].js_name
-        const operacion = require(requireDir)
-        result =  await operacion.function(idsection,idregister,idbutton,iduser,idrol)
+    if(idbutton) {
+        const param_button = [idbutton]
+        const resultButton = await pool.executeQuery('SELECT but.id_capsules, but.js_name FROM cfgapl.sections_buttons but ' +
+            'WHERE id = $1', param_button)
 
-        if(!result || result.success === false)
-            success = false;
+        if (resultButton) {
+            let requireDir = '../../capsules/' + 'c_' + resultButton.rows[0].id_capsules + '/node_js/buttons/' + resultButton.rows[0].js_name
+            const operacion = require(requireDir)
+            result = await operacion.function(idsection, idregister, idbutton, iduser, idrol)
 
+            if (result && result.success === true)
+                success = true;
+
+        }
     }
     return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value}
 }
