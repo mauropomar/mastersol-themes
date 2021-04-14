@@ -1,0 +1,60 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_sections_buttons
+(
+  IN  id_section  uuid,
+  IN  id_rol      uuid
+)
+RETURNS jsonb AS
+$$
+declare
+datas jsonb = null;
+begin
+  IF not $1 is null AND not $2 is null THEN
+      SELECT jsonb_agg(rowset.*) INTO datas FROM
+     (SELECT scb.id as id, scb.namex as "name",scb.actions as "action",scb.image as "iconCls",
+      scb.namex as tooltip,sc.namex as name_section,      
+      'Capsules/'||replace(split_part(scb.id_capsules::text,'-',1),'btn_','')||'/JS/'||scb.js_name||'.js' as url,      
+      cfgapl.fn_execute_function(scb.fn_enable) AS "enable"
+      FROM cfgapl.sections sc
+      JOIN cfgapl.sections_buttons scb on(sc.id = scb.id_section)
+      JOIN security.rol_sections rs on (sc.id = rs.id_sections)
+      JOIN cfgapl.tables tb on (sc.id_tables = tb.id)
+      JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
+      JOIN cfgapl.sections_properties scpr on (scpr.id_tables_properties = tbp.id)      
+      WHERE sc.id = $1 AND rs.id_rol = $2 
+      GROUP BY scb.id_section,scb.namex,scb.actions,scb.orderx,scb.image,scb.fn_enable,scb.js_name,scb.id_capsules,sc.namex 
+      ORDER BY scb.orderx)rowset;
+  ELSE 
+      --Se lista de las tablas sections_buttons y time_event_functions
+      SELECT jsonb_agg(rowset.*) INTO datas FROM
+     ((SELECT scb.id as id, scb.namex as "name",scb.id_capsules,scb.id_section,sc.namex as name_section,
+      'btn_'||scb.namex as name_function,null as identifier
+      FROM cfgapl.sections_buttons scb
+      LEFT JOIN cfgapl.sections sc  on(sc.id = scb.id_section)
+      LEFT JOIN security.rol_sections rs on (sc.id = rs.id_sections)
+      LEFT JOIN cfgapl.tables tb on (sc.id_tables = tb.id)
+      LEFT JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
+      LEFT JOIN cfgapl.sections_properties scpr on (scpr.id_tables_properties = tbp.id)
+      GROUP BY scb.id_section,scb.namex,scb.orderx,scb.id_capsules,sc.namex,identifier
+      ORDER BY scb.orderx)
+      
+      UNION ALL
+      
+      (SELECT tevf.id as id, tevf.namex as "name",tevf.id_capsules,tevf.id_section,sc.namex as name_section,
+      'te_'||tevf.namex as name_function, tevf.identifier
+      FROM cfgapl.time_event_functions tevf
+      LEFT JOIN cfgapl.sections sc on(sc.id = tevf.id_section)
+      LEFT JOIN security.rol_sections rs on (sc.id = rs.id_sections)
+      GROUP BY tevf.id_section,tevf.namex,tevf.orderx,tevf.id_capsules,sc.namex,identifier
+      ORDER BY tevf.orderx))rowset; 
+  END IF;
+  
+  return datas;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_sections_buttons(uuid, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_get_sections_buttons(uuid, uuid)
+  IS 'Get buttons by section';
