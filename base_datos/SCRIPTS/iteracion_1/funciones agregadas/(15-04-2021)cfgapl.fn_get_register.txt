@@ -1,0 +1,31 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_register
+(
+  IN  name_table  varchar,
+  IN  idregister  uuid,
+  IN  sqlWhere    varchar DEFAULT NULL
+)
+RETURNS json AS
+$$
+declare
+rec_table record;
+res_datas json = null;
+begin 
+   IF (not $2 is null) THEN	
+		EXECUTE('SELECT json_agg(rowset.*)  FROM
+		(SELECT dat.* FROM '|| $1 ||' dat WHERE id = '''||$2||''')rowset') INTO res_datas;
+	ELSE
+		EXECUTE('SELECT json_agg(rowset.*)  FROM
+		(SELECT dat.* FROM '|| $1 ||' dat '||$3||')rowset') INTO res_datas;
+	END IF;	
+   
+  return res_datas;
+end
+$$
+LANGUAGE 'plpgsql'
+COST 1;
+
+ALTER FUNCTION cfgapl.fn_get_register(varchar, uuid, varchar)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_get_register(varchar, uuid, varchar)
+  IS 'Return the register by name table and idregister or criteria';

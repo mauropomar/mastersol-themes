@@ -49,9 +49,9 @@ const deleteRegister = async (req) => {
     const ids = "{" + params_parse.join(',') + "}"
     const params_delete = [req.body.idsection, ids, req.session.id_user]
     //Si se elimina un botón, borrar el .js asociado
-    const param_section = [req.body.idsection]
-    const resultSeccion = await pool.executeQuery('SELECT cfgapl.sections.namex FROM cfgapl.sections WHERE id = $1', param_section)
-    if(resultSeccion && resultSeccion.rows[0].namex == 'Sec_sections_buttons'){
+    const param_section = ['cfgapl.sections',req.body.idsection]
+    const resultSeccion = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_section)
+    if(resultSeccion && resultSeccion.rows[0].fn_get_register[0].namex == 'Sec_sections_buttons'){
         var idsEliminar = req.body.id
         idsEliminar = idsEliminar.replace('[', '')
         idsEliminar = idsEliminar.replace(']', '')
@@ -59,11 +59,10 @@ const deleteRegister = async (req) => {
         idsEliminar = idsEliminar.replace('"', '')
         arrEliminar = idsEliminar.split(',')
         for(i=0;i<arrEliminar.length;i++){
-            const param_button = [arrEliminar[i]]
-            const resultButton = await pool.executeQuery('SELECT but.id_capsules, but.js_name FROM cfgapl.sections_buttons but ' +
-                'WHERE id = $1', param_button)
+            const param_button = ['cfgapl.sections_buttons',arrEliminar[i]]
+            const resultButton = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_button)
             if(resultButton) {
-                let direccion = global.appRootApp + '\\capsules\\' + 'c_' + resultButton.rows[0].id_capsules + '\\node_js\\buttons\\' + resultButton.rows[0].js_name + '.js';
+                let direccion = global.appRootApp + '\\capsules\\' + 'c_' + resultButton.rows[0].fn_get_register[0].id_capsules + '\\node_js\\buttons\\' + resultButton.rows[0].fn_get_register[0].js_name + '.js';
                 fs.unlink(direccion, (err => {
                     if (err) console.log(err);
                     else {
