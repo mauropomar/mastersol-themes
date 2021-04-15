@@ -1,0 +1,5 @@
+CREATE TRIGGER tr_cfgapl_attach_fn_trigger_update_field_name
+  BEFORE INSERT
+  ON cfgapl."attach"
+  FOR EACH ROW
+  EXECUTE PROCEDURE cfgapl.fn_trigger_update_field_name();

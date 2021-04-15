@@ -1,0 +1,23 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_trigger_update_field_name()
+RETURNS trigger AS
+$$
+declare
+dir_attach varchar;
+begin    
+   SELECT value INTO dir_attach FROM cfgapl.general WHERE variable = 'dir_attach';
+   
+   IF TG_OP = 'INSERT' THEN
+		IF TG_TABLE_SCHEMA = 'cfgapl' AND TG_TABLE_NAME = 'attach' THEN
+			NEW.name = dir_attach||'/'||substring(NEW.id::text,1,2)||'/'||substring(NEW.id::text,3,6)||'/'||substring(NEW.id::text,9,6)||'/'||substring(NEW.id::text,15,6)||'/'||substring(NEW.id::text,21,6)||'/'||substring(NEW.id::text,27,6)||'/'||substring(NEW.id::text,33,6)||'/'||NEW.id::text||'.'||NEW.name;    
+		END IF;
+   END IF;
+   return NEW;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_trigger_update_field_name()
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_trigger_update_field_name()
+  IS 'Actualizar campo name en la tabla attach una vex creado el registro';

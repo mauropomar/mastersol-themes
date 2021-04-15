@@ -64,7 +64,7 @@ const insertAdjunto = async (req) => {
             readStream.pipe(writeStream);
             writeStream.on('finish', function () {
                 //Al terminar la escritura, continuar proceso                
-                 fs.stat(dirTemp + '/' + req.body.filename, (err, stat) => {
+                 fs.stat(dirTemp + '/' + req.body.filename, async (err, stat) => {
                     if (!err){
                         //Buscar requisito de tamanno
                         let file_size = stat.size
@@ -82,9 +82,13 @@ const insertAdjunto = async (req) => {
                         if(success){   //Si todas las comprobaciones fueron exitosas, proceder a crear el registro y subir el fichero
                             
                             var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
-                            console.log('capsula '+id_capsules)
-                            console.log('organizacion '+id_organizations)
-                            console.log('tabla '+id_tables)
+                            //guardar en name extension del fichero
+                            let extension = ''
+                            arrFileName = req.body.filename.split('.')
+                            if(arrFileName) {
+                                let lastPos = arrFileName.length - 1
+                                extension = arrFileName[lastPos]
+                            }
 
                             //columnas a insertar
                             columnasInsertAux.push('id_capsules')
@@ -98,7 +102,7 @@ const insertAdjunto = async (req) => {
                             valuesInsertAux.push(" '" + id_organizations + "'")
                             valuesInsertAux.push(" '" + id_tables + "'")
                             valuesInsertAux.push(" '" + req.body.idregister + "'")
-                            valuesInsertAux.push("'test'")
+                            valuesInsertAux.push(" '" + extension + "'")
                             valuesInsertAux.push("'" + req.session.id_user + "'")
 
                             paramsInsert.push(id_section)
@@ -108,18 +112,31 @@ const insertAdjunto = async (req) => {
                             paramsInsert.push(req.body.idseccionpadre && req.body.idseccionpadre !== '0' ? req.body.idseccionpadre : null)
                             paramsInsert.push(req.session.id_user)
 
-                           const resultInsert = insertRegister(req, paramsInsert);
-
+                           const resultInsert = await insertRegister(req, paramsInsert);
+                            if(resultInsert){
+                                //Subir fichero final
+                                let address = resultInsert.name
+                                let filename = resultInsert.id + '.' + extension
+                                address = address.replace(filename, '')
+                                
+                                fs.mkdir(address, {recursive: true}, (err) => {
+                                    if (!err) {
+                                        fs.rename(dirTemp + '/' + req.body.filename, resultInsert.name, (err) => {
+                                            if(!err) {
+                                                console.log("Archivo subido!")
+                                                const delDir = deleteDir(dirTemp, req.body.filename)
+                                            }
+                                            else console.log(err)
+                                        });
+                                    }
+                                });
+                            }
+                           
+                        }
+                        else{
+                            const delDir = deleteDir(dirTemp, req.body.filename)
                         }
 
-                        //Al terminar procesamiento eliminar archivo temporal
-                        fs.unlink(dirTemp + '/' + req.body.filename, (err => {
-                            if (!err) {
-                                fs.rmdir(dirTemp, function(err) {
-                                    if(!err) console.log('Eliminada carpeta temporal')
-                                })
-                            }
-                        }));
                     }
                 });
 
@@ -152,6 +169,26 @@ const insertRegister = async (req, params_insert) => {
     }
     
     return result.rows[0].fn_insert_register
+}
+
+const deleteDir = (dirFile, filename) => {
+    let result = ''
+    fs.unlink(dirFile + '/' + filename, (err => {
+        if (err) console.log('No hay fichero');
+        else {
+            console.log("Archivo borrado");
+            fs.rmdir(dirFile, (err) => {
+                if(!err) result = 'Eliminada carpeta temporal'
+                else result = err
+            })
+        }
+    }));
+    fs.rmdir(dirFile, (err) => {
+        if(!err) result = 'Eliminada carpeta temporal'
+        else result = err
+    })
+
+    return result
 }
 
 
