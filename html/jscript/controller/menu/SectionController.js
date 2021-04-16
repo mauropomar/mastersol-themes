@@ -545,5 +545,35 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 }
             }]
         });
+    },
+
+    dblClickHeader: function (window) {
+        if(!window.isminimize) {
+            var panelMenu = Ext.ComponentQuery.query('#panel-center')[0];
+            window.collapse();
+            window.isminimize = true;
+            winWidth = window.getWidth();
+            winHeight = window.getHeight();
+            window.setWidth(300);
+            var btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
+            btn.hide();
+            window.alignTo(panelMenu, 'bl-bl');
+            this.setPositionWindow(window);
+            MasterApp.magnament.isMenuTabMagnament(window);
+            this.adjustOtherWindowsMaximize();
+        }else{
+            window.expand('', false);
+            window.isminimize = false;
+            var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
+            btn.show();
+            btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
+            btn.show();
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+            MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
+            this.adjustOtherWindowsMinimize();
+            var panel = Ext.ComponentQuery.query('#panel-center')[0];
+            MasterApp.util.resizeWindow(window, panel);
+            MasterApp.tools.showButtonsNotDefault(window, true);
+        }
     }
 })

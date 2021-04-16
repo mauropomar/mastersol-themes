@@ -41,6 +41,11 @@ Ext.define('MasterSol.view.menu.WindowMenu', {
         },
        render:function( window , eOpts){
            MasterApp.theme.setStyleWindow(window);
+       },
+       afterrender:function(win){
+            win.header.el.on('dblclick', function () {
+                MasterApp.section.dblClickHeader(win);
+            });
        }
    }
 });
