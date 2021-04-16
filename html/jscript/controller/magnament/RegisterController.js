@@ -431,5 +431,11 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             row: index,
             column: 1
         });
+    },
+
+    onChangesReject:function(){
+        var grid = Ext.ComponentQuery.query('#register-view')[0];
+        var store = grid.getStore();
+        store.rejectChanges();
     }
 })
