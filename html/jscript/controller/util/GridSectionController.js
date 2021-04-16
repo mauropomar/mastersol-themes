@@ -163,7 +163,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         }
                     })
                 }
-                if (cols[i].type === 'date') {
+                if (cols[i].type === 'date' || cols[i].type === 'datetime') {
                     columns.push({
                         dataIndex: MasterApp.util.getDataIndex(cols[i]),
                         width: cols[i].width,
