@@ -58,14 +58,12 @@ Ext.define('MasterSol.view.magnament.Register', {
         handler: function () {
             MasterApp.register.saveChanges();
         }
-    }, {
-        iconCls: 'fa fa-expand',
-        //   handler: 'onExpandAll',
-        tooltip: 'Expandir todos',
-    }, {
-        iconCls: 'fa fa-compress',
-        //    handler: 'onCollapseAll',
-        tooltip: 'Collapsar Todos'
+    },{
+        iconCls: 'fa fa-close',
+        tooltip: 'Cancelar',
+        handler: function () {
+            MasterApp.register.onChangesReject();
+        }
     }, '->', {
         xtype: 'tbtext',
         text: 'Registro',
