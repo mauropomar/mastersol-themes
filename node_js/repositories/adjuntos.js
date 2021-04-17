@@ -138,10 +138,19 @@ const insertAdjunto = async (req) => {
                         }
 
                     }
+                    else{
+                        success = false
+                        msg = 'Ha ocurrido un error, ' + err
+                        const delDir = deleteDir(dirTemp, req.body.filename)
+                    }
                 });
 
 
             });
+        }
+        else{
+            success = false
+            msg = 'Ha ocurrido un error, ' + err
         }
     });
 
@@ -149,13 +158,49 @@ const insertAdjunto = async (req) => {
 }
 
 const deleteAdjunto = async (req) => {
+    let success = true
+    let msg = ''
+    let address = ''
 
-    return 1
+    const paramsAttach = ['cfgapl.attach',req.body.idadjunto];
+    const resultAttach = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsAttach);
+    if(resultAttach)
+        address = resultAttach.rows[0].fn_get_register[0].name
+
+    const resultDelete = await deleteRegister(req, req.body.idadjunto);
+    if(resultDelete.includes('ERROR')) {
+        success = false
+        msg = resultDelete
+    }
+
+    if(success){
+        //Eliminar fichero
+        fs.unlink(address, (err => {
+            if (err) {
+                success = false
+                msg = 'No se pudo eliminar el fichero, ' + err;
+            }
+            else {
+                console.log("Archivo borrado");
+            }
+        }));
+
+    }
+
+    return {'success': success, 'message': msg}
 }
 
 const downloadAdjunto = async (req) => {
+    let success = true
+    let address = ''
+    const paramsAttach = ['cfgapl.attach',req.body.idadjunto];
+    const resultAttach = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsAttach);
+    if(resultAttach)
+        address = resultAttach.rows[0].fn_get_register[0].name
+    else
+        success = false
 
-    return 1
+    return {'success': success, 'message': address}
 }
 
 const insertRegister = async (req, params_insert) => {
@@ -171,12 +216,34 @@ const insertRegister = async (req, params_insert) => {
     return result.rows[0].fn_insert_register
 }
 
+const deleteRegister = async (req, idregister) => {
+    let idsection
+    const paramsSectionAttach = ['cfgapl.sections',null,"WHERE namex = 'Sec_attach' "];
+    const resultSectionAttach = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSectionAttach);
+    if(resultSectionAttach)
+        id_section = resultSectionAttach.rows[0].fn_get_register[0].id
+
+    const ids = "{" + idregister + "}"
+    const params_delete = [id_section, ids, req.session.id_user]
+
+    //-----Eliminar despues de actualizar modifier
+    const query = "SELECT cfgapl.fn_delete_register($1,$2,$3)"
+    const result = await pool.executeQuery(query, params_delete)
+    if (result.success === false) {
+        return result
+    } else if (result.rows[0].fn_delete_register == null) {
+        return []
+    }
+
+    return result.rows[0].fn_delete_register
+}
+
 const deleteDir = (dirFile, filename) => {
     let result = ''
     fs.unlink(dirFile + '/' + filename, (err => {
         if (err) console.log('No hay fichero');
         else {
-            console.log("Archivo borrado");
+            console.log("Archivo temporal borrado");
             fs.rmdir(dirFile, (err) => {
                 if(!err) result = 'Eliminada carpeta temporal'
                 else result = err

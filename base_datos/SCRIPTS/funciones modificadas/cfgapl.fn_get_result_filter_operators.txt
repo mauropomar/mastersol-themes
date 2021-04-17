@@ -1,0 +1,58 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_result_filter_operators
+(
+  IN  idsection  uuid,
+  IN  idrol      uuid,
+  IN  where_aux  varchar,
+  IN  id_user    uuid   
+)
+RETURNS json AS
+$$
+declare
+result_sections record; name_table varchar; err_message varchar;
+result_data json=null;
+sqlEjec varchar;
+sqlSelect varchar = ' SELECT dat.* ';
+fn_filter varchar = null;
+fn_first_filter varchar = null;
+fn_filter_result record = null;
+fn_first_filter_result record = null;
+begin
+	--Prepara consulta de filtro
+	SELECT sc.id_tables,sc.namex,(n_schema || '.' || n_table) as name_table INTO result_sections 
+	 FROM cfgapl.sections sc
+	 JOIN cfgapl.tables tb on(sc.id_tables = tb.id)
+	 JOIN security.rol_sections rsc on rsc.id_sections = sc.id   
+	 WHERE sc.id = $1 AND rsc.id_rol = $2; 
+	 
+	 sqlSelect = sqlSelect || cfgapl.fn_return_value_fk($1,$2);		 
+
+	--Buscar fn_filter y first_filter de la seccion para proceder condicionalmente
+	SELECT cfgapl.sections.fn_filter into fn_filter from cfgapl.sections where id = $1;
+	SELECT cfgapl.sections.fn_first_filter into fn_first_filter from cfgapl.sections where id = $1;
+	IF fn_first_filter is not null and fn_first_filter <> '' THEN
+		--Ejecutar funcion first_filter
+		EXECUTE 'SELECT * FROM '|| fn_first_filter || '('||quote_literal($1)||','||quote_literal($2)||','||quote_literal($4)||')' into fn_first_filter_result;
+		sqlEjec = 'SELECT json_agg(rowset.*) FROM (' || sqlSelect || ' FROM '|| fn_first_filter_result || ' dat ' || $3 || ')rowset;';
+	ELSIF fn_filter is not null and fn_filter <> '' THEN
+		--Ejecutar funcion filter
+		EXECUTE 'SELECT * FROM '|| fn_first_filter || '('||quote_literal($1)||','||quote_literal($2)||','||quote_literal($4)||')' into fn_filter_result;
+		sqlEjec = 'SELECT json_agg(rowset.*) FROM (' || sqlSelect || ' FROM '|| fn_filter_result || ' dat ' || $3 || ')rowset;';
+	ELSE						   
+		sqlEjec = 'SELECT json_agg(rowset.*) FROM (' || sqlSelect || ' FROM '|| result_sections.name_table || ' dat ' || $3 || ')rowset;'; 	
+
+	END IF;
+		
+	BEGIN
+		 EXECUTE(sqlEjec) INTO result_data;
+		 EXCEPTION WHEN OTHERS THEN 
+		  GET STACKED DIAGNOSTICS err_message = MESSAGE_TEXT; 
+		  result_data = to_json('ERROR: ' || err_message);
+	 END; 
+	
+    return result_data;    
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_result_filter_operators(uuid, uuid, varchar, uuid)
+  OWNER TO postgres;

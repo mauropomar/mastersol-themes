@@ -93,7 +93,7 @@ router.get('/functionsresume', async function (req, res) {
 /*Obtener adjuntos*/
 router.get('/adjuntos', async function (req, res) {
     const result = await objects.adjuntos.getAdjuntos(req)
-    res.json(result)
+    return res.json({'success': result ? true : false, 'datos': result})
 })
 
 /*CRUD adjuntos*/
@@ -110,7 +110,7 @@ router.post('/crudadjunto', async function (req, res) {
     // if (result.success === false) {
     //     return res.json(result)
     // } else {
-    return res.json({'success': true, 'datos': result})
+    return res.json({'success': result.success ? true : false, 'datos': result.message})
     // }
 })
 

@@ -50,12 +50,11 @@ const executeFunctionsButtons = async (req, objects) => {
     var success = false;
     var result = []
     if(idbutton) {
-        const param_button = [idbutton]
-        const resultButton = await pool.executeQuery('SELECT but.id_capsules, but.js_name FROM cfgapl.sections_buttons but ' +
-            'WHERE id = $1', param_button)
+        const param_button = ['cfgapl.sections_buttons',idbutton]
+        const resultButton = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_button)
 
         if (resultButton) {
-            let requireDir = '../../capsules/' + 'c_' + resultButton.rows[0].id_capsules + '/node_js/buttons/' + resultButton.rows[0].js_name
+            let requireDir = '../../capsules/' + 'c_' + resultButton.rows[0].fn_get_register[0].id_capsules + '/node_js/buttons/' + resultButton.rows[0].fn_get_register[0].js_name
             const operacion = require(requireDir)
             result = await operacion.function(idsection, idregister, idbutton, iduser, idrol)
             if (result)
