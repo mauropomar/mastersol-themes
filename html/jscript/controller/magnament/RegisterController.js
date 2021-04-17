@@ -247,6 +247,10 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         if (record.data.tipo == 'date') {
             this.setDateField(record, column);
         }
+        if (record.data.tipo == 'datetime') {
+            this.setDateTimeField(record, column);
+        }
+
     },
     //resetea los valores de los registros al insertar
     cleanValues: function () {
@@ -324,6 +328,13 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         }
         ;
         column.setEditor(field);
+    },
+
+    setDateTimeField: function (rec, column) {
+        var edit = Ext.create('MasterSol.view.plugins.DateTime');
+        var value = new Date(rec.data.valor);
+        edit.setValue(value);
+        column.setEditor(edit);
     },
 
     specialKey: function (field, e) {

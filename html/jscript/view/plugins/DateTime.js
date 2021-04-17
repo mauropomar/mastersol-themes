@@ -27,7 +27,7 @@ Ext.define('MasterSol.view.plugins.DateTime', {
         this.items = [
             Ext.apply({
                 xtype: 'datefield',
-                format: 'Y-m-d',
+                format: 'd-m-Y',
                 width: 100
             }, this.dateCfg),
             Ext.apply({
@@ -52,8 +52,9 @@ Ext.define('MasterSol.view.plugins.DateTime', {
     },
 
     setValue: function (value) {
-        this.dateField.setValue(value)
-        this.timeField.setValue(value)
+        value = (value)?new Date(value):new Date();
+        this.dateField.setValue(value);
+        this.timeField.setValue(value);
     },
 
     getSubmitData: function () {

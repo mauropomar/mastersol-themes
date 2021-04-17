@@ -18,6 +18,9 @@ Ext.define('MasterSol.controller.util.UtilController', {
         if ((record.data.tipo == 'date') && value.indexOf('/') == -1) {
             return Ext.util.Format.date(value, 'd/m/Y');
         }
+        if ((record.data.tipo == 'datetime') && value.indexOf('/') == -1) {
+            return Ext.util.Format.date(value, 'd/m/Y h:i:s');
+        }
         return value;
     },
 
@@ -238,6 +241,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
             return value;
         }
         if (type == 'datetime' && value != null) {
+            value = new Date(value);
             return Ext.Date.format(value, 'd/m/Y h:i:s');
         }
         if (type == 'boolean') {
