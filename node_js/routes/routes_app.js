@@ -98,7 +98,6 @@ router.get('/adjuntos', async function (req, res) {
 
 /*CRUD adjuntos*/
 router.post('/crudadjunto', async function (req, res) {
-   // console.log(req.body)
     if (req.body.accion === '13') { //Insert
         result = await objects.adjuntos.insertAdjunto(req)
     } else if (req.body.accion === '7') { //Delete

@@ -23,14 +23,18 @@ app.use(session({
 app.use('/', express.static(appRootApp + "/"));
 
 //add body parser
-app.use(BodyParser.json())
-app.use(BodyParser.urlencoded({extended: false}))
+app.use( BodyParser.json({limit: '50mb'}));
+app.use(BodyParser.urlencoded({
+    limit: '50mb',
+    extended: true,
+    parameterLimit:50000
+}));
 
 //add the middlewares
 // app.use('/app', session_middlewares)
 //add the router
 app.use('/session', router_login);
 app.use('/app', router_app);
-app.listen(8080, ()=>{
+app.listen(8080, () => {
     console.log("Servidor corriendo por el puerto 8080")
 })
