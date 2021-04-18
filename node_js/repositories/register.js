@@ -16,6 +16,7 @@ const getForeignkey = async (req) => {
 
 const insertRegister = async (req, objects) => {
     const params_insert = getParamsInsert(req)
+    console.log(params_insert)
     const query = "SELECT cfgapl.fn_insert_register($1,$2,$3,$4,$5,$6)"
     const result = await pool.executeQuery(query, params_insert)
     if (result.success === false) {
@@ -34,6 +35,7 @@ const insertRegister = async (req, objects) => {
 
 const updateRegister = async (req) => {
     const params_insert = getParamsUpdate(req)
+    console.log(params_insert)
     const query = "SELECT cfgapl.fn_update_register($1,$2,$3,$4)"
     const result = await pool.executeQuery(query, params_insert)
     if (result.success === false) {
@@ -116,7 +118,8 @@ const getParamsInsert = (req) => {
             } else if (item.tipo === 'boolean') {
                 valor = item.valor ? 'true' : 'false';
                 valuesInsertAux.push(valor)
-            } else if (item.tipo === 'date') {
+            } else if (item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone') {
                 var date = moment(item.valor, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD HH:mm:ss');
                 valuesInsertAux.push("'" + date + "'")
             } else {
@@ -166,9 +169,10 @@ const getParamsUpdate = (req) => {
             } else if (item.tipo === 'boolean') {
                 valor = item.valor ? 'true' : 'false';
                 valuesInsertAux.push(item.field + " = " + valor)
-            } else if (item.tipo === 'date' || item.tipo === 'timestamp'
+            } else if (item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
                     || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone') {
-                valuesInsertAux.push(item.field + " = '" + item.valor + "'")
+                var date = moment(item.valor, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD HH:mm:ss');
+                valuesInsertAux.push(item.field + " = '" + date + "'")
             } else {
                 valuesInsertAux.push(item.field + " = " + item.valor)
             }
