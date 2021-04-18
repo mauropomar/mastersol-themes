@@ -268,7 +268,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
             }
         }
         if (gridtotal.getHeight() == 0) {
-            var height_theme = (MasterApp.theme.isShortTheme()) ? 25 : 40;
+            var height_theme = 25;
             var height = gridsection.getHeight() - height_theme;
             gridsection.setHeight(height);
             gridtotal.setHeight(height_theme);
