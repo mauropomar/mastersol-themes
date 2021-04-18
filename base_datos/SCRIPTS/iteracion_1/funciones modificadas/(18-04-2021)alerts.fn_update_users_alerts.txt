@@ -1,0 +1,29 @@
+CREATE OR REPLACE FUNCTION alerts.fn_update_users_alerts()
+RETURNS trigger AS
+$$
+declare
+rec_user record;
+begin
+ 
+  IF TG_OP = 'INSERT' THEN
+    SELECT id,id_capsules,id_organizations INTO rec_user FROM security.users WHERE id = NEW.creator;
+   INSERT INTO alerts.users_alerts(id_alerts_cfg,id_users,id_organizations,id_capsules)
+   VALUES(NEW.id,rec_user.id,NEW.id_organizations,NEW.id_capsules); 
+  ELSEIF TG_OP = 'UPDATE' THEN
+    SELECT id,id_capsules,id_organizations INTO rec_user FROM security.users WHERE id = NEW.modifier; 
+	IF (rec_user is null) THEN	
+		SELECT id,id_capsules,id_organizations INTO rec_user FROM security.users WHERE userx = trim(session_user::TEXT);  
+	END IF;	
+	
+   UPDATE alerts.users_alerts SET id_alerts_cfg = NEW.id, id_users = rec_user.id,
+   id_organizations = NEW.id_organizations, id_capsules = NEW.id_capsules
+   WHERE id_alerts_cfg = NEW.id AND id_users = rec_user.id;     
+  END IF; 
+  return NEW; 
+  
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION alerts.fn_update_users_alerts()
+  OWNER TO postgres;
