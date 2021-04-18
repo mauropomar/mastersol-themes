@@ -206,17 +206,18 @@ Ext.define('MasterSol.controller.menu.MenuController', {
     setHeightTabs: function (window, nivel) {
         var p = MasterApp.globals.getPanelPrincipalByWindow(window);
         var tabs = MasterApp.util.getTabsOfWindow(window);
+        var isSmallTheme = MasterApp.theme.isShortTheme();
         var heightPanel, heightTabs;
         if (tabs.length == 1) {
-            heightPanel = '45%';
+            heightPanel = isSmallTheme?'44%':'43%';
             heightTabs = '55%';
         }
         if (tabs.length == 2){
-            heightPanel = '30%';
+            heightPanel = isSmallTheme?'28%':'27%';
             heightTabs = '35%';
         }
         if (tabs.length == 3){
-            heightPanel = '25%';
+            heightPanel = isSmallTheme?'25%':'24%';
             heightTabs = '25%';
         }
         p.setHeight(heightPanel);
