@@ -9,16 +9,16 @@ Ext.define('MasterSol.view.menu.WindowMenu', {
     isminimize: false,
     bodyPadding: 3,
     constrain: true,
-    constrainTo:'panel-center',
+    constrainTo: 'panel-center',
     requires: ['Ext.resizer.Splitter', 'Ext.layout.container.VBox', 'Ext.panel.Panel'],
     closable: false,
     autoScroll: false,
-    closeAction:'destroy',
+    closeAction: 'destroy',
     layout: 'fit',
-    isAlert:false,
-    childs:[],
-    tabs:[],
-   // tools:this.tools,
+    isAlert: false,
+    childs: [],
+    tabs: [],
+    // tools:this.tools,
     items: [{
         xtype: 'panel',
         name: 'container-menu',
@@ -32,20 +32,20 @@ Ext.define('MasterSol.view.menu.WindowMenu', {
             }
         }]
     }],
-   listeners: {
-        resize: function(window){
+    listeners: {
+        resize: function (window) {
             MasterApp.section.resizeWindow(window);
         },
-        close: function(window){
-            MasterApp.section.closeWindow(window);
+        close: function (window) {
+               MasterApp.section.closeWindow(window);
         },
-       render:function( window , eOpts){
-           MasterApp.theme.setStyleWindow(window);
-       },
-       afterrender:function(win){
+        render: function (window, eOpts) {
+            MasterApp.theme.setStyleWindow(window);
+        },
+        afterrender: function (win) {
             win.header.el.on('dblclick', function () {
                 MasterApp.section.dblClickHeader(win);
             });
-       }
-   }
+        }
+    }
 });

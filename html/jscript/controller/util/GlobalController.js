@@ -20,6 +20,7 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.selEnMosaic = false;
             this.idRol = null;
             this.actionKeyCrtlF = false;
+            this.isLoading = false;
         },
         getOptionSelected: function () {
             return this.optionSelect;
@@ -62,7 +63,7 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.recSection = rec;
         },
         setGridSection: function (grid, colSel = null) {
-            if(grid != null) {
+            if (grid != null) {
                 this.gridSection = grid;
                 this.gridSection['colSelected'] = colSel;
             }
@@ -103,6 +104,9 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         },
         setIdRol: function (idrol) {
             this.idRol = idrol;
+        },
+        setLoading: function (val) {
+            this.isLoading = val;
         }
     }
 )

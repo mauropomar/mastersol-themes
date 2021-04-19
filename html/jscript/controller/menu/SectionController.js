@@ -124,7 +124,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var gridsection = newCard.down('gridpanel');
         MasterApp.globals.setGridSection(gridsection);
         MasterApp.globals.setRecordSection(null);
-        this.addEventClickTabSection(tabPanel, newCard);
         this.findChildOfSection(tabPanel, newCard);
         MasterApp.magnament.getData(gridsection);
         var idparent = newCard.idrecordparent;
@@ -491,11 +490,19 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     // funcion para capturar el click en el tab seleccionados para tenerlo como referencia
     addEventClickTabSection: function (tabPanel, newCard) {
         var comp = tabPanel.getEl();
-        comp.on('click', function () {
+        comp.on('click', function (e) {
+            var isLoading = MasterApp.globals.isLoading;
+            if (isLoading)
+                return;
+            MasterApp.globals.setLoading(true);
             var idtab = comp.id;
-            var sectionActive = Ext.ComponentQuery.query('#' + idtab)[0].getActiveTab();
-            var gridsection = sectionActive.down('gridpanel');
-            MasterApp.globals.setGridSection(gridsection);
+            setTimeout(function () {
+                var sectionActive = Ext.ComponentQuery.query('#' + idtab)[0].getActiveTab();
+                var gridsection = sectionActive.down('gridpanel');
+                MasterApp.globals.setGridSection(gridsection);
+                MasterApp.magnament.getData(gridsection);
+                MasterApp.globals.setLoading(false);
+            }, 500);
         }, comp);
     },
 
@@ -548,7 +555,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     dblClickHeader: function (window) {
-        if(!window.isminimize) {
+        if (!window.isminimize) {
             var panelMenu = Ext.ComponentQuery.query('#panel-center')[0];
             window.collapse();
             window.isminimize = true;
@@ -561,7 +568,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             this.setPositionWindow(window);
             MasterApp.magnament.isMenuTabMagnament(window);
             this.adjustOtherWindowsMaximize();
-        }else{
+        } else {
             window.expand('', false);
             window.isminimize = false;
             var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');

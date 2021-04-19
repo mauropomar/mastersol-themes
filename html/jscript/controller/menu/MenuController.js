@@ -146,6 +146,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         if (section.nivel >= 3) {
             tab.hide();
         }
+        MasterApp.section.addEventClickTabSection(tab);
     },
     // activa el primer panel de cada tab.
     /* activeFirstTab: function () {
