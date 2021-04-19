@@ -52,6 +52,10 @@ const insertAdjunto = async (req) => {
                 id_organizations = resultRegister.rows[0].fn_get_register[0].id_organizations
         }
     }
+    if(!id_organizations || id_organizations == 'undefined')
+        id_organizations = 'b37ac1cb-93db-435a-bb2a-76f6b2fef10e'
+        
+
     const paramsSectionAttach = ['cfgapl.sections',null,"WHERE namex = 'Sec_attach' "];
     const resultSectionAttach = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSectionAttach);
     if(resultSectionAttach)

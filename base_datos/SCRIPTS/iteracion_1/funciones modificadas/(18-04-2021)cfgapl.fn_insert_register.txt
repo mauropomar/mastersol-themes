@@ -1,0 +1,66 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_insert_register
+(
+  IN  id_section        uuid,
+  IN  columns_insert    varchar,
+  IN  values_insert     varchar,
+  IN  idproduct_parent  varchar = NULL::uuid,
+  IN  idsection_padre   uuid    = NULL::uuid,
+  IN  id_user           uuid    = NULL::uuid
+)
+RETURNS json AS
+$$
+declare
+table_inserta varchar;
+sqlInsert varchar;
+result_data record;
+result_insert record;
+err_message varchar;
+foreign_key varchar = null;
+propiedades varchar = null;
+begin 
+  
+  SELECT tb.n_schema||'.'||tb.n_table INTO table_inserta
+  FROM cfgapl.sections s
+  JOIN cfgapl.tables tb on(s.id_tables = tb.id)
+  WHERE s.id = $1::uuid;
+  
+  /*Aqui se busca el campo foreign_key en dependencia del idsectionpadre*/ 
+    SELECT tbp.n_column INTO foreign_key 
+    FROM cfgapl.sections sc
+    JOIN cfgapl.tables tb on (sc.id_tables = tb.id)
+    JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
+    WHERE sc.id = $1::uuid 
+	/*AND tbp.id_fk_tables =   
+    (SELECT tb1.id FROM cfgapl.sections sc
+    JOIN cfgapl.tables tb1 on (sc.id_tables = tb1.id)
+    WHERE sc.id = $5::uuid) */
+	and tbp.nonull is true;  
+  
+  IF $4 is null THEN 
+   sqlInsert = CONCAT('INSERT INTO ',table_inserta,'(',sqlInsert,$2,') VALUES (',$3,') returning id');
+   /*Aqui compruebo que la llave foranea no este en las columnas a insertar*/ 
+  ELSEIF position (foreign_key in $2) = 0 THEN
+   sqlInsert = CONCAT('INSERT INTO ',table_inserta,'(',sqlInsert,$2,',',foreign_key,') VALUES (',$3,',',$4,') returning id');
+  ELSEIF position (foreign_key in $2) > 0 THEN
+   sqlInsert = CONCAT('INSERT INTO ',table_inserta,'(',sqlInsert,$2,') VALUES (',$3,') returning id');
+  END IF;
+      
+  --BEGIN
+    EXECUTE(sqlInsert) INTO result_insert;    
+    result_data = cfgapl.fn_return_data_visible_after_insert_update($1,result_insert.id,table_inserta);
+  --EXCEPTION when others then
+   --GET STACKED DIAGNOSTICS err_message = MESSAGE_TEXT; 
+   --result_data = row('ERROR: ' || err_message);
+  --END;    
+  
+  return row_to_json(result_data);
+end
+$$
+LANGUAGE 'plpgsql'
+COST 1;
+
+ALTER FUNCTION cfgapl.fn_insert_register(uuid, varchar, varchar, varchar, uuid, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_insert_register(uuid, varchar, varchar, varchar, uuid, uuid)
+  IS 'Insert the products (sections,tables,etc...)';

@@ -5,7 +5,7 @@ const getDatatypesAll = () => {
     return datatypes;
 }
 
-const isTypeString = (value) => {
+const isTypeString = (value) => {    
     return datatypes.includes(value)
 }
 
