@@ -166,17 +166,21 @@ Ext.define('MasterSol.controller.menu.MenuController', {
     // elimina todas la secciones y agregar las secciones correspondiente al padre
     addChildOfTab: function (tab, panel) {
         var level, tabs;
-        var childs = (this.json[0].children) ? this.json[0].children : [];
-        tab.removeAll();
+        var childs = tab.items.items;
         var insert = false;
         for (var j = 0; j < childs.length; j++) {
-            if (childs[j].idpadre === panel.idsection) {
-                this.insertSection(childs[j], tab);
+            if (childs[j].idparent === panel.idsection) {
+                childs[j].tab.show();
+                if(!insert){
+                    tab.setActiveItem(childs[j]);
+                }
                 insert = true;
-                break;
+            }else{
+                childs[j].tab.hide();
             }
         }
         var window = tab.up('window');
+
         if (insert) {
             tab.show();
             tabs = MasterApp.util.getTabsOfWindow(window);

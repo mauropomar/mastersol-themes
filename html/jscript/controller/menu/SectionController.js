@@ -123,6 +123,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     tabChangeSection: function (tabPanel, newCard) {
         var gridsection = newCard.down('gridpanel');
         MasterApp.globals.setGridSection(gridsection);
+        MasterApp.globals.setRecordSection(null);
         this.addEventClickTabSection(tabPanel, newCard);
         this.findChildOfSection(tabPanel, newCard);
         MasterApp.magnament.getData(gridsection);
@@ -130,7 +131,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         if (idparent == null)
             return;
         var window = gridsection.up('window');
-        //    MasterApp.tools.setButtons(window, gridsection.btnTools);
         this.getData(idparent, newCard);
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         tabMagnament.idmenumag = tabPanel.idmenu;
