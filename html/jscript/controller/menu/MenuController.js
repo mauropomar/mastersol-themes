@@ -107,14 +107,14 @@ Ext.define('MasterSol.controller.menu.MenuController', {
 
     generateSections: function (level, height) {
         var tabpanel = Ext.create('Ext.tab.Panel', {
-           // height: height,
+            // height: height,
             activeTab: 0,
             split: true,
             resizable: true,
             level: level - 1,
             idmenu: this.windowParent.idmenu,
             name: 'tab-section',
-            layout:'fit',
+            layout: 'fit',
             border: 1
         });
         this.panelMenu.add(tabpanel);
@@ -171,11 +171,13 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         for (var j = 0; j < childs.length; j++) {
             if (childs[j].idparent === panel.idsection) {
                 childs[j].tab.show();
-                if(!insert){
+                if (!insert) {
+                    tab.suspendEvents();
                     tab.setActiveItem(childs[j]);
+                    tab.resumeEvents();
                 }
                 insert = true;
-            }else{
+            } else {
                 childs[j].tab.hide();
             }
         }
@@ -213,15 +215,15 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         var isSmallTheme = MasterApp.theme.isShortTheme();
         var heightPanel, heightTabs;
         if (tabs.length == 1) {
-            heightPanel = isSmallTheme?'44%':'43%';
+            heightPanel = isSmallTheme ? '44%' : '43%';
             heightTabs = '55%';
         }
-        if (tabs.length == 2){
-            heightPanel = isSmallTheme?'28%':'27%';
+        if (tabs.length == 2) {
+            heightPanel = isSmallTheme ? '28%' : '27%';
             heightTabs = '35%';
         }
-        if (tabs.length == 3){
-            heightPanel = isSmallTheme?'25%':'24%';
+        if (tabs.length == 3) {
+            heightPanel = isSmallTheme ? '25%' : '24%';
             heightTabs = '25%';
         }
         p.setHeight(heightPanel);
