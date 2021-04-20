@@ -1,0 +1,61 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_registers
+(
+  IN  id_section       uuid,
+  IN  idregister       uuid,
+  IN  id_sectionpadre  uuid,
+  IN  id_rol           uuid
+)
+RETURNS json AS
+$$
+declare
+result_sections record; name_table varchar; sqlEjec varchar;
+temp_tables_properties varchar[]; 
+result_datas json = null;
+res_foreign_key varchar[];
+sql_where varchar;
+sqlSelect varchar = ' SELECT dat.* ';
+begin
+     SELECT id_tables,namex,path INTO result_sections FROM cfgapl.sections WHERE id = $1;   
+     
+     SELECT (n_schema || '.' || n_table) INTO name_table FROM cfgapl.tables WHERE id = result_sections.id_tables;     
+      
+    SELECT array_agg(tbp.n_column) INTO res_foreign_key
+    FROM cfgapl.sections sc
+    JOIN cfgapl.tables tb on (sc.id_tables = tb.id)
+    JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
+    WHERE sc.id = $1 
+	/*AND tbp.id_fk_tables =   
+    (SELECT tb1.id FROM cfgapl.sections sc
+    JOIN cfgapl.tables tb1 on (sc.id_tables = tb1.id)
+    WHERE sc.id = $3) */
+	AND tbp.n_column not like '%fk%'; --Agregado para despreciar los registros de foreign keys    
+       
+     sqlSelect = sqlSelect || cfgapl.fn_return_value_fk($1,$4);      
+     sqlEjec = 'SELECT json_agg(rowset.*) FROM (' || sqlSelect || ' FROM ';   
+    
+     IF not array_length(res_foreign_key,1) is null THEN
+      FOR item IN 1..array_length(res_foreign_key,1) LOOP      
+       IF item = 1 THEN 
+         sql_where = CONCAT(sql_where , ' dat.', res_foreign_key[item] , ' = ' , ''''||$2||'''');
+       ELSE 
+         sql_where = CONCAT(sql_where , ' OR dat.', res_foreign_key[item] , ' = ' , ''''||$2||'''');         
+       END IF;       
+      END LOOP;
+                    
+      sqlEjec = sqlEjec || name_table || ' dat WHERE ' || trim(sql_where,',') || ' )rowset;';        
+      BEGIN
+         EXECUTE(sqlEjec) INTO result_datas;         
+      EXCEPTION WHEN OTHERS THEN END;
+     END IF;   
+                   
+    return result_datas;
+end
+$$
+LANGUAGE 'plpgsql'
+COST 1;
+
+ALTER FUNCTION cfgapl.fn_get_registers(uuid, uuid, uuid, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_get_registers(uuid, uuid, uuid, uuid)
+  IS 'Return the data sections by idsection and idproduct';
