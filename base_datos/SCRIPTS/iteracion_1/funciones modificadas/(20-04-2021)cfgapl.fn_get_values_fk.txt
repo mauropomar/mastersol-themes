@@ -1,0 +1,36 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_values_fk
+(
+  IN  idsection   uuid,
+  IN  idregister  uuid,
+  IN  id_rol      uuid
+)
+RETURNS json AS
+$$
+declare
+res_datas json;
+name_table varchar;
+begin
+      SELECT mi_fk.n_schema || '.' || mi_fk.n_table INTO name_table
+      FROM cfgapl.sections sc 
+      JOIN security.rol_sections rs on (sc.id = rs.id_sections)
+      JOIN cfgapl.tables tb on (sc.id_tables = tb.id)
+      JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id AND tbp.id = $2)
+      JOIN (SELECT tbf.n_schema,tbf.n_table,tbf.id
+            FROM cfgapl.tables tbf) mi_fk on(mi_fk.id = (select id from cfgapl.tables where n_schema||'.'||n_table in 
+    (select foreign_table_schema||'.'||foreign_table from cfgapl.tables_foreignkeys 
+    where id_tables = tb.id AND array_to_string(local_fields,',') = tbp.n_column 
+	AND tbp.n_column <> 'id')))   
+      WHERE sc.id = $1 AND rs.id_rol = $3;      
+      BEGIN
+       EXECUTE('SELECT json_agg(rowset.*) FROM (SELECT id,namex as nombre FROM ' || name_table || ' )rowset') INTO res_datas;     
+      EXCEPTION WHEN OTHERS THEN END;
+  return res_datas;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_values_fk(uuid, uuid, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_get_values_fk(uuid, uuid, uuid)
+  IS 'Return values by foreign key';
