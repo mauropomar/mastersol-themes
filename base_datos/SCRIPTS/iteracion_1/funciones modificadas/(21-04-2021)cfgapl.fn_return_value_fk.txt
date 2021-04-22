@@ -1,0 +1,98 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_return_value_fk
+(
+  IN  id_section  uuid,
+  IN  id_rol      uuid
+)
+RETURNS varchar AS
+$$
+declare 
+result_data varchar[]; res_fk_prop_name record;
+res_column varchar; rec_fks record; rec_json record; table_fk varchar; val varchar; 
+column1 varchar; column2 varchar; column3 varchar;
+begin 
+      
+     FOR rec_fks IN
+	 (
+		 SELECT tbp.id, (select tfk.name1 from cfgapl.tables_foreignkeys tfk where tfk.id_tables = tb.id 
+	    AND array_to_string(tfk.local_fields,',') = tbp.n_column AND tbp.n_column <> 'id') as id_fk_properties, 
+		(select tfk.name2 from cfgapl.tables_foreignkeys tfk where tfk.id_tables = tb.id 
+	    AND array_to_string(tfk.local_fields,',') = tbp.n_column AND tbp.n_column <> 'id') as id_fk_properties2, 
+		(select tfk.name3 from cfgapl.tables_foreignkeys tfk where tfk.id_tables = tb.id 
+	    AND array_to_string(tfk.local_fields,',') = tbp.n_column AND tbp.n_column <> 'id') as id_fk_properties3
+		 --,tbp.id_fk_properties 
+		FROM cfgapl.sections sc
+		JOIN security.rol_sections rs on (sc.id = rs.id_sections)
+		JOIN cfgapl.tables tb on (sc.id_tables = tb.id)		
+		JOIN cfgapl.tables_properties tbp on (tbp.id_tables = sc.id_tables) 		
+		WHERE sc.id = $1 AND rs.id_rol = $2 
+		AND (select count(tfk.id) from cfgapl.tables_foreignkeys tfk where tfk.id_tables = tb.id 
+		AND array_to_string(tfk.local_fields,',') = tbp.n_column AND tbp.n_column <> 'id') > 0	
+		--AND not tbp.id_fk_tables is null
+	) LOOP 
+    
+    --Aqui se obtiene el id de la columna que hace referencia a la columna que indicara el valor a mostrar en el fk     
+    SELECT 
+	--tbp.id_fk_properties as id
+	--,tbp.id_fk_tables,
+	(select tfk.name1 from cfgapl.tables_foreignkeys tfk where tfk.id_tables = tb.id 
+	    AND array_to_string(tfk.local_fields,',') = tbp.n_column AND tbp.n_column <> 'id') as id,
+	(select tfk.name2 from cfgapl.tables_foreignkeys tfk where tfk.id_tables = tb.id 
+	    AND array_to_string(tfk.local_fields,',') = tbp.n_column AND tbp.n_column <> 'id') as id2,
+	(select tfk.name3 from cfgapl.tables_foreignkeys tfk where tfk.id_tables = tb.id 
+	    AND array_to_string(tfk.local_fields,',') = tbp.n_column AND tbp.n_column <> 'id') as id3,
+	tbp.n_column INTO res_fk_prop_name   
+    FROM cfgapl.tables tb
+    JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id) 	
+    WHERE tbp.id = rec_fks.id;
+    
+    --Aqui se obtiene la columna que indicara el valor a mostrar en el fk
+	SELECT tbp.n_column INTO column1   
+    FROM cfgapl.tables tb
+    JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
+    WHERE tbp.id = res_fk_prop_name.id;
+	
+	SELECT tbp.n_column INTO column2  
+    FROM cfgapl.tables tb
+    JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
+    WHERE tbp.id = res_fk_prop_name.id2;
+	
+	SELECT tbp.n_column INTO column3   
+    FROM cfgapl.tables tb
+    JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
+    WHERE tbp.id = res_fk_prop_name.id3;
+	
+    SELECT tb.n_schema||'.'||tb.n_table INTO res_column   
+    FROM cfgapl.tables tb
+    JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
+    WHERE tbp.id = res_fk_prop_name.id;
+        
+    --Aqui se retorna el valor del fk en forma de subconsulta
+	
+	
+    IF not rec_fks.id_fk_properties is null AND rec_fks.id_fk_properties2 is null AND rec_fks.id_fk_properties3 is null THEN
+		val = '(SELECT '||column1||' FROM '||res_column||' WHERE id = dat.'|| res_fk_prop_name.n_column ||') as n_'||res_fk_prop_name.n_column;
+	ELSIF not rec_fks.id_fk_properties is null AND not rec_fks.id_fk_properties2 is null AND rec_fks.id_fk_properties3 is null THEN
+		val = '(SELECT '||column1||'||''  ''||'||column2||'::text FROM '||res_column||' WHERE id = dat.'|| res_fk_prop_name.n_column ||') as n_'||res_fk_prop_name.n_column;
+	ELSIF not rec_fks.id_fk_properties is null AND not rec_fks.id_fk_properties2 is null AND not rec_fks.id_fk_properties3 is null THEN
+		val = '(SELECT '||column1||'||''  ''||'||column2||'::text ||'' ''||'||column3||'::text FROM '||res_column||' WHERE id = dat.'|| res_fk_prop_name.n_column ||') as n_'||res_fk_prop_name.n_column;
+    ELSE
+		val = 'null as n_'||res_fk_prop_name.n_column;
+    END IF;
+    SELECT array_append(result_data,val) INTO result_data; 
+    END LOOP;    
+    
+    IF array_length(result_data,1) > 0 THEN
+     return ',' || array_to_string(result_data, ',', '*');
+    ELSE
+     return '';
+    END IF;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_return_value_fk(uuid, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_return_value_fk(uuid, uuid)
+  IS 'En esta funcion se devuelven los foreign keys de la seccion, ya organizada en una subconsulta. Ejemplo:
+(SELECT namex FROM cfgapl.capsules WHERE id = dat.idcapsules) as n_id_capsules';
