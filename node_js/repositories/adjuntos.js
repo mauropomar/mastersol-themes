@@ -28,12 +28,6 @@ const insertAdjunto = async (req) => {
     //Validar antes de iniciar proceso de guardado usando una locacion temporal para el fichero que despues será eliminada
     const paramsSize = ['cfgapl.general',null,"WHERE variable = 'max_file_size' "]
     const resultMaxFileSize = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSize)
-    
-    let dirAlmacenar = '../resources/files';
-    const paramsDirAttach = ['cfgapl.general',null,"WHERE variable = 'dir_attach' "];
-    const resultDirAttach = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsDirAttach);
-    if(resultDirAttach && resultDirAttach.rows[0].fn_get_register)
-        dirAlmacenar = resultDirAttach.rows[0].fn_get_register[0].value;
 
     let id_organizations, id_capsules, id_tables, id_section;
     
@@ -117,12 +111,12 @@ const insertAdjunto = async (req) => {
                             paramsInsert.push(req.session.id_user)
 
                            const resultInsert = await insertRegister(req, paramsInsert);
+                            msg = resultInsert.name
                             if(resultInsert){
                                 //Subir fichero final
                                 let address = resultInsert.name
                                 let filename = resultInsert.id + '.' + extension
                                 address = address.replace(filename, '')
-                                
                                 fs.mkdir(address, {recursive: true}, (err) => {
                                     if (!err) {
                                         fs.rename(dirTemp + '/' + req.body.filename, resultInsert.name, (err) => {
@@ -157,7 +151,7 @@ const insertAdjunto = async (req) => {
             msg = 'Ha ocurrido un error, ' + err
         }
     });
-
+    console.log('Mensaje '+msg)
     return {'success': success, 'message': msg}
 }
 
