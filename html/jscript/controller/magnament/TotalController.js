@@ -84,7 +84,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         var idregisterparent = (idrecordparent) ? idrecordparent : 0;
         var idparentsection = MasterApp.util.getIdParentSectionActive();
         var record = MasterApp.globals.getRecordSection();
-        idrecordsection = record.data.id;
+        idrecordsection = (record != null) ? record.data.id : null;
         var save = {
             url: 'app/resultfilterfunctions',
             method: 'POST',
@@ -259,10 +259,11 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         for (var i = 0; i < data.length; i++) {
             var name = data[i]['dataIndex'];
             for (var j = 0; j < columns.length; j++) {
-                if (name.toLocaleLowerCase() == columns[j].dataIndex) {
+                if (name.toLocaleLowerCase() == columns[j].dataIndex || 'n_' + name.toLocaleLowerCase() === columns[j].dataIndex) {
                     columns[j]['funcion'] = data[i]['funcion'];
                     var record = store.getAt(0);
                     record.set(name, data[i]['valor']);
+                    record.set('n_' + name, data[i]['valor']);
                     record.commit();
                 }
             }

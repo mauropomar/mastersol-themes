@@ -73,9 +73,15 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         var rec = MasterApp.globals.getRecordSection();
         var columns = gridsection.config.columns;
         this.addRegister(rec, columns);
-        this.isEdit = true;
-        Ext.ComponentQuery.query('#btn_insert_register')[0].hide();
-        Ext.ComponentQuery.query('#btn_save_register')[0].show();
+        if(rec === null){
+            this.isEdit = false;
+            Ext.ComponentQuery.query('#btn_insert_register')[0].show();
+            Ext.ComponentQuery.query('#btn_save_register')[0].hide();
+        }else{
+            this.isEdit = true;
+            Ext.ComponentQuery.query('#btn_insert_register')[0].hide();
+            Ext.ComponentQuery.query('#btn_save_register')[0].show();
+        }
         var grid = Ext.ComponentQuery.query('#register-view')[0];
         grid.focus();
         var edit = grid.plugins[0];
