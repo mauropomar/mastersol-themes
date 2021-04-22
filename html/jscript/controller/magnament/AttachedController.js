@@ -127,7 +127,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         });
         mask.show();
         var record = MasterApp.globals.getRecordSection();
-        idrecordsection = record.data.id;
+        idrecordsection = (record != null) ? record.data.id : null;
         var idsection = MasterApp.util.getIdSectionActive();
         var idmenu = MasterApp.util.getIdMenuActive();
         var getdata = {
@@ -173,10 +173,10 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         var idregisterparent = (idrecordparent) ? idrecordparent : 0;
         var idparentsection = MasterApp.util.getIdParentSectionActive();
         var record = MasterApp.globals.getRecordSection();
-        idrecordsection = record.data.id;
+        idrecordsection = (record != null) ? record.data.id : null;
         var action = '13';
         if (this.isEdit) { //si estas editando
-            var record = MasterApp.globales.getRecordSection();
+            record = MasterApp.globales.getRecordSection();
             idrecordsection = record.data.id;
             action = '14';
         }
@@ -216,29 +216,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                 }
             })
         }
-        reader.readAsArrayBuffer(file)
-
-        /*   formData.append('idsection', idsection);
-           formData.append('idseccionpadre', idparentsection);
-           formData.append('idpadreregistro', idregisterparent);
-           formData.append('idregister', idrecordsection);
-           formData.append('idmenu', idmenu);
-           formData.append('accion', action);
-           formData.append('filename', filename);
-           formData.append('file_adjunto', file);
-           Ext.Ajax.request({
-               url: 'app/crudadjunto',
-               rawData: formData,
-               headers: {'Content-Type': null},
-               scope: this,
-               success: function (response) {
-                   mask.hide();
-                   var json = Ext.JSON.decode(response.responseText);
-                   if (json.success == true) {
-                       this.addOneFile(json, filename);
-                   }
-               }
-           });*/
+        reader.readAsArrayBuffer(file);
     },
 
     delete: function (me, e, eOpts) {
