@@ -1,0 +1,48 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_columns_by_section
+(
+  IN  id_section  uuid,
+  IN  id_rol      uuid
+)
+RETURNS json AS
+$$
+declare
+columnas jsonb = null;
+begin
+     select jsonb_agg(colum.*) INTO columnas FROM
+      (
+		  SELECT scpr.namex as "text",tbp.n_column as "dataIndex",150 as "width",
+		  (SELECT dt.real_name_ext FROM cfgapl.datatypes dt WHERE dt.id = tbp.id_datatype) as "type",
+		  (SELECT dt.real_name_in FROM cfgapl.datatypes dt WHERE dt.id = tbp.id_datatype) as real_name_in,
+		  'center' as align,scpr.orderable as sortable, 
+		  CASE WHEN (select count(tfk.id) from cfgapl.tables_foreignkeys tfk where tfk.id_tables = tb.id 
+		  AND strpos(array_to_string(tfk.local_fields,','), tbp.n_column) <> 0 AND tbp.n_column <> 'id') = 0 THEN 0 ELSE 1 END as fk,
+		  CASE WHEN (select count(tfk.id) from cfgapl.tables_foreignkeys tfk where tfk.id_tables = tb.id 
+		  AND strpos(array_to_string(tfk.local_fields,','), tbp.n_column) <> 0 AND tbp.n_column <> 'id') > 0 THEN 'n_'||tbp.n_column  ELSE null END as n_fk,
+		  --CASE WHEN tbp.id_fk_tables is null THEN 0 ELSE 1 END as fk,      
+		  --CASE WHEN not tbp.id_fk_tables is null THEN 'n_'||tbp.n_column  ELSE null END as n_fk,  
+		  0 as fk,      
+		  null as n_fk,       
+		  CASE WHEN tbp.is_required = true AND tbp.default_value is null THEN true ELSE false END as required,
+		  cfgapl.fn_execute_function(scpr.fn_hide) AS hidden,
+		  cfgapl.fn_execute_function(scpr.fn_read_only) AS read_only,                
+		  tbp.id as idregister,tbp.*,scpr.no_move,scpr.*
+		  FROM cfgapl.sections sc 
+		  JOIN security.rol_sections rs on (sc.id = rs.id_sections)
+		  JOIN cfgapl.tables tb on (sc.id_tables = tb.id)
+		  JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id) 
+		  --JOIN cfgapl.tables_foreignkeys tfk on (tfk.id_tables = tb.id)
+		  JOIN cfgapl.sections_properties scpr on (scpr.id_tables_properties = tbp.id)     
+		  WHERE sc.id = $1 AND rs.id_rol = $2 AND 
+		  (cfgapl.fn_execute_function(scpr.fn_hide) = false OR 
+		  cfgapl.fn_execute_function(scpr.fn_hide) is null)
+		  ORDER BY scpr.orderx
+      )colum;
+      
+      return columnas;
+     
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_columns_by_section(uuid, uuid)
+  OWNER TO postgres;
