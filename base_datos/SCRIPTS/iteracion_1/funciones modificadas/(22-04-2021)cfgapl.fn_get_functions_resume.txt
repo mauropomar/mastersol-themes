@@ -1,0 +1,43 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_functions_resume
+(
+  IN  idsection  uuid
+)
+RETURNS json AS
+$$
+declare
+resultado json;
+begin
+  
+select json_agg(rowset.*) INTO resultado from
+(
+	SELECT tp.id as idregistro,dt.id as tipodato,dt.namex as nombretipodato,tp.namex as nombrecampo,
+	dt.real_name_ext as tipo, 
+	CASE WHEN (select count(tfk.id) from cfgapl.tables_foreignkeys tfk where tfk.id_tables = tp.id 
+		  AND strpos(array_to_string(tfk.local_fields,','), tp.n_column) <> 0 AND tp.n_column <> 'id') = 0 THEN 0 ELSE 1 END as fk,
+	--CASE WHEN tp.id_fk_tables is null THEN 0 ELSE 1 END as fk,
+	(
+	select json_agg(aux.*) FROM
+	(SELECT op.id as id,op.namex as nombre
+	FROM cfgapl.datatypes_func_resume op
+	WHERE op.id_datatypes = dt.id)aux
+	) as funciones
+
+	FROM cfgapl.sections s
+	JOIN cfgapl.sections_properties sp on sp.id_sections = s.id
+	JOIN cfgapl.tables t on s.id_tables = t.id
+	JOIN cfgapl.tables_properties tp on tp.id_tables = t.id
+	JOIN cfgapl.datatypes dt on dt.id = tp.id_datatype  
+	WHERE s.id = $1
+	GROUP BY tp.id,dt.id,dt.namex
+)rowset;
+
+return resultado;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_functions_resume(uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_get_functions_resume(uuid)
+  IS 'Return functions resume by idsection';
