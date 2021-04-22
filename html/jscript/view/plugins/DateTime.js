@@ -51,11 +51,6 @@ Ext.define('MasterSol.view.plugins.DateTime', {
         return value
     },
 
-    setValue: function (value) {
-        value = (value)?new Date(value):new Date();
-        this.dateField.setValue(value);
-        this.timeField.setValue(value);
-    },
 
     getSubmitData: function () {
         var value = this.getValue()
@@ -68,14 +63,36 @@ Ext.define('MasterSol.view.plugins.DateTime', {
     },
 
     setMaxValue: function (value) {
-        if(value === null || value === '')
+        if (value === null || value === '')
             return;
         this.dateField.setMaxValue(value);
     },
 
     setMinValue: function (value) {
-        if(value === null || value === '')
+        if (value === null || value === '')
             return;
         this.dateField.setMinValue(value);
+    },
+
+    setValue: function (value) {
+        value = this.formatValue(value);
+        this.dateField.setValue(value);
+        this.timeField.setValue(value);
+    },
+
+    formatValue: function (value) {
+        var dateValue = new Date(value);
+        if (Ext.isDate(dateValue) && dateValue != 'Invalid Date')
+            return dateValue;
+        if(!value || value == null || value == 'Invalid Date')
+            return new Date();
+        var day = value.substring(0, 2);
+        var month = value.substring(3, 5);
+        var year = value.substring(6, 10);
+        var hour = value.substring(11, 13);
+        var minute = value.substring(14, 16);
+        var seconds = value.substring(17, 21);
+        var newValue =  year + '/' + month + '/' + day + ' ' + hour + ':' + minute + ':' + seconds;
+        return new Date(newValue);
     }
 })
