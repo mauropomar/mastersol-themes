@@ -197,13 +197,13 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                 url: 'app/crudadjunto',
                 method: 'POST',
                 params: {
-                    idsection:idsection,
-                    idseccionpadre:idparentsection,
-                    idpadreregistro:idregisterparent,
-                    idregister:idrecordsection,
-                    idmenu:idmenu,
-                    accion:action,
-                    filename:filename,
+                    idsection: idsection,
+                    idseccionpadre: idparentsection,
+                    idpadreregistro: idregisterparent,
+                    idregister: idrecordsection,
+                    idmenu: idmenu,
+                    accion: action,
+                    filename: filename,
                     file: base64String
                 },
                 scope: this,
@@ -263,7 +263,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                         method: 'POST',
                         scope: this,
                         params: {
-                            'idsection':  idsection,
+                            'idsection': idsection,
                             'accion': '7',
                             'idadjunto': me.idComp
                         },
@@ -279,31 +279,11 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
     },
 
     download: function (btn) {
-        var idsection = MasterApp.util.getIdSectionActive();
-        var form = Ext.ComponentQuery.query('attached-view')[0];
-        var mask = new Ext.LoadMask(form, {
-            msg: 'Cargando archivo...'
-        });
-        mask.show();
-        var down = {
-            url: 'app/crudadjunto',
-            method: 'POST',
-            scope: this,
-            params: {
-                'idsection': idsection,
-                'idadjunto': btn.idComp,
-                'accion': '15'
-            },
-            callback: function (options, success, response) {
-                mask.hide();
-                /* '<a href = ' + response.responseText + ' download>bbnvbn</a>'
-                 var json = Ext.JSON.decode(response.responseText);
-                 if (json.success == true) {
-
-                 }*/
-            }
-        };
-        Ext.Ajax.request(down);
+        var url = btn.dirFile;
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = url.substr(url.lastIndexOf('/') + 1);
+        link.click();
     },
 
     addComponent: function (datos) {
@@ -343,6 +323,8 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
     },
 
     addFile: function (file) {
+        var index = file.valor.lastIndexOf('/');
+        var valor = file.valor.substring(index + 1, file.valor.length);
         this.fileslist.push(file.valor);
         var addedFilePanel = Ext.create('Ext.form.Panel', {
             frame: false,
@@ -380,7 +362,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     },
                     listeners: {
                         render: function (me, eOpts) {
-                            me.setText(file.valor);
+                            me.setText(valor);
                         }
                     }
                 },
@@ -390,6 +372,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     border: 0,
                     frame: false,
                     idComp: file.id,
+                    dirFile: file.valor,
                     iconCls: 'fa fa-download',
                     tooltip: 'Descargar',
                     cls: 'x-btn-form',
