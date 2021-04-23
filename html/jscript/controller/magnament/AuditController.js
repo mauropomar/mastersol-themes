@@ -19,7 +19,7 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
             var grid = Ext.ComponentQuery.query('audit-view')[0];
             var store = grid.getStore();
             var record = MasterApp.globals.getRecordSection();
-            idrecordsection = record.data.id;
+            idrecordsection = (record != null) ? record.data.id : null;
             var gridsection = MasterApp.globals.getGridSection();
             var window = Ext.ComponentQuery.query('audit-filter')[0];
             var property = Ext.ComponentQuery.query('#combo-property')[0].getValue();
@@ -105,7 +105,7 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
         getAll: function () {
             var idsection = MasterApp.util.getIdSectionActive();
             var record = MasterApp.globals.getRecordSection();
-            idrecordsection = record.data.id;
+            idrecordsection = (record != null) ? record.data.id : null;
             var idmenu = MasterApp.util.getIdMenuActive();
             var grid = Ext.ComponentQuery.query('audit-view')[0];
             var store = grid.getStore();
