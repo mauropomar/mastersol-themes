@@ -1,6 +1,8 @@
 const pool = require('../connection/server-db')
 const fs = require('fs')
 var stream = require('stream');
+const util = require('util');
+
 const objAdj = {}
 const getAdjuntos = async (req) => {
     const params = [req.query.idsection, req.query.idregister, req.session.id_user]
@@ -18,7 +20,6 @@ const getAdjuntos = async (req) => {
 
 const insertAdjunto = async (req) => {
     var success = true
-    var max_size = ''
     var msg = ''
     var Readable = stream.Readable;
     var imgBuffer = Buffer.from(req.body.file, 'base64');
@@ -56,104 +57,136 @@ const insertAdjunto = async (req) => {
         id_section = resultSectionAttach.rows[0].fn_get_register[0].id
 
     let dirTemp = './' + Math.random()
-    fs.mkdir(dirTemp, {recursive: true}, (err) => {
-        if (!err) {
-            var writeStream = fs.createWriteStream(dirTemp + '/' + req.body.filename);
-            readStream.pipe(writeStream);
-            writeStream.on('finish', function () {
-                //Al terminar la escritura, continuar proceso                
-                 fs.stat(dirTemp + '/' + req.body.filename, async (err, stat) => {
-                    if (!err){
-                        //Buscar requisito de tamanno
-                        let file_size = stat.size
-                        //el size viene en bytes, lo divido por 1048576 para convertirlo a MB
-                        file_size = file_size / 1048576
-
-                        if(resultMaxFileSize && resultMaxFileSize.rows[0].fn_get_register) {
-                            max_size = resultMaxFileSize.rows[0].fn_get_register[0].value
-                            if (file_size > max_size) {
-                                success = false;
-                                msg = 'El tamaño del fichero sobrepasa el máximo permitido que es de ' + max_size + ' MB';
-                            }
-                        }
-
-                        if(success){   //Si todas las comprobaciones fueron exitosas, proceder a crear el registro y subir el fichero
-                            
-                            var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
-                            //guardar en name extension del fichero
-                            let extension = ''
-                            arrFileName = req.body.filename.split('.')
-                            if(arrFileName) {
-                                let lastPos = arrFileName.length - 1
-                                extension = arrFileName[lastPos]
-                            }
-
-                            //columnas a insertar
-                            columnasInsertAux.push('id_capsules')
-                            columnasInsertAux.push('id_organizations')
-                            columnasInsertAux.push('id_tables')
-                            columnasInsertAux.push('id_register')
-                            columnasInsertAux.push('name')
-                            columnasInsertAux.push('creator')
-                            //valores a insertar
-                            valuesInsertAux.push(" '" + id_capsules + "'")
-                            valuesInsertAux.push(" '" + id_organizations + "'")
-                            valuesInsertAux.push(" '" + id_tables + "'")
-                            valuesInsertAux.push(" '" + req.body.idregister + "'")
-                            valuesInsertAux.push(" '" + extension + "'")
-                            valuesInsertAux.push("'" + req.session.id_user + "'")
-
-                            paramsInsert.push(id_section)
-                            paramsInsert.push(columnasInsertAux.join(','))
-                            paramsInsert.push(valuesInsertAux.join(','))
-                            paramsInsert.push(req.body.idpadreregistro && req.body.idpadreregistro !== '0' ? req.body.idpadreregistro : null)
-                            paramsInsert.push(req.body.idseccionpadre && req.body.idseccionpadre !== '0' ? req.body.idseccionpadre : null)
-                            paramsInsert.push(req.session.id_user)
-
-                           const resultInsert = await insertRegister(req, paramsInsert);
-                            msg = resultInsert.name
-                            if(resultInsert){
-                                //Subir fichero final
-                                let address = resultInsert.name
-                                let filename = resultInsert.id + '.' + extension
-                                address = address.replace(filename, '')
-                                fs.mkdir(address, {recursive: true}, (err) => {
-                                    if (!err) {
-                                        fs.rename(dirTemp + '/' + req.body.filename, resultInsert.name, (err) => {
-                                            if(!err) {
-                                                console.log("Archivo subido!")
-                                                const delDir = deleteDir(dirTemp, req.body.filename)
-                                            }
-                                            else console.log(err)
-                                        });
-                                    }
-                                });
-                            }
-                           
-                        }
-                        else{
-                            const delDir = deleteDir(dirTemp, req.body.filename)
-                        }
-
-                    }
-                    else{
-                        success = false
-                        msg = 'Ha ocurrido un error, ' + err
-                        const delDir = deleteDir(dirTemp, req.body.filename)
-                    }
-                });
-
-
-            });
-        }
-        else{
-            success = false
+    fs.mkdirSync(dirTemp, {recursive: true}, (err) => {
+        if (err) {
+            success = false;
             msg = 'Ha ocurrido un error, ' + err
         }
     });
-    console.log('Mensaje '+msg)
+    fs.exists(dirTemp, (exists) => {
+        if(!exists){
+            success = false;
+            msg = 'Ha ocurrido un error'
+        }
+    });
+    if(success) {        
+        var writeStream = await fs.createWriteStream(dirTemp + '/' + req.body.filename);
+        readStream.pipe(writeStream);
+        await uploadFile(req,dirTemp,writeStream,id_organizations, id_capsules, id_tables, id_section,resultMaxFileSize)
+            .then((value) => {
+                msg = value
+            })
+            .catch((value) => {
+                success = false
+                msg = value
+            })
+        ;
+    }
+    else{
+        msg = 'Ha ocurrido un error'
+    }
+
     return {'success': success, 'message': msg}
 }
+
+const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_tables, id_section,resultMaxFileSize) => new Promise((resolve, reject) => {
+    let success = true
+    let msg = ''
+    writeStream.on('finish', function () {
+        console.log('llego aqui')
+        //Al terminar la escritura, continuar proceso
+        fs.stat(dirTemp + '/' + req.body.filename, async(err, stat) => {
+            if (!err) {
+                console.log('llego aqui stat')
+                //Buscar requisito de tamanno
+                let file_size = stat.size
+                //el size viene en bytes, lo divido por 1048576 para convertirlo a MB
+                file_size = file_size / 1048576
+
+                if (resultMaxFileSize && resultMaxFileSize.rows[0].fn_get_register) {
+                    max_size = resultMaxFileSize.rows[0].fn_get_register[0].value
+                    if (file_size > max_size) {
+                        success = false;
+                        msg = 'El tamaño del fichero sobrepasa el máximo permitido que es de ' + max_size + ' MB';
+                        reject(msg)
+                    }
+                }
+
+                if (success) {   //Si todas las comprobaciones fueron exitosas, proceder a crear el registro y subir el fichero
+
+                    var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
+                    //guardar en name extension del fichero
+                    let extension = ''
+                    arrFileName = req.body.filename.split('.')
+                    if (arrFileName) {
+                        let lastPos = arrFileName.length - 1
+                        extension = arrFileName[lastPos]
+                    }
+
+                    //columnas a insertar
+                    columnasInsertAux.push('id_capsules')
+                    columnasInsertAux.push('id_organizations')
+                    columnasInsertAux.push('id_tables')
+                    columnasInsertAux.push('id_register')
+                    columnasInsertAux.push('name')
+                    columnasInsertAux.push('creator')
+                    //valores a insertar
+                    valuesInsertAux.push(" '" + id_capsules + "'")
+                    valuesInsertAux.push(" '" + id_organizations + "'")
+                    valuesInsertAux.push(" '" + id_tables + "'")
+                    valuesInsertAux.push(" '" + req.body.idregister + "'")
+                    valuesInsertAux.push(" '" + extension + "'")
+                    valuesInsertAux.push("'" + req.session.id_user + "'")
+
+                    paramsInsert.push(id_section)
+                    paramsInsert.push(columnasInsertAux.join(','))
+                    paramsInsert.push(valuesInsertAux.join(','))
+                    paramsInsert.push(req.body.idpadreregistro && req.body.idpadreregistro !== '0' ? req.body.idpadreregistro : null)
+                    paramsInsert.push(req.body.idseccionpadre && req.body.idseccionpadre !== '0' ? req.body.idseccionpadre : null)
+                    paramsInsert.push(req.session.id_user)
+
+                    const resultInsert = await insertRegister(req, paramsInsert);
+                    if (resultInsert) {
+                        //Subir fichero final
+                        let address = resultInsert.name
+                        let filename = resultInsert.id + '.' + extension
+                        address = address.replace(filename, '')
+                        await fs.mkdir(address, {recursive: true}, (err) => {
+                            if (!err) {
+                                fs.rename(dirTemp + '/' + req.body.filename, resultInsert.name, (err) => {
+                                    if (!err) {
+                                        console.log("Archivo subido!")
+                                        msg = resultInsert.name
+                                        resolve(msg)
+                                        const delDir = deleteDir(dirTemp, req.body.filename)
+                                    }
+                                    else {
+                                        success = false
+                                        msg = 'Ha ocurrido un error, ' + err
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                }
+                else {
+                    success = false
+                    msg = 'Ha ocurrido un error'
+                    const delDir = deleteDir(dirTemp, req.body.filename)
+                }
+
+            }
+            else {
+                success = false
+                msg = 'Ha ocurrido un error, ' + err
+                const delDir = deleteDir(dirTemp, req.body.filename)
+            }
+        });
+
+    });
+
+})
 
 const deleteAdjunto = async (req) => {
     let success = true
