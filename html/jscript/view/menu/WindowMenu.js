@@ -36,13 +36,6 @@ Ext.define('MasterSol.view.menu.WindowMenu', {
         resize: function (window) {
             MasterApp.section.resizeWindow(window);
         },
-        beforeclose: function (win) {
-         /*   var id = win.id;
-            var tabs = Ext.ComponentQuery.query('#' + id + ' tabpanel');
-            tabs[0].destroy();
-            tabs[1].destroy();*/
-
-        },
         close: function (window) {
             MasterApp.section.closeWindow(window);
         },
