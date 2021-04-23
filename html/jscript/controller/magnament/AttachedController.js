@@ -196,6 +196,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
             Ext.Ajax.request({
                 url: 'app/crudadjunto',
                 method: 'POST',
+                scope:this,
                 params: {
                     idsection: idsection,
                     idseccionpadre: idparentsection,
@@ -211,7 +212,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     mask.hide();
                     var json = Ext.JSON.decode(response.responseText);
                     if (json.success == true) {
-                        this.addOneFile(json, filename);
+                        MasterApp.attached.addOneFile(json, json.datos);
                     }
                 }
             })
