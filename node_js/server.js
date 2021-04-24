@@ -5,10 +5,13 @@ var express = require("express"),
     path = require("path"),
     BodyParser = require("body-parser"),
     session = require("express-session"),
-    session_middlewares = require("./middlewares/session")
+    session_middlewares = require("./middlewares/session"),
+    timeout = require('connect-timeout')
 
 global.appRootApp = path.resolve(__dirname).replace('\\node_js', '\\');
 global.appRootNodeJS = path.resolve(__dirname);
+
+app.use(timeout(120000));
 
 app.use(session({
     secret: 'keyboard secret mastersol',
@@ -23,7 +26,7 @@ app.use(session({
 app.use('/', express.static(appRootApp + "/"));
 
 //add body parser
-app.use( BodyParser.json({limit: '50mb'}));
+app.use( BodyParser.json({limit: '50mb', type: 'application/json'}));
 app.use(BodyParser.urlencoded({
     limit: '50mb',
     extended: true,

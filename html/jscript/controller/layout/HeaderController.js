@@ -128,7 +128,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             method: 'POST',
             scope: this,
             params: {
-                sectionId: '3a7c9ace-c91b-4a9a-adb5-71f372318a68',
+                sectionId: '34419b9f-f7bd-443a-a3e8-1569cbdd4a2f',
                 alerta_user: true
             },
             success: function (response) {

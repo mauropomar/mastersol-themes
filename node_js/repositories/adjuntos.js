@@ -21,10 +21,11 @@ const getAdjuntos = async (req) => {
 const insertAdjunto = async (req) => {
     var success = true
     var msg = ''
+    var idreg = ''
     var Readable = stream.Readable;
-    var imgBuffer = Buffer.from(req.body.file, 'base64');
+    var fileBuffer = Buffer.from(req.body.file, 'base64');
     var readStream = new Readable();
-    readStream.push(imgBuffer);
+    readStream.push(fileBuffer);
     readStream.push(null)
     //Validar antes de iniciar proceso de guardado usando una locacion temporal para el fichero que despues será eliminada
     const paramsSize = ['cfgapl.general',null,"WHERE variable = 'max_file_size' "]
@@ -74,7 +75,8 @@ const insertAdjunto = async (req) => {
         readStream.pipe(writeStream);
         await uploadFile(req,dirTemp,writeStream,id_organizations, id_capsules, id_tables, id_section,resultMaxFileSize)
             .then((value) => {
-                msg = value
+                msg = value[0]
+                idreg = value[1]
             })
             .catch((value) => {
                 success = false
@@ -86,18 +88,17 @@ const insertAdjunto = async (req) => {
         msg = 'Ha ocurrido un error'
     }
 
-    return {'success': success, 'message': msg}
+    return {'success': success, 'message': msg, 'id': idreg}
 }
 
 const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_tables, id_section,resultMaxFileSize) => new Promise((resolve, reject) => {
     let success = true
     let msg = ''
+    let idreg = ''
     writeStream.on('finish', function () {
-        console.log('llego aqui')
         //Al terminar la escritura, continuar proceso
         fs.stat(dirTemp + '/' + req.body.filename, async(err, stat) => {
             if (!err) {
-                console.log('llego aqui stat')
                 //Buscar requisito de tamanno
                 let file_size = stat.size
                 //el size viene en bytes, lo divido por 1048576 para convertirlo a MB
@@ -146,7 +147,7 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                     paramsInsert.push(req.session.id_user)
 
                     const resultInsert = await insertRegister(req, paramsInsert);
-                    if (resultInsert) {
+                    if (resultInsert && resultInsert.name) {
                         //Subir fichero final
                         let address = resultInsert.name
                         let filename = resultInsert.id + '.' + extension
@@ -157,7 +158,9 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                                     if (!err) {
                                         console.log("Archivo subido!")
                                         msg = resultInsert.name
-                                        resolve(msg)
+                                        idreg = resultInsert.id
+                                        let arrResolve = [msg, idreg]
+                                        resolve(arrResolve)
                                         const delDir = deleteDir(dirTemp, req.body.filename)
                                     }
                                     else {
@@ -168,11 +171,18 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                             }
                         });
                     }
+                    else {
+                        success = false
+                        msg = 'Ha ocurrido un error'
+                        reject(msg)
+                        const delDir = deleteDir(dirTemp, req.body.filename)
+                    }
 
                 }
                 else {
                     success = false
                     msg = 'Ha ocurrido un error'
+                    reject(msg)
                     const delDir = deleteDir(dirTemp, req.body.filename)
                 }
 
@@ -180,6 +190,7 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
             else {
                 success = false
                 msg = 'Ha ocurrido un error, ' + err
+                reject(msg)
                 const delDir = deleteDir(dirTemp, req.body.filename)
             }
         });

@@ -98,19 +98,18 @@ router.get('/adjuntos', async function (req, res) {
 
 /*CRUD adjuntos*/
 router.post('/crudadjunto', async function (req, res) {
+    var id = ''
     if (req.body.accion === '13') { //Insert
         result = await objects.adjuntos.insertAdjunto(req)
+        id = result.id
     } else if (req.body.accion === '7') { //Delete
         result = await objects.adjuntos.deleteAdjunto(req)
     } else if (req.body.accion === '15') { //Descargar adjunto
         result = await objects.adjuntos.downloadAdjunto(req)
     }
 
-    // if (result.success === false) {
-    //     return res.json(result)
-    // } else {
-    return res.json({'success': result.success ? true : false, 'datos': result.message})
-    // }
+    return res.json({'success': result.success ? true : false, 'datos': result.message, 'id': id})
+
 })
 
 /*CRUD*/
