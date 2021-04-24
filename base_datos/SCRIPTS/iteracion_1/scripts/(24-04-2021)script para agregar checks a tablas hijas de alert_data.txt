@@ -1,0 +1,7 @@
+alter table alerts.alerts_data_new add constraint CK_alerts_new check (statex = 1);
+
+alter table alerts.alerts_data_confirm add constraint CK_alerts_confirm check (statex = 2);
+
+alter table alerts.alerts_data_deleted add constraint CK_alerts_deleted check (statex = 3);
+
+alter table alerts.alerts_data_solved add constraint CK_alerts_solved check (statex = 4);

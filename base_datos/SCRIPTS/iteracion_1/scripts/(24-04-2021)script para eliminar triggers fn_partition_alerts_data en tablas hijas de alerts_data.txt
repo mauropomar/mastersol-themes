@@ -1,0 +1,11 @@
+DROP TRIGGER IF EXISTS tr_alerts_alerts_data_new_fn_partition_alerts_data 
+ON alerts.alerts_data_new;
+
+DROP TRIGGER IF EXISTS tr_alerts_alerts_data_confirm_fn_partition_alerts_data 
+ON alerts.alerts_data_confirm;
+
+DROP TRIGGER IF EXISTS tr_alerts_alerts_data_deleted_fn_partition_alerts_data 
+ON alerts.alerts_data_deleted;
+
+DROP TRIGGER IF EXISTS tr_alerts_alerts_data_solved_fn_partition_alerts_data 
+ON alerts.alerts_data_solved;

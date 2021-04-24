@@ -1,0 +1,36 @@
+CREATE OR REPLACE FUNCTION alerts.fn_partition_alerts_data_update()
+RETURNS trigger AS
+$$
+begin  		
+  	
+	IF (OLD.statex <> NEW.statex) THEN
+		--Insertar en la nueva tabla
+		IF (NEW.statex = 1) THEN
+			INSERT INTO alerts.alerts_data_new VALUES (NEW.*);
+		ELSIF (NEW.statex = 2) THEN
+			INSERT INTO alerts.alerts_data_confirm VALUES (NEW.*);
+		ELSIF (NEW.statex = 3) THEN
+			INSERT INTO alerts.alerts_data_deleted VALUES (NEW.*);
+		ELSIF (NEW.statex = 4) THEN
+			INSERT INTO alerts.alerts_data_solved VALUES (NEW.*);	
+		END IF;	
+		--Eliminar en tabla actual
+		IF (OLD.statex = 1) THEN
+			DELETE FROM alerts.alerts_data_new WHERE id = OLD.id;
+		ELSIF (OLD.statex = 2) THEN
+			DELETE FROM alerts.alerts_data_confirm WHERE id = OLD.id;
+		ELSIF (OLD.statex = 3) THEN
+			DELETE FROM alerts.alerts_data_deleted WHERE id = OLD.id;
+		ELSIF (OLD.statex = 4) THEN
+			DELETE FROM alerts.alerts_data_solved WHERE id = OLD.id;
+		END IF;			
+			
+	END IF;   
+  
+  return NULL;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION alerts.fn_partition_alerts_data_update()
+  OWNER TO postgres;
