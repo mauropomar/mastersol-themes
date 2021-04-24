@@ -174,6 +174,11 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         var idparentsection = MasterApp.util.getIdParentSectionActive();
         var record = MasterApp.globals.getRecordSection();
         idrecordsection = (record != null) ? record.data.id : null;
+        if(idrecordsection == null){
+            mask.hide();
+            MasterApp.util.showMessageInfo('Debe seleccionar un registro para esta sesión');
+            return;
+        }
         var action = '13';
         if (this.isEdit) { //si estas editando
             record = MasterApp.globales.getRecordSection();
