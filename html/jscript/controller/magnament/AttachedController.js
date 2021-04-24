@@ -128,6 +128,11 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         mask.show();
         var record = MasterApp.globals.getRecordSection();
         idrecordsection = (record != null) ? record.data.id : null;
+        if(idrecordsection == null){
+            mask.hide();
+            this.removeAll();
+            return;
+        }
         var idsection = MasterApp.util.getIdSectionActive();
         var idmenu = MasterApp.util.getIdMenuActive();
         var getdata = {
