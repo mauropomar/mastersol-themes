@@ -70,7 +70,7 @@ const insertAdjunto = async (req) => {
             msg = 'Ha ocurrido un error'
         }
     });
-    if(success) {        
+    if(success) {
         var writeStream = await fs.createWriteStream(dirTemp + '/' + req.body.filename);
         readStream.pipe(writeStream);
         await uploadFile(req,dirTemp,writeStream,id_organizations, id_capsules, id_tables, id_section,resultMaxFileSize)
@@ -145,8 +145,9 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                     paramsInsert.push(req.body.idpadreregistro && req.body.idpadreregistro !== '0' ? req.body.idpadreregistro : null)
                     paramsInsert.push(req.body.idseccionpadre && req.body.idseccionpadre !== '0' ? req.body.idseccionpadre : null)
                     paramsInsert.push(req.session.id_user)
-
+                    console.log(paramsInsert)
                     const resultInsert = await insertRegister(req, paramsInsert);
+                    console.log(resultInsert)
                     if (resultInsert && resultInsert.name) {
                         //Subir fichero final
                         let address = resultInsert.name
