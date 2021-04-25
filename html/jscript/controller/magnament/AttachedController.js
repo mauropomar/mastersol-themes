@@ -233,7 +233,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
     delete: function (me, e, eOpts) {
         Ext.Msg.show({
             title: 'Confirmaci&oacute;n',
-            message: '&iquest;Est&aacute; seguro que desea eliminar el documento seleccionado?',
+            message: '&iquest;Est&aacute; seguro que desea eliminar el adjunto seleccionado?',
             buttons: Ext.Msg.YESNO,
             buttonText: {
                 yes: 'Sí',
@@ -258,7 +258,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                         },
                         callback: function (options, success, response) {
                             mainform.remove(currentform);
-                            Ext.toast('El documento fue borrado con éxito.');
+                            Ext.toast('El adjunto fue borrado con éxito.');
                         }
                     };
                     Ext.Ajax.request(del);
@@ -300,7 +300,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         var valid = this.find(filename);
         if (valid) {
             this.addFile(obj);
-            Ext.toast('El documento fue insertado con éxito.');
+            Ext.toast('El adjunto fue insertado con éxito.');
         } else {
             Ext.MessageBox.show({
                 title: 'Error',
