@@ -67,12 +67,12 @@ Ext.define('MasterSol.controller.util.UtilController', {
             windows[i].setWidth(width);
             windows[i].setHeight(height);
         }
-        if (MasterApp.globals.isCascade()) {
-            MasterApp.header.applyCascade();
+        if (MasterApp.globals.isColumns()) {
+            MasterApp.header.applyColumns();
         }
         ;
-        if (MasterApp.globals.isMosaic()) {
-            MasterApp.header.applyMosaic();
+        if (MasterApp.globals.isRows()) {
+            MasterApp.header.applyRows();
         }
         ;
     },

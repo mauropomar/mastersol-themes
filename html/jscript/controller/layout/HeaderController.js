@@ -19,9 +19,9 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         }
     },
 
-    applyCascade: function () {
+    applyRows: function () {
         var win;
-        MasterApp.globals.setEnCascade(true);
+        MasterApp.globals.setEnRows(true);
         var windows = this.getWindows();
         var height = Ext.ComponentQuery.query('#panel-center')[0].getHeight();
         var width = Ext.ComponentQuery.query('#panel-center')[0].getWidth();
@@ -48,9 +48,9 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
 
     },
 
-    applyMosaic: function () {
+    applyColumns: function () {
         var win;
-        MasterApp.globals.setEnMosaic(true);
+        MasterApp.globals.setEnColumns(true);
         var windows = this.getWindows();
         var height = Ext.ComponentQuery.query('#panel-center')[0].getHeight();
         var width = Ext.ComponentQuery.query('#panel-center')[0].getWidth();
@@ -72,6 +72,45 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             btnMaximize.hide();
             MasterApp.tools.showButtonsNotDefault(win, true);
         }
+    },
+
+    applyCascade: function () {
+        var win;
+        MasterApp.globals.setEnCascade(true);
+        var windows = this.getWindows();
+        var height = Ext.ComponentQuery.query('#panel-center')[0].getHeight();
+        var width = Ext.ComponentQuery.query('#panel-center')[0].getWidth();
+        var posX = Ext.ComponentQuery.query('#panel-center')[0].getX();
+        var posY = Ext.ComponentQuery.query('#panel-center')[0].getY();
+        var lastPosX = posX;
+        var lastPosY = posY;
+        var lastWidth = width;
+        var lastHeight = height;
+        this.reconfigureWindows(height, width, posX, posY);
+        for (var j = 0; j < windows.length; j++) {
+            win = windows[j];
+            if(j > 0){
+                var winlast = windows[j - 1];
+                lastWidth = winlast.getWidth() - 30;
+                lastHeight = winlast.getHeight() - 30;
+                lastPosX = winlast.getX() + 30;
+                lastPosY = winlast.getY() + 30;
+            }
+            win.setWidth(lastWidth);
+            win.setHeight(lastHeight);
+            win.setX(lastPosX);
+            win.setY(lastPosY);
+            win.toFront();
+            win.isminimize = false;
+            var btnMinimize = MasterApp.tools.getBtnTools(win, 'btn_minimize');
+            btnMinimize.show();
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+            MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
+            var btnMaximize = MasterApp.tools.getBtnTools(win, 'btn_restore');
+            btnMaximize.hide();
+            MasterApp.tools.showButtonsNotDefault(win, true);
+        }
+
     },
 
     getWindows: function () {
