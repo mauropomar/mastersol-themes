@@ -1,0 +1,24 @@
+CREATE OR REPLACE FUNCTION alerts.fn_partition_alerts_data()
+RETURNS trigger AS
+$$
+
+begin 
+ 
+	IF (NEW.statex = 1) THEN
+		INSERT INTO alerts.alerts_data_new VALUES (NEW.*);
+	ELSIF (NEW.statex = 2) THEN
+		INSERT INTO alerts.alerts_data_confirm VALUES (NEW.*);
+	ELSIF (NEW.statex = 3) THEN
+		INSERT INTO alerts.alerts_data_deleted VALUES (NEW.*);
+	ELSIF (NEW.statex = 4) THEN
+		INSERT INTO alerts.alerts_data_solved VALUES (NEW.*);	
+	END IF;		
+  
+  
+  return NULL;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION alerts.fn_partition_alerts_data()
+  OWNER TO postgres;

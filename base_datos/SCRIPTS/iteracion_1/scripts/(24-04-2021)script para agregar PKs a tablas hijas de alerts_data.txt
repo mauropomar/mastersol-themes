@@ -1,0 +1,11 @@
+ALTER TABLE alerts.alerts_data_confirm
+  ADD CONSTRAINT alerts_data_confirm_pk
+  PRIMARY KEY (id);
+  
+ALTER TABLE alerts.alerts_data_deleted
+  ADD CONSTRAINT alerts_data_deleted_pk
+  PRIMARY KEY (id);
+  
+ALTER TABLE alerts.alerts_data_solved
+  ADD CONSTRAINT alerts_data_solved_pk
+  PRIMARY KEY (id); 

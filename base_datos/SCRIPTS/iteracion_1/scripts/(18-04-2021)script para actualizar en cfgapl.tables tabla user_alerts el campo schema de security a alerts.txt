@@ -1,0 +1,3 @@
+alter table cfgapl.tables disable trigger all;
+update cfgapl.tables set n_schema = 'alerts' where id = 'a576bf4a-62af-4943-b37a-d3f913cf51f7';
+alter table cfgapl.tables enable trigger all;
