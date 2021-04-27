@@ -128,6 +128,11 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         mask.show();
         var record = MasterApp.globals.getRecordSection();
         idrecordsection = (record != null) ? record.data.id : null;
+        if(idrecordsection == null){
+            mask.hide();
+            this.removeAll();
+            return;
+        }
         var idsection = MasterApp.util.getIdSectionActive();
         var idmenu = MasterApp.util.getIdMenuActive();
         var getdata = {
@@ -174,6 +179,11 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         var idparentsection = MasterApp.util.getIdParentSectionActive();
         var record = MasterApp.globals.getRecordSection();
         idrecordsection = (record != null) ? record.data.id : null;
+        if(idrecordsection == null){
+            mask.hide();
+            MasterApp.util.showMessageInfo('Debe seleccionar un registro para esta sesión');
+            return;
+        }
         var action = '13';
         if (this.isEdit) { //si estas editando
             record = MasterApp.globales.getRecordSection();
@@ -196,6 +206,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
             Ext.Ajax.request({
                 url: 'app/crudadjunto',
                 method: 'POST',
+                scope:this,
                 params: {
                     idsection: idsection,
                     idseccionpadre: idparentsection,
@@ -211,7 +222,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     mask.hide();
                     var json = Ext.JSON.decode(response.responseText);
                     if (json.success == true) {
-                        this.addOneFile(json, filename);
+                        MasterApp.attached.addOneFile(json, json.datos);
                     }
                 }
             })

@@ -73,7 +73,8 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         this.panelMenu = window.down('panel').down('container');
         this.generateLevels(json);
         this.configureSections(json);
-        Ext.ComponentQuery.query('#btnEnMosaic')[0].setDisabled(false);
+        Ext.ComponentQuery.query('#btnEnRows')[0].setDisabled(false);
+        Ext.ComponentQuery.query('#btnEnColumns')[0].setDisabled(false);
         Ext.ComponentQuery.query('#btnEnCascade')[0].setDisabled(false);
     },
     //configurar la cantidad de niveles que va a tener el menu
@@ -139,7 +140,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
     },
     // crea una seccion y la agrega al tab
     insertSection(section, tab) {
-        var title = section.nombre;
+         var title = section.nombre;
         var height = tab.getHeight();
         var containerSection = MasterApp.containersections.getPanel(title, section, [], height, 'grid-section', this.windowParent);
         tab.add(containerSection);

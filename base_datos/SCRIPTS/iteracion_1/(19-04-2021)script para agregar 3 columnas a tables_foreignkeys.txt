@@ -1,3 +1,0 @@
-alter table cfgapl.tables_foreignkeys add column name1 uuid null;
-alter table cfgapl.tables_foreignkeys add column name2 uuid null;
-alter table cfgapl.tables_foreignkeys add column name3 uuid null;
