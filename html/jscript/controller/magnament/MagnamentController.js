@@ -53,7 +53,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         var rec = MasterApp.globals.getRecordSection();
         optionActive.idrecordsection = (rec !== null) ? rec.data.id : null;
         var window = grid.up('window');
-        if (window.isAlert)
+        if (window.isAlert || grid.read_only)
             tabMagnament.child('#register-view').tab.hide();
         else
             tabMagnament.child('#register-view').tab.show();
@@ -145,7 +145,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         this.resetTitle();
     },
 
-    resetTitle:function(){
+    resetTitle: function () {
         Ext.ComponentQuery.query('#tbtext_magnament_note')[0].setText('Notas');
         Ext.ComponentQuery.query('#tbtext_magnament_register')[0].setText('Register');
         Ext.ComponentQuery.query('#tbtext_magnament_attached')[0].setText('Adjuntos');
