@@ -37,7 +37,7 @@ Ext.define('MasterSol.view.menu.WindowMenu', {
             MasterApp.section.resizeWindow(window);
         },
         close: function (window) {
-               MasterApp.section.closeWindow(window);
+            MasterApp.section.closeWindow(window);
         },
         render: function (window, eOpts) {
             MasterApp.theme.setStyleWindow(window);

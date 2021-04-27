@@ -108,7 +108,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                     this.configuredData();
                     this.changeIconsTotals(data);
                 } else {
-                    MasterApp.util.showMessageInfo('No existen datos con ese criterio de búsqueda.');
+                    MasterApp.util.showMessageInfo('No existen totales para esta columna.');
                 }
             }
         };

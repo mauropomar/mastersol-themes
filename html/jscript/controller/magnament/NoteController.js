@@ -60,7 +60,12 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
         var idregisterparent = (idrecordparent) ? idrecordparent : 0;
         var idparentsection = MasterApp.util.getIdParentSectionActive();
         var record = MasterApp.globals.getRecordSection();
-        idrecordsection = record.data.id;
+        idrecordsection = (record != null) ? record.data.id : null;
+        if(idrecordsection == null){
+            mask.hide();
+            MasterApp.util.showMessageInfo('Debe seleccionar un registro para esta sesión');
+            return;
+        }
         var action = (form.idNota == null) ? '13' : '14';
         var save = {
             url: 'app/crudnotes',
@@ -111,7 +116,12 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
         });
         mask.show();
         var record = MasterApp.globals.getRecordSection();
-        idrecordsection = record.data.id;
+        idrecordsection = (record != null) ? record.data.id : null;
+        if(idrecordsection == null){
+            mask.hide();
+            Ext.ComponentQuery.query('note-view')[0].removeAll();
+            return;
+        }
         var idsection = MasterApp.util.getIdSectionActive();
         var idmenu = MasterApp.util.getIdMenuActive();
         var obtener = {

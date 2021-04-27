@@ -70,10 +70,11 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     //editar registros
     editRegister: function (columnIndex) {
         var gridsection = MasterApp.globals.getGridSection();
+        var isRecordSelected = gridsection.getSelectionModel().hasSelection();
         var rec = MasterApp.globals.getRecordSection();
         var columns = gridsection.config.columns;
         this.addRegister(rec, columns);
-        if(rec === null){
+        if(!isRecordSelected){
             this.isEdit = false;
             Ext.ComponentQuery.query('#btn_insert_register')[0].show();
             Ext.ComponentQuery.query('#btn_save_register')[0].hide();

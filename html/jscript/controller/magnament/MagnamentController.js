@@ -15,6 +15,10 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
     },
 
     tabChange: function (tabPanel, newCard) {
+        if (newCard.xtype === 'register-view') {
+            MasterApp.register.editRegister(0);
+            return;
+        }
         if (newCard.xtype === 'filter-view') {
             MasterApp.filter.getAll();
             return;

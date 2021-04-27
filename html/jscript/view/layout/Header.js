@@ -16,7 +16,7 @@ Ext.define('MasterSol.view.layout.Header', {
         '->',
         {
             xtype: 'button',
-            iconCls: 'fa fa-server',
+            iconCls: 'fa fa-th-large',
             id: 'btnEnCascade',
             tooltip: 'En Cascada',
             tooltipType: 'title',
@@ -28,14 +28,26 @@ Ext.define('MasterSol.view.layout.Header', {
         },
         {
             xtype: 'button',
-            iconCls: 'fa fa-columns',
-            id: 'btnEnMosaic',
-            tooltip: 'En Mosaico',
+            iconCls: 'fa fa-server',
+            id: 'btnEnRows',
+            tooltip: 'En Filas',
             tooltipType: 'title',
             disabled: true,
             width: 40,
             handler: function () {
-                MasterApp.header.applyMosaic();
+                MasterApp.header.applyRows();
+            }
+        },
+        {
+            xtype: 'button',
+            iconCls: 'fa fa-columns',
+            id: 'btnEnColumns',
+            tooltip: 'En Columnas',
+            tooltipType: 'title',
+            disabled: true,
+            width: 40,
+            handler: function () {
+                MasterApp.header.applyColumns();
             }
         },
         {

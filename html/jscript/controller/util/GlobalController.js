@@ -16,8 +16,9 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.arrayFilter = [];
             this.optionSelect = null;
             //   this.arrayFunctionTotal = [];
+            this.selEnColumns = false;
+            this.selEnRows = false;
             this.selEnCascade = false;
-            this.selEnMosaic = false;
             this.idRol = null;
             this.actionKeyCrtlF = false;
             this.isLoading = false;
@@ -68,32 +69,37 @@ Ext.define('MasterSol.controller.util.GlobalController', {
                 this.gridSection['colSelected'] = colSel;
             }
         },
-        /*    getArrayFuncionesTotalizar: function () {
-                return this.arrayFunctionTotal
-            },
-            setArrayFuncionesTotalizar: function (array) {
-                this.arrayFunctionTotal = array
-            },*/
-        isCascade: function () {
-            return this.selEnCascade;
+        isColumns: function () {
+            return this.selEnColumns;
         },
-        isMosaic: function () {
-            return this.selEnMosaic;
+        isRows: function () {
+            return this.selEnRows;
         },
-        setEnMosaic: function (val) {
+        setEnRows: function (val) {
             if (val) {
-                this.selEnMosaic = true;
+                this.selEnRows = true;
+                this.selEnColumns = false;
                 this.selEnCascade = false;
             } else {
-                this.selEnMosaic = false;
+                this.selEnRows = false;
+            }
+        },
+        setEnColumns: function (val) {
+            if (val) {
+                this.selEnColumns = true;
+                this.selEnCascade = false;
+                this.selEnRows = false;
+            } else {
+                this.selEnColumns = false;
             }
         },
         setEnCascade: function (val) {
             if (val) {
-                this.selEnMosaic = false;
                 this.selEnCascade = true;
+                this.selEnRows = false;
+                this.selEnColumns = false;
             } else {
-                this.selEnCascade = false;
+                this.selEnColumns = false;
             }
         },
         setOptionSelect: function (item) {

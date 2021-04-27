@@ -44,6 +44,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     clickSection: function (grid, td, cellIndex, record) {
+        MasterApp.globals.setLoading(true);
         MasterApp.globals.setGridSection(grid.panel);
         MasterApp.globals.setRecordSection(record);
         var level = grid.up('tabpanel').level + 1;
@@ -52,6 +53,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.util.setStyleWindow(grid.panel);
         MasterApp.magnament.getData(grid.panel);
         MasterApp.tools.setButtons();
+
+      //  grid.resumeEvents();
     },
 
     dblclickSection: function (grid, td, cellIndex, record) {
@@ -169,6 +172,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 var json = Ext.JSON.decode(response.responseText);
                 var grid = newCard.down('gridpanel');
                 grid.getStore().loadData(json);
+                MasterApp.globals.setLoading(false);
                 MasterApp.util.setStyleSection(newCard);
             },
             failure: function (response) {
@@ -248,7 +252,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         window.destroy();
         var windows = Ext.ComponentQuery.query('window-menu');
         if (windows.length == 0) {
-            Ext.ComponentQuery.query('#btnEnMosaic')[0].setDisabled(true);
+            Ext.ComponentQuery.query('#btnEnRows')[0].setDisabled(true);
+            Ext.ComponentQuery.query('#btnEnColumns')[0].setDisabled(true);
             Ext.ComponentQuery.query('#btnEnCascade')[0].setDisabled(true);
         }
         this.adjustOtherWindowsMinimize();
@@ -327,14 +332,14 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     adjustOtherWindowsMaximize: function () {
         var windows = Ext.ComponentQuery.query('window-menu[isminimize=false]');
         for (var j = 0; j < windows.length; j++) {
-            var isMosaic = MasterApp.globals.isMosaic();
-            if (isMosaic) {
-                MasterApp.header.applyMosaic();
+            var isRows = MasterApp.globals.isRows();
+            if (isRows) {
+                MasterApp.header.applyRows();
                 return;
             }
-            var isCascade = MasterApp.globals.isCascade();
-            if (isCascade) {
-                MasterApp.header.applyCascade();
+            var isColumns = MasterApp.globals.isColumns();
+            if (isColumns) {
+                MasterApp.header.applyColumns();
             }
         }
     },
@@ -498,10 +503,13 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             var idtab = comp.id;
             setTimeout(function () {
                 var sectionActive = Ext.ComponentQuery.query('#' + idtab)[0].getActiveTab();
-                var gridsection = sectionActive.down('gridpanel');
-                MasterApp.globals.setGridSection(gridsection);
-                MasterApp.magnament.getData(gridsection);
-                MasterApp.globals.setLoading(false);
+                if(sectionActive) {
+                    var gridsection = sectionActive.down('gridpanel');
+                    MasterApp.globals.setGridSection(gridsection);
+                    MasterApp.globals.setRecordSection(null);
+                    MasterApp.magnament.getData(gridsection);
+                    MasterApp.globals.setLoading(false);
+                }
             }, 500);
         }, comp);
     },
@@ -531,7 +539,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     afterrender: function (panel) {
-        this.actionKey(panel);
+      //  this.actionKey(panel);
     },
 
     actionKey: function (panel) {
