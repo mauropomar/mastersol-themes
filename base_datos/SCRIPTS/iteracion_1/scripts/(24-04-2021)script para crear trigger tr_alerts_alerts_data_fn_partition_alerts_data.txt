@@ -1,0 +1,5 @@
+CREATE TRIGGER tr_alerts_alerts_data_fn_partition_alerts_data
+  BEFORE INSERT
+  ON alerts.alerts_data
+  FOR EACH ROW
+  EXECUTE PROCEDURE alerts.fn_partition_alerts_data();

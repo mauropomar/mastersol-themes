@@ -1,0 +1,29 @@
+CREATE TRIGGER tr_alerts_alerts_data_fn_partition_alerts_data_update
+  BEFORE UPDATE
+  ON alerts.alerts_data
+  FOR EACH ROW
+  EXECUTE PROCEDURE alerts.fn_partition_alerts_data_update();
+
+CREATE TRIGGER tr_alerts_alerts_data_new_fn_partition_alerts_data_update
+  BEFORE UPDATE
+  ON alerts.alerts_data_new
+  FOR EACH ROW
+  EXECUTE PROCEDURE alerts.fn_partition_alerts_data_update();
+
+CREATE TRIGGER tr_alerts_alerts_data_confirm_fn_partition_alerts_data_update
+  BEFORE UPDATE
+  ON alerts.alerts_data_confirm
+  FOR EACH ROW
+  EXECUTE PROCEDURE alerts.fn_partition_alerts_data_update();
+
+CREATE TRIGGER tr_alerts_alerts_data_deleted_fn_partition_alerts_data_update
+  BEFORE UPDATE
+  ON alerts.alerts_data_deleted
+  FOR EACH ROW
+  EXECUTE PROCEDURE alerts.fn_partition_alerts_data_update();
+
+CREATE TRIGGER tr_alerts_alerts_data_solved_fn_partition_alerts_data_update
+  BEFORE UPDATE
+  ON alerts.alerts_data_solved
+  FOR EACH ROW
+  EXECUTE PROCEDURE alerts.fn_partition_alerts_data_update();

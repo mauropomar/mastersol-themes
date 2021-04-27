@@ -41,6 +41,29 @@ const getTimeEvent = async () => {
     return result.rows[0].fn_get_time_events
 }
 
+const executeProcess = async (req, objects) => {
+    const time_events = await getTimeEvent()
+    var objModule = ""
+
+    for (const time of time_events) {
+        cron.schedule('*/' + time.each_any_minutes + ' * */' + time.each_any_days + ',1 * *', () => {
+            //console.log('tarea ejecutada')
+            //objModule = require("../../capsules/" + time.capsule_name + "/JS/" + "te_" + time.identifier)
+            //objModule["te_" + time.identifier]()
+        })
+    }
+    //console.log(time_events)
+}
+
+const getProcess = async () => {
+    const params_process = ['cfgapl.process',null,"WHERE active = true "]
+    const resultProcess = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', params_process)
+    if(!resultProcess){
+       return []
+    }
+    return resultProcess.rows[0].fn_get_register
+}
+
 const executeFunctionsButtons = async (req, objects) => {
     let idbutton = req.query.idbutton != '' ? req.query.idbutton : null
     let idsection = req.query.idsection

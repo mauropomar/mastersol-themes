@@ -1,0 +1,5 @@
+ALTER TABLE alerts.alerts_data_confirm ALTER COLUMN statex SET DEFAULT 2;
+
+ALTER TABLE alerts.alerts_data_deleted ALTER COLUMN statex SET DEFAULT 3;
+
+ALTER TABLE alerts.alerts_data_solved  ALTER COLUMN statex SET DEFAULT 4;

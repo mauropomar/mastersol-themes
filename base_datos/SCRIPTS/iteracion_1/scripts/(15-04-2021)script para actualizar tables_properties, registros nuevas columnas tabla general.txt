@@ -1,0 +1,11 @@
+update cfgapl.tables_properties set namex = 'variable', n_column = 'variable' 
+where id_tables = 'b3b7d651-668a-4882-935b-2b01385937c1' 
+and namex = 'dir_icons'
+
+update cfgapl.tables_properties set namex = 'value', n_column = 'value' 
+where id_tables = 'b3b7d651-668a-4882-935b-2b01385937c1' 
+and namex = 'dir_images'
+
+update cfgapl.tables_properties set namex = 'description', n_column = 'description' 
+where id_tables = 'b3b7d651-668a-4882-935b-2b01385937c1' 
+and namex = 'dir_files'
