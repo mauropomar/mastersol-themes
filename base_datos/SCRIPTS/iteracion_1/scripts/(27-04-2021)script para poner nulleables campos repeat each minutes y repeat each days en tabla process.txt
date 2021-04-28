@@ -1,0 +1,3 @@
+ALTER TABLE cfgapl.process ALTER COLUMN repeat_each_minutes DROP  NOT NULL;
+
+ALTER TABLE cfgapl.process ALTER COLUMN repeat_each_day DROP  NOT NULL;

@@ -29,8 +29,8 @@ begin
                    EXECUTE 'INSERT INTO alerts.alerts_data_new (id_users,id_alerts_cfg,id_sections,
                    id_section_record,textx,created,modified,id_organizations,id_capsules,creator) VALUES 
                    ('||quote_literal(id_user)||','||quote_literal(row.id)||','||quote_literal(sub_row.id_section)||',
-                   '||quote_literal(sub_row.id_register)||','||quote_literal(sub_row.message)||','||quote_literal(sub_row.created)||',
-                   '||quote_literal(sub_row.modified)||','||quote_literal(sub_row.id_organizations)||',
+                   '||quote_literal(sub_row.id_register)||','||quote_literal(case when sub_row.message is not null then sub_row.message else '' end)||',
+                   '||quote_literal(sub_row.created)||', '||quote_literal(sub_row.modified)||','||quote_literal(sub_row.id_organizations)||',
                    '||quote_literal(row.id_capsules)||','||quote_literal(row.creator)||')';
                    
                    IF (select strpos(arr_alertas::text, id_user::text)) = 0 THEN
