@@ -19,7 +19,10 @@ Ext.define('MasterSol.controller.util.UtilController', {
             return Ext.util.Format.date(value, 'd/m/Y');
         }
         if ((record.data.tipo == 'datetime') && value.indexOf('/') == -1) {
-            return Ext.util.Format.date(value, 'd/m/Y h:i:s');
+            var retval = Ext.util.Format.date(value, 'd/m/Y h:i:s');
+            if (value)
+                metaData.tdAttr = 'data-qtip="' + retval + '"';
+            return retval;
         }
         return value;
     },

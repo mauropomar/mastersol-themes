@@ -122,13 +122,15 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
     },
 
     getAll: function () {
+        var title = MasterApp.util.getTitleSectionSelected();
+        Ext.ComponentQuery.query('#tbtext_magnament_attached')[0].setText('Adjuntos: ' + title);
         var mask = new Ext.LoadMask(Ext.ComponentQuery.query('attached-view')[0], {
             msg: 'Cargando...'
         });
         mask.show();
         var record = MasterApp.globals.getRecordSection();
         idrecordsection = (record != null) ? record.data.id : null;
-        if(idrecordsection == null){
+        if(idrecordsection == null || idrecordsection == ''){
             mask.hide();
             this.removeAll();
             return;
@@ -153,9 +155,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     this.fileslist = [];
                     this.addComponent(data);
                 }
-                var title = MasterApp.util.getTitleSectionSelected();
-                Ext.ComponentQuery.query('#tbtext_magnament_attached')[0].setText('Adjuntos: ' + title);
-            },
+             },
             failure: function (response) {
                 mask.hide();
             }

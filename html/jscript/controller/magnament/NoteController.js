@@ -111,13 +111,15 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
     },
 
     getAll: function () {
+        var title = MasterApp.util.getTitleSectionSelected();
+        Ext.ComponentQuery.query('#tbtext_magnament_note')[0].setText('Notas: ' + title);
         var mask = new Ext.LoadMask(Ext.ComponentQuery.query('note-view')[0], {
             msg: 'Cargando...'
         });
         mask.show();
         var record = MasterApp.globals.getRecordSection();
         idrecordsection = (record != null) ? record.data.id : null;
-        if(idrecordsection == null){
+        if(idrecordsection == null || idrecordsection == ''){
             mask.hide();
             Ext.ComponentQuery.query('note-view')[0].removeAll();
             return;
@@ -138,8 +140,6 @@ Ext.define('MasterSol.controller.magnament.NoteController', {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 this.setNotas(json);
-                var title = MasterApp.util.getTitleSectionSelected();
-                Ext.ComponentQuery.query('#tbtext_magnament_note')[0].setText('Notas: ' + title);
             },
             failure: function (response) {
                 mask.hide();
