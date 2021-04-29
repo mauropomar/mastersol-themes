@@ -1,0 +1,78 @@
+CREATE OR REPLACE FUNCTION alerts.fn_generate_alerts()
+RETURNS jsonb AS
+$$
+declare
+arr_alertas jsonb = '[]'::jsonb;
+row  RECORD;
+sub_row RECORD;
+id_user uuid;
+contador int = 1;
+val jsonb;
+json_node jsonb;
+pathvalue text[];
+cadena_sql varchar;
+counter int = 0;
+
+	alertscfg_cursor CURSOR FOR
+		SELECT * FROM  alerts.alerts_cfg WHERE active = true AND sqlx IS NOT NULL;
+	
+begin
+     --Limpiar alerts de los usuarios
+     UPDATE security.users set alerts = null;    
+     
+	  OPEN alertscfg_cursor;
+	  FETCH alertscfg_cursor INTO row;
+	  WHILE( FOUND ) LOOP		  				
+		FOR sub_row IN EXECUTE row.sqlx LOOP 
+            FOR id_user IN SELECT id_users FROM alerts.users_alerts WHERE id_alerts_cfg = row.id LOOP
+                IF (SELECT COUNT(id) FROM alerts.alerts_data_new WHERE id_alerts_cfg = row.id 
+                   AND id_users = id_user AND id_section_record = sub_row.id_register) = 0 THEN 
+                   --Insertar alerta nueva
+                   EXECUTE 'INSERT INTO alerts.alerts_data_new (id_users,id_alerts_cfg,id_sections,
+                   id_section_record,textx,created,modified,id_organizations,id_capsules,creator) VALUES 
+                   ('||quote_literal(id_user)||','||quote_literal(row.id)||','||quote_literal(sub_row.id_section)||',
+                   '||quote_literal(sub_row.id_register)||','||quote_literal(case when sub_row.message is not null then sub_row.message else '' end)||',
+                   '||quote_literal(sub_row.created)||', '||quote_literal(sub_row.modified)||','||quote_literal(sub_row.id_organizations)||',
+                   '||quote_literal(row.id_capsules)||','||quote_literal(row.creator)||')';                                   
+                END IF;
+                IF (select strpos(arr_alertas::text, id_user::text)) = 0 THEN
+                   --agregar elemento 
+                   SELECT jsonb_build_object('id', id_user, 'count', '1') INTO json_node;
+                   SELECT arr_alertas || json_node INTO arr_alertas;                      
+                ELSE             
+                   --actualizar elemento  
+                   cadena_sql = 'SELECT value->>''count'' FROM jsonb_array_elements('||quote_literal(arr_alertas::text)||') d WHERE (value->>''id'') = '||quote_literal(id_user::text)||' ';                   
+                   EXECUTE (cadena_sql) INTO contador;                     
+                   contador = contador + 1;
+                   --obtener posicion del elemento en el array                      
+                   FOR val IN SELECT * FROM jsonb_array_elements(arr_alertas) LOOP                        
+                       exit when val->>'id' = id_user::text;
+                       counter = counter + 1;                                                  
+                   END LOOP;
+                   SELECT ('{'|| counter::text ||',count}')::TEXT[] into pathvalue;
+                   SELECT jsonb_set(arr_alertas, pathvalue, (contador::text)::jsonb) INTO arr_alertas;                      
+                END IF; 
+                counter = 0;
+                                
+            END LOOP;
+        END LOOP;
+		
+		FETCH alertscfg_cursor INTO row;
+	   END LOOP ;  	 
+	   
+      --raise notice '%', arr_alertas;
+	  CLOSE alertscfg_cursor;	 
+	--Insertar alertas en tabla users para cada usuario
+      FOR val IN SELECT * FROM jsonb_array_elements(arr_alertas) LOOP 
+          id_user = val->>'id';
+          contador = val->>'count';
+          if contador is null then contador = 0; end if;          
+          EXECUTE 'UPDATE security.users set alerts = '||contador||' WHERE id = '||quote_literal(id_user::text)||' ';                                                                        
+      END LOOP;		  
+	  return arr_alertas;     
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION alerts.fn_generate_alerts()
+  OWNER TO postgres;
