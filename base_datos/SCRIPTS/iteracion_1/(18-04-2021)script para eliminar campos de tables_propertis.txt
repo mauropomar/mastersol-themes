@@ -1,0 +1,54 @@
+delete from security.rol_sections_properties 
+where id_properties = '1300da45-ffac-4acf-b8b7-23f03637369a';
+
+delete from security.rol_sections_properties 
+where id_properties = '4b9f7b21-a3a8-40bd-8b6f-9bbc4a066126';
+
+delete from security.rol_sections_properties 
+where id_properties = '514a79de-e669-49e1-b868-06ed29202d90';
+
+delete from security.rol_sections_properties 
+where id_properties = 'ec611485-b347-4efb-b473-c4c5cf5d0e3d';
+
+delete from security.rol_sections_properties 
+where id_properties = '776c412b-bdec-44bc-82b1-9e32521b3cbf';
+
+delete from cfgapl.sections_properties 
+where id = '1300da45-ffac-4acf-b8b7-23f03637369a'; 
+
+delete from cfgapl.sections_properties 
+where id = '4b9f7b21-a3a8-40bd-8b6f-9bbc4a066126';
+
+delete from cfgapl.sections_properties 
+where id = '514a79de-e669-49e1-b868-06ed29202d90';
+
+delete from cfgapl.sections_properties 
+where id = 'ec611485-b347-4efb-b473-c4c5cf5d0e3d';
+
+delete from cfgapl.sections_properties 
+where id = '776c412b-bdec-44bc-82b1-9e32521b3cbf';
+
+alter table cfgapl.tables_properties disable trigger all;
+
+delete from cfgapl.tables_properties 
+where id = '907956c2-9668-48af-a8e7-944bd12aea03';
+
+delete from cfgapl.tables_properties 
+where id = 'c87bf781-a31a-4789-a4f5-3bccf66c4877';
+
+delete from cfgapl.tables_properties 
+where id = '87a28232-79c3-4098-8fff-3d59ccb30744';
+
+delete from cfgapl.tables_properties 
+where id = '6cb12325-6092-4fc1-b78d-ec2fa12b985d';
+
+delete from cfgapl.tables_properties 
+where id = '25654535-a427-4678-8a50-b46f7284c6e2';
+
+alter table cfgapl.tables_properties drop column fn_fk_filter;
+alter table cfgapl.tables_properties drop column id_fk_properties;
+alter table cfgapl.tables_properties drop column id_fk_table_attr;
+alter table cfgapl.tables_properties drop column id_fk_table_attr_property;
+alter table cfgapl.tables_properties drop column id_fk_tables;
+
+alter table cfgapl.tables_properties enable trigger all;

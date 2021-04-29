@@ -32,6 +32,7 @@ cron.schedule('* * * * *', async () => {
         let lastMinute = 1
         let lastDay = 1
         if(eachMinutes != '*') {
+            stringMinutes = '1'
             for (let i = 1; i < 60; i++) {
                 lastMinute += eachMinutes
                 if (lastMinute < 60)                     
@@ -40,6 +41,7 @@ cron.schedule('* * * * *', async () => {
             }
         }        
         if(eachDays != '*') {
+            stringDays = '1'
             for (let i = 1; i <= 31; i++) {
                 lastDay += eachDays
                 if (lastDay <= 31)
@@ -48,24 +50,32 @@ cron.schedule('* * * * *', async () => {
             }
         }
         var task = taskArray[pro.id]
-        if(!task) {
-            task = cron.schedule('' + stringMinutes + ' * ' + stringDays + ' * *', async() => {
-                //Buscar funcion asociada al proceso y ejecutar su sqlx
-                const paramsFunction = ['cfgapl.functions', pro.id_function];
-                const resultFunction = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsFunction);
-                if (resultFunction) {
-                    let nombreFuncion = resultFunction.rows[0].fn_get_register[0].namex
-                    const query = 'SELECT ' + nombreFuncion + '()'
-                    const result = await pool.executeQuery(query)
-                    if (result)
-                        console.log('Funcion ejecutada con exito')
-                }
-
-            });
-            if(fechaStart == fechaActual && horaStart == horaActual)
-                task.start();
-            taskArray[pro.id] = task
+        if(task) {
+            task.destroy();
         }
+        task = cron.schedule('' + stringMinutes + ' * ' + stringDays + ' * *', async() => {
+            //Buscar funcion asociada al proceso y ejecutar su sqlx
+            const paramsFunction = ['cfgapl.functions', pro.id_function];
+            const resultFunction = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsFunction);
+            if (resultFunction) {
+                let nombreFuncion = resultFunction.rows[0].fn_get_register[0].namex
+                const query = 'SELECT ' + nombreFuncion + '()'
+                const result = await pool.executeQuery(query)
+                if (result)
+                    console.log('Funcion ejecutada con exito en process '+pro.namex)
+            }
+
+        },{scheduled: false});
+        taskArray[pro.id] = task
+        if(fechaStart == fechaActual && horaStart == horaActual) {
+            task.start();
+        }
+        else if(fechaStart < fechaActual || (fechaStart == fechaActual && horaStart < horaActual)){
+            if((pro.repeat_each_minutes != null && pro.repeat_each_minutes != 0) ||
+                (pro.repeat_each_day != null && pro.repeat_each_day != 0))
+                task.start();
+        }
+
         if((pro.repeat_each_minutes == null || pro.repeat_each_minutes == 0)
             && (pro.repeat_each_day == null || pro.repeat_each_day == 0))
             taskEliminateArray.push(task);
@@ -75,10 +85,9 @@ cron.schedule('* * * * *', async () => {
         for(let i=0;i<taskEliminateArray.length;i++){
             let job = taskEliminateArray[i];
             job.destroy();
-            console.log('destroy the task')
         }
         taskEliminateArray = []
-    }, 60000)
+    }, 30000)
     
 });
 

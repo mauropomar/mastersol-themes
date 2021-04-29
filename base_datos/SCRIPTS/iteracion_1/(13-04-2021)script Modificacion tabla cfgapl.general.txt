@@ -1,0 +1,11 @@
+ALTER TABLE cfgapl.general DROP COLUMN dir_icons;
+ALTER TABLE cfgapl.general DROP COLUMN dir_images;
+ALTER TABLE cfgapl.general DROP COLUMN dir_files;
+
+ALTER TABLE cfgapl.general ADD COLUMN variable varchar(100) NOT NULL;
+ALTER TABLE cfgapl.general ADD COLUMN value varchar(255) NOT NULL;
+ALTER TABLE cfgapl.general ADD COLUMN description varchar(255) NULL;
+
+ALTER TABLE cfgapl.general
+  ALTER COLUMN id_capsules
+  SET DEFAULT '5cdf1800-af89-4ce0-8c9a-ef659b8891c5';
