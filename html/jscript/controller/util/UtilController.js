@@ -241,8 +241,8 @@ Ext.define('MasterSol.controller.util.UtilController', {
             return value;
         }
         if (type == 'datetime' && value != null) {
-            value = new Date(value);
-            return Ext.Date.format(value, 'd/m/Y h:i:s');
+       //     value = new Date(value);
+            return value;
         }
         if (type == 'boolean') {
             return (value == 'false' || value == false) ? false : true;

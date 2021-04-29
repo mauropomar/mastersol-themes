@@ -148,9 +148,11 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                 var json = Ext.JSON.decode(response.responseText);
                 var data = json.datos;
                 if (data != null) {
+                    MasterApp.globals.setRecordSection(null);
                     this.configuredData();
                     store.commitChanges();
                     gridsection.getStore().loadData(data);
+
                 } else {
                     MasterApp.util.showMessageInfo(json.message);
                     gridsection.getStore().removeAll();
@@ -489,6 +491,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         }
         if (record.data.tipo == 'datetime') {
             var retval = Ext.util.Format.date(value, 'd/m/Y h:i:s');
+            if (value)
+                metaData.tdAttr = 'data-qtip="' + retval + '"';
             return retval;
         }
         return value;

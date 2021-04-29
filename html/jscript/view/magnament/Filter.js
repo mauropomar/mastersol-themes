@@ -36,6 +36,11 @@ Ext.define('MasterSol.view.magnament.Filter', {
         flex: 0.3,
         editor: {
             xtype: 'combo-sign'
+        },
+        renderer: function (value, metaData, record) {
+            if (value)
+                metaData.tdAttr = 'data-qtip="' + value + '"';
+            return value;
         }
     }, {
         text: 'Valor Inicio',
@@ -80,7 +85,7 @@ Ext.define('MasterSol.view.magnament.Filter', {
     }, '->', {
         xtype: 'tbtext',
         text: 'Filtrar',
-        id:'tbtext_magnament_filter',
+        id: 'tbtext_magnament_filter',
         style: {
             fontSize: '10px',
             fontWeight: 'bold'
