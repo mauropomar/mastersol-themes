@@ -1,0 +1,7 @@
+ALTER TABLE cfgapl.functions_deleted
+  DROP CONSTRAINT cfgapl_functions_sections_buttons_namex_idx;
+
+ALTER TABLE cfgapl.functions_deleted
+  ADD CONSTRAINT cfgapl_functions_sections_buttons_namex_idx
+  UNIQUE (namex, id_section, js_name)
+    WITH (FILLFACTOR = 100);

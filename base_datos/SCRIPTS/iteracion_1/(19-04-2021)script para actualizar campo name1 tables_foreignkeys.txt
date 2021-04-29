@@ -1,0 +1,30 @@
+DO $$
+DECLARE
+  /* Declare an indefinite length string and record variable. */
+  row  RECORD;
+  idtable uuid;  
+  idpropertie uuid;
+ 
+  /* Declare a cursor. */
+  tfk_cursor CURSOR FOR
+    SELECT * FROM cfgapl.tables_foreignkeys;
+    
+BEGIN
+  ALTER TABLE cfgapl.tables_foreignkeys DISABLE TRIGGER ALL;   
+  /* Open the cursor. */
+  OPEN tfk_cursor;
+  FETCH tfk_cursor INTO row;
+  WHILE( FOUND ) LOOP 
+	SELECT id INTO idtable FROM cfgapl.tables WHERE namex = row.foreign_table;
+	SELECT id INTO idpropertie FROM cfgapl.tables_properties WHERE id_tables = idtable 
+	AND (namex = 'namex' OR namex = 'userx' OR namex = 'name_legal');
+	UPDATE cfgapl.tables_foreignkeys SET name1 = idpropertie WHERE id = row.id;
+    
+	FETCH tfk_cursor INTO row;
+   END LOOP ;  
+ 
+  /* Close the cursor. */
+  CLOSE tfk_cursor;
+  ALTER TABLE cfgapl.tables_foreignkeys ENABLE TRIGGER ALL;
+END;
+$$;

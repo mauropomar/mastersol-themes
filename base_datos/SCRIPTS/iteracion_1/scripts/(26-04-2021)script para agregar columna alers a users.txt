@@ -1,0 +1,1 @@
+alter table security.users add column alerts int null;

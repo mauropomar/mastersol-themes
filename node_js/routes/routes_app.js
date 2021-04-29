@@ -98,7 +98,7 @@ router.get('/adjuntos', async function (req, res) {
 
 /*CRUD adjuntos*/
 router.post('/crudadjunto', async function (req, res) {
-    var id = ''
+    let id = ''
     if (req.body.accion === '13') { //Insert
         result = await objects.adjuntos.insertAdjunto(req)
         id = result.id
@@ -108,7 +108,7 @@ router.post('/crudadjunto', async function (req, res) {
         result = await objects.adjuntos.downloadAdjunto(req)
     }
 
-    return res.json({'success': result.success ? true : false, 'datos': result.message, 'id': id})
+    return res.json({'id': id, 'success': result.success ? true : false, 'datos': result.message})
 
 })
 

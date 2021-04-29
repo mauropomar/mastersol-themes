@@ -139,18 +139,38 @@ function getParamsResultFilter(req, objects) {
             } else if (item.tipo === 'string' && operador.nombre === 'contiene') {
                 where.push(' dat.' + item.nombrecampo + " ILIKE '%" + item.idvalor.replace(/\s/g, "%") + "%'");
             }
+            else if (item.tipo === 'string' && operador.nombre === 'no contiene') {
+                where.push(' dat.' + item.nombrecampo + " NOT ILIKE '%" + item.idvalor.replace(/\s/g, "%") + "%'");
+            }
         } else {
             if (item.cantparam === 2) {
-                if (item.tipo === 'date' && operador.nombre === 'entre' && item.valor1 && item.valor2) {
+                if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                        || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone') 
+                    && operador.nombre === 'entre' && item.valor1 && item.valor2) {
                     date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD') + ' 00:00:00'
                     date_end = moment(item.valor2, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD') + ' 23:59:59'
                     where.push(' dat.' + item.nombrecampo + " BETWEEN '" + date_start + "' AND " + "'" + date_end + "'");
+                }
+                else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone')
+                    && operador.nombre === 'no entre' && item.valor1 && item.valor2) {
+                    date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD') + ' 00:00:00'
+                    date_end = moment(item.valor2, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD') + ' 23:59:59'
+                    where.push(' dat.' + item.nombrecampo + " NOT BETWEEN '" + date_start + "' AND " + "'" + date_end + "'");
+                }
+                else if (item.tipo === 'number' && operador.nombre === 'entre' && item.valor1 && item.valor2) {
+                    where.push(' dat.' + item.nombrecampo + " BETWEEN " + item.valor1 + " AND " + item.valor2);
+                }
+                else if (item.tipo === 'number' && operador.nombre === 'no entre' && item.valor1 && item.valor2) {
+                    where.push(' dat.' + item.nombrecampo + " NOT BETWEEN " + item.valor1 + " AND " + item.valor2);
                 }
             } else {
                 if (operador.nombre === 'contiene' && item.real_name_in.lastIndexOf('uuid') !== -1) {
                     where.push(' dat.' + item.nombrecampo + " = '" + item.idvalor + "'");
                 } else if (item.tipo === 'string' && operador.nombre === 'contiene') {
                     where.push(' dat.' + item.nombrecampo + " ILIKE '%" + item.valor1.replace(/\s/g, "%") + "%'");
+                } else if (item.tipo === 'string' && operador.nombre === 'no contiene') {
+                    where.push(' dat.' + item.nombrecampo + " NOT ILIKE '%" + item.valor1.replace(/\s/g, "%") + "%'");
                 } else if (item.tipo === 'boolean' && operador.nombre === '=') {
                     valor = item.valor1 ? 'true' : 'false';
                     where.push(' dat.' + item.nombrecampo + " = " + valor);
@@ -160,15 +180,45 @@ function getParamsResultFilter(req, objects) {
                     where.push(' dat.' + item.nombrecampo + " > " + item.valor1);
                 } else if (item.tipo === 'number' && operador.nombre === '<' && item.valor1) {
                     where.push(' dat.' + item.nombrecampo + " < " + item.valor1);
-                } else if (item.tipo === 'date' && operador.nombre === '=') {
+                } else if (item.tipo === 'number' && operador.nombre === '<>' && item.valor1) {
+                    where.push(' dat.' + item.nombrecampo + " <> " + item.valor1);
+                } else if (item.tipo === 'number' && operador.nombre === '>=' && item.valor1) {
+                    where.push(' dat.' + item.nombrecampo + " >= " + item.valor1);
+                } else if (item.tipo === 'number' && operador.nombre === '<=' && item.valor1) {
+                    where.push(' dat.' + item.nombrecampo + " <= " + item.valor1);
+                } else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone') 
+                    && operador.nombre === '=') {
                     date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
                     where.push(item.nombrecampo + " ='" + date_start + "'");
-                } else if (item.tipo === 'date' && operador.nombre === '>') {
+                } else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone') 
+                    && operador.nombre === '>') {
                     date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
                     where.push(' dat.' + item.nombrecampo + " > '" + date_start + "'");
-                } else if (item.tipo === 'date' && operador.nombre === '<') {
+                } else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone') 
+                    && operador.nombre === '<') {
                     date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
                     where.push(' dat.' + item.nombrecampo + " < '" + date_start + "'");
+                }
+                else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone')
+                    && operador.nombre === '<>') {
+                    date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
+                    where.push(' dat.' + item.nombrecampo + " <> '" + date_start + "'");
+                }
+                else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone')
+                    && operador.nombre === '>=') {
+                    date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
+                    where.push(' dat.' + item.nombrecampo + " >= '" + date_start + "'");
+                }
+                else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone')
+                    && operador.nombre === '<=') {
+                    date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
+                    where.push(' dat.' + item.nombrecampo + " <= '" + date_start + "'");
                 }
             }
         }
@@ -196,23 +246,57 @@ function getParamsResultFunctions(req, objects, params_parse_data, params_parse_
         valor = false;
         operador = objects.utiles.findByElementInArray(item.operadores, item.idoperador)
         if (item.fk) {
-            if (operador.nombre === 'contiene') {
-                where.push(' dat.' + item.nombrecampo + " = " + "'" + item.idvalor + "'");
+            if (operador.nombre === 'contiene' && item.real_name_in.lastIndexOf('uuid') !== -1) {
+                //Formatear el where para cuando se seleccione más de un valor tipo uuid
+                let arrvalores = item.idvalor.split(',');
+                if(arrvalores.length === 1)
+                    where.push(' dat.' + item.nombrecampo + " = " + "'" + item.idvalor + "'");
+                else{
+                    let cadenaWhere = '(';
+                    let largo = arrvalores.length;
+                    for (i=0;i<largo;i++) {
+                        cadenaWhere += ' dat.' + item.nombrecampo + " = " + "'" + arrvalores[i] + "'";
+                        if(i < largo - 1)
+                            cadenaWhere += ' OR ';
+                    }
+                    cadenaWhere += ')';
+                    where.push(cadenaWhere);
+                }
             } else if (item.tipo === 'string' && operador.nombre === 'contiene') {
                 where.push(' dat.' + item.nombrecampo + " ILIKE '%" + item.idvalor.replace(/\s/g, "%") + "%'");
             }
+            else if (item.tipo === 'string' && operador.nombre === 'no contiene') {
+                where.push(' dat.' + item.nombrecampo + " NOT ILIKE '%" + item.idvalor.replace(/\s/g, "%") + "%'");
+            }
         } else {
             if (item.cantparam === 2) {
-                if (item.tipo === 'date' && operador.nombre === 'entre' && item.valor1 && item.valor2) {
+                if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone') 
+                    && operador.nombre === 'entre' && item.valor1 && item.valor2) {
                     date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD') + ' 00:00:00'
                     date_end = moment(item.valor2, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD') + ' 23:59:59'
                     where.push(' dat.' + item.nombrecampo + " BETWEEN '" + date_start + "' AND " + "'" + date_end + "'");
                 }
+                else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone')
+                    && operador.nombre === 'no entre' && item.valor1 && item.valor2) {
+                    date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD') + ' 00:00:00'
+                    date_end = moment(item.valor2, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD') + ' 23:59:59'
+                    where.push(' dat.' + item.nombrecampo + " NOT BETWEEN '" + date_start + "' AND " + "'" + date_end + "'");
+                }
+                else if (item.tipo === 'number' && operador.nombre === 'entre' && item.valor1 && item.valor2) {
+                    where.push(' dat.' + item.nombrecampo + " BETWEEN " + item.valor1 + " AND " + item.valor2);
+                }
+                else if (item.tipo === 'number' && operador.nombre === 'no entre' && item.valor1 && item.valor2) {
+                    where.push(' dat.' + item.nombrecampo + " NOT BETWEEN " + item.valor1 + " AND " + item.valor2);
+                }
             } else {
-                if (operador.nombre === 'contiene') {
-                    where.push(' dat.' + item.nombrecampo + " ILIKE '%" + item.valor1.replace(/\s/g, "%") + "%'");
+                if (operador.nombre === 'contiene' && item.real_name_in.lastIndexOf('uuid') !== -1) {
+                    where.push(' dat.' + item.nombrecampo + " = '" + item.idvalor + "'");
                 } else if (item.tipo === 'string' && operador.nombre === 'contiene') {
                     where.push(' dat.' + item.nombrecampo + " ILIKE '%" + item.valor1.replace(/\s/g, "%") + "%'");
+                } else if (item.tipo === 'string' && operador.nombre === 'no contiene') {
+                    where.push(' dat.' + item.nombrecampo + " NOT ILIKE '%" + item.valor1.replace(/\s/g, "%") + "%'");
                 } else if (item.tipo === 'boolean' && operador.nombre === '=') {
                     valor = item.valor1 ? 'true' : 'false';
                     where.push(' dat.' + item.nombrecampo + " = " + valor);
@@ -222,15 +306,45 @@ function getParamsResultFunctions(req, objects, params_parse_data, params_parse_
                     where.push(' dat.' + item.nombrecampo + " > " + item.valor1);
                 } else if (item.tipo === 'number' && operador.nombre === '<' && item.valor1) {
                     where.push(' dat.' + item.nombrecampo + " < " + item.valor1);
-                } else if (item.tipo === 'date' && operador.nombre === '=') {
+                } else if (item.tipo === 'number' && operador.nombre === '<>' && item.valor1) {
+                    where.push(' dat.' + item.nombrecampo + " <> " + item.valor1);
+                } else if (item.tipo === 'number' && operador.nombre === '>=' && item.valor1) {
+                    where.push(' dat.' + item.nombrecampo + " >= " + item.valor1);
+                } else if (item.tipo === 'number' && operador.nombre === '<=' && item.valor1) {
+                    where.push(' dat.' + item.nombrecampo + " <= " + item.valor1);
+                } else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone')
+                    && operador.nombre === '=') {
                     date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
                     where.push(item.nombrecampo + " ='" + date_start + "'");
-                } else if (item.tipo === 'date' && operador.nombre === '>') {
+                } else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone')
+                    && operador.nombre === '>') {
                     date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
                     where.push(' dat.' + item.nombrecampo + " > '" + date_start + "'");
-                } else if (item.tipo === 'date' && operador.nombre === '<') {
+                } else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone')
+                    && operador.nombre === '<') {
                     date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
                     where.push(' dat.' + item.nombrecampo + " < '" + date_start + "'");
+                }
+                else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone')
+                    && operador.nombre === '<>') {
+                    date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
+                    where.push(' dat.' + item.nombrecampo + " <> '" + date_start + "'");
+                }
+                else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone')
+                    && operador.nombre === '>=') {
+                    date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
+                    where.push(' dat.' + item.nombrecampo + " >= '" + date_start + "'");
+                }
+                else if ((item.tipo === 'date' || item.tipo === 'datetime' || item.tipo === 'timestamp'
+                    || item.tipo === 'timestamp without time zone' || item.tipo === 'timestamp with time zone')
+                    && operador.nombre === '<=') {
+                    date_start = moment(item.valor1, "DD/MM/YYYY H:m:s").format('YYYY-MM-DD')
+                    where.push(' dat.' + item.nombrecampo + " <= '" + date_start + "'");
                 }
             }
         }
