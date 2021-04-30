@@ -147,8 +147,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 var data = json.datos;
+                MasterApp.globals.setRecordSection(null);
                 if (data != null) {
-                    MasterApp.globals.setRecordSection(null);
                     this.configuredData();
                     store.commitChanges();
                     gridsection.getStore().loadData(data);
@@ -490,7 +490,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             return retval;
         }
         if (record.data.tipo == 'datetime') {
-            var retval = Ext.util.Format.date(value, 'd/m/Y h:i:s');
+            var retval = (Ext.isDate(value)) ? Ext.util.Format.date(value, 'd/m/Y h:i:s') : value;
             if (value)
                 metaData.tdAttr = 'data-qtip="' + retval + '"';
             return retval;

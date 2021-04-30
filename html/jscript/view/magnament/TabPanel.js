@@ -40,7 +40,7 @@ Ext.define('MasterSol.view.magnament.TabPanel', {
     }],
     listeners: {
         collapse: function () {
-            MasterApp.magnament.cleanAll();
+            MasterApp.magnament.collapseTabPanel();
         }
     }
 });

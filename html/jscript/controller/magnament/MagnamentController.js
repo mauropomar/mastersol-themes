@@ -152,7 +152,14 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         Ext.ComponentQuery.query('#tbtext_magnament_note')[0].setText('Notas');
         Ext.ComponentQuery.query('#tbtext_magnament_total')[0].setText('Totales');
         Ext.ComponentQuery.query('#tbtext_magnament_filter')[0].setText('Filtros');
+    },
 
+    collapseTabPanel:function(){
+        MasterApp.globals.setGridSection(null);
+        MasterApp.globals.setRecordSection(null);
+        this.resetTitle();
+        this.cleanAll();
+        Ext.ComponentQuery.query('tabmagnament')[0].setActiveTab(0);
     }
 
 })
