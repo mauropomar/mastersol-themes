@@ -244,7 +244,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
             return value;
         }
         if (type == 'datetime' && value != null) {
-       //     value = new Date(value);
+            //     value = new Date(value);
             return value;
         }
         if (type == 'boolean') {
@@ -315,7 +315,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
             return false;
     },
 
-    setStyleWindow(panel) {
+    setStyleWindow: function (panel) {
         var window = panel.up('window');
         var idSelWindow = window.id;
         window.setStyle({
@@ -331,7 +331,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         }
     },
 
-    setStyleSection(newCard) {
+    setStyleSection: function (newCard) {
         var containers = this.getContainerSections();
         if (newCard) {
             document.getElementById(newCard.tab.id).style.borderTop = '2px solid #49db32';
@@ -349,6 +349,19 @@ Ext.define('MasterSol.controller.util.UtilController', {
                     document.getElementById(tab.id).style.borderTop = 'transparent';
             }
         }
+    },
+
+    getNameOperatorByRecord: function (record) {
+        var operators = record.data.operadores;
+        var value = record.data.operador;
+        var nombre = '';
+        for (var i = 0; i < operators.length; i++) {
+            if (value == operators[i]['simbolo']) {
+                nombre = operators[i]['nombre'];
+                break;
+            }
+        }
+        return nombre;
     }
 
 

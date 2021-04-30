@@ -38,8 +38,10 @@ Ext.define('MasterSol.view.magnament.Filter', {
             xtype: 'combo-sign'
         },
         renderer: function (value, metaData, record) {
-            if (value)
-                metaData.tdAttr = 'data-qtip="' + value + '"';
+            if (value){
+                var name = MasterApp.util.getNameOperatorByRecord(record);
+                metaData.tdAttr = 'data-qtip="' + name + '"';
+            }
             return value;
         }
     }, {

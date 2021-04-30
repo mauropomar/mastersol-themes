@@ -2,8 +2,8 @@ Ext.define('MasterSol.view.magnament.ComboSign', {
     extend: 'Ext.form.field.ComboBox',
     requires:['MasterSol.store.magnament.SignStore'],
     xtype: 'combo-sign',
-    valueField: 'nombre',
-    displayField: 'nombre',
+    valueField: 'simbolo',
+    displayField: 'simbolo',
     triggerAction: 'all',
     queryMode:'local',
     store: {

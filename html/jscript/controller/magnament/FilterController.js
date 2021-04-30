@@ -305,7 +305,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var cantparam = 1;
         var operators = (rec.data.operadores) ? rec.data.operadores : new Array();
         if (val !== null && val !== '' && operators.length > 0) {
-            var operator = (rec.data.operador) ? rec.data.operador : rec.data.operadores[0]['nombre'];
+            var operator = (rec.data.operador) ? rec.data.operador : rec.data.operadores[0]['simbolo'];
             idoperator = this.getOperatorDefault(rec.data.operadores, operator);
             cantparam = this.getCantParam(rec.data.operadores, operator);
             if (val)
@@ -319,7 +319,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var operator = null;
         var operators = (rec.data.operadores) ? rec.data.operadores : new Array();
         if (val != null && val != '' && operators.length > 0) {
-            operator = (rec.data.operador) ? rec.data.operador : rec.data.operadores[0]['nombre'];
+            operator = (rec.data.operador) ? rec.data.operador : rec.data.operadores[0]['simbolo'];
             if (val)
                 rec.set('operador', operator);
         }
@@ -329,7 +329,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
     getOperatorDefault: function (operators, operator) {
         var idoperator = null;
         for (var j = 0; j < operators.length; j++) {
-            if (operators[j]['nombre'] == operator) {
+            if (operators[j]['simbolo'] == operator) {
                 idoperator = operators[j]['id'];
                 break
             }
@@ -341,7 +341,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
     getCantParam: function (operators, operator) {
         var cantparam = 1;
         for (var j = 0; j < operators.length; j++) {
-            if (operators[j]['nombre'] == operator) {
+            if (operators[j]['simbolo'] == operator) {
                 cantparam = operators[j]['cantidadparam'];
                 break
             }
