@@ -277,8 +277,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var grid = Ext.ComponentQuery.query('#filter-view')[0];
         var store = grid.getStore();
         store.each(function (rec) {
-            var valor1 = MasterApp.util.getVal(rec, rec.data.valor1);
-            var valor2 = MasterApp.util.getVal(rec, rec.data.valor2);
+            var valor1 = MasterApp.util.getVal(rec, rec.data.valor1, true);
+            var valor2 = MasterApp.util.getVal(rec, rec.data.valor2, true);
             var d = this.getIdOperator(rec, valor1);
             var idoperator = d[0];
             var cantparam = d[1];

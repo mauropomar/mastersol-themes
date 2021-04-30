@@ -218,7 +218,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         return gridtotal;
     },
 
-    getVal: function (rec, value) {
+    getVal: function (rec, value, save = false) {
         if (!value) return value;
         var type = rec.data.tipo;
         if (rec.data.fk == 1 && value != null) {
@@ -245,7 +245,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         }
         if (type == 'datetime' && value != null) {
             value = new Date(Date.parse(value));
-            return Ext.Date.format(value, 'd/m/Y h:i:s');
+            return (save) ? value : Ext.Date.format(value, 'd/m/Y h:i:s');
         }
         if (type == 'boolean') {
             return (value == 'false' || value == false) ? false : true;
