@@ -8,34 +8,39 @@
 Ext.define('MasterSol.view.magnament.TabPanel', {
     extend: 'Ext.tab.Panel',
     xtype: 'tabmagnament',
-    idmenumag:null,
-    idsectionmag:null,
-    header:false,
+    idmenumag: null,
+    idsectionmag: null,
+    header: false,
     requires: [
         'MasterSol.view.magnament.Register',
         'MasterSol.view.magnament.Total',
         'MasterSol.view.magnament.Filter',
         'MasterSol.view.magnament.Attached',
-         "MasterSol.view.magnament.Note",
+        "MasterSol.view.magnament.Note",
         "MasterSol.view.magnament.Audit"
     ],
-    items:[{
-        xtype:'register-view',
-        id:'register-view'
-    },{
-        xtype:'filter-view',
-        id:'filter-view'
-    },{
-        xtype:'total-view',
-        id:'total-view'
-    },{
-        xtype:'attached-view',
-        id:'attached-view'
-    },{
-        xtype:'note-view',
-        id:'note-view'
-    },{
-        xtype:'audit-view',
-        id:'audit-view'
-    }]
+    items: [{
+        xtype: 'register-view',
+        id: 'register-view'
+    }, {
+        xtype: 'filter-view',
+        id: 'filter-view'
+    }, {
+        xtype: 'total-view',
+        id: 'total-view'
+    }, {
+        xtype: 'attached-view',
+        id: 'attached-view'
+    }, {
+        xtype: 'note-view',
+        id: 'note-view'
+    }, {
+        xtype: 'audit-view',
+        id: 'audit-view'
+    }],
+    listeners: {
+        collapse: function () {
+            MasterApp.magnament.cleanAll();
+        }
+    }
 });

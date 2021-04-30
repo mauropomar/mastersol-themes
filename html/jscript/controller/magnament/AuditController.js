@@ -70,7 +70,7 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
                     if (data != null) {
                         store.loadData(data);
                     } else {
-                        MasterApp.util.showMessageInfo('No existen datos en auditoría.');
+                        MasterApp.util.showMessageInfo('No existen datos en auditoría para este filtro.');
                     }
                     window.close();
                 },

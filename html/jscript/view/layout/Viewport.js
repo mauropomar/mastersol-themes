@@ -39,7 +39,7 @@ Ext.define('MasterSol.view.layout.Viewport', {
             resize:true,
             split:true,
             collapsed: true,
-            width: '30%',
+            width: '30%'
         }]
     }, {
         xtype: 'toolbar-footer',
