@@ -39,8 +39,8 @@ Ext.define('MasterSol.view.magnament.TabPanel', {
         id: 'audit-view'
     }],
     listeners: {
-        collapse: function () {
-            MasterApp.magnament.collapseTabPanel();
+        hide: function () {
+            MasterApp.magnament.collapse();
         }
     }
 });

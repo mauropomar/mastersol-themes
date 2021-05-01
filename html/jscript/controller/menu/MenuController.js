@@ -136,6 +136,8 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         }
         if (json[0].niveles > 2) {
             this.setHeightTabs(window, 2);
+        }else{
+            this.setHeightTabs(window);
         }
     },
     // crea una seccion y la agrega al tab

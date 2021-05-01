@@ -96,7 +96,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             return;
         }
         if (optionActive.xtype === 'total-view') {
-            MasterApp.total.clean();
+            MasterApp.totals.clean();
             return;
         }
         if (optionActive.xtype === 'attached-view') {
@@ -139,12 +139,6 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         MasterApp.util.resizeAllWindow();
     },
 
-    collapse: function () {
-        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
-        tabMagnament.idmenumag = null;
-        this.resetTitle();
-    },
-
     resetTitle: function () {
         Ext.ComponentQuery.query('#tbtext_magnament_note')[0].setText('Notas');
         Ext.ComponentQuery.query('#tbtext_magnament_register')[0].setText('Register');
@@ -154,7 +148,9 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         Ext.ComponentQuery.query('#tbtext_magnament_filter')[0].setText('Filtros');
     },
 
-    collapseTabPanel:function(){
+    collapse:function(){
+        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        tabMagnament.idmenumag = null;
         MasterApp.globals.setGridSection(null);
         MasterApp.globals.setRecordSection(null);
         this.resetTitle();
