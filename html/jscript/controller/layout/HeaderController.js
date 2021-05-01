@@ -75,7 +75,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
     },
 
     applyCascade: function () {
-        var win;
+        var win, btn;
         MasterApp.globals.setEnCascade(true);
         var windows = this.getWindows();
         var height = Ext.ComponentQuery.query('#panel-center')[0].getHeight();
@@ -89,12 +89,17 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         this.reconfigureWindows(height, width, posX, posY);
         for (var j = 0; j < windows.length; j++) {
             win = windows[j];
-            if(j > 0){
+            if (j > 0) {
                 var winlast = windows[j - 1];
                 lastWidth = winlast.getWidth() - 30;
                 lastHeight = winlast.getHeight() - 30;
                 lastPosX = winlast.getX() + 30;
                 lastPosY = winlast.getY() + 30;
+                btn = MasterApp.tools.getBtnTools(win, 'btn_restore');
+                btn.show();
+            }else{
+                btn = MasterApp.tools.getBtnTools(win, 'btn_restore');
+                btn.hide();
             }
             win.setWidth(lastWidth);
             win.setHeight(lastHeight);
@@ -106,8 +111,6 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             btnMinimize.show();
             var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
-            var btnMaximize = MasterApp.tools.getBtnTools(win, 'btn_restore');
-            btnMaximize.hide();
             MasterApp.tools.showButtonsNotDefault(win, true);
         }
 
@@ -179,7 +182,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
                 controller.menu.name = json[0].nombre;
                 controller.json = json;
                 controller.showMenu(json, true);
-          //      Ext.ComponentQuery.query('#register-view')[0].hide();
+                //      Ext.ComponentQuery.query('#register-view')[0].hide();
             },
             failure: function (response) {
                 mask.hide();
@@ -188,7 +191,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         Ext.Ajax.request(alert);
     },
 
-    collapseAllWindow: function(){
+    collapseAllWindow: function () {
         var windows = this.getWindows();
         for (var j = 0; j < windows.length; j++) {
             var panelMenu = Ext.ComponentQuery.query('#panel-center')[0];
@@ -199,7 +202,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             windows[j].setWidth(300);
             var btn = MasterApp.tools.getBtnTools(windows[j], 'btn_restore');
             btn.show();
-            var arrayBtn = ['btn_minimize','btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+            var arrayBtn = ['btn_minimize', 'btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
             MasterApp.tools.setVisibleBtn(windows[j], arrayBtn, true);
             windows[j].alignTo(panelMenu, 'bl-bl');
             MasterApp.section.setPositionWindow(windows[j]);
