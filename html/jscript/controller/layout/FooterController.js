@@ -40,7 +40,7 @@ Ext.define('MasterSol.controller.layout.FooterController', {
         ,
         //seleccionar menu en el combo de ventana expandiendo
         selectWindow: function (combo, record) {
-            var panelmenu = Ext.ComponentQuery.query('#panel-menu')[0];
+            var panelmenu = Ext.ComponentQuery.query('#panel-center')[0];
             var window = MasterApp.util.getMenuByName(record.data.name);
             var height = panelmenu.getHeight();
             var width = panelmenu.getWidth();
