@@ -24,8 +24,10 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         tabMagnament.idmenumag = window.idmenu;
         var gridsection = MasterApp.globals.getGridSection();
-        if (gridsection.idmenu != window.idmenu)
+        if (!gridsection || gridsection.idmenu != window.idmenu) {
             gridsection = MasterApp.globals.getSectionPrincipalByWindow(window);
+            MasterApp.globals.setGridSection(gridsection);
+        }
         var columns = gridsection.config.columns;
         this.addRegister(null, columns);
         this.isEdit = false;
