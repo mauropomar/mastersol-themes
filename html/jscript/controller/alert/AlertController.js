@@ -40,8 +40,8 @@ Ext.define('MasterSol.controller.alert.AlertController', {
     },
 
     laodInitAlert: function () {
-      /*  var obt = {
-            url: 'app/managerfunctionsevent',
+        var obt = {
+            url: 'app/newalerts',
             method: 'GET',
             scope: this,
             success: function (response) {
@@ -50,6 +50,6 @@ Ext.define('MasterSol.controller.alert.AlertController', {
                // Ext.ComponentQuery.query('#btn-alert')[0].setBadgeText('');
             }
         };
-        Ext.Ajax.request(obt);*/
+        Ext.Ajax.request(obt);
     }
 })
