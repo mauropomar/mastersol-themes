@@ -1,0 +1,39 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_filters_operators
+(
+  IN  idsection  uuid
+)
+RETURNS json AS
+$$
+declare
+res_data json;
+begin
+  
+select json_agg(rowset.*) INTO res_data from
+(SELECT tp.id as idregistro,dt.id as idtipodato,dt.namex as nombretipodato,tp.namex as nombrecampo,
+ dt.real_name_ext as tipo, CASE WHEN tp.id_fk_tables is null THEN 0 ELSE 1 END as fk,dt.real_name_in,
+(
+select json_agg(aux.*) FROM
+(SELECT op.id as id,op.namex as nombre,op.op as simbolo, op.cantidad as cantidadparam,null as valor1,
+ null as valor2
+FROM cfgapl.datatypes_comp_operators op
+WHERE op.id_datatypes = dt.id)aux
+) as operadores
+
+FROM cfgapl.sections s
+JOIN cfgapl.sections_properties sp on sp.id_sections = s.id
+JOIN cfgapl.tables_properties tp on tp.id = sp.id_tables_properties
+JOIN cfgapl.datatypes dt on dt.id = tp.id_datatype  
+WHERE s.id = $1 AND sp.filterable is true
+GROUP BY tp.id,dt.id,dt.namex,dt.real_name_ext
+)rowset;
+
+return res_data;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_filters_operators(uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_get_filters_operators(uuid)
+  IS 'Return filter by idsection';

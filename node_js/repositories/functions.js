@@ -13,19 +13,19 @@ cron.schedule('* * * * *', async () => {
         let fechaActual = new Date();
         let horaActual = new Date();
         let fechaStart = pro.date_to_execute;
-        let horaStart = pro.time_to_execute;  
+        let horaStart = pro.time_to_execute;
         horaStart = horaStart.substring(horaStart.length-8,horaStart.length-3)
         let mesActual = fechaActual.getMonth() + 1;
         if(mesActual < 10)
-            mesActual = '0'+mesActual       
-        fechaActual = fechaActual.getFullYear() + '-' + mesActual + '-' + fechaActual.getDate();       
-        horaActual = horaActual.getHours() + ':' + horaActual.getMinutes();        
+            mesActual = '0'+mesActual
+        fechaActual = fechaActual.getFullYear() + '-' + mesActual + '-' + fechaActual.getDate();
+        horaActual = horaActual.getHours() + ':' + horaActual.getMinutes();
         let eachMinutes = '*'
         let eachDays = '*'
         if(pro.repeat_each_minutes != null && pro.repeat_each_minutes > 0 && pro.repeat_each_minutes < 60)
             eachMinutes = pro.repeat_each_minutes
         if(pro.repeat_each_day != null && pro.repeat_each_day > 0 && pro.repeat_each_day <= 31)
-            eachDays = pro.repeat_each_day        
+            eachDays = pro.repeat_each_day
         //Obtener minutos y dias de ejecucion para el calendario
         let stringMinutes = '*'
         let stringDays = '*'
@@ -35,11 +35,11 @@ cron.schedule('* * * * *', async () => {
             stringMinutes = '1'
             for (let i = 1; i < 60; i++) {
                 lastMinute += eachMinutes
-                if (lastMinute < 60)                     
-                    stringMinutes = stringMinutes +','+lastMinute                
+                if (lastMinute < 60)
+                    stringMinutes = stringMinutes +','+lastMinute
                 else break;
             }
-        }        
+        }
         if(eachDays != '*') {
             stringDays = '1'
             for (let i = 1; i <= 31; i++) {
@@ -88,7 +88,7 @@ cron.schedule('* * * * *', async () => {
         }
         taskEliminateArray = []
     }, 30000)
-    
+
 });
 
 const getProcess = async () => {
