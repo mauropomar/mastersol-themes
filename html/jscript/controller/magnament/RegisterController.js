@@ -21,10 +21,11 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     new: function (window) {
         Ext.ComponentQuery.query('#btn_insert_register')[0].show();
         Ext.ComponentQuery.query('#btn_save_register')[0].hide();
+        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        tabMagnament.idmenumag = window.idmenu;
         var gridsection = MasterApp.globals.getGridSection();
-        if (gridsection.idmenu != window.idmenu) {
-            gridsection = MasterApp.globals.getSectionPrincipalByWindow(window)
-        }
+        if (gridsection.idmenu != window.idmenu)
+            gridsection = MasterApp.globals.getSectionPrincipalByWindow(window);
         var columns = gridsection.config.columns;
         this.addRegister(null, columns);
         this.isEdit = false;
@@ -70,15 +71,17 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     //editar registros
     editRegister: function (columnIndex) {
         var gridsection = MasterApp.globals.getGridSection();
+        if (gridsection == null)
+            return;
         var isRecordSelected = gridsection.getSelectionModel().hasSelection();
         var rec = MasterApp.globals.getRecordSection();
         var columns = gridsection.config.columns;
         this.addRegister(rec, columns);
-        if(!isRecordSelected){
+        if (!isRecordSelected) {
             this.isEdit = false;
             Ext.ComponentQuery.query('#btn_insert_register')[0].show();
             Ext.ComponentQuery.query('#btn_save_register')[0].hide();
-        }else{
+        } else {
             this.isEdit = true;
             Ext.ComponentQuery.query('#btn_insert_register')[0].hide();
             Ext.ComponentQuery.query('#btn_save_register')[0].show();
@@ -134,11 +137,12 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         var action = '13';
         if (this.isEdit) { //si estas editando
             var record = MasterApp.globals.getRecordSection();
-            if(record == null){
+            if (record == null) {
                 mask.hide();
                 MasterApp.util.showMessageInfo('Debe seleccionar un registro para esta sesión');
                 return;
-            };
+            }
+            ;
             idrecordsection = record.data.id;
             action = '14';
         }
@@ -166,7 +170,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                     else {
                         var idcreated = json.datos.id;
                         this.insert(data, idcreated);
-                        gridsection.max_line ++;
+                        gridsection.max_line++;
                     }
                     this.showFieldRequired = false;
                     grid.getView().refresh();
@@ -236,7 +240,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
 
     beforeedit: function (editor, e, eOpts) {
         var gridsection = MasterApp.globals.getGridSection();
-        if(gridsection.read_only){
+        if (gridsection.read_only) {
             e.cancel = true;
             return;
         }
@@ -326,7 +330,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 focus: function (f) {
                     var value = f.getValue();
                     value = (value == null || value == '') ? new Date(rec.data.valor) : value;
-                    value = (value == 'Invalid Date')?null:value;
+                    value = (value == 'Invalid Date') ? null : value;
                     f.setValue(value);
                 }
             }
@@ -387,12 +391,12 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 loadingText: 'Buscando...',
                 emptyText: 'No existen opciones....',
                 itemSelector: '.search-item',
-                width:column.cellWidth
+                width: column.cellWidth
             },
             listeners: {
                 scope: this,
                 collapse: this.collapseFk,
-                beforequery: function(record){
+                beforequery: function (record) {
                     record.query = new RegExp(record.query, 'ig');
                 }
             }
@@ -456,7 +460,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         });
     },
 
-    onChangesReject:function(){
+    onChangesReject: function () {
         var grid = Ext.ComponentQuery.query('#register-view')[0];
         var store = grid.getStore();
         store.rejectChanges();

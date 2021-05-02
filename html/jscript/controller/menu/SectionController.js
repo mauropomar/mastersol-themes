@@ -226,9 +226,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.setPositionWindow(window);
         MasterApp.magnament.isMenuTabMagnament(window);
         this.adjustOtherWindowsMaximize();
-        /*   MasterApp.tools.showButtonsNotDefault(window, false);
-           var btn = MasterApp.tools.getBtnTools(window, 'btn_refresh');
-           btn.hide();*/
+
+
     },
 
     maximize: function (button, evt, toolEl, owner, tool) {
@@ -247,9 +246,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     closeWindow: function (window) {
-        var tabmagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        MasterApp.magnament.isMenuTabMagnament(window);
         MasterApp.footer.removeWindowCombo(window);
-        window.destroy();
         var windows = Ext.ComponentQuery.query('window-menu');
         if (windows.length == 0) {
             Ext.ComponentQuery.query('#btnEnRows')[0].setDisabled(true);
@@ -258,12 +256,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         }
         this.adjustOtherWindowsMinimize();
         this.adjustOtherWindowsMaximize();
-        MasterApp.globals.setRecordSection(null);
-        MasterApp.globals.setGridSection(null);
-        if (window.idmenu == tabmagnament.idmenumag) {  //collapsar el tab de gestion que tiene los datos de la ventana que se cierra
-            tabmagnament.collapse();
-            tabmagnament.hide();
-        }
         this.removeOfArrayGlobals(window);
     },
 

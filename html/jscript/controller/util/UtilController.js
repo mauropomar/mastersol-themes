@@ -272,7 +272,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
 
     getNColumnSection() {
         var section = MasterApp.globals.getGridSection();
-        var n_column = (section.colSelected !== null) ? section.columns[section.colSelected]['n_column'] : null;
+        var n_column = (section.colSelected && section.colSelected !== null) ? section.columns[section.colSelected]['n_column'] : null;
         return n_column;
     },
 
@@ -362,6 +362,18 @@ Ext.define('MasterSol.controller.util.UtilController', {
             }
         }
         return nombre;
+    },
+
+    cleanVariableSection: function (window) {
+       // debugger
+        var gridSection = MasterApp.globals.getGridSection();
+        if (gridSection) {
+            var windowSection = gridSection.up('window');
+            if (windowSection.idmenu = window.idmenu) {
+                MasterApp.globals.setRecordSection(null);
+                MasterApp.globals.setGridSection(null);
+            }
+        }
     }
 
 
