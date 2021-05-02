@@ -51,7 +51,7 @@ const getResultFiltersFunctions = async (req, objects) => {
     var resultF = [], valor;
     const result = [];
     if(params_parse_data.length > 0) {
-        const params_filter_fn = getParamsResultFunctions(req, objects, params_parse_data, params_parse_filtros)
+        const params_filter_fn = getParamsResultFunctions(req, objects, params_parse_data, params_parse_filtros)       
         const query = "SELECT cfgapl.fn_get_result_filter_functions($1,$2,$3,$4,$5)"
         const result = await pool.executeQuery(query, params_filter_fn)
 
@@ -250,7 +250,7 @@ function getParamsResultFunctions(req, objects, params_parse_data, params_parse_
         valor = false;
         operador = objects.utiles.findByElementInArray(item.operadores, item.idoperador)
         if (item.fk) {
-            if (operador.nombre === 'contiene' && item.real_name_in.lastIndexOf('uuid') !== -1) {
+            if (operador.nombre === 'contiene') {
                 //Formatear el where para cuando se seleccione más de un valor tipo uuid
                 let arrvalores = item.idvalor.split(',');
                 if(arrvalores.length === 1)
@@ -295,10 +295,8 @@ function getParamsResultFunctions(req, objects, params_parse_data, params_parse_
                     where.push(' dat.' + item.nombrecampo + " NOT BETWEEN " + item.valor1 + " AND " + item.valor2);
                 }
             } else {
-                if (operador.nombre === 'contiene' && item.real_name_in.lastIndexOf('uuid') !== -1) {
-                    where.push(' dat.' + item.nombrecampo + " = '" + item.idvalor + "'");
-                } else if (item.tipo === 'string' && operador.nombre === 'contiene') {
-                    where.push(' dat.' + item.nombrecampo + " ILIKE '%" + item.valor1.replace(/\s/g, "%") + "%'");
+                if ((operador.nombre === 'contiene') || (item.tipo === 'string' && operador.nombre === 'contiene')) {
+                    where.push(' dat.' + item.nombrecampo + " ILIKE '%" + item.valor1.replace(/\s/g, "%") + "%'");                    
                 } else if (item.tipo === 'string' && operador.nombre === 'no contiene') {
                     where.push(' dat.' + item.nombrecampo + " NOT ILIKE '%" + item.valor1.replace(/\s/g, "%") + "%'");
                 } else if (item.tipo === 'boolean' && operador.nombre === '=') {
@@ -353,7 +351,6 @@ function getParamsResultFunctions(req, objects, params_parse_data, params_parse_
             }
         }
     })
-
     result.push(req.body.idsection)
     result.push(req.session.id_rol)
     result.push("{" + fields.join(',') + "}")
@@ -363,6 +360,7 @@ function getParamsResultFunctions(req, objects, params_parse_data, params_parse_
     else
         where = "";
     result.push(where)
+    console.log(result)
     return result
 }
 
