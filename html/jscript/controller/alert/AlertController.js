@@ -21,7 +21,7 @@ Ext.define('MasterSol.controller.alert.AlertController', {
                     resolve('something')
                 }).then(res => {
                     var obtener = {
-                        url: 'app/managerfunctionsevent',
+                        url: 'app/newalerts',
                         method: 'GET',
                         scope: this,
                         success: function (response) {
