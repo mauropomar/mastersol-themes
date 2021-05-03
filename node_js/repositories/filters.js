@@ -52,7 +52,7 @@ const getResultFiltersFunctions = async (req, objects) => {
     const result = [];
     if(params_parse_data.length > 0) {
         const params_filter_fn = getParamsResultFunctions(req, objects, params_parse_data, params_parse_filtros)       
-        const query = "SELECT cfgapl.fn_get_result_filter_functions($1,$2,$3,$4,$5)"
+        const query = "SELECT cfgapl.fn_get_result_filter_functions($1,$2,$3,$4,$5,$6)"
         const result = await pool.executeQuery(query, params_filter_fn)
 
         if (result.success === false) {
@@ -83,7 +83,7 @@ const getTotalsFilterFunction = async (filtros, totales, objects, req) => {
     const params_parse_filtros = JSON.parse(filtros);
 
     const params_filter_fn = getParamsResultFunctions(req, objects, params_parse_data, params_parse_filtros)
-    const query = "SELECT cfgapl.fn_get_result_filter_functions($1,$2,$3,$4,$5)"
+    const query = "SELECT cfgapl.fn_get_result_filter_functions($1,$2,$3,$4,$5,$6)"
     const result = await pool.executeQuery(query, params_filter_fn);
 
     if (result.success === false) {
@@ -360,7 +360,7 @@ function getParamsResultFunctions(req, objects, params_parse_data, params_parse_
     else
         where = "";
     result.push(where)
-    console.log(result)
+    result.push(req.body.idpadreregistro != 0 ? req.body.idpadreregistro : null)
     return result
 }
 

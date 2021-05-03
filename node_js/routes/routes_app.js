@@ -221,8 +221,8 @@ router.get('/managerfunctions', async function (req, res) {
 })
 
 router.get('/managerfunctionsevent', async function (req, res) {
-    var result = await objects.functions.generateFunctionsTimeEvents(req, objects)
-    res.json({'data': result})
+    /*var result = await objects.functions.generateFunctionsTimeEvents(req, objects)
+    res.json({'data': result})*/
 })
 
 router.post('/executebuttons', async function (req, res) {

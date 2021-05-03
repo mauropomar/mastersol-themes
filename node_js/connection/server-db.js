@@ -4,10 +4,10 @@ var utf8 = require('utf8');
 
 var config_bd = {
     user: 'postgres',
-    password: 'root',
+    password: 'postgres',
     host: 'localhost',
     database: 'mastersol',
-    port: 5433
+    port: 5432
 }
 const pool = new Pool(config_bd)
 
@@ -23,4 +23,22 @@ const executeQuery = async (query, params = []) => {
     return result
 }
 
-module.exports.executeQuery = executeQuery;
+const executeQuery2 = async (query, params = []) => {
+    pool.connect()
+        .then(client => {
+            return client.query(query, params) // your query string here
+                .then(res => {
+                    client.release()
+                })
+                .catch(e => {
+                    client.release()
+                })
+        })
+        .catch(e => {
+            console.log('connect err!') // your callback here
+        })
+}
+
+ConPgSQL.executeQuery = executeQuery
+ConPgSQL.executeQuery2 = executeQuery2
+module.exports = ConPgSQL
