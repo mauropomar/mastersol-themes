@@ -23,4 +23,22 @@ const executeQuery = async (query, params = []) => {
     return result
 }
 
-module.exports.executeQuery = executeQuery;
+const executeQuery2 = async (query, params = []) => {
+    pool.connect()
+        .then(client => {
+            return client.query(query, params) // your query string here
+                .then(res => {
+                    client.release()
+                })
+                .catch(e => {
+                    client.release()
+                })
+        })
+        .catch(e => {
+            console.log('connect err!') // your callback here
+        })
+}
+
+ConPgSQL.executeQuery = executeQuery
+ConPgSQL.executeQuery2 = executeQuery2
+module.exports = ConPgSQL
