@@ -69,6 +69,11 @@ Ext.define('MasterSol.controller.util.GlobalController', {
                 this.gridSection['colSelected'] = colSel;
             }
         },
+        resetGridSection: function () {
+            this.gridSection = null;
+            this.gridSectionPrincipal = null;
+            this.recSection = null;
+        },
         isColumns: function () {
             return this.selEnColumns;
         },

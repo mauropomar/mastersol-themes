@@ -124,10 +124,12 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
 
     isMenuTabMagnament: function (window) {
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
-        if (window.idmenu == tabMagnament.idmenumag) {
+        if (window.idmenu == tabMagnament.idmenumag || tabMagnament.idmenumag == null) {
             tabMagnament.idsectionmag = null;
+            MasterApp.globals.resetGridSection();
             tabMagnament.hide();
             tabMagnament.collapse();
+            tabMagnament.setActiveTab(0);
         }
     },
 
@@ -147,15 +149,5 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         Ext.ComponentQuery.query('#tbtext_magnament_total')[0].setText('Totales');
         Ext.ComponentQuery.query('#tbtext_magnament_filter')[0].setText('Filtros');
     },
-
-    collapse:function(){
-        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
-        tabMagnament.idmenumag = null;
-        MasterApp.globals.setGridSection(null);
-        MasterApp.globals.setRecordSection(null);
-        this.resetTitle();
-        this.cleanAll();
-        Ext.ComponentQuery.query('tabmagnament')[0].setActiveTab(0);
-    }
 
 })
