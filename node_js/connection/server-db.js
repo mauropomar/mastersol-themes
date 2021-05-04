@@ -4,10 +4,10 @@ var utf8 = require('utf8');
 
 var config_bd = {
     user: 'postgres',
-    password: 'root',
+    password: 'postgres',
     host: 'localhost',
     database: 'mastersol',
-    port: 5433
+    port: 5432
 }
 const pool = new Pool(config_bd)
 
