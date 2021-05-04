@@ -4,7 +4,9 @@ CREATE OR REPLACE FUNCTION cfgapl.fn_get_result_filter_functions
   IN  id_rol      uuid,
   IN  fields      varchar[],
   IN  functions   varchar[],
-  IN  where_aux  varchar
+  IN  where_aux  varchar,
+  IN  idpadreregistro  uuid = NULL::uuid,
+  IN  id_sectionpadre  uuid = NULL::uuid
 )
 RETURNS varchar[] AS
 $$
@@ -21,22 +23,22 @@ begin
  FOR i IN 0..array_length(campos,1) LOOP
      
   IF funciones[i] = 'Contar' THEN   
-   SELECT cfgapl.fn_count($1,campos[i], str_where) INTO valor;
+   SELECT cfgapl.fn_count($1,campos[i], str_where, $6, $7) INTO valor;
        result_datas[i] = valor;
    --return array_to_json(result_datas); 
   ELSEIF funciones[i] = 'Promedio' THEN
-   SELECT cfgapl.fn_average($1,campos[i], str_where) INTO valor;
+   SELECT cfgapl.fn_average($1,campos[i], str_where, $6, $7) INTO valor;
       result_datas[i] = valor;
    --return array_to_json(result_datas); 
   ELSEIF funciones[i] = 'Sumar' THEN
-   SELECT cfgapl.fn_sum($1,campos[i], str_where) INTO valor;
+   SELECT cfgapl.fn_sum($1,campos[i], str_where, $6, $7) INTO valor;
        result_datas[i] = valor;
    --return array_to_json(result_datas); 
   ELSEIF funciones[i] = 'Máximo' THEN
-   SELECT cfgapl.fn_max($1,campos[i], str_where)  INTO valor;
+   SELECT cfgapl.fn_max($1,campos[i], str_where, $6, $7)  INTO valor;
     result_datas[i] = valor; 
   ELSEIF funciones[i] = 'Mínimo' THEN
-   SELECT cfgapl.fn_min($1,campos[i], str_where) INTO valor;
+   SELECT cfgapl.fn_min($1,campos[i], str_where, $6, $7) INTO valor;
     result_datas[i] = valor;
   END IF; 
  END LOOP;

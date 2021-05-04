@@ -1,0 +1,72 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_average
+(
+  IN  idsection     uuid,
+  IN  nombre_campo  varchar,
+  IN  where_aux  varchar,
+  IN  idpadreregistro  uuid = NULL::uuid,
+  IN  id_sectionpadre  uuid = NULL::uuid
+)
+RETURNS double precision AS
+$$
+declare
+cantidad double precision;
+rec_table record;
+
+result_sections record; name_table varchar; sqlEjec varchar;
+res_foreign_key varchar[];
+sql_where varchar;
+sql_and varchar;
+
+begin
+	--Si idpadre registro es nullo, ejecucion normal
+	IF idpadreregistro is null THEN
+	   SELECT tb.* INTO rec_table
+	   FROM cfgapl.sections sc
+	   JOIN cfgapl.tables tb ON(sc.id_tables = tb.id)
+	   WHERE sc.id = $1;
+	  
+	   EXECUTE('SELECT to_json(avg('||$2||')) FROM '||rec_table.n_schema||'.'||rec_table.n_table ||$3) INTO cantidad;     
+	ELSE 
+		SELECT replace($3,'WHERE','AND') INTO sql_and; 
+
+		SELECT id_tables,namex,path INTO result_sections FROM cfgapl.sections WHERE id = $1;   
+		 
+		 SELECT (n_schema || '.' || n_table) INTO name_table FROM cfgapl.tables WHERE id = result_sections.id_tables;     
+		  
+		SELECT array_agg(tbp.n_column) INTO res_foreign_key
+		FROM cfgapl.sections sc
+		JOIN cfgapl.tables tb on (sc.id_tables = tb.id)
+		JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
+		WHERE sc.id = $1 
+		AND (select id from cfgapl.tables where n_schema||'.'||n_table in 
+		(select foreign_table_schema||'.'||foreign_table from cfgapl.tables_foreignkeys 
+		where id_tables = tb.id AND array_to_string(local_fields,',') = tbp.n_column 
+		AND tbp.n_column <> 'id')) =   
+		(SELECT tb1.id FROM cfgapl.sections sc
+		JOIN cfgapl.tables tb1 on (sc.id_tables = tb1.id)
+		WHERE sc.id = $5) 
+		AND tbp.n_column not like '%fk%'; --Agregado para despreciar los registros de foreign keys    
+			
+		 IF not array_length(res_foreign_key,1) is null THEN
+		  FOR item IN 1..array_length(res_foreign_key,1) LOOP      
+		   IF item = 1 THEN 
+			 sql_where = CONCAT(sql_where , ' dat.', res_foreign_key[item] , ' = ' , ''''||$4||'''');
+		   ELSE 
+			 sql_where = CONCAT(sql_where , ' OR dat.', res_foreign_key[item] , ' = ' , ''''||$4||'''');         
+		   END IF;       
+		  END LOOP;
+						
+		  sqlEjec = name_table || ' dat WHERE ' || trim(sql_where,',') ;    
+	   END IF; 
+	   
+	   EXECUTE('SELECT to_json(avg('||$2||')) FROM  '||sqlEjec||'  '||sql_and||' ') INTO cantidad;    
+
+	END IF;	
+
+  return cantidad;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_average(uuid, varchar, varchar, uuid, uuid)
+  OWNER TO postgres;

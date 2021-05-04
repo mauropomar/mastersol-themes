@@ -58,8 +58,7 @@ cron.schedule('* * * * *', async () => {
         var task = taskArray[pro.id]
         if(task) {
             task.destroy();
-        }
-        console.log(horaActual)
+        }        
         task = cron.schedule('' + stringMinutes + ' * ' + stringDays + ' * *', async() => {
             //Buscar funcion asociada al proceso y ejecutar su sqlx
             executeProcessFunction(pro, queryFunction)

@@ -35,7 +35,7 @@ const executeQuery2 = async (query, params = []) => {
                 })
         })
         .catch(e => {
-            console.log('connect err!') // your callback here
+            console.log('connect err! '+e) // your callback here
         })
 }
 

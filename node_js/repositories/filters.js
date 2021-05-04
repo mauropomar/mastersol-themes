@@ -32,7 +32,8 @@ const getResultFiltersOperators = async (req, objects) => {
     var result_totals = [];
     var result_datos = [];
     const params_filter = getParamsResultFilter(req, objects)
-    const query = "SELECT cfgapl.fn_get_result_filter_operators($1,$2,$3,$4)"
+    console.log(params_filter)
+    const query = "SELECT cfgapl.fn_get_result_filter_operators($1,$2,$3,$4,$5,$6)"
     const result_filter = await pool.executeQuery(query, params_filter)
     if (result_filter.rows[0].fn_get_result_filter_operators != null) {
         result_datos  = result_filter.rows[0].fn_get_result_filter_operators
@@ -52,7 +53,7 @@ const getResultFiltersFunctions = async (req, objects) => {
     const result = [];
     if(params_parse_data.length > 0) {
         const params_filter_fn = getParamsResultFunctions(req, objects, params_parse_data, params_parse_filtros)       
-        const query = "SELECT cfgapl.fn_get_result_filter_functions($1,$2,$3,$4,$5,$6)"
+        const query = "SELECT cfgapl.fn_get_result_filter_functions($1,$2,$3,$4,$5,$6,$7)"
         const result = await pool.executeQuery(query, params_filter_fn)
 
         if (result.success === false) {
@@ -83,7 +84,7 @@ const getTotalsFilterFunction = async (filtros, totales, objects, req) => {
     const params_parse_filtros = JSON.parse(filtros);
 
     const params_filter_fn = getParamsResultFunctions(req, objects, params_parse_data, params_parse_filtros)
-    const query = "SELECT cfgapl.fn_get_result_filter_functions($1,$2,$3,$4,$5,$6)"
+    const query = "SELECT cfgapl.fn_get_result_filter_functions($1,$2,$3,$4,$5,$6,$7)"
     const result = await pool.executeQuery(query, params_filter_fn);
 
     if (result.success === false) {
@@ -232,6 +233,8 @@ function getParamsResultFilter(req, objects) {
         where = "";
     result.push(where)
     result.push(req.session.id_user)
+    result.push(req.body.idpadreregistro != 0 ? req.body.idpadreregistro : null)
+    result.push(req.body.idseccionpadre != 0 ? req.body.idseccionpadre : null)
     return result
 }
 
@@ -361,6 +364,7 @@ function getParamsResultFunctions(req, objects, params_parse_data, params_parse_
         where = "";
     result.push(where)
     result.push(req.body.idpadreregistro != 0 ? req.body.idpadreregistro : null)
+    result.push(req.body.idseccionpadre != 0 ? req.body.idseccionpadre : null)
     return result
 }
 

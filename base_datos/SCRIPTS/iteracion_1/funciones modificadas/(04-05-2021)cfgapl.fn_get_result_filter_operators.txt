@@ -1,0 +1,110 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_result_filter_operators
+(
+  IN  idsection  uuid,
+  IN  idrol      uuid,
+  IN  where_aux  varchar,
+  IN  id_user    uuid,
+  IN  idpadreregistro  uuid = NULL::uuid,
+  IN  id_sectionpadre  uuid = NULL::uuid
+)
+RETURNS json AS
+$$
+declare
+result_sections record; name_table varchar; err_message varchar;
+result_data json=null;
+sqlEjec varchar;
+sqlSelect varchar = ' SELECT dat.* ';
+fn_filter varchar = null;
+fn_first_filter varchar = null;
+str_where varchar = '';
+str_where2 varchar = '';
+sql_where varchar;
+
+res_foreign_key varchar[];
+sqlEjec2 varchar;
+
+begin   
+	SELECT REPLACE($3, 'dat.', '') into str_where;
+	--Prepara consulta de filtro
+	SELECT sc.id_tables,sc.namex,(n_schema || '.' || n_table) as name_table INTO result_sections 
+	 FROM cfgapl.sections sc
+	 JOIN cfgapl.tables tb on(sc.id_tables = tb.id)
+	 JOIN security.rol_sections rsc on rsc.id_sections = sc.id   
+	 WHERE sc.id = $1 AND rsc.id_rol = $2; 
+	 
+	 sqlSelect = sqlSelect || cfgapl.fn_return_value_fk($1,$2);		 
+
+	--Buscar fn_filter y first_filter de la seccion para proceder condicionalmente
+	SELECT cfgapl.sections.fn_filter into fn_filter from cfgapl.sections where id = $1;
+	SELECT cfgapl.sections.fn_first_filter into fn_first_filter from cfgapl.sections where id = $1;
+	
+	--Si idpadre registro es nullo, ejecucion normal
+	IF idpadreregistro is null THEN
+			IF fn_first_filter is not null and fn_first_filter <> '' THEN
+				--Ejecutar funcion first_filter
+				sqlEjec = 'SELECT json_agg(rowset.*) FROM(SELECT * FROM '|| fn_first_filter || '('||quote_literal($1)||','||quote_literal($2)||','||quote_literal($4)||') ' || str_where || ')rowset';	    	   		
+			ELSIF fn_filter is not null and fn_filter <> '' THEN
+				--Ejecutar funcion filter
+				sqlEjec = 'SELECT json_agg(rowset.*) FROM(SELECT * FROM '|| fn_filter || '('||quote_literal($1)||','||quote_literal($2)||','||quote_literal($4)||') ' || str_where || ')rowset';	    	   		
+			ELSE						   
+				sqlEjec = 'SELECT json_agg(rowset.*) FROM (' || sqlSelect || ' FROM '|| result_sections.name_table || ' dat ' || $3 || ')rowset'; 	
+
+			END IF;
+	ELSE
+			SELECT REPLACE($3, 'WHERE', 'AND') into str_where;
+			
+			SELECT array_agg(tbp.n_column) INTO res_foreign_key
+			FROM cfgapl.sections sc
+			JOIN cfgapl.tables tb on (sc.id_tables = tb.id)
+			JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
+			WHERE sc.id = $1 
+			AND (select id from cfgapl.tables where n_schema||'.'||n_table in 
+			(select foreign_table_schema||'.'||foreign_table from cfgapl.tables_foreignkeys 
+			where id_tables = tb.id AND array_to_string(local_fields,',') = tbp.n_column 
+			AND tbp.n_column <> 'id')) =   
+			(SELECT tb1.id FROM cfgapl.sections sc
+			JOIN cfgapl.tables tb1 on (sc.id_tables = tb1.id)
+			WHERE sc.id = $6) 
+			AND tbp.n_column not like '%fk%'; --Agregado para despreciar los registros de foreign keys    
+			
+			IF not array_length(res_foreign_key,1) is null THEN
+				  FOR item IN 1..array_length(res_foreign_key,1) LOOP      
+				   IF item = 1 THEN 
+					 sql_where = CONCAT(sql_where , ' dat.', res_foreign_key[item] , ' = ' , ''''||$5||'''');
+				   ELSE 
+					 sql_where = CONCAT(sql_where , ' OR dat.', res_foreign_key[item] , ' = ' , ''''||$5||'''');         
+				   END IF;       
+				  END LOOP;
+								
+				  sqlEjec2 = ' WHERE ' || trim(sql_where,',') ;    
+				  
+				  str_where2 = sqlEjec2 || str_where;
+		  END IF; 
+	
+			IF fn_first_filter is not null and fn_first_filter <> '' THEN
+				--Ejecutar funcion first_filter
+				sqlEjec = 'SELECT json_agg(rowset.*) FROM(SELECT * FROM '|| fn_first_filter || '('||quote_literal($1)||','||quote_literal($2)||','||quote_literal($4)||') ' || str_where2 || ')rowset';	    	   		
+			ELSIF fn_filter is not null and fn_filter <> '' THEN
+				--Ejecutar funcion filter
+				sqlEjec = 'SELECT json_agg(rowset.*) FROM(SELECT * FROM '|| fn_filter || '('||quote_literal($1)||','||quote_literal($2)||','||quote_literal($4)||') ' || str_where2 || ')rowset';	    	   		
+			ELSE						   
+				sqlEjec = 'SELECT json_agg(rowset.*) FROM (' || sqlSelect || ' FROM '|| result_sections.name_table || ' dat ' ||sqlEjec2||' '|| str_where || ')rowset'; 	
+
+			END IF;
+
+	END IF;	
+		
+	BEGIN
+		 EXECUTE(sqlEjec) INTO result_data;
+		 EXCEPTION WHEN OTHERS THEN 
+		  GET STACKED DIAGNOSTICS err_message = MESSAGE_TEXT; 
+		  result_data = to_json('ERROR: ' || err_message);
+	 END; 
+	
+    return result_data;    
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_result_filter_operators(uuid, uuid, varchar, uuid)
+  OWNER TO postgres;
