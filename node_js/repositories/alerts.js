@@ -7,7 +7,6 @@ const getUser = async (req) => {
     if(resultUser.success === false){
         return {'success': false, 'datos':resultUser.message}
     }
-    console.log(resultUser)
     let alerts = resultUser.rows[0].fn_get_register[0].alerts
     return {'success': true, 'datos': alerts != null ? alerts : 0}
 }
