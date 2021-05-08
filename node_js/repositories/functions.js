@@ -53,7 +53,7 @@ cron.schedule('* * * * *', async () => {
                 else break;
             }
         }
-
+          
         if(fechaStart == fechaActual && horaStart == horaActual) {
             executeProcessFunction(pro, queryFunction)
                 .then((value) => {
@@ -68,9 +68,9 @@ cron.schedule('* * * * *', async () => {
                 (pro.repeat_each_day != null && pro.repeat_each_day != 0)){
                 //si el minuto y dia actual se encuentran en su respectiva cadena, ejecutar
                 if(
-                    (stringMinutes.includes(new Date().getMinutes()) && stringDays.includes(new Date().getDate())) || 
-                    (stringMinutes.includes(new Date().getMinutes()) && stringDays == '*') ||
-                    (stringMinutes == '*' && stringDays.includes(new Date().getDate()))
+                    (await existElemInString(stringMinutes, new Date().getMinutes()) && await existElemInString(stringDays, new Date().getDate())) || 
+                    (await existElemInString(stringMinutes, new Date().getMinutes()) && stringDays == '*') ||
+                    (stringMinutes == '*' && await existElemInString(stringDays, new Date().getDate()))
                 )
                 executeProcessFunction(pro, queryFunction)
                     .then((value) => {
@@ -99,6 +99,15 @@ const executeProcessFunction = (pro, query) => new Promise(async (resolve, rejec
         }
     }
 })
+
+const existElemInString = async (cadena, elem) => {
+    let arr = cadena.split(',')
+    for(let i=0;i<arr.length;i++){
+        if(elem == arr[i])
+            return true
+    }
+    return false
+}
 
 const getProcess = async () => {
     const params_process = ['cfgapl.process',null,"WHERE active = true "]
