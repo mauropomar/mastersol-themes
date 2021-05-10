@@ -13,8 +13,12 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         var btn;
         for (var i = 0; i < array.length; i++) {
             btn = this.getBtnTools(window, array[i]);
-            if (btn)
-                btn.setVisible(!hide);
+            if (btn) {
+                if (btn.name === 'btn_add' && window.isAlert)
+                    btn.setVisible(false);
+                else
+                    btn.setVisible(!hide);
+            }
         }
     },
 
@@ -62,7 +66,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 name: newbuttons[i].name,
                 enable: newbuttons[i].enable,
                 default: false,
-                id:newbuttons[i].id,
+                id: newbuttons[i].id,
                 tooltip: newbuttons[i].tooltip,
                 url: newbuttons[i].url,
                 scope: this,

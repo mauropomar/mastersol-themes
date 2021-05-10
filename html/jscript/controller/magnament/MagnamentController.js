@@ -53,10 +53,15 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         var rec = MasterApp.globals.getRecordSection();
         optionActive.idrecordsection = (rec !== null) ? rec.data.id : null;
         var window = grid.up('window');
-        if (window.isAlert || grid.read_only)
+        if (window.isAlert || grid.read_only) {
             tabMagnament.child('#register-view').tab.hide();
-        else
+            Ext.ComponentQuery.query('#register-view')[0].hide();
+            Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(1);
+        }
+        else {
             tabMagnament.child('#register-view').tab.show();
+            Ext.ComponentQuery.query('#register-view')[0].show();
+        }
         if (optionActive.xtype === 'register-view') {
             MasterApp.register.editRegister(columnIndex);
             return;
@@ -138,7 +143,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
     },
 
     expand: function () {
-        MasterApp.util.resizeAllWindow();
+      //  MasterApp.util.resizeAllWindow();
     },
 
     resetTitle: function () {

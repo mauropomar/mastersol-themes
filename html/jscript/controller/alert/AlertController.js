@@ -15,7 +15,7 @@ Ext.define('MasterSol.controller.alert.AlertController', {
         let intervalid;
         var counted = 0;
 
-       async function callFunction() {
+        async function callFunction() {
             intervalid = setInterval(() => {
                 new Promise(function (resolve, reject) {
                     resolve('something')
@@ -25,10 +25,8 @@ Ext.define('MasterSol.controller.alert.AlertController', {
                         method: 'GET',
                         scope: this,
                         success: function (response) {
-                            counted++;
-                            var text = 'Hay ' + counted + ' alertas nuevas';
-                            Ext.ComponentQuery.query('#btn-alert')[0].setTooltip(text);
-                            Ext.ComponentQuery.query('#btn-alert')[0].setBadgeText(counted);
+                            var json = Ext.JSON.decode(response.responseText);
+                            MasterApp.alert.setNotification(json);
                         }
                     };
                     Ext.Ajax.request(obtener);
@@ -45,11 +43,19 @@ Ext.define('MasterSol.controller.alert.AlertController', {
             method: 'GET',
             scope: this,
             success: function (response) {
-                //   var json = Ext.JSON.decode(response.responseText);
+                var json = Ext.JSON.decode(response.responseText);
                 this.loadIntervalAlert();
-               // Ext.ComponentQuery.query('#btn-alert')[0].setBadgeText('');
+                this.setNotification(json);
             }
         };
         Ext.Ajax.request(obt);
+    },
+
+    setNotification: function (js) {
+        var counted = js.data.datos;
+        var text = 'Hay ' + counted + ' alertas nuevas';
+        Ext.ComponentQuery.query('#btn-alert')[0].setTooltip(text);
+        Ext.ComponentQuery.query('#btn-alert')[0].setBadgeText(counted);
+
     }
 })
