@@ -2,8 +2,6 @@ const pool = require('../connection/server-db')
 const cron = require('node-cron')
 const fs = require('fs')
 const objGenFunc = {}
-var taskArray = []
-var taskEliminateArray = []
 
 //schedule para recorrer todos los procesos activos y ejecutar las funciones que tengan asociadas según sus calendarios
 cron.schedule('* * * * *', async () => {
@@ -55,12 +53,8 @@ cron.schedule('* * * * *', async () => {
                 else break;
             }
         }
-        var task = taskArray[pro.id]
-        if(task) {
-            task.destroy();
-        }        
-        task = cron.schedule('' + stringMinutes + ' * ' + stringDays + ' * *', async() => {
-            //Buscar funcion asociada al proceso y ejecutar su sqlx
+          
+        if(fechaStart == fechaActual && horaStart == horaActual) {
             executeProcessFunction(pro, queryFunction)
                 .then((value) => {
                     console.log(value+pro.namex)
@@ -68,29 +62,26 @@ cron.schedule('* * * * *', async () => {
                 .catch((value) => {
                     console.log(value+pro.namex)
                 });
-
-        },{scheduled: false});
-        taskArray[pro.id] = task
-        if(fechaStart == fechaActual && horaStart == horaActual) {
-            task.start();
         }
         else if(fechaStart < fechaActual || (fechaStart == fechaActual && horaStart < horaActual)){
             if((pro.repeat_each_minutes != null && pro.repeat_each_minutes != 0) ||
-                (pro.repeat_each_day != null && pro.repeat_each_day != 0))
-                task.start();
-        }
-        if((pro.repeat_each_minutes == null || pro.repeat_each_minutes == 0)
-            && (pro.repeat_each_day == null || pro.repeat_each_day == 0))
-            taskEliminateArray.push(task);
-    }
-    //Eliminar tareas de una sola ejecucion
-    setTimeout(function(){
-        for(let i=0;i<taskEliminateArray.length;i++){
-            let job = taskEliminateArray[i];
-            job.destroy();
-        }
-        taskEliminateArray = []
-    }, 30000)
+                (pro.repeat_each_day != null && pro.repeat_each_day != 0)){
+                //si el minuto y dia actual se encuentran en su respectiva cadena, ejecutar
+                if(
+                    (await existElemInString(stringMinutes, new Date().getMinutes()) && await existElemInString(stringDays, new Date().getDate())) || 
+                    (await existElemInString(stringMinutes, new Date().getMinutes()) && stringDays == '*') ||
+                    (stringMinutes == '*' && await existElemInString(stringDays, new Date().getDate()))
+                )
+                executeProcessFunction(pro, queryFunction)
+                    .then((value) => {
+                        console.log(value+pro.namex)
+                    })
+                    .catch((value) => {
+                        console.log(value+pro.namex)
+                    });
+            }               
+        }        
+    }   
 
 });
 
@@ -108,6 +99,15 @@ const executeProcessFunction = (pro, query) => new Promise(async (resolve, rejec
         }
     }
 })
+
+const existElemInString = async (cadena, elem) => {
+    let arr = cadena.split(',')
+    for(let i=0;i<arr.length;i++){
+        if(elem == arr[i])
+            return true
+    }
+    return false
+}
 
 const getProcess = async () => {
     const params_process = ['cfgapl.process',null,"WHERE active = true "]

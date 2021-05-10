@@ -32,7 +32,6 @@ const getResultFiltersOperators = async (req, objects) => {
     var result_totals = [];
     var result_datos = [];
     const params_filter = getParamsResultFilter(req, objects)
-    console.log(params_filter)
     const query = "SELECT cfgapl.fn_get_result_filter_operators($1,$2,$3,$4,$5,$6)"
     const result_filter = await pool.executeQuery(query, params_filter)
     if (result_filter.rows[0].fn_get_result_filter_operators != null) {

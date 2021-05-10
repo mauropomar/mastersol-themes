@@ -21,9 +21,11 @@
     "stream": "0.0.2",
     "utf8": "^3.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon node_js/server.js"
   },
   "repository": {
     "type": "git",
