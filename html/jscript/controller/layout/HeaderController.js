@@ -97,7 +97,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
                 lastPosY = winlast.getY() + 30;
                 btn = MasterApp.tools.getBtnTools(win, 'btn_restore');
                 btn.show();
-            }else{
+            } else {
                 btn = MasterApp.tools.getBtnTools(win, 'btn_restore');
                 btn.hide();
             }
@@ -210,4 +210,14 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             MasterApp.tools.showButtonsNotDefault(windows[j], false);
         }
     },
+
+    refreshDesktop: function () {
+        var view = Ext.ComponentQuery.query('dataview-home')[0].down('dataview');
+        var store = view.getStore();
+        store.reload();
+    },
+
+    showWindowImageDesktop:function(){
+        Ext.create('MasterSol.view.layout.WindowImageDesktop');
+    }
 })
