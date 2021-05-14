@@ -7,7 +7,6 @@ var express = require("express"),
     session = require("express-session"),
     session_middlewares = require("./middlewares/session"),
     timeout = require('connect-timeout')
-
 global.appRootApp = path.resolve(__dirname).replace('\\node_js', '\\');
 global.appRootNodeJS = path.resolve(__dirname);
 

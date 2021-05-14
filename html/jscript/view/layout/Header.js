@@ -18,19 +18,19 @@ Ext.define('MasterSol.view.layout.Header', {
             iconCls: 'fa fa-cog',
             xtype: 'splitbutton',
             menu: [{
-                text:'Actualizar Accesos Directos',
+                text: 'Actualizar Accesos Directos',
                 iconCls: 'fa fa-refresh',
-                handler:function(){
+                handler: function () {
                     MasterApp.header.refreshDesktop();
                 }
-            },{
-                text:'Cambiar Imagen Fondo',
+            }, {
+                text: 'Cambiar Imagen Fondo',
                 iconCls: 'fa fa-file-image-o',
-                handler:function(){
+                handler: function () {
                     MasterApp.header.showWindowImageDesktop();
                 }
             }]
-        },  {
+        }, {
             xtype: 'button',
             iconCls: 'fa fa-window-restore',
             id: 'btnEnCascade',
