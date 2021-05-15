@@ -1,0 +1,26 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_average
+(
+  IN  idsection     uuid,
+  IN  nombre_campo  varchar,
+  IN  where_aux  varchar
+)
+RETURNS double precision AS
+$$
+declare
+cantidad double precision;
+rec_table record;
+begin
+  SELECT tb.* INTO rec_table
+  FROM cfgapl.sections sc
+  JOIN cfgapl.tables tb ON(sc.id_tables = tb.id)
+  WHERE sc.id = $1;
+  
+  EXECUTE('SELECT to_json(avg('||$2||')) FROM '||rec_table.n_schema||'.'||rec_table.n_table ||$3) INTO cantidad;     
+
+  return cantidad;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_average(uuid, varchar)
+  OWNER TO postgres;
