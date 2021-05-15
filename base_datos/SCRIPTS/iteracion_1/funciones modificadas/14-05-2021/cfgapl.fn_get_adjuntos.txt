@@ -1,0 +1,28 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_adjuntos
+(
+  IN  idsection   uuid,
+  IN  idregister  uuid,
+  IN  id_user     uuid
+)
+RETURNS json AS
+$$
+declare
+rec_table record;
+rec_user record;
+res_datas json;
+begin
+  
+  SELECT tb.* INTO rec_table FROM cfgapl.sections sc
+  JOIN cfgapl.tables tb on(sc.id_tables = tb.id)
+  WHERE sc.id = $1; 
+
+   EXECUTE('SELECT json_agg(rowset.*)  FROM
+  (SELECT id,path as "valor", name as "nombre" FROM cfgapl.attach WHERE id_tables = '''||rec_table.id||''''||' AND id_register = '''||$2||''''||')rowset') INTO res_datas;
+   
+  return res_datas;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_adjuntos(uuid, uuid, uuid)
+  OWNER TO postgres;

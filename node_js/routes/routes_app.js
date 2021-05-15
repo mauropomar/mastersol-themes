@@ -197,7 +197,7 @@ router.post('/crudadjunto', async function (req, res) {
         result = await objects.adjuntos.downloadAdjunto(req)
     }
 
-    return res.json({'id': id, 'success': result.success ? true : false, 'datos': result.message})
+    return res.json({'id': id, 'success': result.success ? true : false, 'datos': result.message, 'path': result.path})
 
 })
 

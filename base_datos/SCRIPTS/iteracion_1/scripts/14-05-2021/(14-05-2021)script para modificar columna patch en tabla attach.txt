@@ -1,0 +1,3 @@
+ALTER TABLE cfgapl.attach RENAME COLUMN patch to path;
+alter table cfgapl.tables_properties disable trigger all;
+update cfgapl.tables_properties set namex='path', n_column='path' where id = 'b9d36edb-896d-47b1-9834-7c391e518fca';
