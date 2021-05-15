@@ -152,7 +152,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                     this.configuredData();
                     store.commitChanges();
                     gridsection.getStore().loadData(data);
-
+                    if (json.totales.datos)
+                        MasterApp.totals.changeIconsTotals(json.totales.datos);
                 } else {
                     MasterApp.util.showMessageInfo(json.message);
                     gridsection.getStore().removeAll();
@@ -174,6 +175,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var gridsection = MasterApp.globals.getGridSection();
         var window = gridsection.up('window');
         this.cleanArrayData(window);
+        MasterApp.totals.new();
         MasterApp.section.refreshSectionActive(window);
     },
 

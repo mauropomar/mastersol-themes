@@ -277,6 +277,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
             gridtotal.getView().refresh();
             gridtotal.getView().focusRow(0);
             Ext.ComponentQuery.query('total-view toolbar button')[1].setDisabled(false);
+            gridsection.scrollByDeltaX(-0.01);
         }
     },
 

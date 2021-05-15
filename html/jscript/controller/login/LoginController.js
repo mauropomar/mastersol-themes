@@ -47,7 +47,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
             '</span></div><div class="wrap-input100 validate-input m-b-10" data-validate = "Password is required">' +
             '<input class="input100" type="password" name="pass" placeholder="Contraseña" id="pass_login"><span class="focus-input100"></span>' +
             '<span class="symbol-input100"><i class="fa fa-lock"></i></span></div>' +
-            '<div class="message_login" id="message_login"></div>'+
+            '<div class="message_login" id="message_login"></div>' +
             '<div class="container-login100-form-btn p-t-10"><button class="login100-form-btn" type="button" onclick=MasterApp.getController("MasterSol.controller.login.LoginController").validateLogin();>Autenticarse</button></div>' +
             '</a></div></form></div></div></div>'
         return html;
@@ -94,6 +94,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
                 Mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success === true) {
+                    Ext.ComponentQuery.query('#options-toolbar')[0].show();
                     Ext.ComponentQuery.query('#view_login')[0].hide();
                     Ext.create('MasterSol.view.layout.Viewport');
                     var idrol = 1;
@@ -127,7 +128,6 @@ Ext.define('MasterSol.controller.login.LoginController', {
     },
 
 
-
     actionKey: function () {
         Ext.create('Ext.util.KeyNav', Ext.ComponentQuery.query('#view_login')[0].getEl(), {
             "enter": function (e) {
@@ -137,7 +137,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
         });
     },
 
-    setAliasOtherClass:function(){
+    setAliasOtherClass: function () {
 
     }
 });

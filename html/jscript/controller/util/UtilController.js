@@ -316,7 +316,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     setStyleWindow: function (panel) {
-        var window = panel.up('window');
+        var window = (panel.name !== 'window-menu') ? panel.up('window') : panel;
         var idSelWindow = window.id;
         window.setStyle({
             borderColor: '#e87b48'
@@ -365,7 +365,6 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     cleanVariableSection: function (window) {
-       // debugger
         var gridSection = MasterApp.globals.getGridSection();
         if (gridSection) {
             var windowSection = gridSection.up('window');
@@ -375,6 +374,5 @@ Ext.define('MasterSol.controller.util.UtilController', {
             }
         }
     }
-
-
-});
+})
+;
