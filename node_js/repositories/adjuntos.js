@@ -22,6 +22,7 @@ const insertAdjunto = async (req) => {
     var success = true
     var msg = ''
     var idreg = ''
+    var path = ''
     var Readable = stream.Readable;
     var fileBuffer = Buffer.from(req.body.file, 'base64');
     var readStream = new Readable();
@@ -74,9 +75,10 @@ const insertAdjunto = async (req) => {
         var writeStream = await fs.createWriteStream(dirTemp + '/' + req.body.filename);
         readStream.pipe(writeStream);
         await uploadFile(req,dirTemp,writeStream,id_organizations, id_capsules, id_tables, id_section,resultMaxFileSize)
-            .then((value, id) => {
+            .then((value, id, ruta) => {
                 msg = value
                 idreg = id
+                path = ruta
             })
             .catch((value) => {
                 success = false
@@ -88,13 +90,14 @@ const insertAdjunto = async (req) => {
         msg = 'Ha ocurrido un error'
     }
 
-    return {'success': success, 'message': msg, 'id': idreg}
+    return {'success': success, 'message': msg, 'id': idreg, 'path': path}
 }
 
 const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_tables, id_section,resultMaxFileSize) => new Promise((resolve, reject) => {
     let success = true
     let msg = ''
     let idreg = ''
+    let path = ''
     writeStream.on('finish', function () {
         //Al terminar la escritura, continuar proceso
         fs.stat(dirTemp + '/' + req.body.filename, async(err, stat) => {
@@ -116,7 +119,7 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                 if (success) {   //Si todas las comprobaciones fueron exitosas, proceder a crear el registro y subir el fichero
 
                     var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
-                    //guardar en name extension del fichero
+                    //guardar en path extension del fichero
                     let extension = ''
                     arrFileName = req.body.filename.split('.')
                     if (arrFileName) {
@@ -129,8 +132,9 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                     columnasInsertAux.push('id_organizations')
                     columnasInsertAux.push('id_tables')
                     columnasInsertAux.push('id_register')
-                    columnasInsertAux.push('name')
+                    columnasInsertAux.push('path')
                     columnasInsertAux.push('creator')
+                    columnasInsertAux.push('name')
                     //valores a insertar
                     valuesInsertAux.push(" '" + id_capsules + "'")
                     valuesInsertAux.push(" '" + id_organizations + "'")
@@ -138,6 +142,7 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                     valuesInsertAux.push(" '" + req.body.idregister + "'")
                     valuesInsertAux.push(" '" + extension + "'")
                     valuesInsertAux.push("'" + req.session.id_user + "'")
+                    valuesInsertAux.push(" '" + req.body.filename + "'")
 
                     paramsInsert.push(id_section)
                     paramsInsert.push(columnasInsertAux.join(','))
@@ -147,19 +152,20 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                     paramsInsert.push(req.session.id_user)
 
                     const resultInsert = await insertRegister(req, paramsInsert);
-                    if (resultInsert && resultInsert.name) {
+                    if (resultInsert && resultInsert.path) {
                         //Subir fichero final
-                        let address = resultInsert.name
+                        let address = resultInsert.path
                         let filename = resultInsert.id + '.' + extension
                         address = address.replace(filename, '')
                         await fs.mkdir(address, {recursive: true}, (err) => {
                             if (!err) {
-                                fs.rename(dirTemp + '/' + req.body.filename, resultInsert.name, (err) => {
+                                fs.rename(dirTemp + '/' + req.body.filename, resultInsert.path, (err) => {
                                     if (!err) {
                                         console.log("Archivo subido!")
                                         msg = resultInsert.name
                                         idreg = resultInsert.id
-                                        resolve(msg, idreg)
+                                        path = resultInsert.path
+                                        resolve(msg, idreg, path)
                                         const delDir = deleteDir(dirTemp, req.body.filename)
                                     }
                                     else {
@@ -206,7 +212,7 @@ const deleteAdjunto = async (req) => {
     const paramsAttach = ['cfgapl.attach',req.body.idadjunto];
     const resultAttach = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsAttach);
     if(resultAttach)
-        address = resultAttach.rows[0].fn_get_register[0].name
+        address = resultAttach.rows[0].fn_get_register[0].path
 
     const resultDelete = await deleteRegister(req, req.body.idadjunto);
     if(resultDelete.includes('ERROR')) {
@@ -228,7 +234,7 @@ const deleteAdjunto = async (req) => {
 
     }
 
-    return {'success': success, 'message': msg}
+    return {'success': success, 'message': msg, 'path': ''}
 }
 
 const downloadAdjunto = async (req) => {
@@ -237,11 +243,11 @@ const downloadAdjunto = async (req) => {
     const paramsAttach = ['cfgapl.attach',req.body.idadjunto];
     const resultAttach = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsAttach);
     if(resultAttach)
-        address = resultAttach.rows[0].fn_get_register[0].name
+        address = resultAttach.rows[0].fn_get_register[0].path
     else
         success = false
 
-    return {'success': success, 'message': address}
+    return {'success': success, 'message': address, 'path': ''}
 }
 
 const insertRegister = async (req, params_insert) => {

@@ -13,6 +13,7 @@ var auditorias = require('./repositories/auditorias')
 var tables = require('./repositories/tables')
 var functions = require('./repositories/functions')
 var alerts = require('./repositories/alerts')
+var reports = require('./repositories/reports')
 var enum_datatype = require('./enum/enum_datatype')
 var utiles = require('./util/util')
 
@@ -35,4 +36,5 @@ objAll.utiles = utiles
 objAll.tables = tables
 objAll.functions = functions
 objAll.alerts = alerts
+objAll.reports = reports
 module.exports = objAll

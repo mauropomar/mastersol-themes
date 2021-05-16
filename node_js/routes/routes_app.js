@@ -2,7 +2,96 @@ var express = require("express");
 var router = express.Router();
 var fs = require('fs');
 const objects = require('../modules');
-var app = express();
+
+/*jasper = require('node-jasper')({
+    path: '../../resources/reports/lib/jasperreports-6.2.0',
+    reports: {
+        hw: {
+            jasper: '../../resources/reports/Tablex.jasper'
+        }
+    },
+    drivers: {
+        pg: {
+            path: '../../resources/reports/lib/postgresql-9.2-1004-jdbc41.jar',
+            class: 'org.postgresql.Driver', //odbc driver//sun.jdbc.odbc.JdbcOdbcDriver //mysqlDriver// com.mysql.jdbc.Driver
+            type: 'postgresql'
+        }
+    },
+    conns: {
+        dbserver: {
+            host: 'localhost',
+            port: 5432,
+            dbname: 'mastersol',
+            user: 'postgres',
+            pass: 'postgres',
+            driver: 'pg'
+        }
+    },
+    defaultConn: 'dbserver'
+});*/
+
+router.get('/report', async function(req, res) {
+   const result = await objects.reports.getJasper(req)
+   let jasper = result.jasper
+   let msg = result.msg
+   setTimeout(function(){
+       if(jasper) {
+           let report = {
+               report: 'hw',
+               data: {
+                   nombre: req.query.nombre
+               }
+           };
+           let print = null
+           if(req.query.report_format === 'pdf') {
+               print = jasper.export(report, 'pdf');
+               res.set({
+                   'Content-type': 'application/pdf',
+                   'Content-Length': print.length
+               });
+           }
+           else if(req.query.report_format === 'html') {
+               print = jasper.export(report, 'html');
+               res.set({
+                   'Content-type': 'text/html',
+                   'Content-Length': print.length
+               });
+           }
+           else if(req.query.report_format === 'xlsx') {
+               print = jasper.export(report, 'xlsx');
+               res.set({
+                   'Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                   'Content-Length': print.length
+               });
+           }
+           else if(req.query.report_format === 'xls') {
+               print = jasper.export(report, 'xls');
+               res.set({
+                   'Content-type': 'application/vnd.ms-excel',
+                   'Content-Length': print.length
+               });
+           }
+           else if(req.query.report_format === 'docx') {
+               print = jasper.export(report, 'docx');
+               res.set({
+                   'Content-type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                   'Content-Length': print.length
+               });
+           }
+           else if(req.query.report_format === 'doc') {
+               print = jasper.export(report, 'doc');
+               res.set({
+                   'Content-type': 'application/msword',
+                   'Content-Length': print.length
+               });
+           }
+           res.send(print);
+       }
+       else
+           res.json({'success': false, 'error': msg})
+   }, 1000);
+
+});
 
 /*Obtener lenguajes*/
 router.get('/languages', async function (req, res) {
@@ -108,7 +197,7 @@ router.post('/crudadjunto', async function (req, res) {
         result = await objects.adjuntos.downloadAdjunto(req)
     }
 
-    return res.json({'id': id, 'success': result.success ? true : false, 'datos': result.message})
+    return res.json({'id': id, 'success': result.success ? true : false, 'datos': result.message, 'path': result.path})
 
 })
 

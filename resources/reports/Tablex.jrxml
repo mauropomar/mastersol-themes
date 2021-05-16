@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2021-05-13T00:04:33 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Tablex" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e2e87b0d-29f1-4ac3-a1b7-562eb0cc779f">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="mastersolConnections"/>
+	<parameter name="nombre" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT created, modified, nombre, orderx FROM public.tablex WHERE nombre = $P{nombre}
+]]>
+	</queryString>
+	<field name="created" class="java.sql.Timestamp"/>
+	<field name="modified" class="java.sql.Timestamp"/>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="orderx" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="41" splitType="Stretch">
+			<staticText>
+				<reportElement x="230" y="10" width="130" height="20" uuid="851bf130-de0e-415f-9e43-c9d5562ed852">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS TABLEX]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="17" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="1" width="100" height="17" uuid="191de73b-68ef-42d9-bce3-17e588cfa556"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[created]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="1" width="90" height="17" uuid="be8cb1e3-1d68-4e9e-8750-173c065ae805"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[modified]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="191" y="1" width="100" height="18" uuid="6f4abf22-3e90-4d60-8646-ec6de534cb41"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="291" y="0" width="100" height="18" uuid="e8ffa0fe-a807-4e8d-9105-e010f66ae6ec"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[orderx]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="2b2ed3a8-af8a-4dc7-b868-ef059da29401"/>
+				<textFieldExpression><![CDATA[$F{created}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="90" height="20" uuid="dd921c94-21ca-4389-b617-442a20208975"/>
+				<textFieldExpression><![CDATA[$F{modified}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="0" width="100" height="20" uuid="1c367da8-218b-4370-99a3-8f5a1a46f2af"/>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="0" width="100" height="20" uuid="c3d6c84f-5242-445b-bdf5-9dd23569f8d5"/>
+				<textFieldExpression><![CDATA[$F{orderx}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
