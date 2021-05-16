@@ -19,7 +19,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
             return Ext.util.Format.date(value, 'd/m/Y');
         }
         if ((record.data.tipo == 'datetime') && value.indexOf('/') == -1) {
-            var retval = Ext.util.Format.date(value, 'd/m/Y h:i:s');
+            var retval = Ext.util.Format.date(value, 'd/m/Y H:i:s');
             if (value)
                 metaData.tdAttr = 'data-qtip="' + retval + '"';
             return retval;
@@ -231,21 +231,21 @@ Ext.define('MasterSol.controller.util.UtilController', {
                 var date = new Date(value);
                 date.setHours(0);
                 date.setMinutes(0);
-                return Ext.Date.format(date, 'd/m/Y h:i:s');
+                return Ext.Date.format(date, 'd/m/Y H:i:s');
             } else {
                 var idx = value.indexOf('T');
                 if (idx > -1) {
                     var date = new Date(value);
                     date.setHours(0);
                     date.setMinutes(0);
-                    return Ext.Date.format(date, 'd/m/Y h:i:s');
+                    return Ext.Date.format(date, 'd/m/Y H:i:s');
                 }
             }
             return value;
         }
         if (type == 'datetime' && value != null) {
             value = new Date(Date.parse(value));
-            return (save) ? value : Ext.Date.format(value, 'd/m/Y h:i:s');
+            return (save) ? value : Ext.Date.format(value, 'd/m/Y H:i:s');
         }
         if (type == 'boolean') {
             return (value == 'false' || value == false) ? false : true;

@@ -43,5 +43,6 @@ Ext.application({
         MasterApp.magnament = MasterApp.getController('MasterSol.controller.magnament.MagnamentController');
         MasterApp.register = MasterApp.getController('MasterSol.controller.magnament.RegisterController');
         MasterApp.filter = MasterApp.getController('MasterSol.controller.magnament.FilterController');
+        MasterApp.totals = MasterApp.getController('MasterSol.controller.magnament.TotalController');
     }
 });

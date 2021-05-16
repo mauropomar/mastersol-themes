@@ -59,9 +59,6 @@ Ext.define('MasterSol.view.magnament.Total', {
         }
     }],
     listeners:{
-        afterrender:function(){
-            MasterApp.totals = MasterApp.getController('MasterSol.controller.magnament.TotalController');
-        },
         beforeedit: function (editor, e, eOpts) {
            MasterApp.totals.beforeedit(editor, e, eOpts)
         }

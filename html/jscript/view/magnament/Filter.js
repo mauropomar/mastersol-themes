@@ -98,10 +98,10 @@ Ext.define('MasterSol.view.magnament.Filter', {
             MasterApp.filter = MasterApp.getController('MasterSol.controller.magnament.FilterController');
         },
         beforeedit: function (editor, e, eOpts) {
-            MasterApp.filter.beforeedit(editor, e, eOpts)
+            MasterApp.filter.beforeedit(editor, e, eOpts);
         },
         edit: function (editor, e, eOpts) {
-            MasterApp.filter.edit(editor, e)
+            MasterApp.filter.edit(editor, e);
         }
     }
 });

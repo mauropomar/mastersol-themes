@@ -59,8 +59,10 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(1);
         }
         else {
-         //   tabMagnament.child('#register-view').tab.show();
-         //   Ext.ComponentQuery.query('#register-view')[0].show();
+            if(!tabMagnament.child('#register-view').tab.isVisible()) {
+                tabMagnament.child('#register-view').tab.show();
+                Ext.ComponentQuery.query('#register-view')[0].show();
+            }
         }
         if (optionActive.xtype === 'register-view') {
             MasterApp.register.editRegister(columnIndex);

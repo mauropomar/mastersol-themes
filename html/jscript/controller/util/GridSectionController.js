@@ -194,7 +194,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                                 var idx = value.indexOf('T');
                                 if (idx > -1) {
                                     var date = new Date(value);
-                                    return Ext.Date.format(date, 'd/m/Y h:i:s');
+                                    return Ext.Date.format(date, 'd/m/Y H:i:s');
                                 }
                             }
                             return value;

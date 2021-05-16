@@ -245,13 +245,14 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             rec = record;
             var valor1 = MasterApp.util.getVal(rec, rec.data.valor1);
             var valor2 = MasterApp.util.getVal(rec, rec.data.valor2);
-            if (valor1) {
+            var valid = (valor1 || (valor1 == false && rec.data.tipo === 'boolean'));
+            if (valid) {
                 var d = this.getIdOperator(rec, valor1);
                 var idoperator = d[0];
                 var cantparam = d[1];
                 var real_name_in = MasterApp.util.getValProperty(rec.data.nombrecampo, 'real_name_in');
                 var real_name_out = MasterApp.util.getValProperty(rec.data.nombrecampo, 'real_name_out');
-                if (idoperator && valor1) {
+                if (idoperator && valid) {
                     data.push({
                         idregister: rec.data.idregistro,
                         nombrecampo: rec.data.nombrecampo,
@@ -492,7 +493,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             return retval;
         }
         if (record.data.tipo == 'datetime') {
-            var retval = (Ext.isDate(value)) ? Ext.util.Format.date(value, 'd/m/Y h:i:s') : value;
+            var retval = (Ext.isDate(value)) ? Ext.util.Format.date(value, 'd/m/Y H:i:s') : value;
             if (value)
                 metaData.tdAttr = 'data-qtip="' + retval + '"';
             return retval;
