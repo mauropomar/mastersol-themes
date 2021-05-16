@@ -222,7 +222,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     mask.hide();
                     var json = Ext.JSON.decode(response.responseText);
                     if (json.success == true) {
-                        MasterApp.attached.addOneFile(json, json.datos);
+                        MasterApp.attached.addOneFile(json);
                     }
                 }
             })
@@ -292,19 +292,21 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         return valid;
     },
 
-    addOneFile: function (json, filename) {
+    addOneFile: function (json) {
         var obj = {
             id: json.id,
-            valor: filename
+            valor: json.ruta,
+            nombre:json.datos
+
         };
-        var valid = this.find(filename);
+        var valid = this.find(obj.nombre);
         if (valid) {
             this.addFile(obj);
             Ext.toast('El adjunto fue insertado con éxito.');
         } else {
             Ext.MessageBox.show({
                 title: 'Error',
-                msg: 'Existe ya un fichero con el nombre "' + filename + '".',
+                msg: 'Existe ya un fichero con el nombre "' + obj.nombre + '".',
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.INFO
             });
@@ -315,7 +317,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         if (file.valor === null)
             return;
         var nombre = file.nombre;
-        this.fileslist.push(file.valor);
+        this.fileslist.push(nombre);
         var addedFilePanel = Ext.create('Ext.form.Panel', {
             frame: false,
             border: 0,
