@@ -130,7 +130,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         mask.show();
         var record = MasterApp.globals.getRecordSection();
         idrecordsection = (record != null) ? record.data.id : null;
-        if(idrecordsection == null || idrecordsection == ''){
+        if (idrecordsection == null || idrecordsection == '') {
             mask.hide();
             this.removeAll();
             return;
@@ -155,7 +155,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     this.fileslist = [];
                     this.addComponent(data);
                 }
-             },
+            },
             failure: function (response) {
                 mask.hide();
             }
@@ -179,7 +179,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         var idparentsection = MasterApp.util.getIdParentSectionActive();
         var record = MasterApp.globals.getRecordSection();
         idrecordsection = (record != null) ? record.data.id : null;
-        if(idrecordsection == null){
+        if (idrecordsection == null) {
             mask.hide();
             MasterApp.util.showMessageInfo('Debe seleccionar un registro para esta sesión');
             return;
@@ -206,7 +206,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
             Ext.Ajax.request({
                 url: 'app/crudadjunto',
                 method: 'POST',
-                scope:this,
+                scope: this,
                 params: {
                     idsection: idsection,
                     idseccionpadre: idparentsection,
@@ -312,8 +312,9 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
     },
 
     addFile: function (file) {
-        var index = file.valor.lastIndexOf('/');
-        var valor = file.valor.substring(index + 1, file.valor.length);
+        if (file.valor === null)
+            return;
+        var nombre = file.nombre;
         this.fileslist.push(file.valor);
         var addedFilePanel = Ext.create('Ext.form.Panel', {
             frame: false,
@@ -351,7 +352,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     },
                     listeners: {
                         render: function (me, eOpts) {
-                            me.setText(valor);
+                            me.setText(nombre);
                         }
                     }
                 },
