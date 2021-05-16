@@ -75,10 +75,10 @@ const insertAdjunto = async (req) => {
         var writeStream = await fs.createWriteStream(dirTemp + '/' + req.body.filename);
         readStream.pipe(writeStream);
         await uploadFile(req,dirTemp,writeStream,id_organizations, id_capsules, id_tables, id_section,resultMaxFileSize)
-            .then((value, id, ruta) => {
-                msg = value
-                idreg = id
-                path = ruta
+            .then((value) => {
+                msg = value[0]
+                idreg = value[1]
+                path = value[2]               
             })
             .catch((value) => {
                 success = false
@@ -90,7 +90,7 @@ const insertAdjunto = async (req) => {
         msg = 'Ha ocurrido un error'
     }
 
-    return {'success': success, 'message': msg, 'id': idreg, 'path': path}
+    return {'success': success, 'message': msg, 'id': idreg, 'ruta': path}
 }
 
 const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_tables, id_section,resultMaxFileSize) => new Promise((resolve, reject) => {
@@ -165,7 +165,11 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                                         msg = resultInsert.name
                                         idreg = resultInsert.id
                                         path = resultInsert.path
-                                        resolve(msg, idreg, path)
+                                        let arrresolve = []
+                                        arrresolve.push(msg)
+                                        arrresolve.push(idreg)
+                                        arrresolve.push(path)
+                                        resolve(arrresolve)
                                         const delDir = deleteDir(dirTemp, req.body.filename)
                                     }
                                     else {
@@ -234,7 +238,7 @@ const deleteAdjunto = async (req) => {
 
     }
 
-    return {'success': success, 'message': msg, 'path': ''}
+    return {'success': success, 'message': msg, 'ruta': ''}
 }
 
 const downloadAdjunto = async (req) => {
@@ -247,7 +251,7 @@ const downloadAdjunto = async (req) => {
     else
         success = false
 
-    return {'success': success, 'message': address, 'path': ''}
+    return {'success': success, 'message': address, 'ruta': ''}
 }
 
 const insertRegister = async (req, params_insert) => {

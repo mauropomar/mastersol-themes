@@ -196,8 +196,7 @@ router.post('/crudadjunto', async function (req, res) {
     } else if (req.body.accion === '15') { //Descargar adjunto
         result = await objects.adjuntos.downloadAdjunto(req)
     }
-
-    return res.json({'id': id, 'success': result.success ? true : false, 'datos': result.message, 'path': result.path})
+    return res.json({'id': id, 'success': result.success ? true : false, 'datos': result.message, 'ruta': result.ruta})
 
 })
 
