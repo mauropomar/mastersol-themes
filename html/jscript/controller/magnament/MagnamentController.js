@@ -38,6 +38,9 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         if (newCard.xtype === 'audit-view') {
             MasterApp.audit.getAll();
         }
+        if (newCard.xtype === 'config-report-view') {
+            MasterApp.report.loadValues();
+        }
     },
 
     getData: function (grid, columnIndex = 1) {
@@ -86,6 +89,9 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         }
         if (optionActive.xtype === 'audit-view') {
             MasterApp.audit.getAll();
+        }
+        if (optionActive.xtype === 'config-report-view') {
+            MasterApp.report.loadValues();
         }
     },
 

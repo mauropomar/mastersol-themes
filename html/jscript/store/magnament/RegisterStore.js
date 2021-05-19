@@ -3,4 +3,4 @@ Ext.define('MasterSol.store.magnament.RegisterStore', {
     alias: 'store.store-register',
     //  groupField: 'padre',
     model:'MasterSol.model.magnament.RegisterModel'
-})
+});

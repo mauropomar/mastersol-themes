@@ -17,7 +17,8 @@ Ext.define('MasterSol.view.magnament.TabPanel', {
         'MasterSol.view.magnament.Filter',
         'MasterSol.view.magnament.Attached',
         "MasterSol.view.magnament.Note",
-        "MasterSol.view.magnament.Audit"
+        "MasterSol.view.magnament.Audit",
+        "MasterSol.view.magnament.ConfigReport"
     ],
     items: [{
         xtype: 'register-view',
@@ -37,5 +38,8 @@ Ext.define('MasterSol.view.magnament.TabPanel', {
     }, {
         xtype: 'audit-view',
         id: 'audit-view'
+    },{
+        xtype: 'config-report-view',
+        id: 'config-report-view'
     }]
 });
