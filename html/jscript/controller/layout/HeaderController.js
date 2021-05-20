@@ -219,19 +219,5 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
 
     showWindowImageDesktop: function () {
         Ext.create('MasterSol.view.layout.WindowImageDesktop');
-    },
-
-    prueba: function () {
-        var tipo = Math.random();
-        var title = 'Producción Agropecuaria';
-        sData = "<form name='redirect' id='redirect' action='report.html' method='GET'>";
-        sData = sData + "<input type='hidden' name='title' id='title' value='" + title + "' />";
-        sData = sData + "<input type='hidden' name='tipo' id='tipo' value='" + tipo + "' />";
-        sData = sData + "</form>";
-        sData = sData + "<script type='text/javascript'>";
-        sData = sData + "document.redirect.submit();</script>";
-        name_windows = window.open("", "_blank");
-        name_windows.document.write(sData);
-        name_windows.document.close();
     }
 })

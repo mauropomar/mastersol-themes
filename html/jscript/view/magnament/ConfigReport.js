@@ -21,20 +21,17 @@ Ext.define('MasterSol.view.magnament.ConfigReport', {
     },
     columns: [{
         text: 'Nombre',
-        dataIndex: 'name',
-        flex: 1,
-        renderer: function (value, metaData, record) {
-            return MasterApp.register.renderName(value, metaData, record);
-        }
+        dataIndex: 'nombrecampo',
+        flex: 1
     }, {
         text: 'Valor',
-        dataIndex: 'valor',
+        dataIndex: 'valor1',
         flex: 3,
         editor: {
             xtype: 'textfield',
         },
         renderer: function (value, metaData, record) {
-            return MasterApp.util.afteredit(value, metaData, record);
+            return MasterApp.filter.renderVal(value, metaData, record);
         }
     }],
     features: [{
@@ -55,9 +52,15 @@ Ext.define('MasterSol.view.magnament.ConfigReport', {
         handler: function () {
             //  MasterApp.register.onChangesReject();
         }
-    }, '->', {
+    },{
+        iconCls: 'fa fa-file-text-o',
+        tooltip: 'Report',
+        handler: function () {
+            MasterApp.report.generateReport();
+        }
+    },  '->', {
         xtype: 'tbtext',
-        text: 'Reporte',
+        text: 'Configuración de Reporte',
         id: 'tbtext_magnament_report',
         style: {
             fontSize: '10px',
@@ -70,6 +73,6 @@ Ext.define('MasterSol.view.magnament.ConfigReport', {
         },
         edit: function (editor, e) {
             MasterApp.register.edit(editor, e);
-        },
+        }
     }
 });

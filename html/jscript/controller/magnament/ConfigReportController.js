@@ -5,6 +5,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
 
     },
 
+
     beforeedit: function (editor, e, eOpts) {
         var gridsection = MasterApp.globals.getGridSection();
         if (gridsection.read_only) {
@@ -14,26 +15,25 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var record = e.record;
         var column = Ext.ComponentQuery.query('#config-report-view')[0].columns[1];
         if (record.data.fk == '1') {
-            MasterApp.register.setComboFk(record, column);
+            this.setComboFk(record, column);
             return;
         }
         ;
         if (record.data.tipo == 'number') {
-            MasterApp.register.setNumberField(record, column);
+            this.setNumberField(record, column);
         }
         if (record.data.tipo == 'string') {
-            MasterApp.register.setTextField(column);
+            this.setTextField(column);
         }
         if (record.data.tipo == 'boolean') {
-            MasterApp.register.setCheckbox(column);
+            this.setCheckbox(column);
         }
         if (record.data.tipo == 'date') {
-            MasterApp.register.setDateField(record, column);
+            this.setDateField(record, column);
         }
         if (record.data.tipo == 'datetime') {
-            MasterApp.register.setDateTimeField(record, column);
+            this.setDateTimeField(record, column);
         }
-
     },
 
     edit: function (editor, obj) {
@@ -45,72 +45,34 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
             return;
     },
 
-    new: function (window) {
-   //     Ext.ComponentQuery.query('#btn_insert_register')[0].show();
-   //     Ext.ComponentQuery.query('#btn_save_register')[0].hide();
-        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
-        tabMagnament.idmenumag = window.idmenu;
-        var gridsection = MasterApp.globals.getGridSection();
-        if (!gridsection || gridsection.idmenu != window.idmenu) {
-            gridsection = MasterApp.globals.getSectionPrincipalByWindow(window);
-            MasterApp.globals.setGridSection(gridsection);
-        }
-        var columns = gridsection.config.columns;
-        this.addRegister(null, columns);
-        this.isEdit = false;
+    new: function () {
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
-        grid.focus();
-        var edit = grid.plugins[0];
-        edit.startEditByPosition({
-            row: 0,
-            column: 1
+        var store = grid.getStore();
+        store.each(function (rec) {
+            rec.set('valor1', '');
+            rec.commit();
         });
     },
 
-    //agrega filas dinamicamente a grid de registros
-    addRegister: function (rec, columns) {
-        this.showFieldRequired = false;
+
+    getAll: function () {
+        var idsection = MasterApp.util.getIdSectionActive();
+        var idmenu = MasterApp.util.getIdMenuActive();
+        /*if (this.checkData())
+            return;*/
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
-        store.removeAll();
-        var data = [];
-        columns = (columns.items) ? columns.items : columns;
-        for (var i = 0; i < columns.length; i++) {
-            var dataIndex = columns[i].dataIndex;
-            var header = columns[i].text;
-            data.push({
-                id: i + 1,
-                name: header,
-                orden: i + 1,
-                field: columns[i].n_column,
-                idregistro: columns[i].idregister,
-                id_datatype: columns[i].id_datatype,
-                required: columns[i].required,
-                auditable: columns[i].audit,
-                real_name_in: columns[i].real_name_in,
-                tipo: columns[i].type,
-                valor: (rec != null) ? rec.data[dataIndex] : '',
-                padre: 'Generales',
-                fk: columns[i].fk
-            })
-        }
-        store.loadData(data);
-    },
-
-    //editar registros
-    loadValues: function (columnIndex) {
-        var gridsection = MasterApp.globals.getGridSection();
-        if (gridsection == null)
-            return;
-        var isRecordSelected = gridsection.getSelectionModel().hasSelection();
-        var rec = MasterApp.globals.getRecordSection();
-        var columns = gridsection.config.columns;
-        this.addRegister(rec, columns);
-        var grid = Ext.ComponentQuery.query('#config-report-view')[0];
-        grid.focus();
-        var title = MasterApp.util.getTitleSectionSelected();
-        Ext.ComponentQuery.query('#tbtext_magnament_report')[0].setText('Reporte: ' + title);
-
+        store.proxy.extraParams = {
+            idmenu: idmenu,
+            idsection: idsection
+        };
+        store.load({
+            callback: function () {
+                grid.focus();
+                var title = MasterApp.util.getTitleSectionSelected();
+                Ext.ComponentQuery.query('#tbtext_magnament_report')[0].setText('Configuración de Reporte: ' + title);
+            }
+        });
     },
 
     isValid: function () {
@@ -180,7 +142,6 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
                     store.commitChanges();
-
                     grid.getView().refresh();
                 } else {
                     MasterApp.util.showMessageInfo(json.message);
@@ -189,4 +150,143 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         };
         Ext.Ajax.request(save);
     },
+
+    generateReport: function () {
+        var tipo = Math.random();
+        var title = 'Producción Agropecuaria';
+        sData = "<form name='redirect' id='redirect' action='report.html' method='GET'>";
+        sData = sData + "<input type='hidden' name='title' id='title' value='" + title + "' />";
+        sData = sData + "<input type='hidden' name='tipo' id='tipo' value='" + tipo + "' />";
+        sData = sData + "</form>";
+        sData = sData + "<script type='text/javascript'>";
+        sData = sData + "document.redirect.submit();</script>";
+        name_windows = window.open("", "_blank");
+        name_windows.document.write(sData);
+        name_windows.document.close();
+    },
+
+    setTextField: function (column) {
+        var edit = Ext.create('Ext.form.field.Text', {
+            name: 'fieldFilter',
+            selectOnFocus: true,
+            enableKeyEvents: true,
+            listeners: {
+                specialkey: this.specialKey
+            }
+        });
+        column.setEditor(edit);
+    },
+
+    setCheckbox: function (column) {
+        var edit = Ext.create('Ext.form.field.Checkbox', {
+            name: 'fieldFilter',
+            listeners: {
+                specialkey: this.specialKey
+            }
+        });
+        column.setEditor(edit);
+    },
+
+    setDateField: function (rec, column) {
+        var edit = Ext.create('Ext.form.field.Date', {
+            format: 'd/m/Y',
+            listeners: {
+                specialkey: this.specialKey
+            }
+        });
+        var date = '';
+        if (column.dataIndex === 'valor1') {
+            date = (rec.data.valor2) ? new Date(rec.data.valor2) : '';
+            edit.setMaxValue(date);
+        }
+        ;
+        column.setEditor(edit);
+    },
+
+    setDateTimeField: function (rec, column) {
+        var edit = Ext.create('MasterSol.view.plugins.DateTime');
+        column.setEditor(edit);
+    },
+
+    //setear combo de funcion multiselect
+    setComboFk: function (rec, column) {
+        var idsection = MasterApp.util.getIdSectionActive();
+        var combo = Ext.create('MasterSol.view.magnament.ComboFk', {
+            //   multiSelect: (rec.data.tipo == 'array') ? true : false,
+            multiSelect: true,
+            listConfig: {
+                loadingText: 'Buscando...',
+                emptyText: 'No existen opciones....',
+                itemSelector: '.search-item',
+                width: 150
+            },
+            listeners: {
+                scope: this,
+                collapse: this.collapseFk,
+                beforequery: function (record) {
+                    record.query = new RegExp(record.query, 'ig');
+                }
+            }
+        });
+        var store = combo.getStore();
+        var values = (Ext.isArray(rec.data.valor1)) ? rec.data.valor1.join(',') : rec.data.valor1;
+        rec.set('valor1', values);
+        store.proxy.url = 'app/foreignkey';
+        store.proxy.extraParams = {
+            idregistro: rec.data.idregistro,
+            idsection: idsection
+        };
+        store.load({
+                callback: function (store, records) {
+                    var values = (values) ? values.split(',') : combo.getValue();
+                    combo.setValue(values);
+                }
+            }
+        );
+        column.setEditor(combo);
+    },
+
+    collapseFk: function (combo, rec) {
+        var grid = Ext.ComponentQuery.query('#config-report-view')[0];
+        var recGrid = grid.getSelectionModel().getSelection()[0];
+        var arrayId = [];
+        var arrayText = [];
+        if (combo.lastSelection) {
+            var selects = combo.lastSelection;
+            for (var i = 0; i < selects.length; i++) {
+                var textFk = selects[i].data['nombre'];
+                var idFk = selects[i].data['id'];
+                if (idFk.indexOf('MasterSol') == -1) {
+                    var stringArray = arrayId.join(',');
+                    var idx = stringArray.indexOf(idFk);
+                    if (idx == -1) {
+                        arrayId.push(idFk);
+                        arrayText.push(textFk);
+                    }
+                }
+            }
+        }
+        combo.setValue(arrayText.join(','));
+        recGrid.set('valor1', arrayText.join(','));
+        recGrid.set('idvalor', arrayId.join(','));
+    },
+
+    specialKey: function (field, e) {
+        var grid = Ext.ComponentQuery.query('#config-report-view')[0];
+        var store = grid.getStore();
+        if (e.getKey() == e.ENTER) {
+            e.stopEvent();
+            var edit = grid.plugins[0];
+            var row = edit.context.rowIdx;
+            var col = edit.context.colIdx;
+            var rec = store.getAt(row);
+            edit.cancelEdit();
+            edit.startEditByPosition({
+                row: row + 1,
+                column: col
+            });
+        }
+    },
+
+
 });
