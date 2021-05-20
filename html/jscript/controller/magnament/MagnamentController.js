@@ -39,7 +39,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             MasterApp.audit.getAll();
         }
         if (newCard.xtype === 'config-report-view') {
-            MasterApp.report.loadValues();
+            MasterApp.report.getAll();
         }
     },
 
@@ -91,7 +91,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             MasterApp.audit.getAll();
         }
         if (optionActive.xtype === 'config-report-view') {
-            MasterApp.report.loadValues();
+            MasterApp.report.getAll();
         }
     },
 
@@ -122,6 +122,10 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         }
         if (optionActive.xtype === 'audit-view') {
             MasterApp.audit.clean();
+            return;
+        }
+        if (optionActive.xtype === 'config-report-view') {
+            MasterApp.report.clean();
         }
     },
 
