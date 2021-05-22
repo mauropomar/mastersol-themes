@@ -86,7 +86,7 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
             var store_property = Ext.ComponentQuery.query('#combo-property')[0].getStore();
             store_property.proxy.extraParams = {
                 idsection: idsection
-            }
+            };
             store_property.load();
             var store_users = Ext.ComponentQuery.query('#combo-users')[0].getStore();
             store_users.load();
@@ -98,8 +98,7 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
         },
 
         clean: function () {
-            var grid = Ext.ComponentQuery.query('audit-view')[0];
-            grid.getStore().removeAll();
+            this.getAll();
         },
 
         getAll: function () {

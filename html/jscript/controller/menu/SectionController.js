@@ -173,7 +173,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 var grid = newCard.down('gridpanel');
                 grid.getStore().loadData(json);
                 MasterApp.globals.setLoading(false);
-                MasterApp.util.setStyleSection(newCard);
             },
             failure: function (response) {
                 mask.hide();
@@ -501,6 +500,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                     MasterApp.globals.setRecordSection(null);
                     MasterApp.magnament.getData(gridsection);
                     MasterApp.globals.setLoading(false);
+                    var container = gridsection.up('panel');
+                    MasterApp.util.setStyleSection(container);
                 }
             }, 500);
         }, comp);
