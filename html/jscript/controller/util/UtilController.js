@@ -337,7 +337,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
             document.getElementById(newCard.tab.id).style.borderTop = '2px solid #49db32';
             for (var i = 0; i < containers.length; i++) {
                 var tab = containers[i];
-                if (tab.card.idsection && (tab.card.idsection !== newCard.idsection && tab.card.idsection !== newCard.idparent)) {
+                if (tab.card.idsection && (tab.card.idsection !== newCard.idsection)) {
                     if (document.getElementById(tab.id))
                         document.getElementById(tab.id).style.borderTop = 'transparent';
                 }

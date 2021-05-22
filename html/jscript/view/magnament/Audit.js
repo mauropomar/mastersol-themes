@@ -26,6 +26,12 @@ Ext.define("MasterSol.view.magnament.Audit", {
         handler:function(){
             MasterApp.audit.showWindow();
         }
+    },{
+        iconCls: 'fa fa-eraser',
+        tooltip: 'Limpiar filtro',
+        handler: function () {
+            MasterApp.audit.clean();
+        }
     }, '->', {
         xtype: 'tbtext',
         text: 'Auditoría',
