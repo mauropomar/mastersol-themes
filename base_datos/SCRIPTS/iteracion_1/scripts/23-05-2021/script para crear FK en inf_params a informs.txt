@@ -1,0 +1,7 @@
+alter table reports.inf_params add column id_inform uuid NOT NULL;
+
+alter table reports.inf_params add constraint reports_informes_id_inform_fk 
+FOREIGN KEY (id_inform)
+    REFERENCES reports.informs(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE;

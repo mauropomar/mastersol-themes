@@ -3,33 +3,6 @@ var router = express.Router();
 var fs = require('fs');
 const objects = require('../modules');
 
-/*jasper = require('node-jasper')({
-    path: '../../resources/reports/lib/jasperreports-6.2.0',
-    reports: {
-        hw: {
-            jasper: '../../resources/reports/Tablex.jasper'
-        }
-    },
-    drivers: {
-        pg: {
-            path: '../../resources/reports/lib/postgresql-9.2-1004-jdbc41.jar',
-            class: 'org.postgresql.Driver', //odbc driver//sun.jdbc.odbc.JdbcOdbcDriver //mysqlDriver// com.mysql.jdbc.Driver
-            type: 'postgresql'
-        }
-    },
-    conns: {
-        dbserver: {
-            host: 'localhost',
-            port: 5432,
-            dbname: 'mastersol',
-            user: 'postgres',
-            pass: 'postgres',
-            driver: 'pg'
-        }
-    },
-    defaultConn: 'dbserver'
-});*/
-
 router.get('/report', async function(req, res) {
    const result = await objects.reports.getJasper(req)
    let jasper = result.jasper
@@ -89,7 +62,7 @@ router.get('/report', async function(req, res) {
        }
        else
            res.json({'success': false, 'error': msg})
-   }, 1000);
+   }, 1500);
 
 });
 
@@ -313,17 +286,39 @@ router.get('/managerfunctionsevent', async function (req, res) {
     res.json({'data': result})*/
 })
 
-router.post('/executebuttons', async function (req, res) {
+/*router.post('/executebuttons', async function (req, res) {
     var result = await objects.functions.executeFunctionsButtons(req, objects)
     res.json({'data': result})
-})
+})*/
 
 router.get('/executebuttons', async function (req, res) {
+    const report_params = req.query.extra_params ? JSON.parse(req.query.extra_params) : [];
     var result = await objects.functions.executeFunctionsButtons(req, objects)
     if (result.success === false) {
         return res.json(result)
-    } else {
-        return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value})
+    }
+    else if(result.type == 5){
+        let jasper = result.value
+        setTimeout(function(){
+            if(jasper) {
+                let report = {
+                    report: 'hw',
+                    data: {}
+                };
+                let print = jasper.export(report, 'html');
+                res.set({
+                    'Content-type': 'text/html',
+                    'Content-Length': print.length
+                });
+                //res.json({'success': true, 'btn': '', 'type': 5, 'value': print, 'msg': ''})
+                res.send(print);
+            }
+            else
+                res.json({'success': false, 'btn': '', 'type': '', 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte'})
+        }, 1500);
+    }    
+    else {
+        return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg})
     }
 })
 
