@@ -162,10 +162,11 @@ const executeFunctionsButtons = async (req, objects) => {
     let idregister = req.query.idregister
     let iduser = req.session.id_user
     let idrol = req.session.id_rol
-    //let extra_params = req.query.extra_params
-    let extra_params = []
+    let extra_params = req.query.extra_params
+    //let extra_params = []
     var success = false;
-    var result = {'btn': '', 'type': '', 'value': '', 'msg': ''}    
+    var result = {'btn': '', 'type': '', 'value': '', 'msg': ''}
+    let flagResult = false
     if(idbutton) {
         const param_button = ['cfgapl.sections_buttons',idbutton]
         const resultButton = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_button)
@@ -183,29 +184,23 @@ const executeFunctionsButtons = async (req, objects) => {
                     if(resultInform) {
                         report_name = resultInform.rows[0].fn_get_register[0].name
                         //Si los parametros vienen vacíos buscar los params del reporte y devolverlos
-                        if(extra_params.length == 0) {
+                        if(extra_params && extra_params.length == 0) {
                             const paramsParamsReport = ['reports.inf_params', null, "WHERE id_inform = '" + resultInform.rows[0].fn_get_register[0].id + "' "];
                             const resultParamsReport = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsParamsReport);
                             //Si el reporte lleva parametros buscarlos para devolverlos, sino imprimir directamente
-                            if (resultParamsReport && resultParamsReport.rows[0].fn_get_register != null && resultParamsReport.rows[0].fn_get_register.length > 0) {
+                            if (resultParamsReport && resultParamsReport.rows[0].fn_get_register != null
+                                && resultParamsReport.rows[0].fn_get_register.length > 0) {
                                 //Devolver arreglo de parametros a la vista para el panel de filtro del reporte
                                 resultParamsReport.rows[0].fn_get_register
                                 success = true;
                                 result = {'btn': idbutton, 'type': 4, 'value': resultParamsReport.rows[0].fn_get_register, 'msg': ''}
+                                flagResult = true
                             }
-                            else{// Reporte sin parametros, imprimir directo
-                                result = await operacion.function(idsection, idregister, idbutton, iduser, idrol, report_name)
-                                if (result)
-                                    success = true;                                
-                            }
-                        } //Si vienen llenos imprimir el reporte con los parametros suministrados
-                        else{
-
                         }
                     }
                 }
-                else {
-                    result = await operacion.function(idsection, idregister, idbutton, iduser, idrol)
+                if(!flagResult) {
+                    result = await operacion.function(idsection, idregister, idbutton, iduser, idrol, report_name)
                     if (result)
                         success = true;
                 }

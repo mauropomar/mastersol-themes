@@ -292,7 +292,6 @@ router.get('/managerfunctionsevent', async function (req, res) {
 })*/
 
 router.get('/executebuttons', async function (req, res) {
-    const report_params = req.query.extra_params ? JSON.parse(req.query.extra_params) : [];
     var result = await objects.functions.executeFunctionsButtons(req, objects)
     if (result.success === false) {
         return res.json(result)
@@ -301,16 +300,70 @@ router.get('/executebuttons', async function (req, res) {
         let jasper = result.value
         setTimeout(function(){
             if(jasper) {
+                let report_params = req.query.extra_params ? req.query.extra_params : ""
+                let report_format = req.query.report_format ? req.query.report_format : 'html'
+                //Tratar cadena report params
+                let objParams = {}
+                let arr = report_params.split(',');
+                for(let i=0;i<arr.length;i++){
+                    let elem = arr[i]
+                    let arrElem = elem.split(':')
+                    if(arrElem) {
+                        objParams[''+arrElem[0]+''] = arrElem[1]
+                    }
+                }
                 let report = {
                     report: 'hw',
-                    data: {}
+                    data: objParams
                 };
-                let print = jasper.export(report, 'html');
-                res.set({
-                    'Content-type': 'text/html',
-                    'Content-Length': print.length
-                });
-                //res.json({'success': true, 'btn': '', 'type': 5, 'value': print, 'msg': ''})
+                let print = null
+                if(req.query.report_format === 'html') {
+                    print = jasper.export(report, 'html');
+                    res.set({
+                        'Content-type': 'text/html',
+                        'Content-Length': print.length
+                    });
+                }
+                else if(req.query.report_format === 'pdf') {
+                    print = jasper.export(report, 'pdf');
+                    res.set({
+                        'Content-type': 'application/pdf',
+                        'Content-Length': print.length,
+                        'Content-disposition': 'attachment; filename=report.pdf'
+                    });
+                }
+                else if(req.query.report_format === 'xlsx') {
+                    print = jasper.export(report, 'xlsx');
+                    res.set({
+                        'Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'Content-Length': print.length,
+                        'Content-disposition': 'attachment; filename=report.xlsx'
+                    });
+                }
+                else if(req.query.report_format === 'xls') {
+                    print = jasper.export(report, 'xls');
+                    res.set({
+                        'Content-type': 'application/vnd.ms-excel',
+                        'Content-Length': print.length,
+                        'Content-disposition': 'attachment; filename=report.xls'
+                    });
+                }
+                else if(req.query.report_format === 'docx') {
+                    print = jasper.export(report, 'docx');
+                    res.set({
+                        'Content-type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'Content-Length': print.length,
+                        'Content-disposition': 'attachment; filename=report.docx'
+                    });
+                }
+                else if(req.query.report_format === 'doc') {
+                    print = jasper.export(report, 'doc');
+                    res.set({
+                        'Content-type': 'application/msword',
+                        'Content-Length': print.length,
+                        'Content-disposition': 'attachment; filename=report.doc'
+                    });
+                }
                 res.send(print);
             }
             else
