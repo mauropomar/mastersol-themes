@@ -24,7 +24,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 celldblclick: 'dblclickSection',
                 columnresize: 'columnresize'
             },
-        })
+        });
     },
 
     clickSectionPrincipal: function (grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
@@ -34,6 +34,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.util.setAplyMaxLine();
         this.loadDataTabActive(grid, record, 0);
         MasterApp.util.setStyleWindow(grid.panel);
+        MasterApp.util.setStyleSection();
         MasterApp.magnament.getData(grid.panel);
         MasterApp.tools.setButtons();
     },
@@ -51,6 +52,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.loadDataTabActive(grid, record, level);
         MasterApp.util.setAplyMaxLine();
         MasterApp.util.setStyleWindow(grid.panel);
+        var container = grid.panel.up('panel');
+        MasterApp.util.setStyleSection(container);
         MasterApp.magnament.getData(grid.panel);
         MasterApp.tools.setButtons();
 
