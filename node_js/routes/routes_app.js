@@ -3,33 +3,6 @@ var router = express.Router();
 var fs = require('fs');
 const objects = require('../modules');
 
-/*jasper = require('node-jasper')({
-    path: '../../resources/reports/lib/jasperreports-6.2.0',
-    reports: {
-        hw: {
-            jasper: '../../resources/reports/Tablex.jasper'
-        }
-    },
-    drivers: {
-        pg: {
-            path: '../../resources/reports/lib/postgresql-9.2-1004-jdbc41.jar',
-            class: 'org.postgresql.Driver', //odbc driver//sun.jdbc.odbc.JdbcOdbcDriver //mysqlDriver// com.mysql.jdbc.Driver
-            type: 'postgresql'
-        }
-    },
-    conns: {
-        dbserver: {
-            host: 'localhost',
-            port: 5432,
-            dbname: 'mastersol',
-            user: 'postgres',
-            pass: 'postgres',
-            driver: 'pg'
-        }
-    },
-    defaultConn: 'dbserver'
-});*/
-
 router.get('/report', async function(req, res) {
    const result = await objects.reports.getJasper(req)
    let jasper = result.jasper
@@ -89,7 +62,7 @@ router.get('/report', async function(req, res) {
        }
        else
            res.json({'success': false, 'error': msg})
-   }, 1000);
+   }, 1500);
 
 });
 
@@ -313,17 +286,92 @@ router.get('/managerfunctionsevent', async function (req, res) {
     res.json({'data': result})*/
 })
 
-router.post('/executebuttons', async function (req, res) {
+/*router.post('/executebuttons', async function (req, res) {
     var result = await objects.functions.executeFunctionsButtons(req, objects)
     res.json({'data': result})
-})
+})*/
 
 router.get('/executebuttons', async function (req, res) {
     var result = await objects.functions.executeFunctionsButtons(req, objects)
     if (result.success === false) {
         return res.json(result)
-    } else {
-        return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value})
+    }
+    else if(result.type == 5){
+        let jasper = result.value
+        setTimeout(function(){
+            if(jasper) {
+                let report_params = req.query.extra_params ? req.query.extra_params : ""
+                let report_format = req.query.report_format ? req.query.report_format : 'html'
+                //Tratar cadena report params
+                let objParams = {}
+                let arr = report_params.split(',');
+                for(let i=0;i<arr.length;i++){
+                    let elem = arr[i]
+                    let arrElem = elem.split(':')
+                    if(arrElem) {
+                        objParams[''+arrElem[0]+''] = arrElem[1]
+                    }
+                }
+                let report = {
+                    report: 'hw',
+                    data: objParams
+                };
+                let print = null
+                if(req.query.report_format === 'html') {
+                    print = jasper.export(report, 'html');
+                    res.set({
+                        'Content-type': 'text/html',
+                        'Content-Length': print.length
+                    });
+                }
+                else if(req.query.report_format === 'pdf') {
+                    print = jasper.export(report, 'pdf');
+                    res.set({
+                        'Content-type': 'application/pdf',
+                        'Content-Length': print.length,
+                        'Content-disposition': 'attachment; filename=report.pdf'
+                    });
+                }
+                else if(req.query.report_format === 'xlsx') {
+                    print = jasper.export(report, 'xlsx');
+                    res.set({
+                        'Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'Content-Length': print.length,
+                        'Content-disposition': 'attachment; filename=report.xlsx'
+                    });
+                }
+                else if(req.query.report_format === 'xls') {
+                    print = jasper.export(report, 'xls');
+                    res.set({
+                        'Content-type': 'application/vnd.ms-excel',
+                        'Content-Length': print.length,
+                        'Content-disposition': 'attachment; filename=report.xls'
+                    });
+                }
+                else if(req.query.report_format === 'docx') {
+                    print = jasper.export(report, 'docx');
+                    res.set({
+                        'Content-type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'Content-Length': print.length,
+                        'Content-disposition': 'attachment; filename=report.docx'
+                    });
+                }
+                else if(req.query.report_format === 'doc') {
+                    print = jasper.export(report, 'doc');
+                    res.set({
+                        'Content-type': 'application/msword',
+                        'Content-Length': print.length,
+                        'Content-disposition': 'attachment; filename=report.doc'
+                    });
+                }
+                res.send(print);
+            }
+            else
+                res.json({'success': false, 'btn': '', 'type': '', 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte'})
+        }, 1500);
+    }    
+    else {
+        return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg})
     }
 })
 

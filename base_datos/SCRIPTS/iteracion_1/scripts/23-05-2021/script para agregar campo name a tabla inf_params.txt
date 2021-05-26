@@ -1,0 +1,1 @@
+alter table reports.inf_params add column name varchar(100) not null

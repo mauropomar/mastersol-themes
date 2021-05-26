@@ -21,8 +21,8 @@ const executeReport = (req) => new Promise(async (resolve, reject) => {
             path: '../../resources/reports/lib/jasperreports-6.2.0',
             reports: {
                 hw: {
-                    jasper: '../../resources/reports/' + req.query.report_name + '.jasper',
-                    jrxml: '../../resources/reports/' + req.query.report_name + '.jrxml'
+                    jasper: '../../resources/reports/informs/' + req.query.report_name + '.jasper',
+                    jrxml: '../../resources/reports/informs/' + req.query.report_name + '.jrxml'
                 }
             },
             drivers: {
