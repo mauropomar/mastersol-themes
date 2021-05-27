@@ -298,7 +298,11 @@ router.get('/executebuttons', async function (req, res) {
     }
     else if(result.type == 5){
         let jasper = result.value
-        setTimeout(function(){
+        let print = null
+        let randomName = Math.random()
+        let tmpFile = global.appRootApp + '\\resources\\reports\\tmp\\' + randomName
+        let dirFile = '../resources/reports/tmp/'+randomName
+        setTimeout(async function(){
             if(jasper) {
                 let report_params = req.query.extra_params ? req.query.extra_params : ""
                 let report_format = req.query.report_format ? req.query.report_format : 'html'
@@ -316,58 +320,43 @@ router.get('/executebuttons', async function (req, res) {
                     report: 'hw',
                     data: objParams
                 };
-                let print = null
+
                 if(req.query.report_format === 'html') {
+                    tmpFile = tmpFile + '.html'
+                    dirFile = dirFile + '.html'
                     print = jasper.export(report, 'html');
-                    res.set({
-                        'Content-type': 'text/html',
-                        'Content-Length': print.length
-                    });
                 }
                 else if(req.query.report_format === 'pdf') {
+                    tmpFile = tmpFile + '.pdf'
+                    dirFile = dirFile + '.pdf'
                     print = jasper.export(report, 'pdf');
-                    res.set({
-                        'Content-type': 'application/pdf',
-                        'Content-Length': print.length,
-                        'Content-disposition': 'attachment; filename=report.pdf'
-                    });
                 }
                 else if(req.query.report_format === 'xlsx') {
+                    tmpFile = tmpFile + '.xlsx'
+                    dirFile = dirFile + '.xlsx'
                     print = jasper.export(report, 'xlsx');
-                    res.set({
-                        'Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                        'Content-Length': print.length,
-                        'Content-disposition': 'attachment; filename=report.xlsx'
-                    });
                 }
                 else if(req.query.report_format === 'xls') {
+                    tmpFile = tmpFile + '.xls'
+                    dirFile = dirFile + '.xls'
                     print = jasper.export(report, 'xls');
-                    res.set({
-                        'Content-type': 'application/vnd.ms-excel',
-                        'Content-Length': print.length,
-                        'Content-disposition': 'attachment; filename=report.xls'
-                    });
                 }
                 else if(req.query.report_format === 'docx') {
+                    tmpFile = tmpFile + '.docx'
+                    dirFile = dirFile + '.docx'
                     print = jasper.export(report, 'docx');
-                    res.set({
-                        'Content-type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        'Content-Length': print.length,
-                        'Content-disposition': 'attachment; filename=report.docx'
-                    });
                 }
                 else if(req.query.report_format === 'doc') {
+                    tmpFile = tmpFile + '.doc'
+                    dirFile = dirFile + '.doc'
                     print = jasper.export(report, 'doc');
-                    res.set({
-                        'Content-type': 'application/msword',
-                        'Content-Length': print.length,
-                        'Content-disposition': 'attachment; filename=report.doc'
-                    });
                 }
-                res.send(print);
+                //res.send(print);
+                let resultSaveFile = await objects.reports.saveReportFile(tmpFile, print)
+                res.json({'success': resultSaveFile.success, 'btn':  result.btn, 'type': 5, 'value': dirFile, 'msg': resultSaveFile.msg})
             }
             else
-                res.json({'success': false, 'btn': '', 'type': '', 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte'})
+                res.json({'success': false, 'btn':  result.btn, 'type': 5, 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte'})
         }, 1500);
     }    
     else {

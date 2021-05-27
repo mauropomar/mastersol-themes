@@ -210,6 +210,7 @@ const executeFunctionsButtons = async (req, objects) => {
     return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg}
 }
 
+
 objGenFunc.generateFunctions = generateFunctions
 objGenFunc.generateFunctionsTimeEvents = generateFunctionsTimeEvents
 objGenFunc.executeFunctionsButtons = executeFunctionsButtons
