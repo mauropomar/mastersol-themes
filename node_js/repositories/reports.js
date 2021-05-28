@@ -3,28 +3,28 @@ var stream = require('stream');
 const fs = require('fs')
 const objReports = {}
 
-const getJasper = async (req) => {
+const getJasper = async (report_name) => {
     let jasper = '' 
     let msg = ''
-    await executeReport(req)
+    await executeReport(report_name)
         .then((value) => {
             jasper = value
         })
         .catch((value) => {
             msg = value
         });
+    
     return {'jasper': jasper, 'msg': msg}
 }
 
-const executeReport = (req) => new Promise(async (resolve, reject) => {
+const executeReport = (report_name) => new Promise(async (resolve, reject) => {
     try {
-        let jasper = null
         let options = {
             path: '../../resources/reports/lib/jasperreports-6.2.0',
             reports: {
                 hw: {
-                    jasper: '../../resources/reports/informs/' + req.query.report_name + '.jasper',
-                    jrxml: '../../resources/reports/informs/' + req.query.report_name + '.jrxml'
+                    jasper: '../../resources/reports/informs/' + report_name + '.jasper',
+                    jrxml: '../../resources/reports/informs/' + report_name + '.jrxml'
                 }
             },
             drivers: {
@@ -46,8 +46,7 @@ const executeReport = (req) => new Promise(async (resolve, reject) => {
             },
             defaultConn: 'dbserver'
         }
-
-        jasper = require('node-jasper-report')(options)
+        let jasper = require('node-jasper-report')(options)
         resolve(jasper)
     }
     catch(error){

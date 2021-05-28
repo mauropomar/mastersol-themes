@@ -1,6 +1,7 @@
 const pool = require('../connection/server-db')
 const cron = require('node-cron')
 const fs = require('fs')
+const objects = require('../modules');
 const objGenFunc = {}
 
 //schedule para recorrer todos los procesos activos y ejecutar las funciones que tengan asociadas según sus calendarios
@@ -163,7 +164,7 @@ const executeFunctionsButtons = async (req, objects) => {
     let iduser = req.session.id_user
     let idrol = req.session.id_rol
     let extra_params = req.query.extra_params
-    //let extra_params = []
+
     var success = false;
     var result = {'btn': '', 'type': '', 'value': '', 'msg': ''}
     let flagResult = false
@@ -196,6 +197,12 @@ const executeFunctionsButtons = async (req, objects) => {
                                 result = {'btn': idbutton, 'type': 4, 'value': resultParamsReport.rows[0].fn_get_register, 'msg': ''}
                                 flagResult = true
                             }
+                        }
+                        else{ //generar y devolver el reporte
+                            success = true;
+                            let resultReport = await objects.reports.getJasper(report_name)
+                            result = {'btn': idbutton, 'type': 5, 'value': resultReport.jasper, 'msg': resultReport.msg}
+                            flagResult = true
                         }
                     }
                 }
