@@ -1,0 +1,5 @@
+insert into cfgapl.tables_foreignkeys 
+(id_capsules,id_tables,namex,local_fields,foreign_fields,foreign_table_schema,
+foreign_table,rule_update,rule_delete) values ('5cdf1800-af89-4ce0-8c9a-ef659b8891c5',
+'c154d2b4-82bf-4551-b208-3d820729eda4','cfgapl_sections_buttons_id_inform_fk','{id_inform}',
+'{id}','reports','informs','CASCADE','RESTRICT')

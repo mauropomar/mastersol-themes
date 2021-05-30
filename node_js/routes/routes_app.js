@@ -3,33 +3,6 @@ var router = express.Router();
 var fs = require('fs');
 const objects = require('../modules');
 
-/*jasper = require('node-jasper')({
-    path: '../../resources/reports/lib/jasperreports-6.2.0',
-    reports: {
-        hw: {
-            jasper: '../../resources/reports/Tablex.jasper'
-        }
-    },
-    drivers: {
-        pg: {
-            path: '../../resources/reports/lib/postgresql-9.2-1004-jdbc41.jar',
-            class: 'org.postgresql.Driver', //odbc driver//sun.jdbc.odbc.JdbcOdbcDriver //mysqlDriver// com.mysql.jdbc.Driver
-            type: 'postgresql'
-        }
-    },
-    conns: {
-        dbserver: {
-            host: 'localhost',
-            port: 5432,
-            dbname: 'mastersol',
-            user: 'postgres',
-            pass: 'postgres',
-            driver: 'pg'
-        }
-    },
-    defaultConn: 'dbserver'
-});*/
-
 router.get('/report', async function(req, res) {
    const result = await objects.reports.getJasper(req)
    let jasper = result.jasper
@@ -89,7 +62,7 @@ router.get('/report', async function(req, res) {
        }
        else
            res.json({'success': false, 'error': msg})
-   }, 1000);
+   }, 1500);
 
 });
 
@@ -313,17 +286,92 @@ router.get('/managerfunctionsevent', async function (req, res) {
     res.json({'data': result})*/
 })
 
-router.post('/executebuttons', async function (req, res) {
+/*router.post('/executebuttons', async function (req, res) {
     var result = await objects.functions.executeFunctionsButtons(req, objects)
     res.json({'data': result})
-})
+})*/
 
 router.get('/executebuttons', async function (req, res) {
     var result = await objects.functions.executeFunctionsButtons(req, objects)
     if (result.success === false) {
         return res.json(result)
-    } else {
-        return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value})
+    }
+    else if(result.type == 5){
+        let jasper = result.value
+        let print = null
+        let randomName = Math.random()
+        let tmpFile = global.appRootApp + '\\resources\\reports\\tmp\\' + randomName
+        let dirFile = '../resources/reports/tmp/'+randomName
+        let flagPrint = false
+        setTimeout(async function(){
+            if(jasper) {
+                let report_params = req.query.extra_params ? req.query.extra_params : ""
+                let report_format = req.query.report_format ? req.query.report_format : 'html'
+                //Tratar cadena report params
+                let objParams = {}
+                let arr = report_params.split(',');
+                for(let i=0;i<arr.length;i++){
+                    let elem = arr[i]
+                    let arrElem = elem.split(':')
+                    if(arrElem) {
+                        objParams[''+arrElem[0]+''] = arrElem[1]
+                    }
+                }
+                let report = {
+                    report: 'hw',
+                    data: objParams
+                };
+
+                if(req.query.report_format === 'html') {
+                    tmpFile = tmpFile + '.html'
+                    dirFile = dirFile + '.html'
+                    print = jasper.export(report, 'html');
+                    flagPrint = true
+                }
+                else if(req.query.report_format === 'pdf') {
+                    tmpFile = tmpFile + '.pdf'
+                    dirFile = dirFile + '.pdf'
+                    print = jasper.export(report, 'pdf');
+                }
+                else if(req.query.report_format === 'xlsx') {
+                    tmpFile = tmpFile + '.xlsx'
+                    dirFile = dirFile + '.xlsx'
+                    print = jasper.export(report, 'xlsx');
+                }
+                else if(req.query.report_format === 'xls') {
+                    tmpFile = tmpFile + '.xls'
+                    dirFile = dirFile + '.xls'
+                    print = jasper.export(report, 'xls');
+                }
+                else if(req.query.report_format === 'docx') {
+                    tmpFile = tmpFile + '.docx'
+                    dirFile = dirFile + '.docx'
+                    print = jasper.export(report, 'docx');
+                }
+                else if(req.query.report_format === 'doc') {
+                    tmpFile = tmpFile + '.doc'
+                    dirFile = dirFile + '.doc'
+                    print = jasper.export(report, 'doc');
+                }
+                if(!flagPrint) {
+                    let resultSaveFile = await objects.reports.saveReportFile(tmpFile, print)
+                    res.json({
+                        'success': resultSaveFile.success,
+                        'btn': result.btn,
+                        'type': 5,
+                        'value': dirFile,
+                        'msg': resultSaveFile.msg
+                    })
+                }
+                else
+                    res.send(print);
+            }
+            else
+                res.json({'success': false, 'btn':  result.btn, 'type': 5, 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte'})
+        }, 1500);
+    }    
+    else {
+        return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg})
     }
 })
 

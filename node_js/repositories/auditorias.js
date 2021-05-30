@@ -20,9 +20,8 @@ const getFilterAuditorias = async (req) => {
         req.session.id_user,
         req.query.propiedad !== '' ? req.query.propiedad : null,
         req.query.accion !== '' ? req.query.accion : null,
-        dateDesde, dateHasta, req.query.idsection, req.query.idregister
+        dateDesde, dateHasta, req.query.idsection, req.query.idregistro
     ]
-    // console.log(params)
     const query = "SELECT security.fn_get_filter_auditorias($1,$2,$3,$4,$5,$6,$7)"
     const result = await pool.executeQuery(query, params)
     if (result.success === false) {

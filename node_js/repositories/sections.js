@@ -162,11 +162,11 @@ const createFileJs = (req, params) => {
         function_file = ""
     const body_function = " const params = [] \n const query = \"\" \n const result = await pool.executeQuery(query, params)"
     if (params.is_capsule === false) {
-        comentario_file = salto_linea + "/*Start " + params.nameFunc + "\n * Debe retornarse: \n* type:0 - Sin acción \n* type:1 - value es una cadena de caracteres \n* type:2 - value es 0 (Refrescar Sección) \n* type:3 value devuelve un json de un registro de la sección activa \n* type:4 value devuelve un json de todos los registros de la sección \n */" + salto_linea;
-        function_file = comentario_file + "const " + params.nameFunc + " = async (id_section,id_register,id_button,id_user,id_rol) => { " + salto_linea + body_function + salto_linea + " return {'btn':id_button, type: 0, value: ''};" + salto_linea + "} " + salto_linea
+        comentario_file = salto_linea + "/*Start " + params.nameFunc + "\n * Debe retornarse: \n* type:0 - Sin acción \n* type:1 - value es una cadena de caracteres \n* type:2 - value es 0 (Refrescar Sección) \n* type:3 value devuelve un json de un registro de la sección activa \n* type:4 value devuelve un json de todos los registros de la sección \n* type:5 print report \n*/" + salto_linea;
+        function_file = comentario_file + "const " + params.nameFunc + " = async (id_section,id_register,id_button,id_user,id_rol,report_name='') => { " + salto_linea + body_function + salto_linea + " return {'btn':id_button, type: 0, value: '', msg: ''};" + salto_linea + "} " + salto_linea
     } else {
         comentario_file = salto_linea + "/*Start " + params.nameFunc + "\n * Debe retornarse: \n* type:0 - Sin acción */" + salto_linea;
-        function_file = comentario_file + "function " + params.nameFunc + "() { " + salto_linea + body_function + salto_linea + " return {'btn':id_button, type: 0, value: ''};" + salto_linea + "} " + salto_linea
+        function_file = comentario_file + "function " + params.nameFunc + "() { " + salto_linea + body_function + salto_linea + " return {'btn':id_button, type: 0, value: '', msg: ''};" + salto_linea + "} " + salto_linea
     }
 
     const export_func_file = " module.exports.function = " + params.nameFunc

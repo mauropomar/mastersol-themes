@@ -1,6 +1,7 @@
 const pool = require('../connection/server-db')
 const cron = require('node-cron')
 const fs = require('fs')
+const objects = require('../modules');
 const objGenFunc = {}
 
 //schedule para recorrer todos los procesos activos y ejecutar las funciones que tengan asociadas según sus calendarios
@@ -162,23 +163,60 @@ const executeFunctionsButtons = async (req, objects) => {
     let idregister = req.query.idregister
     let iduser = req.session.id_user
     let idrol = req.session.id_rol
+    let extra_params = req.query.extra_params
+
     var success = false;
-    var result = []
+    var result = {'btn': '', 'type': '', 'value': '', 'msg': ''}
+    let flagResult = false
     if(idbutton) {
         const param_button = ['cfgapl.sections_buttons',idbutton]
         const resultButton = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_button)
 
         if (resultButton) {
             let requireDir = '../../capsules/' + 'c_' + resultButton.rows[0].fn_get_register[0].id_capsules + '/node_js/buttons/' + resultButton.rows[0].fn_get_register[0].js_name
+            let dirFile = global.appRootApp + '\\capsules\\' + 'c_' + resultButton.rows[0].fn_get_register[0].id_capsules + '\\node_js\\buttons\\' + resultButton.rows[0].fn_get_register[0].js_name +'.js'
             const operacion = require(requireDir)
-            result = await operacion.function(idsection, idregister, idbutton, iduser, idrol)
-            if (result)
-                success = true;
-
+            if(fs.existsSync(dirFile)) {
+                let report_name = ''
+                //Si tiene reporte asociado hacer la gestion correspondiente
+                if(resultButton.rows[0].fn_get_register[0].id_inform != null){
+                    const param_inform = ['reports.informs',resultButton.rows[0].fn_get_register[0].id_inform]
+                    const resultInform = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_inform)
+                    if(resultInform) {
+                        report_name = resultInform.rows[0].fn_get_register[0].name
+                        //Si los parametros vienen vacíos buscar los params del reporte y devolverlos
+                        if(extra_params && extra_params.length == 0) {
+                            const paramsParamsReport = ['reports.inf_params', null, "WHERE id_inform = '" + resultInform.rows[0].fn_get_register[0].id + "' "];
+                            const resultParamsReport = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsParamsReport);
+                            //Si el reporte lleva parametros buscarlos para devolverlos, sino imprimir directamente
+                            if (resultParamsReport && resultParamsReport.rows[0].fn_get_register != null
+                                && resultParamsReport.rows[0].fn_get_register.length > 0) {
+                                //Devolver arreglo de parametros a la vista para el panel de filtro del reporte
+                                resultParamsReport.rows[0].fn_get_register
+                                success = true;
+                                result = {'btn': idbutton, 'type': 4, 'value': resultParamsReport.rows[0].fn_get_register, 'msg': ''}
+                                flagResult = true
+                            }
+                        }
+                        else{ //generar y devolver el reporte
+                            success = true;
+                            let resultReport = await objects.reports.getJasper(report_name)
+                            result = {'btn': idbutton, 'type': 5, 'value': resultReport.jasper, 'msg': resultReport.msg}
+                            flagResult = true
+                        }
+                    }
+                }
+                if(!flagResult) {
+                    result = await operacion.function(idsection, idregister, idbutton, iduser, idrol, report_name)
+                    if (result)
+                        success = true;
+                }
+            }
         }
     }
-    return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value}
+    return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg}
 }
+
 
 objGenFunc.generateFunctions = generateFunctions
 objGenFunc.generateFunctionsTimeEvents = generateFunctionsTimeEvents

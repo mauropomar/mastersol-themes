@@ -1,0 +1,62 @@
+CREATE OR REPLACE FUNCTION "security".fn_get_filter_auditorias
+(
+  IN  iduser        uuid = NULL::uuid,
+  IN  idproperties  uuid = NULL::uuid,
+  IN  idaction      uuid = NULL::uuid,
+  IN  datei         date = NULL::date,
+  IN  datef         date = NULL::date,
+  IN  idsection     uuid = NULL::uuid,
+  IN  idregister    uuid = NULL::uuid
+)
+RETURNS json AS
+$$
+declare
+res_datas json;
+query_aux varchar;
+where_aux varchar = 'WHERE sc.id ='|| quote_literal($6) ||' AND ft.id_record = '||quote_literal($7)||'';
+begin
+ 
+   
+  IF not $1 is null and $2 is null THEN
+   where_aux = where_aux||' AND us.id = '||quote_literal($1)||'';
+  ELSE
+   where_aux = where_aux||' AND us.id = '||quote_literal($1)||'';
+  END IF;
+  
+  IF not $2 is null THEN
+   where_aux = where_aux||' AND tbp.id = '||quote_literal($2)||''; 
+  END IF;  
+  
+  IF not $4 is null AND not $5 is null THEN
+   where_aux = where_aux||' AND ft.datetimex::date BETWEEN '||quote_literal($4)||' AND '||quote_literal($5)||'';
+  ELSEIF not $4 is null AND $5 is null THEN
+   where_aux = where_aux||' AND ft.datetimex::date > '||quote_literal($4)||'';
+  ELSEIF $4 is null AND not $5 is null THEN
+   where_aux = where_aux||' AND ft.datetimex::date < '||quote_literal($5)||'';
+  END IF;
+  
+  IF not $3 is null THEN
+  where_aux = where_aux||' AND ac.id = '||quote_literal($3)||'';
+  END IF;
+  
+  EXECUTE ('SELECT json_agg(rowset.*) FROM
+  (
+  SELECT ft.id,tbp.namex as propiedad,upper(ac.namex) as accion,et.name_legal as usuario,ft.created as fecha,
+  ft.oldvalue as valor_anterior,ft.newvalue as valor_nuevo
+  FROM security.footprints ft
+  JOIN cfgapl.tables tb on(ft.id_tables = tb.id)
+  JOIN cfgapl.sections sc on(sc.id_tables = tb.id)
+  JOIN cfgapl.tables_properties tbp on(tbp.id = ft.id_tables_properties)
+  JOIN security.actions ac on(ft.id_actions = ac.id)
+  JOIN security.users us on(us.id = ft.id_users) 
+  JOIN entities.third et ON et.id=us.id_third '|| where_aux ||' GROUP BY ft.id,tbp.namex,ac.namex,et.name_legal,ft.created,ft.oldvalue,ft.newvalue
+  )rowset') INTO res_datas;   
+
+
+return res_datas;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION "security".fn_get_filter_auditorias(uuid, uuid, uuid, date, date, uuid, uuid)
+  OWNER TO postgres;
