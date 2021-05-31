@@ -106,7 +106,6 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         var idsection = grid.idsection;
         var record = MasterApp.globals.getRecordSection();
         var recordId = (record != null) ? record.data.id : null;
-        debugger
         var extra_params = this.getExtraParams();
         var execute = {
             url: 'app/executebuttons',
@@ -126,6 +125,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 if(json.value) {
+                    var params = response.request.params;
                     if(json.value.length > 0) {
                         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
                         tabMagnament.show();
@@ -134,8 +134,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         tabMagnament.setDisabled(false);
                         MasterApp.report.loadValues(json.value);
                     }else{
-                        var html = '<p>Mauro es loco</p>';
-                        MasterApp.report.generateReport(html);
+                        var html = json.html;
+                        MasterApp.report.generateReport(params, html);
                     }
                 }
             }
