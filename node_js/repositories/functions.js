@@ -163,7 +163,7 @@ const executeFunctionsButtons = async (req, objects) => {
     let idregister = req.query.idregister
     let iduser = req.session.id_user
     let idrol = req.session.id_rol
-    let extra_params = req.query.extra_params
+    let extra_params = JSON.parse(req.query.extra_params);
 
     var success = false;
     var result = {'btn': '', 'type': '', 'value': '', 'msg': ''}

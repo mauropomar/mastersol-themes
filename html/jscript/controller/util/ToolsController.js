@@ -106,7 +106,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         var idsection = grid.idsection;
         var record = MasterApp.globals.getRecordSection();
         var recordId = (record != null) ? record.data.id : null;
-        var store = grid.getStore();
+        debugger
+        var extra_params = this.getExtraParams();
         var execute = {
             url: 'app/executebuttons',
             method: 'GET',
@@ -117,13 +118,26 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 idmenu: idmenu,
                 idbutton: button.id,
                 name: button.name,
-                action: button.action
+                action: button.action,
+                extra_params:extra_params,
+                report_format:'html'
             },
             success: function (response) {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
-                var datos = json[0].data;
-                store.loadData(datos);
+                if(json.value) {
+                    if(json.value.length > 0) {
+                        var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
+                        tabMagnament.show();
+                        tabMagnament.setActiveTab(6);
+                        tabMagnament.expand(false);
+                        tabMagnament.setDisabled(false);
+                        MasterApp.report.loadValues(json.value);
+                    }else{
+                        var html = '<p>Mauro es loco</p>';
+                        MasterApp.report.generateReport(html);
+                    }
+                }
             }
         };
         Ext.Ajax.request(execute);
@@ -269,5 +283,9 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             }];
     },
 
-
+    getExtraParams:function(){
+        var params = MasterApp.report.getArrayStringKey();
+        params = (params === '')?Ext.encode([]):params;
+        return params;
+    }
 });

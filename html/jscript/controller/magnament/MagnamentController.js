@@ -39,7 +39,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             MasterApp.audit.getAll();
         }
         if (newCard.xtype === 'config-report-view') {
-            MasterApp.report.getAll();
+           // MasterApp.report.getAll();
         }
     },
 
