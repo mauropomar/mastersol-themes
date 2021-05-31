@@ -55,24 +55,21 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
     },
 
 
-    getAll: function () {
-        var idsection = MasterApp.util.getIdSectionActive();
-        var idmenu = MasterApp.util.getIdMenuActive();
-        /*if (this.checkData())
-            return;*/
+    loadValues: function (values) {
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
-        store.proxy.extraParams = {
-            idmenu: idmenu,
-            idsection: idsection
-        };
-        store.load({
-            callback: function () {
-                grid.focus();
-                var title = MasterApp.util.getTitleSectionSelected();
-                Ext.ComponentQuery.query('#tbtext_magnament_report')[0].setText('Configuración de Reporte: ' + title);
-            }
-        });
+        store.removeAll();
+        var array = [];
+        for (var i = 0; i < values.length; i++) {
+            var elem = values[i];
+            array.push({
+                id: elem.id,
+                name: elem.name,
+                tipo: 'string',
+                valor: ''
+            });
+        }
+        store.loadData(array);
     },
 
     isValid: function () {
@@ -151,12 +148,40 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         Ext.Ajax.request(save);
     },
 
-    generateReport: function () {
-        var tipo = Math.random();
+    getArrayStringKey: function () {
+        var stringArray = '';
+        var grid = Ext.ComponentQuery.query('#config-report-view')[0];
+        var store = grid.getStore();
+        store.each(function (rec) {
+            var field = rec.data.name;
+            var value = rec.data.valor;
+            stringArray += field + ':' + value + ',';
+        });
+        stringArray = stringArray.substring(0, stringArray.length - 1);
+        return stringArray;
+    },
+
+    generateReport: function (params, html = '') {
+        var format = 'html';
         var title = 'Producción Agropecuaria';
+        var idregister = params.idregister;
+        var idsection = params.idsection;
+        var idmenu = params.idmenu;
+        var idbutton = params.idbutton;
+        var namebutton = params.name;
+        var action = params.action;
+        var extra_params = MasterApp.tools.getExtraParams();
         sData = "<form name='redirect' id='redirect' action='report.html' method='GET'>";
         sData = sData + "<input type='hidden' name='title' id='title' value='" + title + "' />";
-        sData = sData + "<input type='hidden' name='tipo' id='tipo' value='" + tipo + "' />";
+        sData = sData + "<input type='hidden' name='idregister' id='idregister' value='" +idregister + "' />";
+        sData = sData + "<input type='hidden' name='idsection' id='idsection' value='" +idsection + "' />";
+        sData = sData + "<input type='hidden' name='idmenu' id='idmenu' value='" +idmenu + "' />";
+        sData = sData + "<input type='hidden' name='idbutton' id='idbutton' value='" +idbutton + "' />";
+        sData = sData + "<input type='hidden' name='namebutton' id='namebutton' value='" +namebutton + "' />";
+        sData = sData + "<input type='hidden' name='action' id='action' value='" +action + "' />";
+        sData = sData + "<input type='hidden' name='format' id='format' value='" +format + "' />";
+        sData = sData + "<input type='hidden' name='html' id='html' value='" +html+ "' />";
+        sData = sData + "<input type='hidden' name='extra_params' id='extra_params' value='" +extra_params+ "' />";
         sData = sData + "</form>";
         sData = sData + "<script type='text/javascript'>";
         sData = sData + "document.redirect.submit();</script>";

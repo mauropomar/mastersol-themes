@@ -21,11 +21,11 @@ Ext.define('MasterSol.view.magnament.ConfigReport', {
     },
     columns: [{
         text: 'Nombre',
-        dataIndex: 'nombrecampo',
+        dataIndex: 'name',
         flex: 1
     }, {
         text: 'Valor',
-        dataIndex: 'valor1',
+        dataIndex: 'valor',
         flex: 3,
         editor: {
             xtype: 'textfield',
