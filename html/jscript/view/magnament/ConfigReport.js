@@ -52,12 +52,6 @@ Ext.define('MasterSol.view.magnament.ConfigReport', {
         handler: function () {
             //  MasterApp.register.onChangesReject();
         }
-    },{
-        iconCls: 'fa fa-file-text-o',
-        tooltip: 'Report',
-        handler: function () {
-            MasterApp.report.generateReport();
-        }
     },  '->', {
         xtype: 'tbtext',
         text: 'Configuración de Reporte',

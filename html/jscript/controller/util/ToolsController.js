@@ -134,7 +134,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         tabMagnament.setDisabled(false);
                         MasterApp.report.loadValues(json.value);
                     }else{
-                        var html = json.html;
+                        var html = json;
                         MasterApp.report.generateReport(params, html);
                     }
                 }
