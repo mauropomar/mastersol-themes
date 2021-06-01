@@ -163,7 +163,7 @@ const executeFunctionsButtons = async (req, objects) => {
     let idregister = req.query.idregister
     let iduser = req.session.id_user
     let idrol = req.session.id_rol
-    let extra_params = JSON.parse(req.query.extra_params);
+    let extra_params = req.query.extra_params;
 
     var success = false;
     var result = {'btn': '', 'type': '', 'value': '', 'msg': ''}
@@ -192,7 +192,12 @@ const executeFunctionsButtons = async (req, objects) => {
                             if (resultParamsReport && resultParamsReport.rows[0].fn_get_register != null
                                 && resultParamsReport.rows[0].fn_get_register.length > 0) {
                                 //Devolver arreglo de parametros a la vista para el panel de filtro del reporte
-                                resultParamsReport.rows[0].fn_get_register
+                                for(let i=0;i<resultParamsReport.rows[0].fn_get_register.length;i++){
+                                    const param_datatype = ['cfgapl.datatypes',resultParamsReport.rows[0].fn_get_register[i].datatype]
+                                    const resultDatatype = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_datatype)
+                                    if(resultDatatype)
+                                        resultParamsReport.rows[0].fn_get_register[i].datatype = resultDatatype.rows[0].fn_get_register[0].real_name_in
+                                }
                                 success = true;
                                 result = {'btn': idbutton, 'type': 4, 'value': resultParamsReport.rows[0].fn_get_register, 'msg': 'filter_params'}
                                 flagResult = true
