@@ -65,7 +65,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
             array.push({
                 id: elem.id,
                 name: elem.name,
-                tipo: 'string',
+                tipo: elem.datatype,
                 valor: ''
             });
         }
@@ -227,6 +227,19 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
             edit.setMaxValue(date);
         }
         ;
+        column.setEditor(edit);
+    },
+
+    setNumberField: function (rec, column) {
+        var edit = Ext.create('Ext.form.field.Number', {
+            decimalPrecision: 2,
+            name: 'fieldFilter',
+            selectOnFocus: true,
+            decimalSeparator: '.',
+            listeners: {
+                specialkey: this.specialKey
+            }
+        });
         column.setEditor(edit);
     },
 

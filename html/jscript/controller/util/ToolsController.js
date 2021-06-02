@@ -285,7 +285,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
 
     getExtraParams:function(){
         var params = MasterApp.report.getArrayStringKey();
-        params = (params === '')?Ext.encode([]):params;
+        params = (params === '')?'':params;
         return params;
     }
 });
