@@ -373,6 +373,15 @@ Ext.define('MasterSol.controller.util.UtilController', {
                 MasterApp.globals.setGridSection(null);
             }
         }
+    },
+
+    isJson: function (str) {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
     }
 })
 ;

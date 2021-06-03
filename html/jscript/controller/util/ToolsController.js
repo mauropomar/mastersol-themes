@@ -118,25 +118,35 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 idbutton: button.id,
                 name: button.name,
                 action: button.action,
-                extra_params:extra_params,
-                report_format:'html'
+                extra_params: extra_params,
+                report_format: 'html'
             },
             success: function (response) {
                 mask.hide();
-                 var json = (!Ext.JSON.decode(response.responseText))?response.responseText:Ext.JSON.decode(response.responseText);
-                if(json.value) {
-                    var params = response.request.params;
-                    if(json.value.length > 0) {
+                var params = response.request.params;
+                var isJSON = MasterApp.util.isJson(response.responseText);
+                if (!isJSON) {
+                    var html = response.responseText;
+                    MasterApp.report.generateReport(params, html);
+                    return;
+                }
+                var json = Ext.JSON.decode(response.responseText);
+                if (json.success) {
+                    if (json.value && json.value.length > 0) {
                         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
                         tabMagnament.show();
                         tabMagnament.setActiveTab(6);
                         tabMagnament.expand(false);
                         tabMagnament.setDisabled(false);
                         MasterApp.report.loadValues(json.value);
-                    }else{
-                        var html = json;
-                        MasterApp.report.generateReport(params, html);
                     }
+                }else{
+                    Ext.MessageBox.show({
+                        title: 'Error',
+                        msg: json.msg,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
                 }
             }
         };
@@ -283,9 +293,9 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             }];
     },
 
-    getExtraParams:function(){
+    getExtraParams: function () {
         var params = MasterApp.report.getArrayStringKey();
-        params = (params === '')?'':params;
+        params = (params === '') ? '' : params;
         return params;
     }
 });
