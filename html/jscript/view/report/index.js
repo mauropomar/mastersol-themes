@@ -72,7 +72,7 @@ Ext.onReady(function () {
             url: 'app/executebuttons',
             method: 'GET',
             scope: this,
-            params: {
+             params: {
                 idregister: urlParam.get('idregister'),
                 idsection: urlParam.get('idsection'),
                 idmenu: urlParam.get('idmenu'),
