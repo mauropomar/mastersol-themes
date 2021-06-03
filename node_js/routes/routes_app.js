@@ -302,7 +302,6 @@ router.get('/executebuttons', async function (req, res) {
         let randomName = Math.random()
         let tmpFile = global.appRootApp + '\\resources\\reports\\tmp\\' + randomName
         let dirFile = '../resources/reports/tmp/'+randomName
-        let flagPrint = false
         setTimeout(async function(){
             if(jasper) {
                 let report_params = req.query.extra_params ? req.query.extra_params : ""
@@ -326,7 +325,6 @@ router.get('/executebuttons', async function (req, res) {
                     tmpFile = tmpFile + '.html'
                     dirFile = dirFile + '.html'
                     print = jasper.export(report, 'html');
-                    flagPrint = true
                 }
                 else if(req.query.report_format === 'pdf') {
                     tmpFile = tmpFile + '.pdf'
@@ -353,22 +351,18 @@ router.get('/executebuttons', async function (req, res) {
                     dirFile = dirFile + '.doc'
                     print = jasper.export(report, 'doc');
                 }
-                if(!flagPrint) {
-                    let resultSaveFile = await objects.reports.saveReportFile(tmpFile, print)
-                    res.json({
-                        'success': resultSaveFile.success,
-                        'btn': result.btn,
-                        'type': 5,
-                        'value': dirFile,
-                        'msg': resultSaveFile.msg
-                    })
-                }
-                else
-                    res.send(print);
+                let resultSaveFile = await objects.reports.saveReportFile(tmpFile, print)
+                res.json({
+                    'success': resultSaveFile.success,
+                    'btn': result.btn,
+                    'type': 5,
+                    'value': dirFile,
+                    'msg': resultSaveFile.msg
+                })
             }
             else
                 res.json({'success': false, 'btn':  result.btn, 'type': 5, 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte'})
-        }, 1500);
+        }, 2000);
     }    
     else {
         return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg})
