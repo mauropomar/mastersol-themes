@@ -36,7 +36,7 @@ Ext.onReady(function () {
                 tooltip: 'Exportar a Word',
                 tooltipType: 'title',
                 handle: function () {
-                    downloadReport('word');
+                    downloadReport(urlParams,'word');
                 }
             }, '-', {
                 xtype: 'button',
@@ -44,7 +44,7 @@ Ext.onReady(function () {
                 tooltip: 'Exportar a Pdf',
                 tooltipType: 'title',
                 handle: function () {
-                    downloadReport('pdf');
+                    downloadReport(urlParams,'pdf');
                 }
             }, '-', {
                 xtype: 'button',
@@ -52,7 +52,7 @@ Ext.onReady(function () {
                 tooltip: 'Exportar Odt',
                 tooltipType: 'title',
                 handle: function () {
-                    downloadReport('odt');
+                    downloadReport(urlParams,'odt');
                 }
             }, '-', {
                 xtype: 'button',
@@ -60,26 +60,26 @@ Ext.onReady(function () {
                 tooltip: 'Imprimir',
                 tooltipType: 'title',
                 handle: function () {
-                    downloadReport('print');
+                    downloadReport(urlParams,'print');
                 }
             }]
         }]
     });
   //  var iframe = Ext.get('mainBuffer');
    // iframe.dom.src = './report.html';
-    function downloadReport(urlParams, type) {
+    function downloadReport(urlParam, type) {
         var download = {
             url: 'app/executebuttons',
             method: 'GET',
             scope: this,
             params: {
-                idregister: urlParams.get('idregister'),
-                idsection: urlParams.get('idsection'),
-                idmenu: urlParams.get('idmenu'),
-                idbutton: urlParams.get('idbutton'),
-                name: urlParams.get('namebutton'),
-                action: urlParams.get('action'),
-                extra_params: urlParams.get('extra_params'),
+                idregister: urlParam.get('idregister'),
+                idsection: urlParam.get('idsection'),
+                idmenu: urlParam.get('idmenu'),
+                idbutton: urlParam.get('idbutton'),
+                name: urlParam.get('namebutton'),
+                action: urlParam.get('action'),
+                extra_params: urlParam.get('extra_params'),
                 report_format: type
             },
             success: function (response) {
