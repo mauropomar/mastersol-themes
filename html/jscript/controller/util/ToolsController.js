@@ -126,17 +126,17 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 var params = response.request.params;
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success) {
-                    if (json.value && json.value.length > 0) {
+                    if (json.type === 4) {
                         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
                         tabMagnament.show();
                         tabMagnament.setActiveTab(6);
                         tabMagnament.expand(false);
                         tabMagnament.setDisabled(false);
                         MasterApp.report.loadValues(json.value);
-                    }else{
-                        MasterApp.report.generateReport(params, json.value);
                     }
-                }else{
+                    if (json.type === 5)
+                        MasterApp.report.generateReport(params, json.value);
+                } else {
                     Ext.MessageBox.show({
                         title: 'Error',
                         msg: json.msg,
@@ -230,63 +230,62 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                     })
                 }
             }
-        }
-            , {
-                iconCls: 'fa fa-trash',
-                name: 'btn_trash',
-                default: true,
-                tooltip: 'Borrar',
-                handler: function (evt, toolEl, owner, tool) {
-                    var window = owner.up('window');
-                    MasterApp.section.deleteRow(this, window, evt, toolEl, owner, tool);
+        }, {
+            iconCls: 'fa fa-trash',
+            name: 'btn_trash',
+            default: true,
+            tooltip: 'Borrar',
+            handler: function (evt, toolEl, owner, tool) {
+                var window = owner.up('window');
+                MasterApp.section.deleteRow(this, window, evt, toolEl, owner, tool);
 
-                }
-            }, {
-                type: 'minimize',
-                tooltip: 'Minimizar',
-                default: true,
-                name: 'btn_minimize',
-                handler: function (evt, toolEl, owner, tool) {
-                    MasterApp.section.minimize(this, evt, toolEl, owner, tool);
-                }
-            }, {
-                iconCls: 'fa fa-expand',
-                hidden: true,
-                tooltip: 'Restaurar',
-                default: true,
-                name: 'btn_restore',
-                handler: function (evt, toolEl, owner, tool) {
-                    MasterApp.section.restore(this, evt, toolEl, owner, tool);
+            }
+        }, {
+            type: 'minimize',
+            tooltip: 'Minimizar',
+            default: true,
+            name: 'btn_minimize',
+            handler: function (evt, toolEl, owner, tool) {
+                MasterApp.section.minimize(this, evt, toolEl, owner, tool);
+            }
+        }, {
+            iconCls: 'fa fa-expand',
+            hidden: true,
+            tooltip: 'Restaurar',
+            default: true,
+            name: 'btn_restore',
+            handler: function (evt, toolEl, owner, tool) {
+                MasterApp.section.restore(this, evt, toolEl, owner, tool);
 
-                }
-            }, {
-                iconCls: 'fa fa-clone',
-                name: 'btn_clone',
-                default: true,
-                hidden: true,
-                handler: function (evt, toolEl, owner, tool) {
-                    /*   var window = owner.up('window');
-                       window.getController().restoreDefault(this, evt, toolEl, owner, tool);*/
-                }
-            }, {
-                iconCls: 'fa fa-square-o',
-                tooltip: 'Maximizar',
-                name: 'btn_maximize',
-                default: true,
-                hidden: true,
-                handler: function (evt, toolEl, owner, tool) {
-                    MasterApp.section.maximize(this, evt, toolEl, owner, tool);
-                }
-            }, {
-                iconCls: 'fa fa-close',
-                tooltip: 'Cerrar',
-                default: true,
-                name: 'btn_close',
-                handler: function (evt, toolEl, owner, tool) {
-                    var window = owner.up('window');
-                    window.close();
-                }
-            }];
+            }
+        }, {
+            iconCls: 'fa fa-clone',
+            name: 'btn_clone',
+            default: true,
+            hidden: true,
+            handler: function (evt, toolEl, owner, tool) {
+                /*   var window = owner.up('window');
+                   window.getController().restoreDefault(this, evt, toolEl, owner, tool);*/
+            }
+        }, {
+            iconCls: 'fa fa-square-o',
+            tooltip: 'Maximizar',
+            name: 'btn_maximize',
+            default: true,
+            hidden: true,
+            handler: function (evt, toolEl, owner, tool) {
+                MasterApp.section.maximize(this, evt, toolEl, owner, tool);
+            }
+        }, {
+            iconCls: 'fa fa-close',
+            tooltip: 'Cerrar',
+            default: true,
+            name: 'btn_close',
+            handler: function (evt, toolEl, owner, tool) {
+                var window = owner.up('window');
+                window.close();
+            }
+        }];
     },
 
     getExtraParams: function () {
@@ -294,4 +293,5 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         params = (params === '') ? '' : params;
         return params;
     }
-});
+})
+;
