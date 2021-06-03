@@ -11,6 +11,7 @@ Ext.onReady(function () {
     var urlParams = new URLSearchParams(queryString);
     var title = urlParams.get('title');
     var html = urlParams.get('html');
+    alert(html);
     Ext.create('Ext.Viewport', {
         layout: 'border',
         title: 'Reporte',

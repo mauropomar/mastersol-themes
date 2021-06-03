@@ -126,7 +126,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 var params = response.request.params;
                 var isJSON = MasterApp.util.isJson(response.responseText);
                 if (!isJSON) {
-                    var html = response.responseText;
+                    var html = response.responseText + '';
                     MasterApp.report.generateReport(params, html);
                     return;
                 }
