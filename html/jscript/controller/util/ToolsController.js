@@ -123,7 +123,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             },
             success: function (response) {
                 mask.hide();
-                var json = Ext.JSON.decode(response.responseText);
+                 var json = (!Ext.JSON.decode(response.responseText))?response.responseText:Ext.JSON.decode(response.responseText);
                 if(json.value) {
                     var params = response.request.params;
                     if(json.value.length > 0) {
