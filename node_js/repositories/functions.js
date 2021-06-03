@@ -164,6 +164,7 @@ const executeFunctionsButtons = async (req, objects) => {
     let iduser = req.session.id_user
     let idrol = req.session.id_rol
     let extra_params = req.query.extra_params;
+    console.log(extra_params)
 
     var success = false;
     var result = {'btn': '', 'type': '', 'value': '', 'msg': ''}
@@ -183,9 +184,9 @@ const executeFunctionsButtons = async (req, objects) => {
                     const param_inform = ['reports.informs',resultButton.rows[0].fn_get_register[0].id_inform]
                     const resultInform = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_inform)
                     if(resultInform) {
-                        report_name = resultInform.rows[0].fn_get_register[0].name
+                        report_name = resultInform.rows[0].fn_get_register[0].name                        
                         //Si los parametros vienen vacíos buscar los params del reporte y devolverlos
-                        if(!extra_params || extra_params == '') {
+                        if(!extra_params || extra_params == '') {                            
                             const paramsParamsReport = ['reports.inf_params', null, "WHERE id_inform = '" + resultInform.rows[0].fn_get_register[0].id + "' "];
                             const resultParamsReport = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsParamsReport);
                             //Si el reporte lleva parametros buscarlos para devolverlos, sino imprimir directamente
@@ -202,9 +203,15 @@ const executeFunctionsButtons = async (req, objects) => {
                                 result = {'btn': idbutton, 'type': 4, 'value': resultParamsReport.rows[0].fn_get_register, 'msg': 'filter_params'}
                                 flagResult = true
                             }
+                            else{
+                                success = true;
+                                let resultReport = await objects.reports.getJasper(report_name)
+                                result = {'btn': idbutton, 'type': 5, 'value': resultReport.jasper, 'msg': resultReport.msg}
+                                flagResult = true
+                            }
                         }
                         else{ //generar y devolver el reporte
-                            success = true;
+                            success = true;                            
                             let resultReport = await objects.reports.getJasper(report_name)
                             result = {'btn': idbutton, 'type': 5, 'value': resultReport.jasper, 'msg': resultReport.msg}
                             flagResult = true
