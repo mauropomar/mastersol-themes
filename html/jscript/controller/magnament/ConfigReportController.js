@@ -163,7 +163,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         return stringArray;
     },
 
-    generateReport: function (params, html = '') {
+    generateReport: function (params, url) {
         var format = 'html';
         var title = 'Producción Agropecuaria';
         var idregister = params.idregister;
@@ -182,7 +182,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         sData = sData + "<input type='hidden' name='namebutton' id='namebutton' value='" +namebutton + "' />";
         sData = sData + "<input type='hidden' name='action' id='action' value='" +action + "' />";
         sData = sData + "<input type='hidden' name='format' id='format' value='" +format + "' />";
-        sData = sData + "<input type='hidden' name='html' id='html' value='" +html+ "' />";
+        sData = sData + "<input type='hidden' name='url' id='url' value='" +url+ "' />";
         sData = sData + "<input type='hidden' name='extra_params' id='extra_params' value='" +extra_params+ "' />";
         sData = sData + "</form>";
         sData = sData + "<script type='text/javascript'>";

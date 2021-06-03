@@ -124,12 +124,6 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             success: function (response) {
                 mask.hide();
                 var params = response.request.params;
-                var isJSON = MasterApp.util.isJson(response.responseText);
-                if (!isJSON) {
-                    var html = response.responseText + '';
-                    MasterApp.report.generateReport(params, html);
-                    return;
-                }
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success) {
                     if (json.value && json.value.length > 0) {
@@ -139,6 +133,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         tabMagnament.expand(false);
                         tabMagnament.setDisabled(false);
                         MasterApp.report.loadValues(json.value);
+                    }else{
+                        MasterApp.report.generateReport(params, json.value);
                     }
                 }else{
                     Ext.MessageBox.show({

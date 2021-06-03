@@ -10,78 +10,88 @@ Ext.onReady(function () {
     var queryString = window.location.search;
     var urlParams = new URLSearchParams(queryString);
     var title = urlParams.get('title');
-    var html = urlParams.get('html');
-    alert(html);
+    var url = urlParams.get('url');
+    url = getUrl(url);
+ 
     Ext.create('Ext.Viewport', {
         layout: 'border',
         title: 'Reporte',
         items: [{
             xtype: 'panel',
-            title:title,
+            title: title,
             region: 'center',
+         //   id:'content_iframe',
+             html: '<iframe height="100%"  width="100%" src="'+url+'" id="mainBuffer" name="mainBuffer"></iframe>',
             tbar: [{
-                xtype:'button',
-                iconCls:'fa fa-file-excel-o',
+                xtype: 'button',
+                iconCls: 'fa fa-file-excel-o',
                 tooltip: 'Exportar a Excel',
                 tooltipType: 'title',
-                handler:function(){
-                    downloadReport(urlParams,'excel');
+                handler: function () {
+                    downloadReport(urlParams, 'excel');
                 }
-            },'-',{
-                xtype:'button',
-                iconCls:'fa fa-file-word-o',
+            }, '-', {
+                xtype: 'button',
+                iconCls: 'fa fa-file-word-o',
                 tooltip: 'Exportar a Word',
                 tooltipType: 'title',
-                handle:function(){
+                handle: function () {
                     downloadReport('word');
                 }
-            },'-',{
-                xtype:'button',
-                iconCls:'fa fa-file-pdf-o',
+            }, '-', {
+                xtype: 'button',
+                iconCls: 'fa fa-file-pdf-o',
                 tooltip: 'Exportar a Pdf',
                 tooltipType: 'title',
-                handle:function(){
+                handle: function () {
                     downloadReport('pdf');
                 }
-            },'-',{
-                xtype:'button',
-                iconCls:'fa fa-file-code-o',
+            }, '-', {
+                xtype: 'button',
+                iconCls: 'fa fa-file-code-o',
                 tooltip: 'Exportar Odt',
                 tooltipType: 'title',
-                handle:function(){
+                handle: function () {
                     downloadReport('odt');
                 }
-            },'-',{
-                xtype:'button',
-                iconCls:'fa fa-print',
+            }, '-', {
+                xtype: 'button',
+                iconCls: 'fa fa-print',
                 tooltip: 'Imprimir',
                 tooltipType: 'title',
-                handle:function(){
+                handle: function () {
                     downloadReport('print');
                 }
             }]
         }]
     });
-
-    function downloadReport(urlParams, type){
+  //  var iframe = Ext.get('mainBuffer');
+   // iframe.dom.src = './report.html';
+    function downloadReport(urlParams, type) {
         var download = {
             url: 'app/executebuttons',
             method: 'GET',
             scope: this,
             params: {
                 idregister: urlParams.get('idregister'),
-                idsection:  urlParams.get('idsection'),
+                idsection: urlParams.get('idsection'),
                 idmenu: urlParams.get('idmenu'),
                 idbutton: urlParams.get('idbutton'),
                 name: urlParams.get('namebutton'),
-                action:urlParams.get('action'),
-                extra_params:urlParams.get('extra_params'),
-                report_format:type
+                action: urlParams.get('action'),
+                extra_params: urlParams.get('extra_params'),
+                report_format: type
             },
             success: function (response) {
                 var json = Ext.JSON.decode(response.responseText);
             }
         };
         Ext.Ajax.request(download);
+    }
+
+    function getUrl(url) {
+        var link = document.createElement('a');
+        link.href = url;
+        return link.href;
     }
 });
