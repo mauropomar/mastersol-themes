@@ -167,7 +167,7 @@ const executeFunctionsButtons = async (req, objects) => {
     console.log(extra_params)
 
     var success = false;
-    var result = {'btn': '', 'type': '', 'value': '', 'msg': ''}
+    var result = {'btn': '', 'type': '', 'value': '', 'msg': '', 'name':''}
     let flagResult = false
     if(idbutton) {
         const param_button = ['cfgapl.sections_buttons',idbutton]
@@ -206,14 +206,14 @@ const executeFunctionsButtons = async (req, objects) => {
                             else{
                                 success = true;
                                 let resultReport = await objects.reports.getJasper(report_name)
-                                result = {'btn': idbutton, 'type': 5, 'value': resultReport.jasper, 'msg': resultReport.msg}
+                                result = {'btn': idbutton, 'type': 5, 'value': resultReport.jasper, 'msg': resultReport.msg, 'name': resultInform.rows[0].fn_get_register[0].name}
                                 flagResult = true
                             }
                         }
                         else{ //generar y devolver el reporte
                             success = true;                            
                             let resultReport = await objects.reports.getJasper(report_name)
-                            result = {'btn': idbutton, 'type': 5, 'value': resultReport.jasper, 'msg': resultReport.msg}
+                            result = {'btn': idbutton, 'type': 5, 'value': resultReport.jasper, 'msg': resultReport.msg, 'name': resultInform.rows[0].fn_get_register[0].name}
                             flagResult = true
                         }
                     }
@@ -226,7 +226,7 @@ const executeFunctionsButtons = async (req, objects) => {
             }
         }
     }
-    return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg}
+    return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name}
 }
 
 

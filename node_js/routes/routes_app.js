@@ -311,7 +311,7 @@ router.get('/executebuttons', async function (req, res) {
                 let arr = report_params.split(',');
                 for(let i=0;i<arr.length;i++){
                     let elem = arr[i]
-                    let arrElem = elem.split(':')
+                    let arrElem = elem.split('=>')
                     if(arrElem) {
                         objParams[''+arrElem[0]+''] = arrElem[1]
                     }
@@ -351,21 +351,27 @@ router.get('/executebuttons', async function (req, res) {
                     dirFile = dirFile + '.doc'
                     print = jasper.export(report, 'doc');
                 }
+                else if(req.query.report_format === 'odt') {
+                    tmpFile = tmpFile + '.odt'
+                    dirFile = dirFile + '.odt'
+                    print = jasper.export(report, 'odt');
+                }
                 let resultSaveFile = await objects.reports.saveReportFile(tmpFile, print)
                 res.json({
                     'success': resultSaveFile.success,
                     'btn': result.btn,
                     'type': 5,
                     'value': dirFile,
-                    'msg': resultSaveFile.msg
+                    'msg': resultSaveFile.msg,
+                    'name': result.name
                 })
             }
             else
-                res.json({'success': false, 'btn':  result.btn, 'type': 5, 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte'})
-        }, 1000);
+                res.json({'success': false, 'btn':  result.btn, 'type': 5, 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte', 'name': result.name})
+        }, 1500);
     }    
     else {
-        return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg})
+        return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name})
     }
 })
 

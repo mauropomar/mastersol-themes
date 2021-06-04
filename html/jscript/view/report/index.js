@@ -27,7 +27,7 @@ Ext.onReady(function () {
                 tooltip: 'Exportar a Excel',
                 tooltipType: 'title',
                 handler: function () {
-                    downloadReport(urlParams, 'excel');
+                    downloadReport(urlParams, 'xlsx');
                 }
             }, '-', {
                 xtype: 'button',
@@ -35,7 +35,7 @@ Ext.onReady(function () {
                 tooltip: 'Exportar a Word',
                 tooltipType: 'title',
                 handler: function () {
-                    downloadReport(urlParams,'word');
+                    downloadReport(urlParams,'docx');
                 }
             }, '-', {
                 xtype: 'button',
