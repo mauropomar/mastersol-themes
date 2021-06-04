@@ -93,11 +93,9 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
         store.each(function (rec) {
-            if(rec.data.valor != null && rec.data.valor !== '') {
-                var field = rec.data.name;
-                var value = MasterApp.util.getVal(rec, rec.data.valor);
-                stringArray += field + '=>' + value + ',';
-            }
+            var field = rec.data.name;
+            var value = MasterApp.util.getVal(rec, rec.data.valor);
+            stringArray += field + '=>' + value + ',';
         });
         stringArray = stringArray.substring(0, stringArray.length - 1);
         return stringArray;
@@ -117,15 +115,15 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var extra_params = MasterApp.tools.getExtraParams();
         sData = "<form name='redirect' id='redirect' action='report.html' method='GET'>";
         sData = sData + "<input type='hidden' name='title' id='title' value='" + title + "' />";
-        sData = sData + "<input type='hidden' name='idregister' id='idregister' value='" +idregister + "' />";
-        sData = sData + "<input type='hidden' name='idsection' id='idsection' value='" +idsection + "' />";
-        sData = sData + "<input type='hidden' name='idmenu' id='idmenu' value='" +idmenu + "' />";
-        sData = sData + "<input type='hidden' name='idbutton' id='idbutton' value='" +idbutton + "' />";
-        sData = sData + "<input type='hidden' name='namebutton' id='namebutton' value='" +namebutton + "' />";
-        sData = sData + "<input type='hidden' name='action' id='action' value='" +action + "' />";
-        sData = sData + "<input type='hidden' name='format' id='format' value='" +format + "' />";
-        sData = sData + "<input type='hidden' name='url' id='url' value='" +url+ "' />";
-        sData = sData + "<input type='hidden' name='extra_params' id='extra_params' value='" +extra_params+ "' />";
+        sData = sData + "<input type='hidden' name='idregister' id='idregister' value='" + idregister + "' />";
+        sData = sData + "<input type='hidden' name='idsection' id='idsection' value='" + idsection + "' />";
+        sData = sData + "<input type='hidden' name='idmenu' id='idmenu' value='" + idmenu + "' />";
+        sData = sData + "<input type='hidden' name='idbutton' id='idbutton' value='" + idbutton + "' />";
+        sData = sData + "<input type='hidden' name='namebutton' id='namebutton' value='" + namebutton + "' />";
+        sData = sData + "<input type='hidden' name='action' id='action' value='" + action + "' />";
+        sData = sData + "<input type='hidden' name='format' id='format' value='" + format + "' />";
+        sData = sData + "<input type='hidden' name='url' id='url' value='" + url + "' />";
+        sData = sData + "<input type='hidden' name='extra_params' id='extra_params' value='" + extra_params + "' />";
         sData = sData + "</form>";
         sData = sData + "<script type='text/javascript'>";
         sData = sData + "document.redirect.submit();</script>";
@@ -212,18 +210,18 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         });
         var store = combo.getStore();
         var values = (Ext.isArray(rec.data.valor1)) ? rec.data.valor1.join(',') : rec.data.valor1;
-        rec.set('valor1', values);
+        rec.set('valor', values);
         store.proxy.url = 'app/foreignkey';
         store.proxy.extraParams = {
             idregistro: rec.data.idregistro,
             idsection: idsection
         };
         store.load({
-                callback: function (store, records) {
-                    var values = (values) ? values.split(',') : combo.getValue();
-                    combo.setValue(values);
-                }
+            callback: function (store, records) {
+                var values = (values) ? values.split(',') : combo.getValue();
+                combo.setValue(values);
             }
+        }
         );
         column.setEditor(combo);
     },
