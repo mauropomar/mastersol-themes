@@ -311,7 +311,7 @@ router.get('/executebuttons', async function (req, res) {
                 let arr = report_params.split(',');
                 for(let i=0;i<arr.length;i++){
                     let elem = arr[i]
-                    let arrElem = elem.split(':')
+                    let arrElem = elem.split('=>')
                     if(arrElem) {
                         objParams[''+arrElem[0]+''] = arrElem[1]
                     }
