@@ -20,8 +20,7 @@ Ext.onReady(function () {
             xtype: 'panel',
             title: title,
             region: 'center',
-         //   id:'content_iframe',
-             html: '<iframe height="100%"  width="100%" src="'+url+'" id="mainBuffer" name="mainBuffer"></iframe>',
+            html: '<iframe height="100%"  width="100%" src="'+url+'" id="mainBuffer" name="mainBuffer"></iframe>',
             tbar: [{
                 xtype: 'button',
                 iconCls: 'fa fa-file-excel-o',
@@ -35,7 +34,7 @@ Ext.onReady(function () {
                 iconCls: 'fa fa-file-word-o',
                 tooltip: 'Exportar a Word',
                 tooltipType: 'title',
-                handle: function () {
+                handler: function () {
                     downloadReport(urlParams,'word');
                 }
             }, '-', {
@@ -43,7 +42,7 @@ Ext.onReady(function () {
                 iconCls: 'fa fa-file-pdf-o',
                 tooltip: 'Exportar a Pdf',
                 tooltipType: 'title',
-                handle: function () {
+                handler: function () {
                     downloadReport(urlParams,'pdf');
                 }
             }, '-', {
@@ -51,7 +50,7 @@ Ext.onReady(function () {
                 iconCls: 'fa fa-file-code-o',
                 tooltip: 'Exportar Odt',
                 tooltipType: 'title',
-                handle: function () {
+                handler: function () {
                     downloadReport(urlParams,'odt');
                 }
             }, '-', {
@@ -59,14 +58,13 @@ Ext.onReady(function () {
                 iconCls: 'fa fa-print',
                 tooltip: 'Imprimir',
                 tooltipType: 'title',
-                handle: function () {
+                handler: function () {
                     downloadReport(urlParams,'print');
                 }
             }]
         }]
     });
-  //  var iframe = Ext.get('mainBuffer');
-   // iframe.dom.src = './report.html';
+
     function downloadReport(urlParam, type) {
         var download = {
             url: 'app/executebuttons',
@@ -84,14 +82,25 @@ Ext.onReady(function () {
             },
             success: function (response) {
                 var json = Ext.JSON.decode(response.responseText);
+                if (json.success) {
+                    exportFile(json.value);
+                }
+
             }
         };
         Ext.Ajax.request(download);
     }
 
-    function getUrl(url) {
+    function getUrl(dir) {
         var link = document.createElement('a');
-        link.href = url;
+        link.href = dir;
         return link.href;
+    }
+
+    function exportFile(dir) {
+        var link = document.createElement('a');
+        link.href = dir;
+        link.download = dir.substr(dir.lastIndexOf('/') + 1);
+        link.click();
     }
 });
