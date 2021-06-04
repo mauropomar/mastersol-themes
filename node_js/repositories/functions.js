@@ -86,6 +86,19 @@ cron.schedule('* * * * *', async () => {
 
 });
 
+cron.schedule('1 * * * *', async () => {
+    const dirFolder = global.appRootApp + '\\resources\\reports\\tmp'
+    fs.readdir(dirFolder, (err, files) => {
+        if (err) console.log(err)
+
+        for (const file of files) {
+            fs.unlink(dirFolder + '\\' + file, err => {
+                if (err) console.log(err)
+            });
+        }
+    });
+});
+
 const executeProcessFunction = (pro, query) => new Promise(async (resolve, reject) => {
     if (query != '') {
         try {
