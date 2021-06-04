@@ -5,6 +5,7 @@
 /nbproject/
 /.idea
 /.sencha
+/resources/reports/*
 /resources/files/*
 
 #Files by Project

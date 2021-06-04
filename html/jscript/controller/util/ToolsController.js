@@ -135,7 +135,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         MasterApp.report.loadValues(json.value);
                     }
                     if (json.type === 5)
-                        MasterApp.report.generateReport(params, json.value);
+                        MasterApp.report.generateReport(params, json.value, json.name);
                 } else {
                     Ext.MessageBox.show({
                         title: 'Error',

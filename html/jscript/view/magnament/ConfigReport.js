@@ -40,17 +40,10 @@ Ext.define('MasterSol.view.magnament.ConfigReport', {
     }],
     viewConfig: {},
     tbar: [{
-        iconCls: 'fa fa-save',
-        id: 'btn_save_config-report',
-        tooltip: 'Guardar Cambios',
-        handler: function () {
-            //  MasterApp.register.saveChanges();
-        }
-    }, {
         iconCls: 'fa fa-close',
         tooltip: 'Cancelar',
         handler: function () {
-            //  MasterApp.register.onChangesReject();
+              MasterApp.report.new();
         }
     },  '->', {
         xtype: 'tbtext',

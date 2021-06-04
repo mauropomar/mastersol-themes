@@ -49,7 +49,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
         store.each(function (rec) {
-            rec.set('valor1', '');
+            rec.set('valor', '');
             rec.commit();
         });
     },
@@ -87,66 +87,6 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         }
         return (idx > -1) ? false : true;
     },
-    //guarda los cambios del registro seleccionado
-    saveChanges: function () {
-        var gridsection = MasterApp.globals.getGridSection();
-        var grid = Ext.ComponentQuery.query('#config-report-view')[0];
-        var mask = new Ext.LoadMask(grid, {
-            msg: 'Guardando Cambios...'
-        });
-        var store = grid.getStore();
-        mask.show();
-        if (!this.isValid()) {
-            mask.hide();
-            return;
-        }
-        ;
-        var data = MasterApp.register.getData(store);
-        var idrecordsection = null;
-        var idsection = MasterApp.util.getIdSectionActive();
-        var idmenu = MasterApp.util.getIdMenuActive();
-        var idrecordparent = gridsection.up('panel').idrecordparent;
-        var idregisterparent = (idrecordparent) ? idrecordparent : 0;
-        var idparentsection = MasterApp.util.getIdParentSectionActive();
-        var action = '13';
-        if (this.isEdit) { //si estas editando
-            var record = MasterApp.globals.getRecordSection();
-            if (record == null) {
-                mask.hide();
-                MasterApp.util.showMessageInfo('Debe seleccionar un registro para esta sesión');
-                return;
-            }
-            ;
-            idrecordsection = record.data.id;
-            action = '14';
-        }
-        var save = {
-            url: 'app/crudregister',
-            method: 'POST',
-            scope: this,
-            params: {
-                'idregistro': idrecordsection,
-                'idsection': idsection,
-                'idseccionpadre': idparentsection,
-                'idpadreregistro': idregisterparent,
-                'idmenu': idmenu,
-                'accion': action,
-                'data': Ext.encode(data),
-                'section_checked': gridsection.section_checked
-            },
-            callback: function (options, success, response) {
-                mask.hide();
-                var json = Ext.JSON.decode(response.responseText);
-                if (json.success == true) {
-                    store.commitChanges();
-                    grid.getView().refresh();
-                } else {
-                    MasterApp.util.showMessageInfo(json.message);
-                }
-            }
-        };
-        Ext.Ajax.request(save);
-    },
 
     getArrayStringKey: function () {
         var stringArray = '';
@@ -163,9 +103,11 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         return stringArray;
     },
 
-    generateReport: function (params, url) {
+    generateReport: function (params, url, title) {
+        var grid = Ext.ComponentQuery.query('#config-report-view')[0];
+        var store = grid.getStore();
+        store.removeAll();
         var format = 'html';
-        var title = 'Producción Agropecuaria';
         var idregister = params.idregister;
         var idsection = params.idsection;
         var idmenu = params.idmenu;
