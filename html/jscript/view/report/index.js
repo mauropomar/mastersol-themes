@@ -101,6 +101,7 @@ Ext.onReady(function () {
         var link = document.createElement('a');
         link.href = dir;
         link.download = dir.substr(dir.lastIndexOf('/') + 1);
+        alert(link.download);
         link.click();
     }
 });
