@@ -351,6 +351,11 @@ router.get('/executebuttons', async function (req, res) {
                     dirFile = dirFile + '.doc'
                     print = jasper.export(report, 'doc');
                 }
+                else if(req.query.report_format === 'odt') {
+                    tmpFile = tmpFile + '.odt'
+                    dirFile = dirFile + '.odt'
+                    print = jasper.export(report, 'odt');
+                }
                 let resultSaveFile = await objects.reports.saveReportFile(tmpFile, print)
                 res.json({
                     'success': resultSaveFile.success,
@@ -362,7 +367,7 @@ router.get('/executebuttons', async function (req, res) {
             }
             else
                 res.json({'success': false, 'btn':  result.btn, 'type': 5, 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte'})
-        }, 1000);
+        }, 1500);
     }    
     else {
         return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg})
