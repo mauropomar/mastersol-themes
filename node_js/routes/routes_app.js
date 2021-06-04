@@ -362,15 +362,16 @@ router.get('/executebuttons', async function (req, res) {
                     'btn': result.btn,
                     'type': 5,
                     'value': dirFile,
-                    'msg': resultSaveFile.msg
+                    'msg': resultSaveFile.msg,
+                    'name': result.name
                 })
             }
             else
-                res.json({'success': false, 'btn':  result.btn, 'type': 5, 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte'})
+                res.json({'success': false, 'btn':  result.btn, 'type': 5, 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte', 'name': result.name})
         }, 1500);
     }    
     else {
-        return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg})
+        return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name})
     }
 })
 
