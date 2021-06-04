@@ -156,7 +156,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
             if(rec.data.valor != null && rec.data.valor !== '') {
                 var field = rec.data.name;
                 var value = MasterApp.util.getVal(rec, rec.data.valor);
-                stringArray += field + ':' + value + ',';
+                stringArray += field + '=>' + value + ',';
             }
         });
         stringArray = stringArray.substring(0, stringArray.length - 1);
