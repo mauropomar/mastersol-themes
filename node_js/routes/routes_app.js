@@ -309,7 +309,7 @@ router.get('/executebuttons', async function (req, res) {
             }
             else
                 res.json({'success': false, 'btn':  result.btn, 'type': 5, 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte', 'name': result.name})
-        }, 2000);
+        }, 2500);
     }    
     else {
         return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name})

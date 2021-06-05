@@ -51,7 +51,6 @@ const addShortcut = async (req) => {
     arrParams.push(null)
     arrParams.push(null)
     arrParams.push(req.session.id_user)
-    console.log(arrParams)
 
     const query = "SELECT cfgapl.fn_insert_register($1,$2,$3,$4,$5,$6)"
     const result = await pool.executeQuery(query, arrParams)

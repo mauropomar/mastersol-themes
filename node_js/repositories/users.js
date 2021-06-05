@@ -34,6 +34,7 @@ const insertOptionuser = async (req) => {
         req.body.idlanguajes,
         req.body.idrol
     ]
+    console.log(params)
     const query = "SELECT security.fn_insert_user_options($1,$2,$3,$4,$5)"
     const result = await pool.executeQuery(query, params)
     if (result.success === false) {
