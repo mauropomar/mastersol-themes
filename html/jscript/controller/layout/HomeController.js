@@ -18,7 +18,7 @@ Ext.define('MasterSol.controller.layout.HomeController', {
             handleNodeDrop: function (data, record, position) {
                 var node = data.records[0];
                 if (node.isLeaf())
-                   MasterApp.home.addMenu(node);
+                    MasterApp.home.addMenu(node);
             }
         });
     },
@@ -55,26 +55,27 @@ Ext.define('MasterSol.controller.layout.HomeController', {
         });
         mask.show();
         var save = {
-            url: '../mastersol/app/data/secciones.json',
-            method: 'GET',
+            url: 'app/addshortcut',
+            method: 'POST',
             scope: this,
             params: {
-                idopcion: node.id,
-                accion:'9',
+                id_menu: node.id,
             },
             success: function (response) {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
-                this.insertNode(node);
+                if (json.success == true) {
+                    this.insertNode(node.data);
+                }
             }
         };
         Ext.Ajax.request(save);
     },
 
-    insertNode: function (node) {
+    insertNode: function (data) {
         var dataview = Ext.ComponentQuery.query('dataview-home')[0].down('dataview');
         var store = dataview.getStore();
-        var index = store.findExact('nombre', node.data.text);
+        var index = store.findExact('nombre', data.text);
         if (index > -1) {
             Ext.Msg.show({
                 title: 'Información',
@@ -86,10 +87,10 @@ Ext.define('MasterSol.controller.layout.HomeController', {
         }
         ;
         var newRecord = new MasterSol.model.layout.DataViewModel({
-            id: node.id,
-            nombre: node.data.text,
+            id: data.id,
+            nombre: data.text,
             icon: 'camion2.jpg',
-            sectionId: node.data.sectionId
+            sectionId: data.sectionId
         });
         store.insert(store.getCount(), newRecord);
     },
@@ -104,7 +105,7 @@ Ext.define('MasterSol.controller.layout.HomeController', {
                     scope: this,
                     params: {
                         id: record.data.id,
-                        accion:'10',
+                        accion: '10',
                     },
                     success: function (response) {
                         var store = Ext.ComponentQuery.query('dataview-home')[0].down('dataview').getStore();
