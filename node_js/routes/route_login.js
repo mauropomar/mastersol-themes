@@ -1,6 +1,7 @@
 var express = require("express")
 var router = express.Router()
 const objects = require('../modules')
+const pool = require('../connection/server-db')
 var app = express()
 
 /*Ruta principal*/
@@ -20,7 +21,16 @@ router.post("/login", async function (req, res) {
         req.session.id_organizations = result.vals.id_organizations
         req.session.id_rol = result.vals.id_rol
         req.session.id_user = result.vals.id_user
-        res.json({'success': true, 'user': result.vals.id_user})
+        req.session.language = ''
+        //Buscar 1er lenguaje de este user
+        const paramsUser = ['security.users_language', null, "WHERE id_users = '" + req.session.id_user + "' "];
+        const resultUser= await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsUser);
+        if(resultUser && resultUser.rows[0].fn_get_register != null) {
+            console.log(resultUser.row)
+            req.session.language = resultUser.rows[0].fn_get_register[0].id_languages
+        }
+
+        res.json({'success': true, 'user': result.vals.id_user, 'rol': result.vals.id_rol, 'language': req.session.language})
     } else {
         res.json({'success': false})
     }
