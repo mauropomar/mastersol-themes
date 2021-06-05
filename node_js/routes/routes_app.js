@@ -3,69 +3,6 @@ var router = express.Router();
 var fs = require('fs');
 const objects = require('../modules');
 
-router.get('/report', async function(req, res) {
-   const result = await objects.reports.getJasper(req)
-   let jasper = result.jasper
-   let msg = result.msg
-   setTimeout(function(){
-       if(jasper) {
-           let report = {
-               report: 'hw',
-               data: {
-                   nombre: req.query.nombre
-               }
-           };
-           let print = null
-           if(req.query.report_format === 'pdf') {
-               print = jasper.export(report, 'pdf');
-               res.set({
-                   'Content-type': 'application/pdf',
-                   'Content-Length': print.length
-               });
-           }
-           else if(req.query.report_format === 'html') {
-               print = jasper.export(report, 'html');
-               res.set({
-                   'Content-type': 'text/html',
-                   'Content-Length': print.length
-               });
-           }
-           else if(req.query.report_format === 'xlsx') {
-               print = jasper.export(report, 'xlsx');
-               res.set({
-                   'Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                   'Content-Length': print.length
-               });
-           }
-           else if(req.query.report_format === 'xls') {
-               print = jasper.export(report, 'xls');
-               res.set({
-                   'Content-type': 'application/vnd.ms-excel',
-                   'Content-Length': print.length
-               });
-           }
-           else if(req.query.report_format === 'docx') {
-               print = jasper.export(report, 'docx');
-               res.set({
-                   'Content-type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                   'Content-Length': print.length
-               });
-           }
-           else if(req.query.report_format === 'doc') {
-               print = jasper.export(report, 'doc');
-               res.set({
-                   'Content-type': 'application/msword',
-                   'Content-Length': print.length
-               });
-           }
-           res.send(print);
-       }
-       else
-           res.json({'success': false, 'error': msg})
-   }, 1500);
-
-});
-
 /*Obtener lenguajes*/
 router.get('/languages', async function (req, res) {
     const result = await objects.languages.getLanguages(req)
@@ -84,6 +21,15 @@ router.post('/delshortcut', async function (req, res) {
         return res.json(result)
     } else {
         res.json(result)
+    }
+})
+
+router.post('/addshortcut', async function (req, res) {
+    const result = await objects.shortcut.addShortcut(req)
+    if (result.success === false) {
+        return res.json(result)
+    }else {
+        return res.json({'success': true, 'datos': result, 'message': ''})
     }
 })
 
@@ -285,11 +231,6 @@ router.get('/managerfunctionsevent', async function (req, res) {
     /*var result = await objects.functions.generateFunctionsTimeEvents(req, objects)
     res.json({'data': result})*/
 })
-
-/*router.post('/executebuttons', async function (req, res) {
-    var result = await objects.functions.executeFunctionsButtons(req, objects)
-    res.json({'data': result})
-})*/
 
 router.get('/executebuttons', async function (req, res) {
     var result = await objects.functions.executeFunctionsButtons(req, objects)
