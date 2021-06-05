@@ -110,6 +110,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var namebutton = params.name;
         var action = params.action;
         var extra_params = MasterApp.tools.getExtraParams();
+        this.removeAll();
         sData = "<form name='redirect' id='redirect' action='report.html' method='GET'>";
         sData = sData + "<input type='hidden' name='title' id='title' value='" + title + "' />";
         sData = sData + "<input type='hidden' name='idregister' id='idregister' value='" + idregister + "' />";
@@ -127,9 +128,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         name_windows = window.open("", "_blank");
         name_windows.document.write(sData);
         name_windows.document.close();
-        var grid = Ext.ComponentQuery.query('#config-report-view')[0];
-        var store = grid.getStore();
-        store.removeAll();
+      
     },
 
     setTextField: function (column) {
@@ -267,6 +266,12 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
             });
         }
     },
+
+    removeAll:function(){
+        var grid = Ext.ComponentQuery.query('#config-report-view')[0];
+        var store = grid.getStore();
+        store.removeAll();
+    }
 
 
 });
