@@ -101,10 +101,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         return stringArray;
     },
 
-    generateReport: function (params, url, title) {
-        var grid = Ext.ComponentQuery.query('#config-report-view')[0];
-        var store = grid.getStore();
-        store.removeAll();
+    generateReport: function (params, url, title) {        
         var format = 'html';
         var idregister = params.idregister;
         var idsection = params.idsection;
@@ -130,6 +127,9 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         name_windows = window.open("", "_blank");
         name_windows.document.write(sData);
         name_windows.document.close();
+        var grid = Ext.ComponentQuery.query('#config-report-view')[0];
+        var store = grid.getStore();
+        store.removeAll();
     },
 
     setTextField: function (column) {

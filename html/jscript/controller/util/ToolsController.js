@@ -125,6 +125,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 mask.hide();
                 var params = response.request.params;
                 var json = Ext.JSON.decode(response.responseText);
+             //   MasterApp.report.generateReport(params, './resources/reportes.html', 'Table x');
+             //   return;
                 if (json.success) {
                     if (json.type === 4) {
                         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
