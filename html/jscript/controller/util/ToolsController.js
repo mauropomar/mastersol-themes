@@ -125,8 +125,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 mask.hide();
                 var params = response.request.params;
                 var json = Ext.JSON.decode(response.responseText);
-             //   MasterApp.report.generateReport(params, './resources/reportes.html', 'Table x');
-             //   return;
+                //  MasterApp.report.generateReport(params, './resources/reportes.html', 'Table x');
+                //  return;             
                 if (json.success) {
                     if (json.type === 4) {
                         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
@@ -136,8 +136,11 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         tabMagnament.setDisabled(false);
                         MasterApp.report.loadValues(json.value);
                     }
-                    if (json.type === 5)
-                        MasterApp.report.generateReport(params, json.value, json.name);
+                    if (json.type === 5) {
+                        var extra_params = MasterApp.tools.getExtraParams();
+                        MasterApp.report.removeAll();
+                        MasterApp.report.generateReport(params, json.value, json.name, extra_params);
+                    }
                 } else {
                     Ext.MessageBox.show({
                         title: 'Error',
@@ -296,4 +299,4 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         return params;
     }
 })
-;
+    ;

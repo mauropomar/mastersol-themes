@@ -101,16 +101,14 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         return stringArray;
     },
 
-    generateReport: function (params, url, title) {        
+    generateReport: function (params, url, title, extraParams) {        
         var format = 'html';
         var idregister = params.idregister;
         var idsection = params.idsection;
         var idmenu = params.idmenu;
         var idbutton = params.idbutton;
         var namebutton = params.name;
-        var action = params.action;
-        var extra_params = MasterApp.tools.getExtraParams();
-        this.removeAll();
+        var action = params.action;        
         sData = "<form name='redirect' id='redirect' action='report.html' method='GET'>";
         sData = sData + "<input type='hidden' name='title' id='title' value='" + title + "' />";
         sData = sData + "<input type='hidden' name='idregister' id='idregister' value='" + idregister + "' />";
@@ -121,7 +119,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         sData = sData + "<input type='hidden' name='action' id='action' value='" + action + "' />";
         sData = sData + "<input type='hidden' name='format' id='format' value='" + format + "' />";
         sData = sData + "<input type='hidden' name='url' id='url' value='" + url + "' />";
-        sData = sData + "<input type='hidden' name='extra_params' id='extra_params' value='" + extra_params + "' />";
+        sData = sData + "<input type='hidden' name='extra_params' id='extra_params' value='" + extraParams + "' />";
         sData = sData + "</form>";
         sData = sData + "<script type='text/javascript'>";
         sData = sData + "document.redirect.submit();</script>";
@@ -270,7 +268,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
     removeAll:function(){
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
-        store.removeAll();
+        store.loadData([]);
     }
 
 
