@@ -26,7 +26,6 @@ router.post("/login", async function (req, res) {
         const paramsUser = ['security.users_language', null, "WHERE id_users = '" + req.session.id_user + "' "];
         const resultUser= await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsUser);
         if(resultUser && resultUser.rows[0].fn_get_register != null) {
-            console.log(resultUser.row)
             req.session.language = resultUser.rows[0].fn_get_register[0].id_languages
         }
 
