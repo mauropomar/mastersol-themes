@@ -20,8 +20,15 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.selEnRows = false;
             this.selEnCascade = false;
             this.idRol = null;
+            this.idLanguage = null;
             this.actionKeyCrtlF = false;
             this.isLoading = false;
+        },        
+        getIdRol: function () {
+            return this.idRol;
+        },
+        getIdLanguage: function () {
+            return this.idLanguage;
         },
         getOptionSelected: function () {
             return this.optionSelect;
@@ -110,11 +117,11 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         setOptionSelect: function (item) {
             this.optionSelect = item;
         },
-        getIdRol: function () {
-            return this.idRol;
+        setIdRol: function (id) {
+            this.idRol = id;
         },
-        setIdRol: function (idrol) {
-            this.idRol = idrol;
+        setIdLanguage: function (id) {
+            this.idLanguage = id;
         },
         setLoading: function (val) {
             this.isLoading = val;

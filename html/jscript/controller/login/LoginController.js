@@ -97,9 +97,9 @@ Ext.define('MasterSol.controller.login.LoginController', {
                     Ext.ComponentQuery.query('#options-toolbar')[0].show();
                     Ext.ComponentQuery.query('#view_login')[0].hide();
                     Ext.create('MasterSol.view.layout.Viewport');
-                    var idrol = 1;
-                    MasterApp.globals.setIdRol(idrol);
-                    this.configureOptionsByRol(idrol);
+                    MasterApp.globals.setIdRol(json.rol);
+                    MasterApp.globals.setIdLanguage(json.language);
+                 //   this.configureOptionsByRol(json.rol);
                     this.setAliasOtherClass();
                     this.loadOptions();
                 } else {
@@ -113,18 +113,34 @@ Ext.define('MasterSol.controller.login.LoginController', {
     },
 
     loadOptions: function () {
-        Ext.ComponentQuery.query('#comborol')[0].getStore().load();
+        this.loadRols();
+        this.loadLanguages();
         Ext.ComponentQuery.query('#combolanguage')[0].getStore().load();
         MasterApp.theme.setStyle();
         MasterApp.alert.laodInitAlert();
+    },
 
+    loadRols:function(){
+        var id = MasterApp.globals.getIdRol();
+        var combo = Ext.ComponentQuery.query('#comborol')[0];
+        var store = combo.getStore();
+        combo.setValue(id); 
+        store.load();
+    },
+
+    loadLanguages:function(){
+        var id = MasterApp.globals.getIdLanguage();
+        var combo = Ext.ComponentQuery.query('#combolanguage')[0];
+        var store = combo.getStore();
+        combo.setValue(id); 
+        store.load()
     },
     //mostrar u ocultar opciones por rol
     configureOptionsByRol: function (id_rol) {
-        if (id_rol != 1) {
+       // if (id_rol != 1) {
             var panelConfig = Ext.ComponentQuery.query('tree-config')[0];
             Ext.ComponentQuery.query('menu-panel')[0].remove(panelConfig);
-        }
+       // }
     },
 
 
