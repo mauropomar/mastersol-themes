@@ -99,7 +99,6 @@ Ext.define('MasterSol.controller.login.LoginController', {
                     Ext.create('MasterSol.view.layout.Viewport');
                     MasterApp.globals.setIdRol(json.rol);
                     MasterApp.globals.setIdLanguage(json.language);
-                 //   this.configureOptionsByRol(json.rol);
                     this.setAliasOtherClass();
                     this.loadOptions();
                 } else {
@@ -120,27 +119,38 @@ Ext.define('MasterSol.controller.login.LoginController', {
         MasterApp.alert.laodInitAlert();
     },
 
-    loadRols:function(){
+    loadRols: function () {
         var id = MasterApp.globals.getIdRol();
         var combo = Ext.ComponentQuery.query('#comborol')[0];
         var store = combo.getStore();
-        combo.setValue(id); 
-        store.load();
+        combo.setValue(id);
+        store.load({
+            scope:this,
+            callback: function () {
+                this.configureOptionsByRol(id);
+            }
+        });
     },
 
-    loadLanguages:function(){
+    loadLanguages: function () {
         var id = MasterApp.globals.getIdLanguage();
         var combo = Ext.ComponentQuery.query('#combolanguage')[0];
         var store = combo.getStore();
-        combo.setValue(id); 
+        combo.setValue(id);
         store.load()
     },
     //mostrar u ocultar opciones por rol
-    configureOptionsByRol: function (id_rol) {
-       // if (id_rol != 1) {
-            var panelConfig = Ext.ComponentQuery.query('tree-config')[0];
-            Ext.ComponentQuery.query('menu-panel')[0].remove(panelConfig);
-       // }
+    configureOptionsByRol: function (idrol) {
+        var combo = Ext.ComponentQuery.query('#comborol')[0];
+        var store = combo.getStore();
+        var idx = store.findExact('id', idrol);
+        if (idx > -1) {
+            var name = store.getAt(idx).get('nombre');
+            if (name !== 'Administrador') {
+                var panelConfig = Ext.ComponentQuery.query('tree-config')[0];
+                Ext.ComponentQuery.query('menu-panel')[0].remove(panelConfig);
+            }
+        }
     },
 
 
