@@ -246,7 +246,6 @@ router.get('/executebuttons', async function (req, res) {
         setTimeout(async function(){
             if(jasper) {
                 let report_params = req.query.extra_params ? req.query.extra_params : ""
-                let report_format = req.query.report_format ? req.query.report_format : 'html'
                 //Tratar cadena report params
                 let objParams = {}
                 let arr = report_params.split(',');
@@ -309,7 +308,7 @@ router.get('/executebuttons', async function (req, res) {
             }
             else
                 res.json({'success': false, 'btn':  result.btn, 'type': 5, 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte', 'name': result.name})
-        }, 2500);
+        }, 3500);
     }    
     else {
         return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name})
