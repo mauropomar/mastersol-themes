@@ -99,8 +99,8 @@ Ext.define('MasterSol.controller.login.LoginController', {
                     Ext.create('MasterSol.view.layout.Viewport');
                     MasterApp.globals.setIdRol(json.rol);
                     MasterApp.globals.setIdLanguage(json.language);
-                    this.setAliasOtherClass();
                     this.loadOptions();
+                    this.loadCapsules();
                 } else {
                     var div_message = Ext.get('message_login');
                     var message = "Usuario o contraseña incorrecta";
@@ -125,7 +125,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
         var store = combo.getStore();
         combo.setValue(id);
         store.load({
-            scope:this,
+            scope: this,
             callback: function () {
                 this.configureOptionsByRol(id);
             }
@@ -163,7 +163,26 @@ Ext.define('MasterSol.controller.login.LoginController', {
         });
     },
 
-    setAliasOtherClass: function () {
-
+    loadCapsules: function () {
+        var capsules = {
+            url: '../../data/capsules.json',
+            method: 'GET',
+            scope: this,
+            params: {},
+            success: function (response) {
+                var json = Ext.JSON.decode(response.responseText);
+                var data = json.data;
+                for (var i = 0; i < data.length; i++) {
+                    var comps = data[i].components;
+                    for (var j = 0; j < comps.length; j++) {
+                          var clasName = comps[j].view;
+                          var comp = Ext.create(clasName);
+                          var controller = comp.control;
+                          MasterApp.getController(controller).render(comp);
+                    }
+                }
+            }
+        };
+        Ext.Ajax.request(capsules);
     }
 });
