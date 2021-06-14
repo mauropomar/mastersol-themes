@@ -1,0 +1,12 @@
+{
+  "data":[
+    {
+      "name": "Siembra",
+      "components": [
+        {
+          "view":"Capsules.siembra.view.button.button"
+        }
+      ]
+    }
+  ]
+}

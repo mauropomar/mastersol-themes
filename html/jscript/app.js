@@ -1,3 +1,10 @@
+Ext.Loader.setConfig({
+    enabled : true,
+    paths   : {
+        'Capsules' : 'html/jscript/capsules'
+    }
+});
+
 Ext.application({
     name: 'MasterSol',
     appFolder: 'html/jscript',

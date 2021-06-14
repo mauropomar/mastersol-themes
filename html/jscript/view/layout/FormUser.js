@@ -21,7 +21,7 @@ Ext.define('MasterSol.view.layout.FormUser', {
     tbar: [{
         xtype: 'button',
         iconCls: 'fa fa-save',
-        handler: function(){
+        handler: function () {
             MasterApp.user.save();
         }
     }],
@@ -31,5 +31,42 @@ Ext.define('MasterSol.view.layout.FormUser', {
     }, {
         xtype: 'combolanguage',
         id: 'combolanguage'
-    }, ]
+    }, {
+        xtype:'textfield',
+        allowBlank: true,
+        fieldLabel: 'Contraseña Anterior',
+        id: 'password_last',
+        emptyText: 'password',
+        inputType: 'password',
+        listeners:{
+            change:function(field, newValue, oldValue){
+                MasterApp.user.changeField(field, newValue, oldValue);
+            }
+        }
+    }, {
+        xtype:'textfield',
+        allowBlank: true,
+        fieldLabel: 'Contraseña',
+        id: 'password',
+        emptyText: 'password',
+        inputType: 'password',
+        listeners:{
+            change:function(field, newValue, oldValue){
+                MasterApp.user.changeField(field, newValue, oldValue);
+            }
+        }
+    },{
+        xtype:'textfield',
+        allowBlank: true,
+        fieldLabel: 'Confirmar Contraseña',
+        id: 'confirm_password',
+        emptyText: 'password',
+        inputType: 'password',
+        listeners:{
+            change:function(field, newValue, oldValue){
+                MasterApp.user.changeField(field, newValue, oldValue);
+            }
+        }
+    }
+    ]
 });
