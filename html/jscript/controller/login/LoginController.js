@@ -94,11 +94,13 @@ Ext.define('MasterSol.controller.login.LoginController', {
                 Mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success === true) {
+
                     Ext.ComponentQuery.query('#options-toolbar')[0].show();
                     Ext.ComponentQuery.query('#view_login')[0].hide();
                     Ext.create('MasterSol.view.layout.Viewport');
                     MasterApp.globals.setIdRol(json.rol);
                     MasterApp.globals.setIdLanguage(json.language);
+                    MasterApp.globals.setPassword(response.request.params.password);
                     this.loadOptions();
                     this.loadCapsules();
                 } else {
@@ -114,6 +116,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
     loadOptions: function () {
         this.loadRols();
         this.loadLanguages();
+        MasterApp.user.setValues();
         Ext.ComponentQuery.query('#combolanguage')[0].getStore().load();
         MasterApp.theme.setStyle();
         MasterApp.alert.laodInitAlert();

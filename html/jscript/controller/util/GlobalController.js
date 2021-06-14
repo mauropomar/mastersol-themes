@@ -23,7 +23,8 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.idLanguage = null;
             this.actionKeyCrtlF = false;
             this.isLoading = false;
-        },        
+            this.password = '';
+        },
         getIdRol: function () {
             return this.idRol;
         },
@@ -66,6 +67,9 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         getPanelPrincipalByWindow: function (window) {
             var p = this.getSectionPrincipalByWindow(window);
             return p.up('panel');
+        },
+        getPassword: function () {
+            return this.password;
         },
         setRecordSection: function (rec) {
             this.recSection = rec;
@@ -125,6 +129,9 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         },
         setLoading: function (val) {
             this.isLoading = val;
+        },
+        setPassword: function (val) {
+            this.password = val;
         }
     }
 )
