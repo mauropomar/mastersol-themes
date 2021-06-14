@@ -238,86 +238,138 @@ router.get('/executebuttons', async function (req, res) {
         return res.json(result)
     }
     else if(result.type == 5){
+        let resultado = {'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name}
         let jasper = result.value
-        let print = null
-        let randomName = Math.random()
-        let tmpFile = global.appRootApp + '\\resources\\reports\\tmp\\' + randomName
-        let dirFile = '../resources/reports/tmp/'+randomName
-        setTimeout(async function(){
-            if(jasper) {
-                let report_params = req.query.extra_params ? req.query.extra_params : ""
-                //Tratar cadena report params
-                let objParams = {}
-                let arr = report_params.split(',');
-                for(let i=0;i<arr.length;i++){
-                    let elem = arr[i]
-                    let arrElem = elem.split('=>')
-                    if(arrElem) {
-                        objParams[''+arrElem[0]+''] = arrElem[1]
-                    }
+        let time = 500
+        let flag = false
+        for(let i=0;i<12;i++){
+            if(!flag) {
+                try {
+                    await sleep(time)
+                    resultado = await processJasper(jasper, result, req)
+                    if(resultado.msg != 'No se pudo procesar el reporte')
+                        flag = true
                 }
-                let report = {
-                    report: 'hw',
-                    data: objParams
-                };
-
-                if(req.query.report_format === 'html') {
-                    tmpFile = tmpFile + '.html'
-                    dirFile = dirFile + '.html'
-                    print = jasper.export(report, 'html');
+                catch (e) {
+                    console.log(e)
                 }
-                else if(req.query.report_format === 'pdf') {
-                    tmpFile = tmpFile + '.pdf'
-                    dirFile = dirFile + '.pdf'
-                    print = jasper.export(report, 'pdf');
-                }
-                else if(req.query.report_format === 'xlsx') {
-                    tmpFile = tmpFile + '.xlsx'
-                    dirFile = dirFile + '.xlsx'
-                    print = jasper.export(report, 'xlsx');
-                }
-                else if(req.query.report_format === 'xls') {
-                    tmpFile = tmpFile + '.xls'
-                    dirFile = dirFile + '.xls'
-                    print = jasper.export(report, 'xls');
-                }
-                else if(req.query.report_format === 'docx') {
-                    tmpFile = tmpFile + '.docx'
-                    dirFile = dirFile + '.docx'
-                    print = jasper.export(report, 'docx');
-                }
-                else if(req.query.report_format === 'doc') {
-                    tmpFile = tmpFile + '.doc'
-                    dirFile = dirFile + '.doc'
-                    print = jasper.export(report, 'doc');
-                }
-                else if(req.query.report_format === 'odt') {
-                    tmpFile = tmpFile + '.odt'
-                    dirFile = dirFile + '.odt'
-                    print = jasper.export(report, 'odt');
-                }
-                let resultSaveFile = await objects.reports.saveReportFile(tmpFile, print)
-                res.json({
-                    'success': resultSaveFile.success,
-                    'btn': result.btn,
-                    'type': 5,
-                    'value': dirFile,
-                    'msg': resultSaveFile.msg,
-                    'name': result.name
-                })
             }
-            else
-                res.json({'success': false, 'btn':  result.btn, 'type': 5, 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte', 'name': result.name})
-        }, 3500);
+
+            if(flag) break;
+            time += 500
+        }
+        return res.json(resultado)
     }    
     else {
         return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name})
     }
 })
 
+const processJasper = async (jasper, result, req) => {
+    let print = null
+    let randomName = Math.random()
+    let tmpFile = global.appRootApp + '\\resources\\reports\\tmp\\' + randomName
+    let dirFile = '../resources/reports/tmp/'+randomName
+    if(jasper) {
+        let report_params = req.query.extra_params ? req.query.extra_params : ""
+        //Tratar cadena report params
+        let objParams = {}
+        let arr = report_params.split(',');
+        for(let i=0;i<arr.length;i++){
+            let elem = arr[i]
+            let arrElem = elem.split('=>')
+            if(arrElem) {
+                objParams[''+arrElem[0]+''] = arrElem[1]
+            }
+        }
+        let report = {
+            report: 'hw',
+            data: objParams
+        };
+
+        if(req.query.report_format === 'html') {
+            tmpFile = tmpFile + '.html'
+            dirFile = dirFile + '.html'
+            print = await jasper.export(report, 'html');
+        }
+        else if(req.query.report_format === 'pdf') {
+            tmpFile = tmpFile + '.pdf'
+            dirFile = dirFile + '.pdf'
+            print = await jasper.export(report, 'pdf');
+        }
+        else if(req.query.report_format === 'xlsx') {
+            tmpFile = tmpFile + '.xlsx'
+            dirFile = dirFile + '.xlsx'
+            print = await jasper.export(report, 'xlsx');
+        }
+        else if(req.query.report_format === 'xls') {
+            tmpFile = tmpFile + '.xls'
+            dirFile = dirFile + '.xls'
+            print = await jasper.export(report, 'xls');
+        }
+        else if(req.query.report_format === 'docx') {
+            tmpFile = tmpFile + '.docx'
+            dirFile = dirFile + '.docx'
+            print = await jasper.export(report, 'docx');
+        }
+        else if(req.query.report_format === 'doc') {
+            tmpFile = tmpFile + '.doc'
+            dirFile = dirFile + '.doc'
+            print = await jasper.export(report, 'doc');
+        }
+        else if(req.query.report_format === 'odt') {
+            tmpFile = tmpFile + '.odt'
+            dirFile = dirFile + '.odt'
+            print = await jasper.export(report, 'odt');
+        }
+        if(print === 'No se pudo procesar el reporte') {
+            return {'success': false, 'btn': result.btn, 'type': 5, 'value': '', 'msg': print, 'name': result.name}
+        }
+        else {
+            let resultSaveFile = await objects.reports.saveReportFile(tmpFile, print)
+            return {
+                'success': resultSaveFile.success,
+                'btn': result.btn,
+                'type': 5,
+                'value': dirFile,
+                'msg': resultSaveFile.msg,
+                'name': result.name
+            }
+        }
+    }
+    else
+        return {'success': false, 'btn':  result.btn, 'type': 5, 'value': '', 'msg': 'Ha ocurrido un error al imprimir el reporte', 'name': result.name}
+
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 router.get('/newalerts', async function (req, res) {
     var result = await objects.alerts.getUser(req)
     res.json({'data': result})
+})
+
+router.post('/savecapsule', async function (req, res) {
+    var result = await objects.functions.saveCapsule(req)
+    if (result.success === false) {
+        return res.json(result)
+    } else {
+        return res.json({'success': true, 'message': result.datos})
+    }
+})
+
+router.post('/changepass', async function (req, res) {
+    var result = await objects.users.changePass(req)
+    let success = true
+    if(result.includes('ERROR'))
+        success = false
+    if (result.success === false) {
+        return res.json(result)
+    } else {
+        return res.json({'success': success, 'datos': result})
+    }
 })
 
 module.exports = router

@@ -34,7 +34,6 @@ const insertOptionuser = async (req) => {
         req.body.idlanguajes,
         req.body.idrol
     ]
-    console.log(params)
     const query = "SELECT security.fn_insert_user_options($1,$2,$3,$4,$5)"
     const result = await pool.executeQuery(query, params)
     if (result.success === false) {
@@ -45,7 +44,24 @@ const insertOptionuser = async (req) => {
     return result.rows[0].fn_insert_user_options
 }
 
+const changePass = async (req) => {
+    const params = [
+        req.body.pass,
+        req.session.id_user
+    ]
+    console.log(params)
+    const query = "SELECT security.fn_change_pass($1,$2)"
+    const result = await pool.executeQuery(query, params)
+    if (result.success === false) {
+        return result
+    } else if (result.rows[0].fn_change_pass == null) {
+        return []
+    }
+    return result.rows[0].fn_change_pass
+}
+
 objUser.authentication = authentication
 objUser.getUsers = getUsers
 objUser.insertOptionuser = insertOptionuser
+objUser.changePass = changePass
 module.exports = objUser

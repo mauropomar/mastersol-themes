@@ -2,6 +2,7 @@ const pool = require('../connection/server-db')
 const cron = require('node-cron')
 const fs = require('fs')
 const objects = require('../modules');
+const child_process = require('child_process');
 const objGenFunc = {}
 
 //schedule para recorrer todos los procesos activos y ejecutar las funciones que tengan asociadas según sus calendarios
@@ -242,8 +243,35 @@ const executeFunctionsButtons = async (req, objects) => {
     return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name}
 }
 
+const saveCapsule = async (req) => {
+    let success = true
+    let datos = ''
+    try {
+        var bat = require.resolve('../encapsular.bat');
+        var ls = child_process.spawn(bat);
+        ls.stdout.on('data', function (data) {
+            console.log(data);
+        });
+        ls.stderr.on('data', function (data) {
+            console.log(data);
+        });
+        ls.on('close', function (code) {
+            if (code == 0)
+                console.log('Stop');
+            else
+                console.log('Start');
+        });
+    }
+    catch(err){
+        datos = err
+        success = false
+    }
+    return {'success': success, 'datos': datos}
+}
+
 
 objGenFunc.generateFunctions = generateFunctions
 objGenFunc.generateFunctionsTimeEvents = generateFunctionsTimeEvents
 objGenFunc.executeFunctionsButtons = executeFunctionsButtons
+objGenFunc.saveCapsule = saveCapsule
 module.exports = objGenFunc
