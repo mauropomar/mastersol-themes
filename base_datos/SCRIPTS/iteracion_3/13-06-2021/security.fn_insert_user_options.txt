@@ -1,0 +1,35 @@
+CREATE OR REPLACE FUNCTION "security".fn_insert_user_options
+(
+  IN  id_capsules       uuid,
+  IN  id_organizations  uuid,
+  IN  id_users          uuid,
+  IN  id_languages      uuid,
+  IN  id_rol            uuid
+)
+RETURNS varchar AS
+$$
+declare
+id_registro varchar = null;
+begin
+  --BEGIN  
+  IF NOT EXISTS(SELECT u.id FROM security.users_language u WHERE u.id_capsules =  $1::uuid AND 
+     u.id_organizations = $2::uuid AND u.id_users = $3::uuid AND u.id_languages = $4::uuid) THEN    
+     INSERT INTO security.users_language(id_capsules,id_organizations,id_users,id_languages)
+     VALUES($1,$2,$3,$4) returning id INTO id_registro;
+   ELSE
+      id_registro = 'Ya existe el elemento'; 
+   END IF;     
+  --EXCEPTION when others then 
+    --id_registro = 'ERROR: Ocurrio un error al insertar el elemento.';
+   --END;   
+ 
+ return 'ERROR: '||id_registro; 
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION "security".fn_insert_user_options(uuid, uuid, uuid, uuid, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION "security".fn_insert_user_options(uuid, uuid, uuid, uuid, uuid)
+  IS 'Insert the user''s options';

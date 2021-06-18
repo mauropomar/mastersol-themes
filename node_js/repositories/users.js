@@ -27,6 +27,7 @@ const getUsers = async (req) => {
 }
 
 const insertOptionuser = async (req) => {
+    let message = ''
     const params = [
         req.session.id_capsules,
         req.session.id_organizations,
@@ -37,11 +38,22 @@ const insertOptionuser = async (req) => {
     const query = "SELECT security.fn_insert_user_options($1,$2,$3,$4,$5)"
     const result = await pool.executeQuery(query, params)
     if (result.success === false) {
-        return result
-    } else if (result.rows[0].fn_insert_user_options == null) {
-        return []
+        message = result
     }
-    return result.rows[0].fn_insert_user_options
+    console.log(message)
+    if(message === '' && req.body.pass !== ''){
+        const paramsPass = [
+            req.body.pass,
+            req.session.id_user
+        ]
+        const query = "SELECT security.fn_change_pass($1,$2)"
+        const result = await pool.executeQuery(query, paramsPass)
+        if (result.success === false) {
+            message = result
+        }
+    }
+
+    return message
 }
 
 const changePass = async (req) => {
@@ -49,7 +61,6 @@ const changePass = async (req) => {
         req.body.pass,
         req.session.id_user
     ]
-    console.log(params)
     const query = "SELECT security.fn_change_pass($1,$2)"
     const result = await pool.executeQuery(query, params)
     if (result.success === false) {
