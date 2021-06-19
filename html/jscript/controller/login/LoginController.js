@@ -116,7 +116,6 @@ Ext.define('MasterSol.controller.login.LoginController', {
     loadOptions: function () {
         this.loadRols();
         this.loadLanguages();
-        MasterApp.user.setValues();
         Ext.ComponentQuery.query('#combolanguage')[0].getStore().load();
         MasterApp.theme.setStyle();
         MasterApp.alert.laodInitAlert();
