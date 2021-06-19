@@ -215,11 +215,11 @@ router.get('/getusers', async function (req, res) {
 
 router.post('/insoptionuser', async function (req, res) {
     var result = await objects.users.insertOptionuser(req)
-    if (result.success === false) {
-        return res.json(result)
-    } else {
-        return res.json({'success': true, 'message': result.datos})
-    }
+    let success = true
+    if(result.includes('ERROR'))
+        success = false
+
+    return res.json({'success': success, 'message': result})
 })
 
 router.get('/managerfunctions', async function (req, res) {
@@ -360,16 +360,5 @@ router.post('/savecapsule', async function (req, res) {
     }
 })
 
-router.post('/changepass', async function (req, res) {
-    var result = await objects.users.changePass(req)
-    let success = true
-    if(result.includes('ERROR'))
-        success = false
-    if (result.success === false) {
-        return res.json(result)
-    } else {
-        return res.json({'success': success, 'datos': result})
-    }
-})
 
 module.exports = router
