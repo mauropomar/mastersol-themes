@@ -7,21 +7,44 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
     sendJson: function () {
         var menus = Ext.ComponentQuery.query('window-menu');
         var panels = menus[0].items.items[0].items.items[0].items.items;
+        var array = [];
+        var comp, columns, data, obj;
         for (var i = 0; i < panels.length; i++) {
-            var type = panels[0].name;
-            if (type === 'tab_section') {
-
-            } else {
-                var columns = this.getColumns(panels[0]);
-                var data = this.getData(panels[0]);
+            var type = panels[i].name;
+            if (type === 'panel_section') {
+                comp = panels[i].items.items[0];
+                columns = this.getColumns(comp);
+                data = this.getData(comp);
+                array.push({
+                    title:panels[i].title,
+                    idsection:panels[i].idsection,
+                    idparent:panels[i].idparent,
+                    data:data,
+                    columns: columns
+                });
+            }
+            if (type === 'tab-section') {
+                var components = panels[i].items.items;
+                for (var j = 0; j < components.length; j++) {
+                    comp = components[j].items.items[0];
+                    columns = this.getColumns(comp);
+                    data = this.getData(comp);
+                    array.push({
+                        title:components[j].title,
+                        idsection:components[j].idsection,
+                        idparent:components[j].idparent,
+                        data:data,
+                        columns: columns
+                    });
+                }
             }
         }
-
+        return array;
     },
 
     getColumns: function (panel) {
         var array = [];
-        var gridSection = panel.items.items[0];
+        var gridSection = panel;
         var columns = gridSection.columns;
         for (var i = 0; i < columns.length; i++) {
             var filter = this.getFilterByColumn(columns[i]);
@@ -92,13 +115,14 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
         var store = gridSection.getStore();
         var fields = store.model.fields;
         var items = store.data.items;
-        for(var i = 0; i < items.length; i++){
+        for (var i = 0; i < items.length; i++) {
             var record = items[i];
             var obj = {};
-            for(var j = 0; j < fields.length; j++){
+            for (var j = 0; j < fields.length; j++) {
                 var name = fields[j].name;
                 obj[name] = record.data[name];
-            };
+            }
+            ;
             array.push(obj);
         }
         return array;
