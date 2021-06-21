@@ -5,37 +5,99 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
     },
 
     sendJson: function () {
-        var menus = Ext.ComponentQuery.query('window-menu');
-        var panels = menus[0].items.items[0].items.items[0].items.items;
+        var winSections = this.getWindows();
+        var accessDirect = this.getDesktop();
+        var menuCombo = this.getMenuCombo();
+        var winCombo = this.getWindowCombo();
+    },
+
+    getDesktop: function () {
+        var dataview = Ext.ComponentQuery.query('dataview[name=principal]')[0];
+        var store = dataview.getStore();
         var array = [];
-        var comp, columns, data, obj;
-        for (var i = 0; i < panels.length; i++) {
-            var type = panels[i].name;
-            if (type === 'panel_section') {
-                comp = panels[i].items.items[0];
-                columns = this.getColumns(comp);
-                data = this.getData(comp);
-                array.push({
-                    title:panels[i].title,
-                    idsection:panels[i].idsection,
-                    idparent:panels[i].idparent,
-                    data:data,
-                    columns: columns
-                });
-            }
-            if (type === 'tab-section') {
-                var components = panels[i].items.items;
-                for (var j = 0; j < components.length; j++) {
-                    comp = components[j].items.items[0];
+        store.each(function (rec) {
+            array.push({
+                id: rec.data.id,
+                name: rec.data.nombre,
+                idsection: rec.data.sectionId,
+                icon: rec.data.icon
+            });
+        });
+        return array;
+    },
+
+    getMenuCombo: function () {
+        var combo = Ext.ComponentQuery.query('#combomenu')[0];
+        var store = combo.getStore();
+        var array = [];
+        store.each(function (rec) {
+            array.push({
+                id: rec.data.id,
+                name: rec.data.nombre,
+                idsection: rec.data.sectionId
+            });
+        });
+        return array;
+    },
+
+    getWindowCombo: function () {
+        var combo = Ext.ComponentQuery.query('#combowindow')[0];
+        var store = combo.getStore();
+        var array = [];
+        store.each(function (rec) {
+            array.push({
+                id: rec.data.id,
+                name: rec.data.name
+            });
+        });
+        return array;
+    },
+
+    getWindows: function () {
+        var menus = Ext.ComponentQuery.query('window-menu');
+        var array = [];
+        for (var m = 0; m < menus.length; m++) {
+            var panels = menus[m].items.items[0].items.items[0].items.items;
+            var comp, columns, data, obj, recSel;
+            array.push({
+                title: menus[m].title,
+                idsection: menus[m].idsection,
+                idmenu: menus[m].idmenu,
+                collapsed: menus[m].collapsed,
+                panels: []
+            });
+            for (var i = 0; i < panels.length; i++) {
+                var type = panels[i].name;
+                if (type === 'panel_section') {
+                    comp = panels[i].items.items[0];
                     columns = this.getColumns(comp);
                     data = this.getData(comp);
-                    array.push({
-                        title:components[j].title,
-                        idsection:components[j].idsection,
-                        idparent:components[j].idparent,
-                        data:data,
+                    recSel = this.getRecordSelected(comp);
+                    array[m].panels.push({
+                        title: panels[i].title,
+                        idsection: panels[i].idsection,
+                        idparent: panels[i].idparent,
+                        selected: recSel,
+                        data: data,
                         columns: columns
                     });
+                }
+                if (type === 'tab-section') {
+                    var components = panels[i].items.items;
+                    for (var j = 0; j < components.length; j++) {
+                        comp = components[j].items.items[0];
+                        columns = this.getColumns(comp);
+                        data = this.getData(comp);
+                        recSel = this.getRecordSelected(comp);
+                        array[m].panels.push({
+                            title: components[j].title,
+                            idsection: components[j].idsection,
+                            idparent: components[j].idparent,
+                            selected: recSel,
+                            data: data,
+                            columns: columns
+                        });
+                    }
                 }
             }
         }
@@ -126,6 +188,14 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
             array.push(obj);
         }
         return array;
+    },
+
+    getRecordSelected: function (grid) {
+        var hasSelection = grid.getSelectionModel().hasSelection();
+        if (hasSelection) {
+            return grid.getSelectionModel().getSelection();
+        }
+        return [];
     },
 
     render: function (comp) {
