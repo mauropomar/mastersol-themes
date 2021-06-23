@@ -296,7 +296,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         var obj = {
             id: json.id,
             valor: json.ruta,
-            nombre:json.datos
+            nombre: json.datos
 
         };
         var valid = this.find(obj.nombre);
@@ -323,6 +323,8 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
             border: 0,
             padding: 2,
             idComp: file.id,
+            dirFile: file.valor,
+            nameFile: nombre,
             margin: '10',
             layout: {
                 type: 'hbox',

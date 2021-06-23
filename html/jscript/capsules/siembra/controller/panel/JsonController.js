@@ -58,7 +58,9 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
         var array = [];
         for (var m = 0; m < menus.length; m++) {
             var panels = menus[m].items.items[0].items.items[0].items.items;
-            var comp, columns, data, obj, recSel;
+            var comp, columns, data, obj, recSel,
+                register, totals, filters,
+                attachments, notes, audits;
             array.push({
                 title: menus[m].title,
                 idsection: menus[m].idsection,
@@ -73,12 +75,24 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
                     columns = this.getColumns(comp);
                     data = this.getData(comp);
                     recSel = this.getRecordSelected(comp);
+                    register = this.getRegister();
+                    totals = this.getTotals();
+                    filters = this.getFilters();
+                    attachments = this.getAttachments();
+                    notes = this.getNotes();
+                    audits = this.getAudit(recSel);
                     array[m].panels.push({
                         title: panels[i].title,
                         idsection: panels[i].idsection,
                         idparent: panels[i].idparent,
                         selected: recSel,
                         data: data,
+                        register: register,
+                        totals: totals,
+                        filters: filters,
+                        attachment: attachments,
+                        notes: notes,
+                        audits: audits,
                         columns: columns
                     });
                 }
@@ -89,12 +103,24 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
                         columns = this.getColumns(comp);
                         data = this.getData(comp);
                         recSel = this.getRecordSelected(comp);
+                        register = this.getRegister();
+                        totals = this.getTotals();
+                        filters = this.getFilters();
+                        attachments = this.getAttachments();
+                        notes = this.getNotes();
+                        audits = this.getAudit(recSel);
                         array[m].panels.push({
                             title: components[j].title,
                             idsection: components[j].idsection,
                             idparent: components[j].idparent,
                             selected: recSel,
                             data: data,
+                            register: register,
+                            totals: totals,
+                            filters: filters,
+                            attachment: attachments,
+                            notes: notes,
+                            audits: audits,
                             columns: columns
                         });
                     }
@@ -187,6 +213,110 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
             ;
             array.push(obj);
         }
+        return array;
+    },
+
+    getRegister: function () {
+        var array = [];
+        var store = Ext.ComponentQuery.query('#register-view')[0].getStore();
+        store.each(function (rec) {
+            array.push({
+                id: rec.data.id,
+                id_datatype: rec.data.id_datatype,
+                idregistro: rec.data.idregistro,
+                idvalor: rec.data.idvalor,
+                name: rec.data.name,
+                nombre: rec.data.nombre,
+                real_name_in: rec.data.real_name_in,
+                required: rec.data.required,
+                tipo: rec.data.tipo,
+                valor: rec.data.valor,
+                auditable: rec.data.auditable,
+                field: rec.data.field,
+                fk: rec.data.fk,
+                orden: rec.data.orden
+            });
+        });
+        return array;
+    },
+
+    getTotals: function () {
+        var array = [];
+        var store = Ext.ComponentQuery.query('#total-view')[0].getStore();
+        store.each(function (rec) {
+            array.push({
+                idregistro: rec.data.idregistro,
+                nombrecampo: rec.data.nombrecampo,
+                nombretipodato: rec.data.nombretipodato,
+                tipo: rec.data.tipo,
+                tipodato: rec.data.tipodato,
+                funciones: rec.data.funciones
+            });
+        });
+        return array;
+    },
+
+    getFilters: function () {
+        var array = [];
+        var store = Ext.ComponentQuery.query('#filter-view')[0].getStore();
+        store.each(function (rec) {
+            array.push({
+                idregistro: rec.data.idregistro,
+                idtipodato: rec.data.idtipodato,
+                nombrecampo: rec.data.nombrecampo,
+                nombretipodato: rec.data.nombretipodato,
+                tipo: rec.data.tipo,
+                fk: rec.data.fk,
+                real_name_in: rec.data.real_name_in,
+                operadores: rec.data.operadores
+            });
+        });
+        return array;
+    },
+
+    getAttachments: function () {
+        var array = [];
+        var attached = Ext.ComponentQuery.query('#attached-view')[0];
+        var items = attached.items.items;
+        for (var i = 1; i < items.length; i++) {
+            array.push({
+                id: items[i].idComp,
+                name: items[i].nameFile,
+                url: items[i].dirFile
+            });
+        }
+        return array;
+    },
+
+    getNotes: function () {
+        var array = [];
+        var notes = Ext.ComponentQuery.query('#note-view')[0];
+        var items = notes.items.items;
+        for (var i = 0; i < items.length; i++) {
+            var textarea = items[i].down('textarea');
+            array.push({
+                id: items[i].idNota,
+                value: textarea.getValue()
+            });
+        }
+        return array;
+    },
+
+    getAudit: function (recSel) {
+        var array = [];
+        var store = Ext.ComponentQuery.query('#audit-view')[0].getStore();
+        store.each(function (rec) {
+            array.push({
+                id: rec.data.id,
+                idregistro: recSel[0].data.id,
+                accion: rec.data.accion,
+                fecha: rec.data.fecha,
+                propiedad: rec.data.propiedad,
+                usuario: rec.data.usuario,
+                valor_anterior: rec.data.valor_anterior,
+                valor_nuevo: rec.data.valor_nuevo
+            });
+        });
         return array;
     },
 
