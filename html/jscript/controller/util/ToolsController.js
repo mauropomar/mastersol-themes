@@ -137,9 +137,9 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         MasterApp.report.loadValues(json.value);
                     }
                     if (json.type === 5) {
-                        var extra_params = MasterApp.tools.getExtraParams();
+                        var extraParams = MasterApp.tools.getExtraParams();
                         MasterApp.report.removeAll();
-                        MasterApp.report.generateReport(params, json.value, json.name, extra_params);
+                        MasterApp.report.generateReport(params, json.value, json.name, extraParams);
                     }
                 } else {
                     Ext.MessageBox.show({

@@ -94,7 +94,6 @@ Ext.define('MasterSol.controller.login.LoginController', {
                 Mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success === true) {
-
                     Ext.ComponentQuery.query('#options-toolbar')[0].show();
                     Ext.ComponentQuery.query('#view_login')[0].hide();
                     Ext.create('MasterSol.view.layout.Viewport');

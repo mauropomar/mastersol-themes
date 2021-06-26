@@ -9,6 +9,29 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
         var accessDirect = this.getDesktop();
         var menuCombo = this.getMenuCombo();
         var winCombo = this.getWindowCombo();
+        var options = this.getTreeOptions();
+        var configs = this.getTreeConfig();
+        var theme = MasterApp.theme.getNameTheme();
+        var userData = this.getUserData();
+        var json = {
+            sections: winSections,
+            accessDirect: accessDirect,
+            menuCombo: menuCombo,
+            winCombo: winCombo,
+            theme: theme,
+            userData: userData,
+            options: options,
+            configs: configs
+        };
+        alert(Ext.encode(json));
+    },
+
+    getUserData: function () {
+        var obj = {
+            idrol: MasterApp.globals.getIdRol(),
+            language: MasterApp.globals.getIdLanguage()
+        };
+        return obj;
     },
 
     getDesktop: function () {
@@ -71,11 +94,14 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
             for (var i = 0; i < panels.length; i++) {
                 var type = panels[i].name;
                 if (type === 'panel_section') {
+
                     comp = panels[i].items.items[0];
                     columns = this.getColumns(comp);
                     data = this.getData(comp);
                     recSel = this.getRecordSelected(comp);
+                    recSel = [];
                     register = this.getRegister();
+                    //  register = [];
                     totals = this.getTotals();
                     filters = this.getFilters();
                     attachments = this.getAttachments();
@@ -323,9 +349,45 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
     getRecordSelected: function (grid) {
         var hasSelection = grid.getSelectionModel().hasSelection();
         if (hasSelection) {
-            return grid.getSelectionModel().getSelection();
+            var selection = grid.getSelectionModel().getSelection();
+            var data = selection[0].data;
+            return data;
         }
         return [];
+    },
+
+    getTreeOptions: function () {
+        var array = [];
+        var tree = Ext.ComponentQuery.query('tree-options')[0];
+        var rootNodes = tree.getRootNode();
+        rootNodes.cascadeBy(function (node) {
+            if (node.data.id !== 'root') {
+                array.push({
+                    id: node.data.id,
+                    text: node.data.text,
+                    parentId: (node.data.parentId === 'root') ? '0' : node.data.parentId,
+                    sectionId: node.data.sectionId,
+                })
+            }
+        });
+        return array;
+    },
+
+    getTreeConfig: function () {
+        var array = [];
+        var tree = Ext.ComponentQuery.query('tree-config')[0];
+        var rootNodes = tree.getRootNode();
+        rootNodes.cascadeBy(function (node) {
+            if (node.data.id !== 'root' && node.data.id !== 'opciones') {
+                array.push({
+                    id: node.data.id,
+                    text: node.data.text,
+                    parentId: (node.data.parentId === 'opciones') ? '0' : node.data.parentId,
+                    sectionId: node.data.sectionId,
+                })
+            }
+        });
+        return array;
     },
 
     render: function (comp) {
