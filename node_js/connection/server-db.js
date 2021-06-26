@@ -42,4 +42,5 @@ const executeQuery2 = async (query, params = []) => {
 ConPgSQL.executeQuery = executeQuery
 ConPgSQL.executeQuery2 = executeQuery2
 ConPgSQL.config_bd = config_bd
+ConPgSQL.obj_pool = pool
 module.exports = ConPgSQL

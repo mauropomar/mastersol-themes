@@ -353,11 +353,16 @@ router.get('/newalerts', async function (req, res) {
 
 router.post('/savecapsule', async function (req, res) {
     var result = await objects.functions.saveCapsule(req)
-    if (result.success === false) {
-        return res.json(result)
-    } else {
-        return res.json({'success': true, 'message': result.datos})
-    }
+    let success = result.success
+    if (result.datos.includes('ERROR: '))
+        success = false
+
+    return res.json({'success': success, 'datos': result.datos})
+})
+
+router.get('/capsules', async function (req, res) {
+    var result = await objects.functions.getCapsules(req)
+    return res.json({'success': result.success, 'datos': result.datos})
 })
 
 

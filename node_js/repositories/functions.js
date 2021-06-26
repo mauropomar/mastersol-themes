@@ -3,6 +3,10 @@ const cron = require('node-cron')
 const fs = require('fs')
 const objects = require('../modules');
 const child_process = require('child_process');
+const copyTo = require('pg-copy-streams').to
+var stream = require('stream');
+var archiver = require('archiver');
+const rimraf = require("rimraf");
 const objGenFunc = {}
 
 //schedule para recorrer todos los procesos activos y ejecutar las funciones que tengan asociadas según sus calendarios
@@ -55,7 +59,7 @@ cron.schedule('* * * * *', async () => {
                 else break;
             }
         }
-          
+
         if(fechaStart == fechaActual && horaStart == horaActual) {
             executeProcessFunction(pro, queryFunction)
                 .then((value) => {
@@ -70,7 +74,7 @@ cron.schedule('* * * * *', async () => {
                 (pro.repeat_each_day != null && pro.repeat_each_day != 0)){
                 //si el minuto y dia actual se encuentran en su respectiva cadena, ejecutar
                 if(
-                    (await existElemInString(stringMinutes, new Date().getMinutes()) && await existElemInString(stringDays, new Date().getDate())) || 
+                    (await existElemInString(stringMinutes, new Date().getMinutes()) && await existElemInString(stringDays, new Date().getDate())) ||
                     (await existElemInString(stringMinutes, new Date().getMinutes()) && stringDays == '*') ||
                     (stringMinutes == '*' && await existElemInString(stringDays, new Date().getDate()))
                 )
@@ -81,9 +85,9 @@ cron.schedule('* * * * *', async () => {
                     .catch((value) => {
                         console.log(value+pro.namex)
                     });
-            }               
-        }        
-    }   
+            }
+        }
+    }
 
 });
 
@@ -98,6 +102,11 @@ cron.schedule('1 * * * *', async () => {
             });
         }
     });
+});
+
+cron.schedule('1 23 * * *', async () => {
+    const dirFolder = global.appRootApp + '\\resources\\backups'
+    rimraf(dirFolder, function () { console.log("Limpiada carpeta backups"); });
 });
 
 const executeProcessFunction = (pro, query) => new Promise(async (resolve, reject) => {
@@ -245,33 +254,144 @@ const executeFunctionsButtons = async (req, objects) => {
 
 const saveCapsule = async (req) => {
     let success = true
-    let datos = ''
-    try {
-        var bat = require.resolve('../encapsular.bat');
-        var ls = child_process.spawn(bat);
-        ls.stdout.on('data', function (data) {
-            console.log(data);
-        });
-        ls.stderr.on('data', function (data) {
-            console.log(data);
-        });
-        ls.on('close', function (code) {
-            if (code == 0)
-                console.log('Stop');
-            else
-                console.log('Start');
-        });
-    }
-    catch(err){
-        datos = err
+    let finalResult = ''
+
+    const query = "SELECT cfgapl.fn_save_capsule($1)"
+    const param_capsule = [req.body.idcapsule]
+    const result = await pool.executeQuery(query, param_capsule)
+    if (result.success === false)
         success = false
+    let resultSaveStructure = result.rows[0].fn_save_capsule
+    if (resultSaveStructure.includes('ERROR: ')) {  //Si hubo error, capturar y terminar la funcion
+        success = false
+        finalResult = resultSaveStructure
     }
-    return {'success': success, 'datos': datos}
+    else{
+        //Crear carpeta para contener los ficheros generados
+        const dirFolder = global.appRootApp + '\\resources\\backups\\'+Math.random()
+        await generateExportFiles(req,dirFolder,resultSaveStructure)
+            .then((value) => {
+                finalResult = value
+            })
+            .catch((value) => {
+                success = false
+                finalResult = value
+            });
+        //Comprimir carpeta y devolver direccion de comprimido
+        if(finalResult === dirFolder) {
+            await archiveDirectory(dirFolder)
+                .then((value) => {
+                    finalResult = value
+                    //Borrar carpeta con ficheros(me quedo solo con el comprimido)
+                    rimraf(dirFolder, function () { console.log("Borrada carpeta exportacion"); });
+                })
+                .catch((value) => {
+                    success = false
+                    finalResult = value
+                });
+        }
+        else{
+            success = false
+        }
+    }
+
+    return {'success': success, 'datos': finalResult}
 }
 
+const generateExportFiles = async (req,dirFolder,resultSaveStructure) => new Promise(async (resolve, reject) => {
+    let success = true
+    let msg = ''
+    await fs.mkdir(dirFolder, {recursive: true}, async (err) => {
+        if (!err) {
+            console.log('directorio salva creado')
+            //Salvar fichero con estructura
+            let fileStructure = fs.createWriteStream(dirFolder+'\\e_'+Math.random()+'.sql')
+            fileStructure.write(resultSaveStructure)
+
+            const query = "SELECT cfgapl.fn_get_ordered_tables_by_fk($1)"
+            const param_capsule = [req.body.idcapsule]
+            const result = await pool.executeQuery(query, param_capsule)
+            if (result.success === false)
+                success = false
+            let resultOrdredTables = result.rows[0].fn_get_ordered_tables_by_fk
+            //ciclar por las tablas dependientes de la capsula, ordenadas, para exportar los datos
+            if(resultOrdredTables) {
+                let arrTablas = resultOrdredTables.split(',');
+                let largo_arr = arrTablas.length
+                const client = await pool.obj_pool.connect()
+                try {
+                    for(let i = 0; i < largo_arr; i++){
+                        let tabla = arrTablas[i]
+                        let writeStream = await fs.createWriteStream(dirFolder + '\\' + i + '_' + tabla + Math.random() + '.csv');
+                        writeStream.setMaxListeners(0);
+                        var readStream = await client.query(copyTo("COPY (SELECT * FROM "+tabla+" WHERE id_capsules = '"+req.body.idcapsule+"') TO STDOUT with csv DELIMITER ';'"))
+                        await copyStreamToFile(req,readStream,writeStream,tabla)
+                            .then((value) => {
+                                writeStream = value
+                            })
+                            .catch((value) => {
+                                success = false
+                                writeStream = value
+                                reject('Error exportando ' + tabla)
+                            });
+                        writeStream.removeAllListeners()
+                    }
+                }
+                catch(err){
+                    console.log(err)
+                }
+                resolve(dirFolder)
+            }
+            else resolve(dirFolder)
+        }
+        else
+            reject(err)
+    });
+
+})
+
+
+const copyStreamToFile = async (req,readStream,writeStream,tabla) => new Promise(async (resolve, reject) => {
+    readStream.pipe(writeStream)
+    writeStream.addListener('finish', function(){
+        console.log(tabla, 'exportada')
+        resolve(writeStream)
+    });
+    writeStream.addListener('error', function(){
+        reject(writeStream)
+    })
+})
+
+const archiveDirectory = async (dirFolder) => new Promise(async (resolve, reject) => {
+    let output = await fs.createWriteStream(dirFolder+'.tar.gz');
+    let archive = archiver('tar', {
+        gzip: true,
+        zlib: { level: 9 } // Sets the compression level.
+    });
+    archive.on('error', function(err) {
+        reject(err)
+    });
+    output.on('close', () => {
+        resolve(dirFolder+'.tar.gz')
+    });
+
+    archive.pipe(output);
+    archive.directory(dirFolder, '');
+    archive.finalize();
+})
+
+const getCapsules = async () => {
+    const params_capsules = ['cfgapl.capsules',null,"WHERE active = true "]
+    const resultCapsules = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', params_capsules)
+    if(!resultCapsules){
+        return {'success': false, 'datos': []}
+    }
+   return {'success': true, 'datos': resultCapsules.rows[0].fn_get_register}
+}
 
 objGenFunc.generateFunctions = generateFunctions
 objGenFunc.generateFunctionsTimeEvents = generateFunctionsTimeEvents
 objGenFunc.executeFunctionsButtons = executeFunctionsButtons
 objGenFunc.saveCapsule = saveCapsule
+objGenFunc.getCapsules = getCapsules
 module.exports = objGenFunc

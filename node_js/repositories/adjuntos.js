@@ -83,8 +83,7 @@ const insertAdjunto = async (req) => {
             .catch((value) => {
                 success = false
                 msg = value
-            })
-        ;
+            });
     }
     else{
         msg = 'Ha ocurrido un error'
