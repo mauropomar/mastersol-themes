@@ -38,8 +38,9 @@ Ext.define('MasterSol.view.magnament.TabPanel', {
     }, {
         xtype: 'audit-view',
         id: 'audit-view'
-    },{
+    }, {
         xtype: 'config-report-view',
+        hidden: true,
         id: 'config-report-view'
     }]
 });

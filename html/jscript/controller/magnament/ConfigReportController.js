@@ -56,6 +56,8 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
 
 
     loadValues: function (values) {
+        var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
+        tabMagnament.child('#config-report-view').tab.show();
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
         store.removeAll();
@@ -101,14 +103,14 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         return stringArray;
     },
 
-    generateReport: function (params, url, title, extraParams) {        
+    generateReport: function (params, url, title, extraParams) {
         var format = 'html';
         var idregister = params.idregister;
         var idsection = params.idsection;
         var idmenu = params.idmenu;
         var idbutton = params.idbutton;
         var namebutton = params.name;
-        var action = params.action;        
+        var action = params.action;
         sData = "<form name='redirect' id='redirect' action='report.html' method='GET'>";
         sData = sData + "<input type='hidden' name='title' id='title' value='" + title + "' />";
         sData = sData + "<input type='hidden' name='idregister' id='idregister' value='" + idregister + "' />";
@@ -126,7 +128,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         name_windows = window.open("", "_blank");
         name_windows.document.write(sData);
         name_windows.document.close();
-      
+
     },
 
     setTextField: function (column) {
@@ -214,11 +216,11 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
             idsection: idsection
         };
         store.load({
-            callback: function (store, records) {
-                var values = (values) ? values.split(',') : combo.getValue();
-                combo.setValue(values);
+                callback: function (store, records) {
+                    var values = (values) ? values.split(',') : combo.getValue();
+                    combo.setValue(values);
+                }
             }
-        }
         );
         column.setEditor(combo);
     },
@@ -265,7 +267,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         }
     },
 
-    removeAll:function(){
+    removeAll: function () {
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
         store.loadData([]);
