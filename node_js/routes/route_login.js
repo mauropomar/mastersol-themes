@@ -22,15 +22,16 @@ router.post("/login", async function (req, res) {
         req.session.id_rol = result.vals.id_rol
         req.session.id_user = result.vals.id_user
         req.session.language = ''
+        let default_rol = ''
         //Buscar lenguaje y rol por defecto de este user
         const paramsUser = ['security.users', req.session.id_user];
         const resultUser= await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsUser);
         if(resultUser && resultUser.rows[0].fn_get_register != null) {
-            req.session.id_rol = resultUser.rows[0].fn_get_register[0].default_rol
+            default_rol = resultUser.rows[0].fn_get_register[0].default_rol
             req.session.language = resultUser.rows[0].fn_get_register[0].default_language
         }
 
-        res.json({'success': true, 'user': result.vals.id_user, 'rol': req.session.id_rol, 'language': req.session.language})
+        res.json({'success': true, 'user': result.vals.id_user, 'rol': default_rol, 'language': req.session.language})
     } else {
         res.json({'success': false})
     }

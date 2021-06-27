@@ -268,7 +268,8 @@ const saveCapsule = async (req) => {
     }
     else{
         //Crear carpeta para contener los ficheros generados
-        const dirFolder = global.appRootApp + '\\resources\\backups\\'+Math.random()
+        let str_capsule = req.body.idcapsule.substring(0,6)
+        const dirFolder = global.appRootApp + '\\resources\\backups\\'+str_capsule+'_'+Math.random()
         await generateExportFiles(req,dirFolder,resultSaveStructure)
             .then((value) => {
                 finalResult = value
