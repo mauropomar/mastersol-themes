@@ -29,7 +29,30 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
     },
 
     export:function(){
+        var grid = Ext.ComponentQuery.query('#grid_list_capsules')[0];
+        var record = grid.getSelectionModel().getSelection()[0];
+        var mask = new Ext.LoadMask(grid, {
+            msg: 'Exportando...'
+        });
+        mask.show();
+        var save = {
+            url: 'app/savecapsule',
+            method: 'POST',
+            scope: this,
+            params: {
+                idcapsule: record.data.id
+            },
+            success: function (response) {
+                debugger
+                mask.hide();
+                var json = Ext.JSON.decode(response.responseText);
 
+            },
+            failure: function (response) {
+                mask.hide();
+            }
+        };
+        Ext.Ajax.request(save);
     },
 
     cancel:function(){
