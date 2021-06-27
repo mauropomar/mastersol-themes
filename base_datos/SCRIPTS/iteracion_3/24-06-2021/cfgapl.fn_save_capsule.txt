@@ -1,0 +1,371 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_save_capsule
+(
+  IN  idcapsule  uuid
+)
+RETURNS text AS
+$$
+declare
+scriptResult text;
+record_table record;
+record_function record;
+record_row record;
+record_pk record;
+row_column record;
+full_table_name varchar;
+full_data_type varchar;
+count_row_capsule int;
+mycapsule uuid = $1;
+mycolumn_name varchar;
+mysequence varchar;
+first_digits varchar;
+conteo_columnas int = 0;
+counter int = 0;
+string_temp varchar;
+string_trigger varchar;
+array_tables text[];
+elem varchar;
+tabla_arr varchar;
+peso_arr int;
+miesquema varchar;
+mitabla varchar;
+myoffset int = 0;
+totalcount int = 0;
+
+tables_cursor CURSOR FOR
+		SELECT table_schema as myschema,table_name as mytable FROM information_schema.tables 
+        WHERE table_type='BASE TABLE' ORDER BY table_name; 
+begin
+  --Tabla temporal para manejar la herencia de tablas
+  CREATE TEMP TABLE temp_table(
+     padre varchar,
+     hijo varchar
+  );
+  --Encerrar todo en BEGIN Y EXCEPTION
+BEGIN  
+  select substring(CAST(mycapsule AS varchar ), 1, 6) INTO first_digits;  
+  --Crear o reemplazar funciones asociadas a la capsula
+  first_digits = first_digits||'%';
+  FOR row_column IN EXECUTE('SELECT proname,nspname,pg_get_functiondef(f.oid) 
+  FROM pg_catalog.pg_proc f INNER JOIN pg_catalog.pg_namespace n ON 
+  (f.pronamespace = n.oid) WHERE proname LIKE '||quote_literal(first_digits)||'') LOOP
+      scriptResult = CONCAT(scriptResult,'CREATE SCHEMA IF NOT EXISTS '||row_column.nspname||'; ');  
+      scriptResult = CONCAT(scriptResult,row_column.pg_get_functiondef,'; '); 
+  END LOOP;
+  --Fin gestión funciones 
+  --Recorrer todas las tablas que y salvar las que contengan alguna columna id_capsules 
+  --y alguna fila con el id capsule suministrado        
+  OPEN tables_cursor;
+  FETCH tables_cursor INTO record_table;
+      WHILE( FOUND ) LOOP	
+        IF (SELECT COUNT(column_name) FROM information_schema.columns 
+        WHERE table_schema = record_table.myschema AND table_name = record_table.mytable 
+        AND column_name = 'id_capsules') > 0 THEN
+            SELECT record_table.myschema||'.'||record_table.mytable INTO full_table_name;            
+           --Comprobar si existe algún registro con la capsula suministrada 
+           EXECUTE ('SELECT COUNT(id_capsules) FROM '||full_table_name||' 
+           WHERE id_capsules = '||quote_literal(mycapsule)||' ') INTO count_row_capsule;           
+           IF (count_row_capsule) > 0 THEN 
+                 --Llenar tabla temporal
+                 FOR row_column IN EXECUTE('SELECT pg_namespace.nspname as schema, 
+                 pg_class.relname as tabla FROM pg_catalog.pg_inherits INNER JOIN pg_catalog.pg_class ON 
+                 (pg_inherits.inhrelid = pg_class.oid) INNER JOIN pg_catalog.pg_namespace ON 
+                 (pg_class.relnamespace = pg_namespace.oid) WHERE inhparent = 
+                 '||quote_literal(full_table_name)||'::regclass') LOOP
+                    INSERT INTO temp_table (padre,hijo)VALUES(full_table_name,
+                    row_column.schema||'.'||row_column.tabla);
+                 END LOOP; 
+                 --script estructura de esta tabla y schema si no existen
+                 scriptResult = CONCAT(scriptResult,'CREATE SCHEMA IF NOT EXISTS 
+                 '||record_table.myschema||'; '); 
+                 --Crear tabla
+                 scriptResult = CONCAT(scriptResult,'CREATE TABLE IF NOT EXISTS '
+                 ||record_table.myschema||'.'||record_table.mytable||' (');
+                 
+                 SELECT COUNT(*) INTO conteo_columnas FROM information_schema.columns 
+                 WHERE table_name = record_table.mytable AND table_schema = record_table.myschema;
+                 
+                 FOR row_column IN EXECUTE('SELECT * FROM information_schema.columns 
+                 WHERE table_name = '||quote_literal(record_table.mytable)||' 
+                 AND table_schema = '||quote_literal(record_table.myschema)||' 
+                 ORDER BY ordinal_position') LOOP
+                    --Adicionar columnas correspondientes a la tabla:   
+                    counter = counter + 1;                                       
+                    scriptResult = CONCAT(scriptResult,row_column.column_name||' '); 
+                    --Consulta para obtener data type completo
+                    SELECT pg_catalog.format_type(a.atttypid, a.atttypmod) 
+                    as "Datatype" INTO full_data_type FROM pg_catalog.pg_attribute a WHERE a.attrelid = 
+                    (SELECT c.oid FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n 
+                    ON n.oid = c.relnamespace WHERE c.relname = record_table.mytable 
+                    AND n.nspname = record_table.myschema AND a.attname = row_column.column_name);
+                    scriptResult = CONCAT(scriptResult,full_data_type);
+                    
+                    IF(row_column.column_default IS NOT NULL AND row_column.column_default 
+                    NOT LIKE '%nextval%') THEN
+                       scriptResult = CONCAT(scriptResult,' DEFAULT '||row_column.column_default||'');                                                 
+                    END IF;  
+                    IF(row_column.is_nullable = 'NO') THEN  
+                       scriptResult = CONCAT(scriptResult,' NOT NULL');                        
+                    END IF; 
+                    --Separar por comas las columnas menos la última
+                    IF counter < conteo_columnas THEN                            
+                       scriptResult = CONCAT(scriptResult,', ');
+                    END IF;   
+                 END LOOP; 
+                 --Setear PK
+                 SELECT col.column_name AS columna INTO record_pk  
+                 FROM information_schema.key_column_usage AS col LEFT JOIN 
+                 information_schema.table_constraints AS t ON t.constraint_name = 
+                 col.constraint_name WHERE t.table_name = record_table.mytable 
+                 AND t.table_schema = record_table.myschema AND t.constraint_type = 'PRIMARY KEY';                 
+                 IF(record_pk.columna IS NOT NULL) THEN
+                     scriptResult = CONCAT(scriptResult,', PRIMARY KEY ('||record_pk.columna||') ');
+                 END IF;    
+                 
+                 scriptResult = CONCAT(scriptResult,') '); --Verificar si la tabla es hija, antes de cerrar                  
+                 --Termina creación de campos de la tabla
+                 IF(SELECT COUNT(hijo) FROM temp_table WHERE hijo = full_table_name)>0 THEN 
+                    SELECT padre INTO row_column FROM temp_table WHERE hijo = full_table_name LIMIT 1;
+                    scriptResult = CONCAT(scriptResult,'INHERITS (',row_column.padre,')');
+                 END IF;
+                 scriptResult = CONCAT(scriptResult,'; ');
+                 
+                 scriptResult = CONCAT(scriptResult,'ALTER TABLE '||full_table_name||' OWNER TO postgres; ');
+                 IF (select COUNT(*) from pg_description join pg_class on pg_description.objoid = pg_class.oid 
+                 join pg_namespace on pg_class.relnamespace = pg_namespace.oid 
+                 where relname = record_table.mytable and nspname = record_table.myschema) > 0 THEN
+                    --Agregar comentarios de la tabla y columnas
+                    FOR row_column IN EXECUTE('select objsubid,description 
+                    from pg_description join pg_class on pg_description.objoid = pg_class.oid 
+                    join pg_namespace on pg_class.relnamespace = pg_namespace.oid 
+                    where relname = '||quote_literal(record_table.mytable)||' 
+                    and nspname='||quote_literal(record_table.myschema)||' ') LOOP   
+                       IF(row_column.objsubid = 0) THEN
+                          scriptResult = CONCAT(scriptResult,'COMMENT ON TABLE '
+                          ||full_table_name||' IS '||quote_literal(row_column.description)||'; ');                    
+                       ELSE
+                          SELECT column_name INTO mycolumn_name FROM information_schema.columns 
+                          WHERE table_name = record_table.mytable 
+                          AND table_schema = record_table.myschema 
+                          AND ordinal_position = row_column.objsubid;
+                          
+                          scriptResult = CONCAT(scriptResult,'COMMENT ON COLUMN '
+                          ||full_table_name||'.'||mycolumn_name||' IS '||quote_literal(row_column.description)||'; ');     
+                       END IF;      
+                          
+                    END LOOP;
+                 END IF;
+                 --Buscar secuencias por cada campo y agregarlas de existir
+                 FOR row_column IN EXECUTE('SELECT * FROM information_schema.columns 
+                 WHERE table_name = '||quote_literal(record_table.mytable)||' 
+                 AND table_schema = '||quote_literal(record_table.myschema)||'') LOOP
+                    IF (select count(pg_get_serial_sequence(full_table_name, 
+                    row_column.column_name))) > 0 THEN
+                        SELECT pg_get_serial_sequence(full_table_name, 
+                        row_column.column_name) INTO mysequence;
+                        scriptResult = CONCAT(scriptResult,'CREATE SEQUENCE IF NOT EXISTS '
+                        ||mysequence||' AS integer START WITH 1 INCREMENT BY 1 NO MINVALUE 
+                        NO MAXVALUE CACHE 1; ALTER TABLE '||mysequence||' OWNER TO postgres; ');
+                        
+                        scriptResult = CONCAT(scriptResult,'ALTER SEQUENCE '||mysequence||' OWNED BY '
+                        ||full_table_name||'.'||row_column.column_name||'; ');
+                        
+                        scriptResult = CONCAT(scriptResult,'ALTER TABLE ONLY '||full_table_name||' 
+                        ALTER COLUMN '||row_column.column_name||' SET DEFAULT 
+                        nextval('||quote_literal(mysequence)||'::regclass); ');
+                       
+                    END IF; 
+                 END LOOP; 
+                 --Buscar y crear indices
+                 FOR row_column IN EXECUTE('select * from pg_indexes where 
+                 tablename = '||quote_literal(record_table.mytable)||' AND 
+                 schemaname = '||quote_literal(record_table.myschema)||'') LOOP
+                    IF(row_column.indexdef LIKE 'CREATE UNIQUE INDEX%') THEN
+                       select substr(row_column.indexdef,20) INTO string_temp;
+                       scriptResult = CONCAT(scriptResult,'CREATE UNIQUE INDEX IF NOT EXISTS ',string_temp,'; ');
+                    ELSEIF(row_column.indexdef LIKE 'CREATE INDEX%') THEN 
+                       select substr(row_column.indexdef,13) INTO string_temp;
+                       scriptResult = CONCAT(scriptResult,'CREATE INDEX IF NOT EXISTS ',string_temp,'; ');
+                    END IF;     
+                 END LOOP;
+                 --Buscar y crear triggers
+                 FOR row_column IN EXECUTE('select event_object_schema as table_schema,
+                 event_object_table as table_name,trigger_schema,trigger_name,
+                 string_agg(event_manipulation, '','') as event,action_timing as activation,
+                 action_condition as condition,action_statement as definition,
+                 action_orientation from information_schema.triggers where 
+                 event_object_schema = '||quote_literal(record_table.myschema)||' 
+                 AND event_object_table = '||quote_literal(record_table.mytable)||' 
+                 group by 1,2,3,4,6,7,8,9') LOOP                                          
+                     --Borrar trigger si existe
+                     select replace(row_column.trigger_name, '.', '_') into row_column.trigger_name;
+                     scriptResult = CONCAT(scriptResult,'DROP TRIGGER IF EXISTS ',row_column.trigger_name,
+                     ' ON ',full_table_name,'; ');  
+                     string_temp = '';
+                     IF(row_column.event like '%INSERT%') THEN
+                        string_temp = ' INSERT ';                    
+                     END IF;  
+                     IF(row_column.event like '%UPDATE%') THEN
+                        IF(string_temp <> '') THEN
+                           string_temp = CONCAT(string_temp,' OR ');  
+                        END IF;                  
+                        string_temp = CONCAT(string_temp,' UPDATE ');                    
+                     END IF;
+                     IF(row_column.event like '%DELETE%') THEN
+                        IF(string_temp <> '') THEN
+                           string_temp = CONCAT(string_temp,' OR ');  
+                        END IF; 
+                        string_temp = CONCAT(string_temp,' DELETE ');                    
+                     END IF;
+                     IF(row_column.event like '%TRUNCATE%') THEN
+                        IF(string_temp <> '') THEN
+                           string_temp = CONCAT(string_temp,' OR ');  
+                        END IF; 
+                        string_temp = CONCAT(string_temp,' TRUNCATE ');                    
+                     END IF;
+                     string_temp = CONCAT(string_temp,'ON ');
+                     scriptResult = CONCAT(scriptResult,'CREATE TRIGGER ',
+                     row_column.trigger_name,' ',row_column.activation,string_temp,
+                     full_table_name,' FOR EACH ',row_column.action_orientation,' ',
+                     row_column.definition,'; '); 
+                     --Crear comentario del trigger
+                     string_trigger = '';
+                     select description into string_trigger from pg_description join pg_trigger 
+                     on pg_description.objoid = pg_trigger.oid where 
+                     tgname = row_column.trigger_name;
+                     IF(string_trigger <> '') THEN
+                        scriptResult = CONCAT(scriptResult,'COMMENT ON TRIGGER ',row_column.trigger_name,
+                        ' ON ',full_table_name,' IS ',quote_literal(string_trigger),'; ');
+                     END IF;                    
+                     
+                 END LOOP;    
+                 --Buscar y crear FKs
+                 FOR row_column IN EXECUTE('SELECT conname as name, pg_get_constraintdef(oid) 
+                 as definition FROM pg_constraint WHERE contype IN (''f'') 
+                 AND connamespace = '||quote_literal(record_table.myschema)||'::regnamespace 
+                 AND (conrelid::regclass::text = '||quote_literal(full_table_name)||' OR 
+                 conrelid::regclass::text = '||quote_literal(record_table.mytable)||')') LOOP
+                    scriptResult = CONCAT(scriptResult,'DO ','$','$ ','BEGIN BEGIN ALTER TABLE ONLY ',
+                    full_table_name,' ADD CONSTRAINT ',row_column.name,' ',row_column.definition,'; 
+                    EXCEPTION WHEN OTHERS THEN RAISE NOTICE ''ERROR AGREGANDO LA FOREIGN KEY '||row_column.name||' '' ',
+                    '; END; END',' $','$; ');
+                 
+                 END LOOP; 
+                 --Buscar y crear Checks
+                 FOR row_column IN EXECUTE('select pgc.conname as nombre,
+                 pg_get_constraintdef(pgc.oid) as definicion,ccu.table_schema as esquema,
+                 ccu.table_name as tabla from pg_constraint pgc join pg_namespace nsp 
+                 on nsp.oid = pgc.connamespace join pg_class  cls on pgc.conrelid = cls.oid 
+                 left join information_schema.constraint_column_usage ccu on pgc.conname = 
+                 ccu.constraint_name and nsp.nspname = ccu.constraint_schema WHERE contype =''c'' 
+                 AND ccu.table_schema = '||quote_literal(record_table.myschema)||' 
+                 AND ccu.table_name = '||quote_literal(record_table.mytable)||'') LOOP
+                    scriptResult = CONCAT(scriptResult,'DO $','$ ','BEGIN BEGIN ALTER TABLE ',
+                    full_table_name,' ADD CONSTRAINT ',row_column.nombre,' ',row_column.definicion,'; 
+                    EXCEPTION WHEN OTHERS THEN RAISE NOTICE ''ERROR AGREGANDO LA CHECK '||row_column.nombre||' '' ',
+                    '; END; END',' $','$; '); 
+                 
+                 END LOOP;                           
+                 ------------Final de gestión de la tabla-------------------------------
+                 counter = 0;
+                 conteo_columnas = 0;                           
+           END IF;      
+        END IF;
+		
+		FETCH tables_cursor INTO record_table;
+      END LOOP ; 
+      DROP TABLE temp_table;
+  CLOSE tables_cursor; 
+  --Exportar vistas
+  FOR record_function IN EXECUTE('select * from pg_views WHERE viewname LIKE 
+  '||quote_literal(first_digits)||'') LOOP
+     scriptResult = CONCAT(scriptResult,'CREATE OR REPLACE VIEW ',record_function.schemaname,
+     '."',record_function.viewname,'" ','AS ',record_function.definition,' ',
+     'ALTER TABLE ',record_function.schemaname,'."',record_function.viewname,'" OWNER TO ',
+     record_function.viewowner,'; ');
+     --Agregar comentarios de la vista y columnas
+     FOR row_column IN EXECUTE('select objsubid,description 
+     from pg_description join pg_class on pg_description.objoid = pg_class.oid 
+     join pg_namespace on pg_class.relnamespace = pg_namespace.oid 
+     where relname = '||quote_literal(record_function.viewname)||' 
+     and nspname='||quote_literal(record_function.schemaname)||' ') LOOP   
+        IF(row_column.objsubid = 0) THEN
+           scriptResult = CONCAT(scriptResult,'COMMENT ON VIEW ',record_function.schemaname,
+           '."',record_function.viewname,'" ',' IS '||quote_literal(row_column.description)||'; ');                    
+        ELSE
+           SELECT column_name INTO mycolumn_name FROM information_schema.columns 
+           WHERE table_name = record_function.viewname AND table_schema = 
+           record_function.schemaname AND ordinal_position = row_column.objsubid;
+                          
+           scriptResult = CONCAT(scriptResult,'COMMENT ON COLUMN ',record_function.schemaname,
+           '."',record_function.viewname,'".'||mycolumn_name||' IS '||quote_literal(row_column.description)||'; ');     
+        END IF;      
+                          
+     END LOOP;
+     
+  END LOOP;
+  --Fin de exportacion de vistas
+  --Creacion de rules
+  FOR record_table IN EXECUTE('SELECT table_schema as myschema,table_name as mytable 
+  FROM information_schema.tables WHERE table_type=''BASE TABLE'' ORDER BY table_name') LOOP
+     IF (SELECT COUNT(column_name) FROM information_schema.columns WHERE table_schema = 
+     record_table.myschema AND table_name = record_table.mytable AND column_name = 'id_capsules') > 0 THEN 
+        SELECT record_table.myschema||'.'||record_table.mytable INTO full_table_name;            
+        --Comprobar si existe algún registro con la capsula suministrada 
+        EXECUTE ('SELECT COUNT(id_capsules) FROM '||full_table_name||' 
+        WHERE id_capsules = '||quote_literal(mycapsule)||' ') INTO count_row_capsule; 
+        IF (count_row_capsule) > 0 THEN  
+           FOR record_function IN EXECUTE('select * from pg_rules where schemaname = 
+           '||quote_literal(record_table.myschema)||' AND tablename = 
+           '||quote_literal(record_table.mytable)||'') LOOP
+              string_temp = record_function.definition;
+              select replace(string_temp, 'CREATE RULE', 'CREATE OR REPLACE RULE') into string_temp;
+              scriptResult = CONCAT(scriptResult,string_temp,' ');
+              --Poner comentario
+              select n.nspname as rule_schema,c.relname as rule_table,r.rulename,d.description into row_column 
+              from pg_rewrite r join pg_class c on r.ev_class = c.oid left join pg_namespace n 
+              on n.oid = c.relnamespace left join pg_description d on r.oid = d.objoid 
+              where c.relname = record_table.mytable and n.nspname = record_table.myschema 
+              and r.rulename = record_function.rulename;
+              IF(row_column is not null) THEN
+                 scriptResult = CONCAT(scriptResult,'COMMENT ON RULE ',record_function.rulename,' ON ',
+                 record_table.myschema,'.',record_table.mytable,' IS ',quote_literal(row_column.description),'; ');
+              END IF;
+        
+           END LOOP; 
+        END IF;
+     END IF; 
+  END LOOP; 
+  FOR record_table IN EXECUTE('select * from pg_views WHERE viewname LIKE 
+  '||quote_literal(first_digits)||'') LOOP  
+     FOR record_function IN EXECUTE('select * from pg_rules where schemaname = 
+        '||quote_literal(record_table.schemaname)||' AND tablename = 
+        '||quote_literal(record_table.viewname)||'') LOOP
+           string_temp = record_function.definition;
+           select replace(string_temp, 'CREATE RULE', 'CREATE OR REPLACE RULE') into string_temp;
+           scriptResult = CONCAT(scriptResult,string_temp,' ');
+           --Poner comentario
+           select n.nspname as rule_schema,c.relname as rule_table,r.rulename,d.description into row_column 
+           from pg_rewrite r join pg_class c on r.ev_class = c.oid left join pg_namespace n 
+           on n.oid = c.relnamespace left join pg_description d on r.oid = d.objoid 
+           where c.relname = record_table.mytable and n.nspname = record_table.myschema 
+           and r.rulename = record_function.rulename;
+           IF(row_column is not null) THEN
+              scriptResult = CONCAT(scriptResult,'COMMENT ON RULE ',record_function.rulename,' ON ',
+              record_table.myschema,'.',record_table.mytable,' IS ',quote_literal(row_column.description),'; ');
+           END IF;
+        
+     END LOOP;  
+  
+  END LOOP; 
+EXCEPTION WHEN others THEN
+  GET STACKED DIAGNOSTICS scriptResult = MESSAGE_TEXT;  
+  scriptResult = 'ERROR: '||scriptResult; 
+END;        		
+  --raise notice '%', scriptResult;
+  return scriptResult;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_save_capsule(uuid)
+  OWNER TO postgres;

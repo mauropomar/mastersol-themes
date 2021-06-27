@@ -1,0 +1,80 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_ordered_tables_by_fk
+(
+  IN  idcapsule  uuid
+)
+RETURNS text AS
+$$
+declare
+record_table record;
+record_function record;
+list_tables text = '';
+array_tables text[];
+elem varchar;
+tabla_arr varchar;
+peso_arr int;
+conteo_filas int = 0;
+counter int = 0;
+list_capsule_tables text = '';
+part_esquema varchar;
+part_table varchar;
+count_row_capsule int;
+full_table_name varchar;
+
+begin
+   FOR record_table IN EXECUTE('SELECT table_schema as myschema,table_name as mytable 
+   FROM information_schema.tables WHERE table_type=''BASE TABLE'' ORDER BY table_name') LOOP
+     SELECT record_table.myschema||'.'||record_table.mytable INTO full_table_name;   
+     IF (SELECT COUNT(column_name) FROM information_schema.columns WHERE table_schema = 
+     record_table.myschema AND table_name = record_table.mytable AND column_name 
+     = 'id_capsules') > 0 THEN 
+        EXECUTE ('SELECT COUNT(id_capsules) FROM '||full_table_name||' 
+        WHERE id_capsules = '||quote_literal($1)||' ') INTO count_row_capsule;
+        IF (count_row_capsule) > 0 THEN 
+           list_capsule_tables = CONCAT(list_capsule_tables,record_table.myschema,'.',record_table.mytable,',');
+           select cfgapl.fn_list_tables_by_fk(list_tables,record_table.myschema::varchar,
+           record_table.mytable::varchar) into list_tables; 
+        END IF;       
+     END IF; 
+   END LOOP; 
+   --Rerodenar el listado
+   CREATE TEMP TABLE temp_table(
+     tabla varchar,
+     peso int
+  );
+  SELECT string_to_array(list_tables, ',') into array_tables;
+  FOREACH elem IN ARRAY array_tables LOOP
+     SELECT split_part(elem, ':', 1) into tabla_arr;
+     SELECT split_part(elem, ':', 2) into peso_arr;
+     --Comprobar que la tabla tenga datos de la capsula
+     SELECT split_part(tabla_arr, '.', 1) into part_esquema;
+     SELECT split_part(tabla_arr, '.', 2) into part_table;
+     IF (SELECT COUNT(column_name) FROM information_schema.columns WHERE table_schema = 
+     part_esquema AND table_name = part_table AND column_name = 'id_capsules') > 0 THEN
+        EXECUTE ('SELECT COUNT(id_capsules) FROM '||tabla_arr||' 
+        WHERE id_capsules = '||quote_literal($1)||' ') INTO count_row_capsule;
+        IF (count_row_capsule) > 0 THEN   
+           IF(strpos(list_capsule_tables, tabla_arr)) > 0 THEN      
+              INSERT INTO temp_table (tabla,peso)VALUES(tabla_arr,peso_arr);
+           END IF; 
+        END IF;   
+     END IF;     
+  END loop;
+  list_tables = ''; 
+  SELECT COUNT(*) INTO conteo_filas FROM temp_table;
+  FOR record_table IN EXECUTE('SELECT tabla FROM temp_table ORDER BY peso DESC') LOOP
+     counter = counter + 1;   
+     list_tables = CONCAT(list_tables,record_table.tabla);
+     IF counter < conteo_filas THEN                            
+        list_tables = CONCAT(list_tables,',');
+     END IF;  
+  END LOOP;  
+  
+  DROP TABLE temp_table;  
+  
+  return list_tables;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_ordered_tables_by_fk(uuid)
+  OWNER TO postgres;
