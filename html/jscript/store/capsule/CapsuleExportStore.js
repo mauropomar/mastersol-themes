@@ -5,10 +5,10 @@ Ext.define('MasterSol.store.capsule.CapsuleExportStore', {
     autoLoad: true,
     proxy: {
         type: 'ajax',
-        url: 'app/languages',
+        url: 'app/capsules',
         reader: {
             type: 'json',
-            rootProperty: ''
+            rootProperty: 'datos'
         }
     }
 });

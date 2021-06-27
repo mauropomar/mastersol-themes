@@ -16,6 +16,7 @@ Ext.define('MasterSol.view.capsule.WindowExportCapsule', {
     ],
     items: [{
         xtype: 'gridpanel',
+        id: 'grid_list_capsules',
         tbar: [{
             xtype: 'tbtext',
             text: 'Nombre:'
@@ -31,18 +32,30 @@ Ext.define('MasterSol.view.capsule.WindowExportCapsule', {
         columns: [{
             text: 'Nombre',
             sortable: false,
-            dataIndex: 'name',
+            dataIndex: 'namex',
             flex: 1
+        }, {
+            text: 'Descripción',
+            sortable: false,
+            dataIndex: 'description',
+            flex: 2
         }],
         viewConfig: {},
     }],
     buttons: [{
         text: 'Exportar',
-        iconCls: 'fa fa-save'
-        //   handler: 'firstFormSave'
+        id: 'btn_exportar_capsule',
+        disabled: true,
+        iconCls: 'fa fa-save',
+        handler: function () {
+            MasterApp.getController('MasterSol.controller.capsule.CapsuleExportController').export();
+        }
     }, {
         text: 'Cancelar',
-        iconCls: 'fa fa-close'
-        //   handler: 'firstFormSave'
+        iconCls: 'fa fa-close',
+        id: 'btn_cancelar_capsule',
+        handler: function () {
+           MasterApp.getController('MasterSol.controller.capsule.CapsuleExportController').cancel();
+        }
     }]
 });
