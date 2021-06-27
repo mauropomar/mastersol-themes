@@ -1,8 +1,8 @@
-Ext.define('MasterSol.store.layout.LanguageStore', {
+Ext.define('MasterSol.store.capsule.CapsuleExportStore', {
     extend: 'Ext.data.Store',
-    alias: 'store.store_language',
-    model:'MasterSol.model.layout.LanguageModel',
-    autoLoad: false,
+    alias: 'store.store_export_capsule',
+    model:'MasterSol.model.capsule.CapsuleExportModel',
+    autoLoad: true,
     proxy: {
         type: 'ajax',
         url: 'app/languages',

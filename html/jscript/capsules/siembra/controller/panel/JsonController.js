@@ -367,7 +367,7 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
                     text: node.data.text,
                     parentId: (node.data.parentId === 'root') ? '0' : node.data.parentId,
                     sectionId: node.data.sectionId,
-                })
+                });
             }
         });
         return array;
