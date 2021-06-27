@@ -216,7 +216,7 @@ router.get('/getusers', async function (req, res) {
 router.post('/insoptionuser', async function (req, res) {
     var result = await objects.users.insertOptionuser(req)
     let success = true
-    if(result.includes('ERROR'))
+    if(result.includes('ERROR: '))
         success = false
 
     return res.json({'success': success, 'message': result})

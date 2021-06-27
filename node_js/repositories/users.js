@@ -38,9 +38,9 @@ const insertOptionuser = async (req) => {
     const query = "SELECT security.fn_insert_user_options($1,$2,$3,$4,$5)"
     const result = await pool.executeQuery(query, params)
     if (result.success === false) {
-        message = result
+        message = result.message
     }
-    console.log(message)
+    console.log('PASS',req.body.pass)
     if(message === '' && req.body.pass !== ''){
         const paramsPass = [
             req.body.pass,
