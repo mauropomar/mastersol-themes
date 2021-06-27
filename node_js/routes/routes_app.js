@@ -354,6 +354,7 @@ router.get('/newalerts', async function (req, res) {
 router.post('/savecapsule', async function (req, res) {
     var result = await objects.functions.saveCapsule(req)
     let success = result.success
+    console.log('RESULTADO: ',result)
     if (result.datos.includes('ERROR: '))
         success = false
 
