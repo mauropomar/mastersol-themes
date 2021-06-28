@@ -1,0 +1,22 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_languages_by_user
+(  
+  IN  iduser  uuid   
+)
+RETURNS json AS
+$$
+declare
+result JSON;
+begin
+  SELECT json_agg(rowset.*) INTO result FROM
+  (SELECT l.id,l.namex as nombre FROM security.users_language ul INNER JOIN cfgapl.languages l 
+  ON ul.id_languages = l.id WHERE ul.id_users = $1)rowset;
+  return result;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_languages(integer, integer, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_get_languages(integer, integer, uuid)
+  IS 'Function get languages by user';

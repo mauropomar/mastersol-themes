@@ -14,7 +14,7 @@ const getRoles = async (req) => {
 }
 
 const getRolesByUser = async (req) => {
-    const params = [req.session.id_rol]
+    const params = [req.session.id_user]
     const query = "SELECT security.fn_get_roles_by_user($1)"
     const result = await pool.executeQuery(query, params)
     if (result.success === false) {
