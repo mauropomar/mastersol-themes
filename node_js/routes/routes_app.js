@@ -51,7 +51,7 @@ router.get('/roles', async function (req, res) {
     res.json(result)
 })
 
-/*Obtener roles*/
+/*Obtener roles por usuario*/
 router.get('/rolesbyuser', async function (req, res) {
     const result = await objects.roles.getRolesByUser(req)
     res.json(result)
