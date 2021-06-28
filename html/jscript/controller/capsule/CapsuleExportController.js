@@ -13,7 +13,6 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
             id: 'window_export_capsule'
         });
         Ext.ComponentQuery.query('#field_name_export')[0].focus('');
-     //   this.setNameFile('CapsuleX');
     },
 
     setNameFile: function (nameCapsule) {
@@ -32,20 +31,31 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
         var grid = Ext.ComponentQuery.query('#grid_list_capsules')[0];
         var record = grid.getSelectionModel().getSelection()[0];
         var mask = new Ext.LoadMask(grid, {
-            msg: 'Exportando...'
+            msg: 'Exportando. Espere unos minutos por favor...'
         });
         mask.show();
+        var nameFile = Ext.ComponentQuery.query('#field_name_export')[0].getValue();
         var save = {
             url: 'app/savecapsule',
             method: 'POST',
             scope: this,
+            timeout: 50000,
             params: {
                 idcapsule: record.data.id
             },
             success: function (response) {
-                debugger
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
+                if(json.success == true) {
+                    var url = json.datos;
+                    var index = url.indexOf('resources');
+                    url = url.substring(index, url.length);
+                    var link = document.createElement('a');
+                    link.href = url;
+                    link.download = nameFile;
+                    link.click();
+                    Ext.toast('La capsula fue exportada con éxito.');
+                }
 
             },
             failure: function (response) {
