@@ -50,7 +50,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
                     var url = json.datos;
                     var index = url.indexOf('resources');
                     url = url.substring(index, url.length);
-                    var link = document.createElement('a');
+                     var link = document.createElement('a');
                     link.href = url;
                     link.download = nameFile;
                     link.click();
