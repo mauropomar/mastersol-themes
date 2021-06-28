@@ -51,6 +51,12 @@ router.get('/roles', async function (req, res) {
     res.json(result)
 })
 
+/*Obtener roles*/
+router.get('/rolesbyuser', async function (req, res) {
+    const result = await objects.roles.getRolesByUser(req)
+    res.json(result)
+})
+
 /*Obtener propiedades tablas*/
 router.get('/getproperties', async function (req, res) {
     const result = await objects.tables.getProperties(req)
