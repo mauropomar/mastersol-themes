@@ -11,19 +11,12 @@ $$
 declare
 respuesta varchar = null;
 begin
-  BEGIN
-     IF NOT EXISTS(SELECT u.id FROM security.users_language u WHERE u.id_capsules =  $1::uuid AND 
-        u.id_organizations = $2::uuid AND u.id_users = $3::uuid AND u.id_languages = $4::uuid) THEN    
-        INSERT INTO security.users_language(id_capsules,id_organizations,id_users,id_languages)
-        VALUES($1,$2,$3,$4) returning id INTO respuesta;   
-     END IF;     
+  BEGIN      
      --Actualizar valores por defecto de lenguaje y rol en tabla users
      UPDATE security.users SET default_rol = $5, default_language = $4 WHERE id = $3;  
   EXCEPTION WHEN OTHERS THEN
-    respuesta = 'ERROR: No se pudo actualizar el rol y lenguaje por defecto';
-  
-  END;    
- 
+    respuesta = 'ERROR: No se pudo actualizar el rol y lenguaje por defecto';  
+  END;
  return respuesta; 
 end
 $$

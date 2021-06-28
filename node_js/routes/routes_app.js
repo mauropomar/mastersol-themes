@@ -9,6 +9,12 @@ router.get('/languages', async function (req, res) {
     res.json(result)
 })
 
+/*Obtener lenguajes por usuario*/
+router.get('/languagesbyuser', async function (req, res) {
+    const result = await objects.languages.getLanguagesByUser(req)
+    res.json(result)
+})
+
 /*Obtener accesos directos*/
 router.get('/shortcut', async function (req, res) {
     const result = await objects.shortcut.getShortcut()
@@ -48,6 +54,12 @@ router.get('/menusoption', async function (req, res) {
 /*Obtener roles*/
 router.get('/roles', async function (req, res) {
     const result = await objects.roles.getRoles(req)
+    res.json(result)
+})
+
+/*Obtener roles por usuario*/
+router.get('/rolesbyuser', async function (req, res) {
+    const result = await objects.roles.getRolesByUser(req)
     res.json(result)
 })
 
