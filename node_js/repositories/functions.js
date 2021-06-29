@@ -255,6 +255,8 @@ const executeFunctionsButtons = async (req, objects) => {
 const saveCapsule = async (req) => {
     let success = true
     let finalResult = ''
+    let noSchema = false
+    let noData = false
 
     const query = "SELECT cfgapl.fn_save_capsule($1)"
     const param_capsule = [req.body.idcapsule]
@@ -262,7 +264,9 @@ const saveCapsule = async (req) => {
     if (result.success === false)
         success = false
     let resultSaveStructure = result.rows[0].fn_save_capsule
-    if (resultSaveStructure.includes('ERROR: ')) {  //Si hubo error, capturar y terminar la funcion
+    if(!resultSaveStructure)
+        noSchema = true
+    if (resultSaveStructure && resultSaveStructure.includes('ERROR: ')) {  //Si hubo error, capturar y terminar la funcion
         success = false
         finalResult = resultSaveStructure
     }
@@ -272,6 +276,9 @@ const saveCapsule = async (req) => {
         const dirFolder = global.appRootApp + '\\resources\\backups\\'+str_capsule+'_'+Math.random()
         await generateExportFiles(req,dirFolder,resultSaveStructure)
             .then((value) => {
+                if(value == 'No hay datos para exportar') {
+                    noData = true
+                }
                 finalResult = value
             })
             .catch((value) => {
@@ -279,7 +286,7 @@ const saveCapsule = async (req) => {
                 finalResult = value
             });
         //Comprimir carpeta y devolver direccion de comprimido
-        if(finalResult === dirFolder) {
+        if(finalResult === dirFolder && !noSchema && !noData) {
             await archiveDirectory(dirFolder)
                 .then((value) => {
                     finalResult = value
@@ -291,6 +298,10 @@ const saveCapsule = async (req) => {
                     finalResult = value
                 });
         }
+        else if(!noSchema && !noData) {
+            success = false
+            finalResult = 'No hay estructura o datos para exportar'
+        }
         else{
             success = false
         }
@@ -301,13 +312,14 @@ const saveCapsule = async (req) => {
 
 const generateExportFiles = async (req,dirFolder,resultSaveStructure) => new Promise(async (resolve, reject) => {
     let success = true
-    let msg = ''
     await fs.mkdir(dirFolder, {recursive: true}, async (err) => {
         if (!err) {
             console.log('directorio salva creado')
-            //Salvar fichero con estructura
-            let fileStructure = fs.createWriteStream(dirFolder+'\\e_'+Math.random()+'.sql')
-            fileStructure.write(resultSaveStructure)
+            //Salvar fichero con estructura si existe
+            if(resultSaveStructure) {
+                let fileStructure = fs.createWriteStream(dirFolder + '\\e_' + Math.random() + '.sql')
+                fileStructure.write(resultSaveStructure)
+            }
 
             const query = "SELECT cfgapl.fn_get_ordered_tables_by_fk($1)"
             const param_capsule = [req.body.idcapsule]
@@ -343,7 +355,7 @@ const generateExportFiles = async (req,dirFolder,resultSaveStructure) => new Pro
                 }
                 resolve(dirFolder)
             }
-            else resolve(dirFolder)
+            else resolve('noData')
         }
         else
             reject(err)
