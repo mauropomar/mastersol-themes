@@ -1,0 +1,22 @@
+CREATE OR REPLACE FUNCTION "security".fn_get_roles_by_user
+(  
+  IN  iduser       uuid
+)
+RETURNS json AS
+$$
+declare
+result JSON;
+begin  
+  SELECT json_agg(rowset.*) INTO result FROM 
+  (SELECT r.id,r.namex as nombre FROM security.users_rol ur INNER JOIN security.rol r 
+  ON ur.id_rol = r.id WHERE ur.id_users = $1)rowset;  
+  return result;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION "security".fn_get_roles_by_user(uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION "security".fn_get_roles_by_user(uuid)
+  IS 'Function get roles by user';
