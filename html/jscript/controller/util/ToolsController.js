@@ -5,7 +5,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     getArrayBtn: function () {
-        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print'];
+        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
         return array;
     },
 
@@ -155,16 +155,25 @@ Ext.define('MasterSol.controller.util.ToolsController', {
 
     getButtonsDefaut: function (win) {
         return [{
-            iconCls: 'x-fa fa-export',
+            iconCls: 'fa fa-list-alt',
             tooltip: 'Exportar Capsula',
             default: true,
             name: 'btn_export_capsule',
             handler: function (evt, toolEl, owner, tool) {
                 var window = owner.up('window');
-                MasterApp.capsule.showWindow();
+                MasterApp.getController('MasterSol.controller.capsule.CapsuleExportController').showWindow();
+            }
+        },{
+            iconCls: 'fa fa-database',
+            tooltip: 'Importar Capsula',
+            default: true,
+            name: 'btn_import_capsula',
+            handler: function (evt, toolEl, owner, tool) {
+                var window = owner.up('window');
+                MasterApp.getController('MasterSol.controller.capsule.CapsuleImportController').showWindow();
             }
         }, {
-            iconCls: 'x-fa fa-export',
+            iconCls: 'fa fa-file-text',
             tooltip: 'Configurar Reporte',
             default: true,
             name: 'btn_report',

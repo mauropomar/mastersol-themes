@@ -8,7 +8,7 @@ Ext.define('MasterSol.view.capsule.WindowExportCapsule', {
     closeAction: 'destroy',
     height: 300,
     width: 600,
-    title: 'Exportar',
+    title: 'Exportar capsula',
     layout: 'fit',
     autoShow: true,
     requires: [
