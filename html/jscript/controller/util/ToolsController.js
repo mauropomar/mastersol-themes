@@ -5,7 +5,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     getArrayBtn: function () {
-        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
+        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula'];
         return array;
     },
 
@@ -126,7 +126,19 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 var params = response.request.params;
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success) {
-
+                    if (json.type === 4) {
+                        var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
+                        tabMagnament.show();
+                        tabMagnament.setActiveTab(6);
+                        tabMagnament.expand(false);
+                        tabMagnament.setDisabled(false);
+                        MasterApp.report.loadValues(json.value);
+                    }
+                    if (json.type === 5) {
+                        var extraParams = MasterApp.tools.getExtraParams();
+                        MasterApp.report.removeAll();
+                        MasterApp.report.generateReport(params, json.value, json.name, extraParams);
+                    }
                 } else {
                     Ext.MessageBox.show({
                         title: 'Error',
@@ -172,16 +184,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 var window = owner.up('window');
                 MasterApp.getController('MasterSol.controller.capsule.CapsuleImportController').showWindow();
             }
-        }, {
-            iconCls: 'fa fa-file-text',
-            tooltip: 'Configurar Reporte',
-            default: true,
-            name: 'btn_report',
-            handler: function (evt, toolEl, owner, tool) {
-                var window = owner.up('window');
-                MasterApp.report.clickButton();
-            }
-        }, {
+        },{
             iconCls: 'fa fa-plus',
             tooltip: 'Agregar',
             hidden: win.isAlert,
