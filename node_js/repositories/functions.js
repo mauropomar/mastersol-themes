@@ -276,10 +276,11 @@ const saveCapsule = async (req) => {
         const dirFolder = global.appRootApp + '\\resources\\backups\\'+str_capsule+'_'+Math.random()
         await generateExportFiles(req,dirFolder,resultSaveStructure)
             .then((value) => {
-                if(value == 'No hay datos para exportar') {
+                if(value == 'noData') {
                     noData = true
+                    finalResult = 'No hay datos para exportar'
                 }
-                finalResult = value
+                else finalResult = value
             })
             .catch((value) => {
                 success = false
