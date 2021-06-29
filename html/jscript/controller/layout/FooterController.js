@@ -44,7 +44,7 @@ Ext.define('MasterSol.controller.layout.FooterController', {
             var window = MasterApp.util.getMenuByName(record.data.name);
             var height = panelmenu.getHeight();
             var width = panelmenu.getWidth();
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
             MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
             var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
             btn.hide();

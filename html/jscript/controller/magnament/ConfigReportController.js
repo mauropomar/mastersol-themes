@@ -54,7 +54,6 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         });
     },
 
-
     loadValues: function (values) {
         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
         tabMagnament.child('#config-report-view').tab.show();

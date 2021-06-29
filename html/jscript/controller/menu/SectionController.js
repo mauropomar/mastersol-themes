@@ -524,7 +524,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var arrayBtn = ['btn_restore'];
         var isExpanded = MasterApp.util.isWindowExpand(win);
         MasterApp.tools.setVisibleBtn(win, arrayBtn, isExpanded);
-        arrayBtn = ['btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+        arrayBtn = ['btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
         if (widthPanel >= width) {
             MasterApp.tools.setVisibleBtn(win, arrayBtn, true);
             MasterApp.tools.showButtonsNotDefault(win, false);
@@ -579,7 +579,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             btn.show();
             btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
             btn.show();
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
             MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
             this.adjustOtherWindowsMinimize();
             var panel = Ext.ComponentQuery.query('#panel-center')[0];

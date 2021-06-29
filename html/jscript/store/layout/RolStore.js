@@ -5,7 +5,7 @@ Ext.define('MasterSol.store.layout.RolStore', {
     autoLoad: false,
     proxy: {
         type: 'ajax',
-        url: 'app/roles',
+        url: 'app/rolesbyuser',
         reader: {
             type: 'json',
             rootProperty: ''

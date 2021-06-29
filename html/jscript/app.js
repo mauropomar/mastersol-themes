@@ -52,6 +52,7 @@ Ext.application({
         MasterApp.filter = MasterApp.getController('MasterSol.controller.magnament.FilterController');
         MasterApp.totals = MasterApp.getController('MasterSol.controller.magnament.TotalController');
         MasterApp.report = MasterApp.getController('MasterSol.controller.magnament.ConfigReportController');
+        MasterApp.capsule = MasterApp.getController('MasterSol.controller.capsule.CapsuleExportController');
 
     }
 });

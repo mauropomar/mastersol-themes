@@ -5,7 +5,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     getArrayBtn: function () {
-        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print'];
+        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula'];
         return array;
     },
 
@@ -125,8 +125,6 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 mask.hide();
                 var params = response.request.params;
                 var json = Ext.JSON.decode(response.responseText);
-                //  MasterApp.report.generateReport(params, './resources/reportes.html', 'Table x');
-                //  return;             
                 if (json.success) {
                     if (json.type === 4) {
                         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
@@ -169,6 +167,24 @@ Ext.define('MasterSol.controller.util.ToolsController', {
 
     getButtonsDefaut: function (win) {
         return [{
+            iconCls: 'fa fa-list-alt',
+            tooltip: 'Exportar Capsula',
+            default: true,
+            name: 'btn_export_capsule',
+            handler: function (evt, toolEl, owner, tool) {
+                var window = owner.up('window');
+                MasterApp.getController('MasterSol.controller.capsule.CapsuleExportController').showWindow();
+            }
+        },{
+            iconCls: 'fa fa-database',
+            tooltip: 'Importar Capsula',
+            default: true,
+            name: 'btn_import_capsula',
+            handler: function (evt, toolEl, owner, tool) {
+                var window = owner.up('window');
+                MasterApp.getController('MasterSol.controller.capsule.CapsuleImportController').showWindow();
+            }
+        },{
             iconCls: 'fa fa-plus',
             tooltip: 'Agregar',
             hidden: win.isAlert,
@@ -299,4 +315,4 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         return params;
     }
 })
-    ;
+;

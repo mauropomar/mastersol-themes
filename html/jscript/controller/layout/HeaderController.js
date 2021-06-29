@@ -39,7 +39,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             win.isminimize = false;
             var btnMinimize = MasterApp.tools.getBtnTools(win, 'btn_minimize');
             btnMinimize.show();
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             var btnMaximize = MasterApp.tools.getBtnTools(win, 'btn_restore');
             btnMaximize.hide();
@@ -66,7 +66,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             win.setY(posY);
             posX = width + posX;
             win.isminimize = false;
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             var btnMaximize = MasterApp.tools.getBtnTools(win, 'btn_restore');
             btnMaximize.hide();
@@ -109,7 +109,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             win.isminimize = false;
             var btnMinimize = MasterApp.tools.getBtnTools(win, 'btn_minimize');
             btnMinimize.show();
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             MasterApp.tools.showButtonsNotDefault(win, true);
         }
@@ -202,7 +202,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             windows[j].setWidth(300);
             var btn = MasterApp.tools.getBtnTools(windows[j], 'btn_restore');
             btn.show();
-            var arrayBtn = ['btn_minimize', 'btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
+            var arrayBtn = ['btn_minimize', 'btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
             MasterApp.tools.setVisibleBtn(windows[j], arrayBtn, true);
             windows[j].alignTo(panelMenu, 'bl-bl');
             MasterApp.section.setPositionWindow(windows[j]);
