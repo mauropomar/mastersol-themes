@@ -55,6 +55,13 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
                     link.download = nameFile;
                     link.click();
                     Ext.toast('La capsula fue exportada con éxito.');
+                }else{
+                    Ext.MessageBox.show({
+                        title: 'Información',
+                        msg: json.datos,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
                 }
 
             },

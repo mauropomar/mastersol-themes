@@ -125,22 +125,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 mask.hide();
                 var params = response.request.params;
                 var json = Ext.JSON.decode(response.responseText);
-                //  MasterApp.report.generateReport(params, './resources/reportes.html', 'Table x');
-                //  return;             
                 if (json.success) {
-                    if (json.type === 4) {
-                        var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
-                        tabMagnament.show();
-                        tabMagnament.setActiveTab(6);
-                        tabMagnament.expand(false);
-                        tabMagnament.setDisabled(false);
-                        MasterApp.report.loadValues(json.value);
-                    }
-                    if (json.type === 5) {
-                        var extraParams = MasterApp.tools.getExtraParams();
-                        MasterApp.report.removeAll();
-                        MasterApp.report.generateReport(params, json.value, json.name, extraParams);
-                    }
+
                 } else {
                     Ext.MessageBox.show({
                         title: 'Error',
@@ -169,6 +155,24 @@ Ext.define('MasterSol.controller.util.ToolsController', {
 
     getButtonsDefaut: function (win) {
         return [{
+            iconCls: 'x-fa fa-export',
+            tooltip: 'Exportar Capsula',
+            default: true,
+            name: 'btn_export_capsule',
+            handler: function (evt, toolEl, owner, tool) {
+                var window = owner.up('window');
+                MasterApp.capsule.showWindow();
+            }
+        }, {
+            iconCls: 'x-fa fa-export',
+            tooltip: 'Configurar Reporte',
+            default: true,
+            name: 'btn_report',
+            handler: function (evt, toolEl, owner, tool) {
+                var window = owner.up('window');
+                MasterApp.report.clickButton();
+            }
+        }, {
             iconCls: 'fa fa-plus',
             tooltip: 'Agregar',
             hidden: win.isAlert,
@@ -299,4 +303,4 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         return params;
     }
 })
-    ;
+;

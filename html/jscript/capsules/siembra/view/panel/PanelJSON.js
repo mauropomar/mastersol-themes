@@ -22,14 +22,6 @@ Ext.define('Capsules.siembra.view.panel.PanelJson', {
         handler:function(){
             MasterApp.getController("Capsules.siembra.controller.panel.JsonController").sendJson();
         }
-    },{
-        xtype: 'button',
-        iconCls: 'fa fa-done',
-        text: 'Exportar',
-        id: 'btn_export_capsula',
-        handler:function(){
-            MasterApp.getController("MasterSol.controller.capsule.CapsuleExportController").showWindow();
-        }
     }],
     requires: [
         'MasterSol.view.magnament.Register',
