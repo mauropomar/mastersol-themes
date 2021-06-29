@@ -25,8 +25,6 @@ Ext.define('MasterSol.controller.layout.UserController', {
         ;
         var language = Ext.ComponentQuery.query('#combolanguage')[0].getValue();
         var rol = Ext.ComponentQuery.query('#comborol')[0].getValue();
-        var passwordLast = Ext.ComponentQuery.query('#password_last')[0].getValue();
-        var password = Ext.ComponentQuery.query('#password')[0].getValue();
         var save = {
             url: 'app/insoptionuser',
             method: 'POST',
@@ -34,8 +32,8 @@ Ext.define('MasterSol.controller.layout.UserController', {
             params: {
                 idlanguajes: language,
                 idrol: rol,
-                lastpass: sha256(passwordLast),
-                pass: sha256(password),
+                lastpass: this.getPassword('password_last'),
+                pass: this.getPassword('password'),
                 accion: '12'
             },
             success: function (response) {
@@ -96,5 +94,11 @@ Ext.define('MasterSol.controller.layout.UserController', {
         Ext.ComponentQuery.query('#password_last')[0].reset();
         Ext.ComponentQuery.query('#password')[0].reset();
         Ext.ComponentQuery.query('#confirm_password')[0].reset();
+    },
+
+    getPassword: function (field) {
+        var value = Ext.ComponentQuery.query('#' + field)[0].getValue();
+        value = (value === '' || value === null) ? MasterApp.globals.password : sha256(value);
+        return value;
     }
 });
