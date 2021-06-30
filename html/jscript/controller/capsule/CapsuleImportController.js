@@ -19,11 +19,29 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
         var fileField = Ext.ComponentQuery.query('#file_capsule')[0];
         var file = fileField.fileInputEl.dom.files[0],
             reader;
+        reader = new FileReader();
         if (file === undefined || !(file instanceof File)) {
+            mask.hide();
+            Ext.MessageBox.show({
+                title: 'Información',
+                msg: 'Debe seleccionar un fichero.',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.INFO
+            });
             return;
         }
-        reader = new FileReader();
         var nameFile = this.getName(fileField.value);
+        if (!this.isValidFile(nameFile)) {
+            mask.hide();
+            fileField.reset();
+            Ext.MessageBox.show({
+                title: 'Información',
+                msg: 'La extensión del fichero no es correcta.',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.INFO
+            });
+            return;
+        }
         reader.onloadend = function (event) {
             var binaryString = '',
                 bytes = new Uint8Array(event.target.result),
@@ -83,6 +101,12 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
             return name;
         }
         return path;
+    },
+
+    isValidFile: function (name) {
+        var index = name.lastIndexOf('.gz');
+        var valid = (index === -1) ? false : true;
+        return valid;
     }
 
 });
