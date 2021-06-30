@@ -15,7 +15,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
         var mask = new Ext.LoadMask(window, {
             msg: 'Importando. Espere unos minutos por favor...'
         });
-        mask.show();
+     //   mask.show();
         var fileField = Ext.ComponentQuery.query('#file_capsule')[0];
         var file = fileField.fileInputEl.dom.files[0],
             reader;
@@ -104,7 +104,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
     },
 
     isValidFile: function (name) {
-        var index = name.lastIndexOf('.gz');
+        var index = name.lastIndexOf('.zip');
         var valid = (index === -1) ? false : true;
         return valid;
     }

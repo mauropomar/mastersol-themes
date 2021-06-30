@@ -12,7 +12,6 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
         Ext.create('MasterSol.view.capsule.WindowExportCapsule', {
             id: 'window_export_capsule'
         });
-        Ext.ComponentQuery.query('#field_name_export')[0].focus('');
     },
 
     setNameFile: function (nameCapsule) {
@@ -22,8 +21,6 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
     },
 
     clickCapsule: function (grid, record) {
-        var name = record.data.namex;
-        this.setNameFile(name);
         Ext.ComponentQuery.query('#btn_exportar_capsule')[0].setDisabled(false);
     },
 
@@ -34,7 +31,6 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
             msg: 'Exportando. Espere unos minutos por favor...'
         });
         mask.show();
-        var nameFile = Ext.ComponentQuery.query('#field_name_export')[0].getValue();
         Ext.ComponentQuery.query('#btn_cancelar_capsule')[0].setDisabled(true);
         var save = {
             url: 'app/savecapsule',
@@ -49,12 +45,11 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
                 Ext.ComponentQuery.query('#btn_cancelar_capsule')[0].setDisabled(false);
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
-                    var url = json.datos;
-                    var index = url.indexOf('resources');
-                    url = url.substring(index, url.length);
+                    var url = this.getPath(json.datos);
+                    var name = this.getName(url);
                     var link = document.createElement('a');
                     link.href = url;
-                    link.download = nameFile;
+                    link.download = name;
                     link.click();
                     Ext.toast('La capsula fue exportada con éxito.');
                 } else {
@@ -76,5 +71,15 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
 
     cancel: function () {
         Ext.ComponentQuery.query('window-export-capsule')[0].close();
+    },
+
+    getPath:function(path){
+        var index = path.indexOf('resources');
+        return path.substring(index, path.length);
+    },
+
+    getName:function(path){
+        var index = path.lastIndexOf('\\');
+        return path.substring(index + 1, path.length);
     }
 });

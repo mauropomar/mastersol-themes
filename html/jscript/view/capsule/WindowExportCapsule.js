@@ -17,7 +17,7 @@ Ext.define('MasterSol.view.capsule.WindowExportCapsule', {
     items: [{
         xtype: 'gridpanel',
         id: 'grid_list_capsules',
-        tbar: [{
+      /*  tbar: [{
             xtype: 'tbtext',
             text: 'Nombre:'
         }, {
@@ -25,7 +25,7 @@ Ext.define('MasterSol.view.capsule.WindowExportCapsule', {
             id: 'field_name_export',
             width: '50%',
             allowBlank: false
-        }],
+        }],*/
         store: {
             type: 'store_export_capsule'
         },
