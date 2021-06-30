@@ -3,7 +3,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
     init: function () {
         this.control({
             '#grid_list_capsules': { // matches the view itself
-                itemclick:'clickCapsule'
+                itemclick: 'clickCapsule'
             }
         });
     },
@@ -21,13 +21,13 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
         Ext.ComponentQuery.query('#field_name_export')[0].setValue(name);
     },
 
-    clickCapsule:function(grid, record){
+    clickCapsule: function (grid, record) {
         var name = record.data.namex;
         this.setNameFile(name);
         Ext.ComponentQuery.query('#btn_exportar_capsule')[0].setDisabled(false);
     },
 
-    export:function(){
+    export: function () {
         var grid = Ext.ComponentQuery.query('#grid_list_capsules')[0];
         var record = grid.getSelectionModel().getSelection()[0];
         var mask = new Ext.LoadMask(grid, {
@@ -35,6 +35,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
         });
         mask.show();
         var nameFile = Ext.ComponentQuery.query('#field_name_export')[0].getValue();
+        Ext.ComponentQuery.query('#btn_cancelar_capsule')[0].setDisabled(true);
         var save = {
             url: 'app/savecapsule',
             method: 'POST',
@@ -45,17 +46,18 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
             },
             success: function (response) {
                 mask.hide();
+                Ext.ComponentQuery.query('#btn_cancelar_capsule')[0].setDisabled(false);
                 var json = Ext.JSON.decode(response.responseText);
-                if(json.success == true) {
+                if (json.success == true) {
                     var url = json.datos;
                     var index = url.indexOf('resources');
                     url = url.substring(index, url.length);
-                     var link = document.createElement('a');
+                    var link = document.createElement('a');
                     link.href = url;
                     link.download = nameFile;
                     link.click();
                     Ext.toast('La capsula fue exportada con éxito.');
-                }else{
+                } else {
                     Ext.MessageBox.show({
                         title: 'Información',
                         msg: json.datos,
@@ -72,7 +74,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
         Ext.Ajax.request(save);
     },
 
-    cancel:function(){
+    cancel: function () {
         Ext.ComponentQuery.query('window-export-capsule')[0].close();
     }
 });

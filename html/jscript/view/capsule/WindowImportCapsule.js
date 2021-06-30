@@ -23,6 +23,7 @@ Ext.define('MasterSol.view.capsule.WindowImportCapsule', {
             emptyText: 'Seleccione la capsula a importar..',
             fieldLabel: 'Fichero',
             name: 'file_capsule',
+            id:'file_capsule',
             flex:2,
             buttonConfig: {
                 text: '',
@@ -33,7 +34,6 @@ Ext.define('MasterSol.view.capsule.WindowImportCapsule', {
     buttons: [{
         text: 'Importar',
         id: 'btn_execute_importar_capsule',
-        disabled: true,
         iconCls: 'fa fa-save',
         handler: function () {
             MasterApp.getController('MasterSol.controller.capsule.CapsuleImportController').import();

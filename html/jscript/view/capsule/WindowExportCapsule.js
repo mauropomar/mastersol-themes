@@ -4,7 +4,7 @@
 Ext.define('MasterSol.view.capsule.WindowExportCapsule', {
     extend: 'Ext.window.Window',
     xtype: 'window-export-capsule',
-    closable: true,
+    closable: false,
     closeAction: 'destroy',
     height: 300,
     width: 600,
