@@ -10,7 +10,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
         });
     },
 
-    import:function(){
+    import: function () {
         var window = Ext.ComponentQuery.query('#window_import_capsule')[0];
         var mask = new Ext.LoadMask(window, {
             msg: 'Importando. Espere unos minutos por favor...'
@@ -23,6 +23,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
             return;
         }
         reader = new FileReader();
+        var nameFile = this.getName(fileField.value);
         reader.onloadend = function (event) {
             var binaryString = '',
                 bytes = new Uint8Array(event.target.result),
@@ -37,14 +38,14 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
 
             // convert to base64
             base64String = btoa(binaryString);
-
             var save = {
                 url: 'app/importcapsule',
                 method: 'POST',
                 scope: this,
                 timeout: 50000,
                 params: {
-                    file: base64String
+                    file: base64String,
+                    name: nameFile
                 },
                 success: function (response) {
                     mask.hide();
@@ -71,8 +72,17 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
         reader.readAsArrayBuffer(file);
     },
 
-    cancel:function(){
+    cancel: function () {
         Ext.ComponentQuery.query('#window_import_capsule')[0].close();
+    },
+
+    getName: function (path) {
+        var index = path.lastIndexOf('\\');
+        if (index > -1) {
+            var name = path.substring(index + 1, path.lengh);
+            return name;
+        }
+        return path;
     }
 
 });
