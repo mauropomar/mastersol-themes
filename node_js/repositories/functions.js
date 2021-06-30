@@ -10,6 +10,7 @@ const rimraf = require("rimraf");
 const fileType = require('file-type');
 const zlib = require("zlib");
 const extract = require('extract-zip')
+var JSZip = require("jszip");
 const objGenFunc = {}
 
 //schedule para recorrer todos los procesos activos y ejecutar las funciones que tengan asociadas según sus calendarios
@@ -281,7 +282,7 @@ const saveCapsule = async (req) => {
         if(resultCap){
             name_capsule =  resultCap.rows[0].fn_get_register[0].namex
         }
-        const dirFolder = global.appRootApp + '\\resources\\backups\\'+name_capsule+'#'+Math.random()
+        const dirFolder = global.appRootApp + '\\resources\\backups\\'+name_capsule+'[n]'+Math.random()
         await generateExportFiles(req,dirFolder,resultSaveStructure)
             .then((value) => {
                 if(value == 'noData') {
@@ -434,7 +435,7 @@ const importCapsule = async (req) => {
         }
     });
     if(success){
-        req.body.filename = 'Core#0.5388733270112278.tar.gz'  //para prueba
+        req.body.filename = 'Core[n]0.5388733270112278.tar.gz'  //para prueba
         var writeStream = await fs.createWriteStream(dirTemp + '\\' + req.body.filename);
         readStream.pipe(writeStream);
         await uploadFile(req,dirTemp,writeStream)
@@ -458,7 +459,7 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
     let msg = ''
 
     writeStream.on('finish', async function () {
-        req.body.filename = 'Core#0.5388733270112278.tar.gz'
+        req.body.filename = 'Core[n]0.5388733270112278.tar.gz'
         const dirFile = dirTemp + '/' + req.body.filename
         const tipo = await fileType.fromFile(dirFile)
         //Comprobar fichero antes de iniciar el proceso
@@ -471,13 +472,29 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                 });
             });*/
 
-            try {
+            /*try {
                 console.log('dir file ',dirFile)
                 await extract(dirFile, { dir: dirTemp+'\\tmp' })
                 console.log('Extraction complete')
             } catch (err) {
                 // handle any errors
-            }
+            }*/
+            // fs.createReadStream(dirFile)
+            //     .pipe(unzipper.Extract({ path: dirTemp+'\\tmp' }));
+            // compressing.zip.uncompress(dirFile, dirTemp+'\\tmp\\')
+            //     .then(() => {
+            //         console.log('unzip','success');
+            //     })
+            //     .catch(err => {
+            //         console.error('unzip',err);
+            //     });
+            fs.readFile(dirFile, function(err, data) {
+                if (err) throw err;
+                JSZip.loadAsync(data).then(function (zip) {
+                    files = Object.keys(zip.files);
+                    console.log(files);
+                });
+            });
 
             resolve('exito')
         }
