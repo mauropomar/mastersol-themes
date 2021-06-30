@@ -54,7 +54,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
                     url = url.substring(index, url.length);
                     var link = document.createElement('a');
                     link.href = url;
-                    link.download = nameFile;
+                    link.download = nameFile + '#';
                     link.click();
                     Ext.toast('La capsula fue exportada con éxito.');
                 } else {

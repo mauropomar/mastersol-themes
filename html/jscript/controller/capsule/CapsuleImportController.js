@@ -72,7 +72,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
     },
 
     cancel:function(){
-
+        Ext.ComponentQuery.query('#window_import_capsule')[0].close();
     }
 
 });
