@@ -7,6 +7,9 @@ const copyTo = require('pg-copy-streams').to
 var stream = require('stream');
 var archiver = require('archiver');
 const rimraf = require("rimraf");
+const fileType = require('file-type');
+const zlib = require("zlib");
+const extract = require('extract-zip')
 const objGenFunc = {}
 
 //schedule para recorrer todos los procesos activos y ejecutar las funciones que tengan asociadas según sus calendarios
@@ -272,8 +275,13 @@ const saveCapsule = async (req) => {
     }
     else{
         //Crear carpeta para contener los ficheros generados
-        let str_capsule = req.body.idcapsule.substring(0,6)
-        const dirFolder = global.appRootApp + '\\resources\\backups\\'+str_capsule+'_'+Math.random()
+        const param_cap = ['cfgapl.capsules',req.body.idcapsule]
+        const resultCap = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_cap)
+        let name_capsule = ''
+        if(resultCap){
+            name_capsule =  resultCap.rows[0].fn_get_register[0].namex
+        }
+        const dirFolder = global.appRootApp + '\\resources\\backups\\'+name_capsule+'#'+Math.random()
         await generateExportFiles(req,dirFolder,resultSaveStructure)
             .then((value) => {
                 if(value == 'noData') {
@@ -403,9 +411,110 @@ const getCapsules = async () => {
    return {'success': true, 'datos': resultCapsules.rows[0].fn_get_register}
 }
 
+const importCapsule = async (req) => {
+    let success = true
+    let msg = ''
+
+    var Readable = stream.Readable;
+    var fileBuffer = Buffer.from(req.body.file, 'base64');
+    var readStream = new Readable();
+    readStream.push(fileBuffer);
+    readStream.push(null)
+    const dirTemp = global.appRootApp + '\\resources\\backups\\'+Math.random()
+    fs.mkdirSync(dirTemp, {recursive: true}, (err) => {
+        if (err) {
+            success = false;
+            msg = 'Ha ocurrido un error, ' + err
+        }
+    });
+    fs.exists(dirTemp, (exists) => {
+        if(!exists){
+            success = false;
+            msg = 'Ha ocurrido un error'
+        }
+    });
+    if(success){
+        req.body.filename = 'Core#0.5388733270112278.tar.gz'  //para prueba
+        var writeStream = await fs.createWriteStream(dirTemp + '\\' + req.body.filename);
+        readStream.pipe(writeStream);
+        await uploadFile(req,dirTemp,writeStream)
+            .then((value) => {
+                msg = value
+            })
+            .catch((value) => {
+                success = false
+                msg = value
+            });
+    }
+    else{
+        msg = 'Ha ocurrido un error'
+    }
+
+    return {'success': success, 'message': msg}
+}
+
+const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) => {
+    let success = true
+    let msg = ''
+
+    writeStream.on('finish', async function () {
+        req.body.filename = 'Core#0.5388733270112278.tar.gz'
+        const dirFile = dirTemp + '/' + req.body.filename
+        const tipo = await fileType.fromFile(dirFile)
+        //Comprobar fichero antes de iniciar el proceso
+        if(tipo['ext'] == 'gz' && tipo['mime'] == 'application/gzip'){
+            /*zlib.gzip(dirFile, (err, buffer) => {
+                // Calling unzip method
+                zlib.unzip(buffer, (err, buffer) => {
+                    console.log('Dir Fichero: ',buffer.toString('utf8'));
+
+                });
+            });*/
+
+            try {
+                console.log('dir file ',dirFile)
+                await extract(dirFile, { dir: dirTemp+'\\tmp' })
+                console.log('Extraction complete')
+            } catch (err) {
+                // handle any errors
+            }
+
+            resolve('exito')
+        }
+        else{
+            reject('El archivo es incorrecto')
+        }
+
+        //const delDir = deleteDir(dirTemp, req.body.filename)
+
+    });
+
+})
+
+const deleteDir = (dirFile, filename) => {
+    let result = ''
+    fs.unlink(dirFile + '/' + filename, (err => {
+        if (err) console.log('No hay fichero');
+        else {
+            console.log("Archivo temporal borrado");
+            fs.rmdir(dirFile, (err) => {
+                if(!err) result = 'Eliminada carpeta temporal'
+                else result = err
+            })
+        }
+    }));
+    fs.rmdir(dirFile, (err) => {
+        if(!err) result = 'Eliminada carpeta temporal'
+        else result = err
+    })
+
+    return result
+}
+
 objGenFunc.generateFunctions = generateFunctions
 objGenFunc.generateFunctionsTimeEvents = generateFunctionsTimeEvents
 objGenFunc.executeFunctionsButtons = executeFunctionsButtons
 objGenFunc.saveCapsule = saveCapsule
 objGenFunc.getCapsules = getCapsules
+objGenFunc.importCapsule = importCapsule
 module.exports = objGenFunc

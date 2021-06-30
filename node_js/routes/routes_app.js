@@ -377,5 +377,14 @@ router.get('/capsules', async function (req, res) {
     return res.json({'success': result.success, 'datos': result.datos})
 })
 
+router.post('/importcapsule', async function (req, res) {
+    let id = ''
+    result = await objects.functions.importCapsule(req)
+    id = result.id
+
+    return res.json({'success': result.success, 'datos': result.message})
+
+})
+
 
 module.exports = router
