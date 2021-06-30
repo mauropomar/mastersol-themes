@@ -10,7 +10,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
         });
     },
 
-    import:function(){
+    import: function () {
         var window = Ext.ComponentQuery.query('#window_import_capsule')[0];
         var mask = new Ext.LoadMask(window, {
             msg: 'Importando. Espere unos minutos por favor...'
@@ -19,10 +19,29 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
         var fileField = Ext.ComponentQuery.query('#file_capsule')[0];
         var file = fileField.fileInputEl.dom.files[0],
             reader;
+        reader = new FileReader();
         if (file === undefined || !(file instanceof File)) {
+            mask.hide();
+            Ext.MessageBox.show({
+                title: 'Información',
+                msg: 'Debe seleccionar un fichero.',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.INFO
+            });
             return;
         }
-        reader = new FileReader();
+        var nameFile = this.getName(fileField.value);
+        if (!this.isValidFile(nameFile)) {
+            mask.hide();
+            fileField.reset();
+            Ext.MessageBox.show({
+                title: 'Información',
+                msg: 'La extensión del fichero no es correcta.',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.INFO
+            });
+            return;
+        }
         reader.onloadend = function (event) {
             var binaryString = '',
                 bytes = new Uint8Array(event.target.result),
@@ -37,14 +56,14 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
 
             // convert to base64
             base64String = btoa(binaryString);
-
             var save = {
                 url: 'app/importcapsule',
                 method: 'POST',
                 scope: this,
                 timeout: 50000,
                 params: {
-                    file: base64String
+                    file: base64String,
+                    name: nameFile
                 },
                 success: function (response) {
                     mask.hide();
@@ -71,8 +90,23 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
         reader.readAsArrayBuffer(file);
     },
 
-    cancel:function(){
+    cancel: function () {
         Ext.ComponentQuery.query('#window_import_capsule')[0].close();
+    },
+
+    getName: function (path) {
+        var index = path.lastIndexOf('\\');
+        if (index > -1) {
+            var name = path.substring(index + 1, path.lengh);
+            return name;
+        }
+        return path;
+    },
+
+    isValidFile: function (name) {
+        var index = name.lastIndexOf('.gz');
+        var valid = (index === -1) ? false : true;
+        return valid;
     }
 
 });
