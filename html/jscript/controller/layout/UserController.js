@@ -80,11 +80,15 @@ Ext.define('MasterSol.controller.layout.UserController', {
             return false;
         }
         if (password !== '' && confirm_password === '') {
-            Ext.ComponentQuery.query('#confirm_password')[0].markInvalid('Este campo es obligatorio');
+            Ext.ComponentQuery.query('#confirm_password')[0].markInvalid('Este campo es obligatorio.');
             return false;
         }
         if ((password !== '' && confirm_password !== '') && (password !== confirm_password)) {
             Ext.ComponentQuery.query('#confirm_password')[0].markInvalid('Las contraseñas no coinciden.');
+            return false;
+        }
+        if ((password !== '' && confirm_password !== '') && passwordLast === '') {
+            Ext.ComponentQuery.query('#password_last')[0].markInvalid('Este campo es obligatorio.');
             return false;
         }
         return true;

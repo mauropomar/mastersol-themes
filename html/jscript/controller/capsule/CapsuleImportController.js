@@ -15,7 +15,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
         var mask = new Ext.LoadMask(window, {
             msg: 'Importando. Espere unos minutos por favor...'
         });
-     //   mask.show();
+        mask.show();
         var fileField = Ext.ComponentQuery.query('#file_capsule')[0];
         var file = fileField.fileInputEl.dom.files[0],
             reader;
