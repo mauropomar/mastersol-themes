@@ -71,6 +71,11 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
             });
         }
         store.loadData(array);
+        var edit = grid.plugins[0];
+        edit.startEditByPosition({
+            row: 0,
+            column: 1
+        });
     },
 
     isValid: function () {
@@ -182,8 +187,13 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
     },
 
     setDateTimeField: function (rec, column) {
-        var edit = Ext.create('MasterSol.view.plugins.DateTime');
+        var edit = Ext.create('MasterSol.view.plugins.DateTime',{
+            className:'MasterSol.controller.magnament.ConfigReportController'
+        });
         column.setEditor(edit);
+        Ext.defer(()=>{
+            edit.dateField.focus('', false);
+        },1);
     },
 
     //setear combo de funcion multiselect
@@ -252,15 +262,17 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
     specialKey: function (field, e) {
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
+        var rows = grid.getStore().getCount();
         if (e.getKey() == e.ENTER) {
             e.stopEvent();
             var edit = grid.plugins[0];
             var row = edit.context.rowIdx;
+            row = (row + 1 < rows) ? row + 1 : 0;
             var col = edit.context.colIdx;
             var rec = store.getAt(row);
             edit.cancelEdit();
             edit.startEditByPosition({
-                row: row + 1,
+                row: row,
                 column: col
             });
         }
