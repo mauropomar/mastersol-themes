@@ -4,13 +4,13 @@ const fs = require('fs')
 const objects = require('../modules');
 const child_process = require('child_process');
 const copyTo = require('pg-copy-streams').to
+const copyFrom = require('pg-copy-streams').from
 var stream = require('stream');
 var archiver = require('archiver');
 const rimraf = require("rimraf");
 const fileType = require('file-type');
-const zlib = require("zlib");
 const extract = require('extract-zip')
-var JSZip = require("jszip");
+const dirTree = require("directory-tree");
 const objGenFunc = {}
 
 //schedule para recorrer todos los procesos activos y ejecutar las funciones que tengan asociadas según sus calendarios
@@ -282,7 +282,8 @@ const saveCapsule = async (req) => {
         if(resultCap){
             name_capsule =  resultCap.rows[0].fn_get_register[0].namex
         }
-        const dirFolder = global.appRootApp + '\\resources\\backups\\'+name_capsule+'[n]'+Math.random()
+        let currentDate = new Date()
+        const dirFolder = global.appRootApp + '\\resources\\backups\\'+name_capsule+'[n]'+req.body.idcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
         await generateExportFiles(req,dirFolder,resultSaveStructure)
             .then((value) => {
                 if(value == 'noData') {
@@ -345,9 +346,9 @@ const generateExportFiles = async (req,dirFolder,resultSaveStructure) => new Pro
                 try {
                     for(let i = 0; i < largo_arr; i++){
                         let tabla = arrTablas[i]
-                        let writeStream = await fs.createWriteStream(dirFolder + '\\' + i + '_' + tabla + Math.random() + '.csv');
+                        let writeStream = await fs.createWriteStream(dirFolder + '\\' + i + '_' + tabla +'[n]'+ Math.random() + '.csv');
                         writeStream.setMaxListeners(0);
-                        var readStream = await client.query(copyTo("COPY (SELECT * FROM "+tabla+" WHERE id_capsules = '"+req.body.idcapsule+"') TO STDOUT with csv DELIMITER ';'"))
+                        var readStream = await client.query(copyTo("COPY (SELECT * FROM "+tabla+" WHERE id_capsules = '"+req.body.idcapsule+"') TO STDOUT with NULL as 'NULL' DELIMITER ';' csv "))
                         await copyStreamToFile(req,readStream,writeStream,tabla)
                             .then((value) => {
                                 writeStream = value
@@ -386,16 +387,15 @@ const copyStreamToFile = async (req,readStream,writeStream,tabla) => new Promise
 })
 
 const archiveDirectory = async (dirFolder) => new Promise(async (resolve, reject) => {
-    let output = await fs.createWriteStream(dirFolder+'.tar.gz');
-    let archive = archiver('tar', {
-        gzip: true,
+    let output = await fs.createWriteStream(dirFolder+'.zip');
+    let archive = archiver('zip', {
         zlib: { level: 9 } // Sets the compression level.
     });
     archive.on('error', function(err) {
         reject(err)
     });
     output.on('close', () => {
-        resolve(dirFolder+'.tar.gz')
+        resolve(dirFolder+'.zip')
     });
 
     archive.pipe(output);
@@ -435,8 +435,7 @@ const importCapsule = async (req) => {
         }
     });
     if(success){
-        req.body.filename = 'Core[n]0.5388733270112278.tar.gz'  //para prueba
-        var writeStream = await fs.createWriteStream(dirTemp + '\\' + req.body.filename);
+        var writeStream = await fs.createWriteStream(dirTemp + '\\' + req.body.name);
         readStream.pipe(writeStream);
         await uploadFile(req,dirTemp,writeStream)
             .then((value) => {
@@ -455,60 +454,180 @@ const importCapsule = async (req) => {
 }
 
 const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) => {
-    let success = true
-    let msg = ''
 
     writeStream.on('finish', async function () {
-        req.body.filename = 'Core[n]0.5388733270112278.tar.gz'
-        const dirFile = dirTemp + '/' + req.body.filename
+        const dirFile = dirTemp + '/' + req.body.name
         const tipo = await fileType.fromFile(dirFile)
         //Comprobar fichero antes de iniciar el proceso
-        if(tipo['ext'] == 'gz' && tipo['mime'] == 'application/gzip'){
-            /*zlib.gzip(dirFile, (err, buffer) => {
-                // Calling unzip method
-                zlib.unzip(buffer, (err, buffer) => {
-                    console.log('Dir Fichero: ',buffer.toString('utf8'));
+        if(tipo['ext'] == 'zip' && tipo['mime'] == 'application/zip'){
+            //Comprobar si la capsula existe, sino, crearla
+            let arrName = req.body.name.split('[n]')
+            let nameCapsule = arrName[0]
+            let idCapsule = arrName[1]
+            let existeNameCap = false
+            //Buscar si existe una capsula con el mismo nombre
+            const paramsName = ['cfgapl.capsules',null,"WHERE namex = '"+nameCapsule+"' "]
+            const resultName = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsName)
+            if(resultName && resultName.rows[0].fn_get_register){
+                let idCap = resultName.rows[0].fn_get_register[0].id
+                if(idCap !== idCapsule)
+                    existeNameCap = true
+            }
+            const paramsCapsule = ['cfgapl.capsules',idCapsule]
+            const resultCapsule = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsCapsule)
+            let id_section, id_language;
+            //Obtencion de section capsule
+            const paramsSectionCapsule = ['cfgapl.sections',null,"WHERE namex = 'Sec_capsules' "];
+            const resultSectionCapsule = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSectionCapsule);
+            if(resultSectionCapsule)
+                id_section = resultSectionCapsule.rows[0].fn_get_register[0].id
+            if(resultCapsule && !resultCapsule.rows[0].fn_get_register) {
+                 var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
+                 //Obtencion de lenguaje spanish
+                 const paramsLanguage = ['cfgapl.languages',null,"WHERE namex = 'Spanish from Spain' "];
+                 const resultLanguage = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsLanguage);
+                 if(resultLanguage)
+                     id_language = resultLanguage.rows[0].fn_get_register[0].id
+                //Obtencion de section
+                 //columnas a insertar
+                 columnasInsertAux.push('id')
+                 columnasInsertAux.push('namex')
+                 columnasInsertAux.push('description')
+                 columnasInsertAux.push('version')
+                 columnasInsertAux.push('licencetext')
+                 columnasInsertAux.push('idlanguage')
+                 columnasInsertAux.push('creator')
+                 //valores a insertar
+                 if(existeNameCap)
+                     nameCapsule += ' '
+                 valuesInsertAux.push(" '" + idCapsule + "'")
+                 valuesInsertAux.push(" '" + nameCapsule + "'")
+                 valuesInsertAux.push(" '" + nameCapsule + "'")
+                 valuesInsertAux.push(" '1.0'")
+                 valuesInsertAux.push(" ' '")
+                 valuesInsertAux.push(" '" + id_language + "'")
+                 valuesInsertAux.push("'" + req.session.id_user + "'")
 
+                 paramsInsert.push(id_section)
+                 paramsInsert.push(columnasInsertAux.join(','))
+                 paramsInsert.push(valuesInsertAux.join(','))
+                 paramsInsert.push(null)
+                 paramsInsert.push(null)
+                 paramsInsert.push(req.session.id_user)
+
+                await insertRegister(req, paramsInsert);
+                console.log('Insertada capsula!')
+            }
+            else if(resultCapsule && resultCapsule.rows[0].fn_get_register){
+                var paramsInsert = [], valuesInsertAux = [];
+                valuesInsertAux.push("namex = '" + nameCapsule + "'" )
+                valuesInsertAux.push("modifier = '" + req.session.id_user + "'" )
+
+                paramsInsert.push(id_section)
+                paramsInsert.push(valuesInsertAux.join(','))
+                paramsInsert.push(idCapsule)
+                paramsInsert.push(req.session.id_user)
+                await updateRegister(req, paramsInsert);
+                console.log('Actualizada capsula!')
+            }
+           let nameFileStructure = ''
+            await extract(dirFile, { dir: dirTemp+'\\tmp' })
+            //Después de extraer, procesar ficheros a importar
+            const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.sql/ });
+            if(tree.children) {
+                nameFileStructure = tree.children[0].name
+                await fs.readFile(dirTemp + '\\tmp\\' + nameFileStructure, 'utf-8', async (err, data) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        await pool.executeQuery(data)
+                        console.log('Importada estructura!')
+                        //Proceder a importar datos
+                        const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.csv/ });
+                        const client = await pool.obj_pool.connect()
+                        let orderedArr = await quickSort(tree.children)
+                        if(orderedArr){
+                            let largoChildren = orderedArr.length
+                            for(let i=0;i<largoChildren;i++){
+                                let nameFile = orderedArr[i].name
+                                //Obtener nombre de la tabla
+                                let index = nameFile.indexOf("[n]")
+                                let first_part = nameFile.substring(0, index)
+                                let index_first_part = first_part.indexOf("_")
+                                let nameTable = nameFile.substring(index_first_part+1, index)
+
+                                await fs.readFile(dirTemp + '\\tmp\\' + nameFile, 'utf-8', async (err, data) => {
+                                    if (err) {
+                                        reject(err)
+                                    } else {
+                                        //Importar de este fichero
+                                        //eliminar todos los registros asociados a la capsula, porque el copy solo inserta
+                                        await pool.executeQuery("ALTER TABLE "+nameTable+" DISABLE TRIGGER ALL;")
+                                        await pool.executeQuery("DELETE FROM "+nameTable+" WHERE id_capsules = '"+idCapsule+"';")
+                                        var stream = await client.query(copyFrom("COPY "+nameTable+" FROM STDIN WITH NULL as 'NULL' DELIMITER ';'"))
+                                        var fileStream = await fs.createReadStream(dirTemp + '\\tmp\\' + nameFile)
+                                        fileStream.on('error', async function(err) {
+                                            reject(err)
+                                            console.log(nameTable+': ',err)
+                                            await pool.executeQuery("ALTER TABLE "+nameTable+" ENABLE TRIGGER ALL;")
+                                        })
+                                        stream.on('error', async function(err) {
+                                            reject(err)
+                                            console.log(nameTable+': ',err)
+                                            await pool.executeQuery("ALTER TABLE "+nameTable+" ENABLE TRIGGER ALL;")
+                                        })
+                                        stream.on('finish', async () => {
+                                            console.log(nameTable, 'importada')
+                                            await pool.executeQuery("ALTER TABLE "+nameTable+" ENABLE TRIGGER ALL;")
+                                        })
+                                        fileStream.pipe(stream)
+                                    }
+                                });
+                            }
+                        }
+                    }
                 });
-            });*/
 
-            /*try {
-                console.log('dir file ',dirFile)
-                await extract(dirFile, { dir: dirTemp+'\\tmp' })
-                console.log('Extraction complete')
-            } catch (err) {
-                // handle any errors
-            }*/
-            // fs.createReadStream(dirFile)
-            //     .pipe(unzipper.Extract({ path: dirTemp+'\\tmp' }));
-            // compressing.zip.uncompress(dirFile, dirTemp+'\\tmp\\')
-            //     .then(() => {
-            //         console.log('unzip','success');
-            //     })
-            //     .catch(err => {
-            //         console.error('unzip',err);
-            //     });
-            fs.readFile(dirFile, function(err, data) {
-                if (err) throw err;
-                JSZip.loadAsync(data).then(function (zip) {
-                    files = Object.keys(zip.files);
-                    console.log(files);
-                });
-            });
+            }
+            else {
+                reject('Error de importación')
+            }
 
-            resolve('exito')
+            resolve('Importación exitosa')
         }
         else{
             reject('El archivo es incorrecto')
         }
 
-        //const delDir = deleteDir(dirTemp, req.body.filename)
-
     });
 
 })
 
-const deleteDir = (dirFile, filename) => {
+const insertRegister = async (req, params_insert) => {
+    const query = "SELECT cfgapl.fn_insert_register($1,$2,$3,$4,$5,$6)"
+    const result = await pool.executeQuery(query, params_insert)
+
+    if (result.success === false) {
+        return result
+    } else if (result.rows[0].fn_insert_register == null) {
+        return []
+    }
+
+    return result.rows[0].fn_insert_register
+}
+
+const updateRegister = async (req, params_insert) => {
+    const query = "SELECT cfgapl.fn_update_register($1,$2,$3,$4)"
+    const result = await pool.executeQuery(query, params_insert)
+    if (result.success === false) {
+        return result
+    } else if (result.rows[0].fn_update_register == null) {
+        return []
+    }
+    return result.rows[0].fn_update_register
+}
+
+/*const deleteDir = (dirFile, filename) => {
     let result = ''
     fs.unlink(dirFile + '/' + filename, (err => {
         if (err) console.log('No hay fichero');
@@ -526,6 +645,81 @@ const deleteDir = (dirFile, filename) => {
     })
 
     return result
+}*/
+
+const SortingAlgorithm = (a, b) => {
+    let prop_a = a['name']
+    let prop_b = b['name']
+    let index_a = prop_a.indexOf("_")
+    let index_b = prop_b.indexOf("_")
+    let num_a = prop_a.substring(0, index_a)
+    let num_b = prop_b.substring(0, index_b)
+
+    if (Number(num_a) < Number(num_b)) {
+        return -1;
+    }
+    if (Number(num_a) > Number(num_b)) {
+        return 1;
+    }
+    return 0;
+};
+
+const quickSort = (
+    unsortedArray,
+    sortingAlgorithm = SortingAlgorithm
+) => {
+    // immutable version
+    const sortedArray = [...unsortedArray];
+
+    const swapArrayElements = (arrayToSwap, i, j) => {
+        const a = arrayToSwap[i];
+        arrayToSwap[i] = arrayToSwap[j];
+        arrayToSwap[j] = a;
+    };
+
+    const partition = (arrayToDivide, start, end) => {
+        const pivot = arrayToDivide[end];
+        let splitIndex = start;
+        for (let j = start; j <= end - 1; j++) {
+            const sortValue = sortingAlgorithm(arrayToDivide[j], pivot);
+            if (sortValue === -1) {
+                swapArrayElements(arrayToDivide, splitIndex, j);
+                splitIndex++;
+            }
+        }
+        swapArrayElements(arrayToDivide, splitIndex, end);
+        return splitIndex;
+    };
+
+    // Recursively sort sub-arrays.
+    const recursiveSort = (arraytoSort, start, end) => {
+        // stop condition
+        if (start < end) {
+            const pivotPosition = partition(arraytoSort, start, end);
+            recursiveSort(arraytoSort, start, pivotPosition - 1);
+            recursiveSort(arraytoSort, pivotPosition + 1, end);
+        }
+    };
+
+    // Sort the entire array.
+    recursiveSort(sortedArray, 0, unsortedArray.length - 1);
+    return sortedArray;
+};
+
+Array.prototype.orderByNumberInString=function(property){
+    // Primero se verifica que la propiedad sortOrder tenga un dato válido.
+   // if (sortOrder!=-1 && sortOrder!=1) sortOrder=1;
+    this.sort(function(a,b){
+        // La función de ordenamiento devuelve la comparación entre property de a y b.
+        // El resultado será afectado por sortOrder.
+        let prop_a = a[property]
+        let prop_b = b[property]
+        let index_a = prop_a.indexOf("_")
+        let index_b = prop_b.indexOf("_")
+        let num_a = prop_a.substring(0, index_a)
+        let num_b = prop_b.substring(0, index_b)
+        return (num_a-num_b);
+    })
 }
 
 objGenFunc.generateFunctions = generateFunctions
