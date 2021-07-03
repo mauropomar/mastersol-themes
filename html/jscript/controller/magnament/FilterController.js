@@ -346,7 +346,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         for (var j = 0; j < operators.length; j++) {
             if (operators[j]['simbolo'] == operator) {
                 cantparam = operators[j]['cantidadparam'];
-                break
+                break;
             }
         }
         return cantparam;
@@ -409,7 +409,9 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
     },
 
     setDateTimeField: function (rec, column) {
-        var edit = Ext.create('MasterSol.view.plugins.DateTime');
+        var edit = Ext.create('MasterSol.view.plugins.DateTime',{
+            className:'MasterSol.controller.magnament.FilterController'
+        });
         var date = '';
         if (column.dataIndex === 'valor1') {
             date = (rec.data.valor2) ? new Date(rec.data.valor2) : '';
@@ -422,6 +424,9 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         }
         ;
         column.setEditor(edit);
+        Ext.defer(()=>{
+            edit.dateField.focus('', false);
+        },1);
     },
 
     specialKey: function (field, e) {
@@ -433,11 +438,11 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             var row = edit.context.rowIdx;
             var col = edit.context.colIdx;
             var rec = store.getAt(row);
-            var cantparam = rec.data.cantparam;
+            var cantparam = (rec.data.cantparam)?rec.data.cantparam:1;
             if (col == 1) {
                 col = 2;
             } else if (col == 2 && cantparam == 1) {
-                col = 1;
+                col = 2;
                 row = row + 1;
             } else if (col == 2 && cantparam > 1) {
                 col = 3;
@@ -449,7 +454,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             edit.startEditByPosition({
                 row: row,
                 column: col
-            })
+            });
         }
     },
 
@@ -516,6 +521,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             listeners: {
                 scope: this,
                 collapse: this.collapseFk,
+                specialKey:this.specialKey,
                 beforequery: function (record) {
                     record.query = new RegExp(record.query, 'ig');
                 }

@@ -7,10 +7,6 @@ Ext.define('MasterSol.view.magnament.Filter', {
         'MasterSol.view.magnament.ComboSign',
         'MasterSol.view.plugins.DateTime'
     ],
-    /*  features: [{
-          ftype: 'grouping',
-          groupHeaderTpl: '{name}'
-      }],*/
     iconCls: 'fa fa-filter',
     frame: true,
     idrecordSection: null,

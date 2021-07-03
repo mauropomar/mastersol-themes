@@ -9,7 +9,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
 
     },
 
-    edit: function (editor, obj) {
+    edit: function (editor, obj, e) {
         var record = obj.record;
         if ((obj.value === null || obj.value === '') && record.previousValues) {
             record.set('valor', record.previousValues.valor);
@@ -349,23 +349,29 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     },
 
     setDateTimeField: function (rec, column) {
-        var edit = Ext.create('MasterSol.view.plugins.DateTime');
+        var edit = Ext.create('MasterSol.view.plugins.DateTime',{
+            className:'MasterSol.controller.magnament.RegisterController'
+        });
         var value = new Date(rec.data.valor);
         edit.setValue(value);
         column.setEditor(edit);
+        Ext.defer(()=>{
+            edit.dateField.focus('', false);
+        },1);
+
     },
 
     specialKey: function (field, e) {
         var grid = Ext.ComponentQuery.query('#register-view')[0];
-        var filas = grid.getStore().getCount()
+        var filas = grid.getStore().getCount();
         if (e.getKey() == e.ENTER) {
             var edit = grid.plugins[0];
             var row = edit.context.rowIdx;
-            var row = (row + 1 < filas) ? row + 1 : 0;
+            row = (row + 1 < filas) ? row + 1 : 0;
             edit.startEditByPosition({
                 row: row,
                 column: 1
-            })
+            });
         }
     },
 
@@ -398,6 +404,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             listeners: {
                 scope: this,
                 collapse: this.collapseFk,
+                specialKey:this.specialKey,
                 beforequery: function (record) {
                     record.query = new RegExp(record.query, 'ig');
                 }

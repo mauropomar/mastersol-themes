@@ -9,7 +9,7 @@ Ext.define('MasterSol.view.plugins.DateTime', {
     height: 22,
     combineErrors: true,
     msgTarget: 'side',
-
+    className:'',
     dateCfg: {},
     timeCfg: {},
 
@@ -17,8 +17,8 @@ Ext.define('MasterSol.view.plugins.DateTime', {
         var me = this;
         me.buildField();
         me.callParent();
-        this.dateField = this.down('datefield')
-        this.timeField = this.down('timefield')
+        this.dateField = this.down('datefield');
+        this.timeField = this.down('timefield');
         me.initField();
     },
 
@@ -28,12 +28,26 @@ Ext.define('MasterSol.view.plugins.DateTime', {
             Ext.apply({
                 xtype: 'datefield',
                 format: 'd-m-Y',
-                width: 100
+                hasfocus:true,
+                width: 100,
+                focusOnToFront: false,
+                listeners: {
+                    scope: this,
+                    specialKey: function () {
+                        this.timeField.focus('', 10);
+                    }
+                }
             }, this.dateCfg),
             Ext.apply({
                 xtype: 'timefield',
                 format: 'H:i',
-                width: 80
+                width: 80,
+                listeners: {
+                    scope: this,
+                    specialKey: function (field, e) {
+                        MasterApp.getController(this.className).specialKey(field, e);
+                    }
+                }
             }, this.timeCfg)
         ]
     },
@@ -42,19 +56,19 @@ Ext.define('MasterSol.view.plugins.DateTime', {
         var value, date = this.dateField.getSubmitValue(), time = this.timeField.getSubmitValue();
         if (date) {
             if (time) {
-                var format = this.getFormat()
+                var format = this.getFormat();
                 value = Ext.Date.parse(date + ' ' + time, format)
             } else {
-                value = this.dateField.getValue()
+                value = this.dateField.getValue();
             }
         }
-        return value
+        return value;
     },
 
 
     getSubmitData: function () {
-        var value = this.getValue()
-        var format = this.getFormat()
+        var value = this.getValue();
+        var format = this.getFormat();
         return value ? Ext.Date.format(value, format) : null;
     },
 
@@ -84,7 +98,7 @@ Ext.define('MasterSol.view.plugins.DateTime', {
         var dateValue = new Date(value);
         if (Ext.isDate(dateValue) && dateValue != 'Invalid Date')
             return dateValue;
-        if(!value || value == null || value == 'Invalid Date')
+        if (!value || value == null || value == 'Invalid Date')
             return new Date();
         var day = value.substring(0, 2);
         var month = value.substring(3, 5);
@@ -92,7 +106,7 @@ Ext.define('MasterSol.view.plugins.DateTime', {
         var hour = value.substring(11, 13);
         var minute = value.substring(14, 16);
         var seconds = value.substring(17, 21);
-        var newValue =  year + '/' + month + '/' + day + ' ' + hour + ':' + minute + ':' + seconds;
+        var newValue = year + '/' + month + '/' + day + ' ' + hour + ':' + minute + ':' + seconds;
         return new Date(newValue);
     }
 })

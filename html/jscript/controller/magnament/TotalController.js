@@ -5,8 +5,24 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
     },
 
     beforeedit: function (editor, obj, eOpts) {
+        var record = obj.record;
         Ext.ComponentQuery.query('total-view toolbar button')[0].setDisabled(false);
+        var column = Ext.ComponentQuery.query('#total-view')[0].columns[1];
+        this.setComboFunction(record, column);
         this.loadFunctions(obj);
+    },
+
+    setComboFunction: function (rec, column) {
+        var combo = Ext.create('MasterSol.view.magnament.ComboFunction', {
+            listeners: {
+                scope: this,
+                specialKey: this.specialKey,
+                beforequery: function (record) {
+                    record.query = new RegExp(record.query, 'ig');
+                }
+            }
+        });
+        column.setEditor(combo);
     },
 
     loadFunctions: function (obj) {
@@ -311,7 +327,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
             var edit = grid.plugins[0];
             var row = edit.context.rowIdx;
             var combo = grid.columns[1].getEditor();
-            if (combo.lastSelection) {
+            if (combo.lastSelection[0]) {
                 var rec = grid.getStore().getAt(row);
                 var id = combo.lastSelection[0].data.id;
                 var nombre = combo.lastSelection[0].data.nombre;
