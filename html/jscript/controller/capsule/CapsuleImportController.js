@@ -60,7 +60,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
                 url: 'app/importcapsule',
                 method: 'POST',
                 scope: this,
-                timeout: 50000,
+                timeout: 100000,
                 params: {
                     file: base64String,
                     name: nameFile
