@@ -368,10 +368,12 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             var edit = grid.plugins[0];
             var row = edit.context.rowIdx;
             row = (row + 1 < filas) ? row + 1 : 0;
+            edit.completeEdit();
             edit.startEditByPosition({
                 row: row,
                 column: 1
             });
+            grid.getSelectionModel().select(row);
         }
     },
 

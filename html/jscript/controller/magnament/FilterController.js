@@ -431,6 +431,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
 
     specialKey: function (field, e) {
         var grid = Ext.ComponentQuery.query('#filter-view')[0];
+        var rows = grid.getStore().getCount();
         var store = grid.getStore();
         if (e.getKey() == e.ENTER) {
             e.stopEvent();
@@ -450,11 +451,13 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                 col = 2;
                 row = row + 1;
             }
-            edit.cancelEdit();
+            row = (row == rows) ? 0 : row;
+            edit.completeEdit();
             edit.startEditByPosition({
                 row: row,
                 column: col
             });
+            grid.getSelectionModel().select(row);
         }
     },
 

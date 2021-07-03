@@ -270,11 +270,12 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
             row = (row + 1 < rows) ? row + 1 : 0;
             var col = edit.context.colIdx;
             var rec = store.getAt(row);
-            edit.cancelEdit();
+            edit.completeEdit();
             edit.startEditByPosition({
                 row: row,
                 column: col
             });
+            grid.getSelectionModel().select(row);
         }
     },
 

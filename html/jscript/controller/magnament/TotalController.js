@@ -334,12 +334,13 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                 rec.set('idfuncion', id);
                 rec.set('nombrefuncion', nombre);
             }
-            var row = (row + 1 < rows) ? row + 1 : 0;
-            edit.cancelEdit();
+            row = (row + 1 < rows) ? row + 1 : 0;
+            edit.completeEdit();
             edit.startEditByPosition({
                 row: row,
                 column: 1
-            })
+            });
+            grid.getSelectionModel().select(row);
         }
     },
 
