@@ -36,7 +36,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
             url: 'app/savecapsule',
             method: 'POST',
             scope: this,
-            timeout: 50000,
+            timeout: 150000,
             params: {
                 idcapsule: record.data.id
             },
