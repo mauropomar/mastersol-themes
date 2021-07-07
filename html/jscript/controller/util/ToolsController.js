@@ -305,6 +305,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             handler: function (evt, toolEl, owner, tool) {
                 var window = owner.up('window');
                 window.close();
+                MasterApp.section.adjustOtherWindowsMaximize();
             }
         }];
     },
