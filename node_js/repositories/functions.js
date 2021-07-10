@@ -12,9 +12,9 @@ const fileType = require('file-type');
 const extract = require('extract-zip')
 const dirTree = require("directory-tree");
 var lineReader = require('line-reader');
+const invert = require('clean-directory');
 const objGenFunc = {}
 var arrCheck = [];
-var myInterval = '';
 
 //schedule para recorrer todos los procesos activos y ejecutar las funciones que tengan asociadas según sus calendarios
 cron.schedule('* * * * *', async () => {
@@ -100,30 +100,21 @@ cron.schedule('* * * * *', async () => {
 
 cron.schedule('1 * * * *', async () => {
     const dirFolder = global.appRootApp + '\\resources\\reports\\tmp'
-    fs.readdir(dirFolder, (err, files) => {
-        if (err) console.log(err)
-
-        for (const file of files) {
-            fs.unlink(dirFolder + '\\' + file, err => {
-                if (err) console.log(err)
-            });
-        }
-    });
+    clean(dirFolder);
+    // fs.readdir(dirFolder, (err, files) => {
+    //     if (err) console.log(err)
+    //
+    //     for (const file of files) {
+    //         fs.unlink(dirFolder + '\\' + file, err => {
+    //             if (err) console.log(err)
+    //         });
+    //     }
+    // });
 });
 
 cron.schedule('1 23 * * *', async () => {
     const dirFolder = global.appRootApp + '\\resources\\backups'
-    fs.readdir(dirFolder, (err, files) => {
-        if (err) console.log(err)
-
-        for (const file of files) {
-            fs.unlink(dirFolder + '\\' + file, err => {
-                if (err) console.log(err)
-            });
-        }
-    });
-    //rimraf(dirFolder, function () { console.log("Limpiada carpeta backups"); });
-    //fs.mkdir(dirFolder, {recursive: true}, (err) => {});
+    clean(dirFolder);
 });
 
 const executeProcessFunction = (pro, query) => new Promise(async (resolve, reject) => {
@@ -606,7 +597,6 @@ const copyFromFiles = async (req, dirTemp, dirFile) => new Promise(async (resolv
                             let first_part = nameFile.substring(0, index)
                             let index_first_part = first_part.indexOf("_")
                             let nameTable = nameFile.substring(index_first_part + 1, index)
-                            console.log(nameTable)
                             //await client.query("ALTER TABLE " + nameTable + " DISABLE TRIGGER ALL;")
                             let campoLlave = ''
                             let arrTable = nameTable.split('.');
