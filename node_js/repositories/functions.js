@@ -100,22 +100,31 @@ cron.schedule('* * * * *', async () => {
 
 cron.schedule('1 * * * *', async () => {
     const dirFolder = global.appRootApp + '\\resources\\reports\\tmp'
-    clean(dirFolder);
-    // fs.readdir(dirFolder, (err, files) => {
-    //     if (err) console.log(err)
-    //
-    //     for (const file of files) {
-    //         fs.unlink(dirFolder + '\\' + file, err => {
-    //             if (err) console.log(err)
-    //         });
-    //     }
-    // });
+    await rimraf(dirFolder, () => console.log('Borrado reports tmp!'));
+    await sleep(2000)
+    fs.mkdir(dirFolder, (err) => {
+        if (err) {
+            throw err;
+        }
+        console.log("Reports tmp creado.");
+    });
 });
 
 cron.schedule('1 23 * * *', async () => {
     const dirFolder = global.appRootApp + '\\resources\\backups'
-    clean(dirFolder);
+    await rimraf(dirFolder, () => console.log('Borrado backups!'));
+    await sleep(2000)
+    fs.mkdir(dirFolder, (err) => {
+        if (err) {
+            throw err;
+        }
+        console.log("Backups creado.");
+    });
 });
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 const executeProcessFunction = (pro, query) => new Promise(async (resolve, reject) => {
     if (query != '') {
