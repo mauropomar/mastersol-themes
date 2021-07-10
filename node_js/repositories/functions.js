@@ -3,15 +3,18 @@ const cron = require('node-cron')
 const fs = require('fs')
 const objects = require('../modules');
 const child_process = require('child_process');
-const copyTo = require('pg-copy-streams').to
-const copyFrom = require('pg-copy-streams').from
+const copyTo = require('pg-copy-streams').to;
+const copyFrom = require('pg-copy-streams').from;
 var stream = require('stream');
 var archiver = require('archiver');
 const rimraf = require("rimraf");
 const fileType = require('file-type');
 const extract = require('extract-zip')
 const dirTree = require("directory-tree");
+var lineReader = require('line-reader');
 const objGenFunc = {}
+var arrCheck = [];
+var myInterval = '';
 
 //schedule para recorrer todos los procesos activos y ejecutar las funciones que tengan asociadas según sus calendarios
 cron.schedule('* * * * *', async () => {
@@ -110,7 +113,17 @@ cron.schedule('1 * * * *', async () => {
 
 cron.schedule('1 23 * * *', async () => {
     const dirFolder = global.appRootApp + '\\resources\\backups'
-    rimraf(dirFolder, function () { console.log("Limpiada carpeta backups"); });
+    fs.readdir(dirFolder, (err, files) => {
+        if (err) console.log(err)
+
+        for (const file of files) {
+            fs.unlink(dirFolder + '\\' + file, err => {
+                if (err) console.log(err)
+            });
+        }
+    });
+    //rimraf(dirFolder, function () { console.log("Limpiada carpeta backups"); });
+    //fs.mkdir(dirFolder, {recursive: true}, (err) => {});
 });
 
 const executeProcessFunction = (pro, query) => new Promise(async (resolve, reject) => {
@@ -346,19 +359,29 @@ const generateExportFiles = async (req,dirFolder,resultSaveStructure) => new Pro
                 try {
                     for(let i = 0; i < largo_arr; i++){
                         let tabla = arrTablas[i]
-                        let writeStream = await fs.createWriteStream(dirFolder + '\\' + i + '_' + tabla +'[n]'+ Math.random() + '.csv');
-                        writeStream.setMaxListeners(0);
-                        var readStream = await client.query(copyTo("COPY (SELECT * FROM "+tabla+" WHERE id_capsules = '"+req.body.idcapsule+"') TO STDOUT with NULL as 'NULL' DELIMITER ';' csv "))
-                        await copyStreamToFile(req,readStream,writeStream,tabla)
-                            .then((value) => {
-                                writeStream = value
-                            })
-                            .catch((value) => {
-                                success = false
-                                writeStream = value
-                                reject('Error exportando ' + tabla)
-                            });
-                        writeStream.removeAllListeners()
+                        let arrTable = tabla.split('.');
+                        //Si la tabla es padre no exportar
+                        let queryParent = "SELECT count(*) as conteo FROM pg_inherits JOIN pg_class AS c ON (inhrelid=c.oid) " +
+                            "JOIN pg_class as p ON (inhparent=p.oid) JOIN pg_namespace pn ON pn.oid = p.relnamespace " +
+                            "JOIN pg_namespace cn ON cn.oid = c.relnamespace " +
+                            "WHERE p.relname = '"+arrTable[1]+"' and pn.nspname = '"+arrTable[0]+"'";
+                        const resultHijos = await pool.executeQuery(queryParent)
+                        if(resultHijos && resultHijos.rows[0].conteo == 0) {
+                            let writeStream = await fs.createWriteStream(dirFolder + '\\' + i + '_' + tabla + '[n]' + Math.random() + '.csv');
+                            writeStream.setMaxListeners(0);
+                            var readStream = await client.query(copyTo("COPY (SELECT * FROM " + tabla + " WHERE id_capsules = '" + req.body.idcapsule + "') " +
+                                "TO STDOUT WITH NULL as 'NULL' DELIMITER ';' "));
+                            await copyStreamToFile(req, readStream, writeStream, tabla)
+                                .then((value) => {
+                                    writeStream = value
+                                })
+                                .catch((value) => {
+                                    success = false
+                                    writeStream = value
+                                    reject('Error exportando ' + tabla)
+                                });
+                            writeStream.removeAllListeners()
+                        }
                     }
                 }
                 catch(err){
@@ -412,7 +435,7 @@ const getCapsules = async () => {
    return {'success': true, 'datos': resultCapsules.rows[0].fn_get_register}
 }
 
-const importCapsule = async (req) => {
+const importCapsule = (req) => new Promise(async (resolve, reject) => {
     let success = true
     let msg = ''
 
@@ -440,18 +463,24 @@ const importCapsule = async (req) => {
         await uploadFile(req,dirTemp,writeStream)
             .then((value) => {
                 msg = value
+                console.log('Concluída importación satisfactoriamente')
             })
             .catch((value) => {
                 success = false
                 msg = value
+                console.log('Concluída importación con errores')
             });
+        let arrresolve = []
+        arrresolve.push(success)
+        arrresolve.push(msg)
+        resolve(arrresolve)
     }
     else{
         msg = 'Ha ocurrido un error'
+        reject(msg)
     }
 
-    return {'success': success, 'message': msg}
-}
+})
 
 const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) => {
 
@@ -530,70 +559,13 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                 await updateRegister(req, paramsInsert);
                 console.log('Actualizada capsula!')
             }
-           let nameFileStructure = ''
-            await extract(dirFile, { dir: dirTemp+'\\tmp' })
-            //Después de extraer, procesar ficheros a importar
-            const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.sql/ });
-            if(tree.children) {
-                nameFileStructure = tree.children[0].name
-                await fs.readFile(dirTemp + '\\tmp\\' + nameFileStructure, 'utf-8', async (err, data) => {
-                    if (err) {
-                        reject(err)
-                    } else {
-                        await pool.executeQuery(data)
-                        console.log('Importada estructura!')
-                        //Proceder a importar datos
-                        const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.csv/ });
-                        const client = await pool.obj_pool.connect()
-                        let orderedArr = await quickSort(tree.children)
-                        if(orderedArr){
-                            let largoChildren = orderedArr.length
-                            for(let i=0;i<largoChildren;i++){
-                                let nameFile = orderedArr[i].name
-                                //Obtener nombre de la tabla
-                                let index = nameFile.indexOf("[n]")
-                                let first_part = nameFile.substring(0, index)
-                                let index_first_part = first_part.indexOf("_")
-                                let nameTable = nameFile.substring(index_first_part+1, index)
-
-                                await fs.readFile(dirTemp + '\\tmp\\' + nameFile, 'utf-8', async (err, data) => {
-                                    if (err) {
-                                        reject(err)
-                                    } else {
-                                        //Importar de este fichero
-                                        //eliminar todos los registros asociados a la capsula, porque el copy solo inserta
-                                        await pool.executeQuery("ALTER TABLE "+nameTable+" DISABLE TRIGGER ALL;")
-                                        await pool.executeQuery("DELETE FROM "+nameTable+" WHERE id_capsules = '"+idCapsule+"';")
-                                        var stream = await client.query(copyFrom("COPY "+nameTable+" FROM STDIN WITH NULL as 'NULL' DELIMITER ';'"))
-                                        var fileStream = await fs.createReadStream(dirTemp + '\\tmp\\' + nameFile)
-                                        fileStream.on('error', async function(err) {
-                                            reject(err)
-                                            console.log(nameTable+': ',err)
-                                            await pool.executeQuery("ALTER TABLE "+nameTable+" ENABLE TRIGGER ALL;")
-                                        })
-                                        stream.on('error', async function(err) {
-                                            reject(err)
-                                            console.log(nameTable+': ',err)
-                                            await pool.executeQuery("ALTER TABLE "+nameTable+" ENABLE TRIGGER ALL;")
-                                        })
-                                        stream.on('finish', async () => {
-                                            console.log(nameTable, 'importada')
-                                            await pool.executeQuery("ALTER TABLE "+nameTable+" ENABLE TRIGGER ALL;")
-                                        })
-                                        fileStream.pipe(stream)
-                                    }
-                                });
-                            }
-                        }
-                    }
+            await copyFromFiles(req, dirTemp, dirFile)
+                .then((value) => {
+                    resolve(value)
+                })
+                .catch((value) => {
+                    reject(value)
                 });
-
-            }
-            else {
-                reject('Error de importación')
-            }
-
-            resolve('Importación exitosa')
         }
         else{
             reject('El archivo es incorrecto')
@@ -602,6 +574,112 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
     });
 
 })
+
+const copyFromFiles = async (req, dirTemp, dirFile) => new Promise(async (resolve, reject) => {
+    let nameFileStructure = ''
+    await extract(dirFile, { dir: dirTemp+'\\tmp' })
+    //Después de extraer, procesar ficheros a importar
+    const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.sql/ });
+    if(tree.children) {
+        nameFileStructure = tree.children[0].name
+        await fs.readFile(dirTemp + '\\tmp\\' + nameFileStructure, 'utf-8', async (err, data) => {
+            if (err) {
+                reject(err)
+            } else {
+                await pool.executeQuery(data)
+                console.log('Importada estructura!')
+                //Proceder a importar datos
+                const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.csv/ });
+                const client = await pool.obj_pool.connect()
+                let orderedArr = await quickSort(tree.children)
+                if(orderedArr){
+                    let largoChildren = orderedArr.length
+                    try {
+                        //Array de flags para lanzar resolve
+                        for (let i = 0; i < largoChildren; i++)
+                            arrCheck.push(false)
+
+                        for (let i = 0; i < largoChildren; i++) {
+                            let nameFile = orderedArr[i].name
+                            //Obtener nombre de la tabla
+                            let index = nameFile.indexOf("[n]")
+                            let first_part = nameFile.substring(0, index)
+                            let index_first_part = first_part.indexOf("_")
+                            let nameTable = nameFile.substring(index_first_part + 1, index)
+                            console.log(nameTable)
+                            //await client.query("ALTER TABLE " + nameTable + " DISABLE TRIGGER ALL;")
+                            let campoLlave = ''
+                            let arrTable = nameTable.split('.');
+                            let nombreTabla = arrTable[1]
+                            let nombreEsquema = arrTable[0]
+                            let queryKey = "SELECT col.column_name AS columna FROM information_schema.key_column_usage " +
+                                "AS col LEFT JOIN information_schema.table_constraints AS t ON t.constraint_name = col.constraint_name " +
+                                "WHERE t.table_name = '"+nombreTabla+"' AND t.table_schema = '"+nombreEsquema+"' " +
+                                "AND t.constraint_type = 'PRIMARY KEY'; "
+                            const resultKey = await pool.executeQuery(queryKey)
+                            if(resultKey && resultKey.rows[0])
+                                campoLlave = resultKey.rows[0].columna
+                            //Importar de este fichero
+                            await fs.readFile(dirTemp + '\\tmp\\' + nameFile, 'utf-8', async (err, data) => {
+                                if (err) {
+                                    reject(err)
+                                } else {
+                                    //Importar de este fichero
+                                    var d = new Date();
+                                    var nameTempTable = nameTable + '_' + d.getSeconds() + '' + d.getMilliseconds();
+                                    let queryCopy = "CREATE TABLE " + nameTempTable + " AS (SELECT * FROM " + nameTable + "); " +
+                                        "DELETE FROM " + nameTempTable + "; " +
+                                        "COPY " + nameTempTable + " FROM STDIN WITH NULL as 'NULL' DELIMITER ';';";
+                                    var stream = await client.query(copyFrom(queryCopy))
+                                    var fileStream = await fs.createReadStream(dirTemp + '\\tmp\\' + nameFile)
+                                    fileStream.on('error', async function (err) {
+                                        console.log(nameTable + ': ', err)
+                                        //await pool.executeQuery("ALTER TABLE "+nameTable+" ENABLE TRIGGER ALL;")
+                                    })
+                                    stream.on('error', async function (err) {
+                                        reject(err)
+                                        console.log(nameTable + ': ', err)
+                                    })
+                                    stream.on('finish', async() => {
+                                        //Procesar tabla
+                                        let paramsCopy = [nameTable, nameTempTable, campoLlave]
+                                        const query = "SELECT cfgapl.fn_import_table_from_copy($1,$2,$3)"
+                                        const resultCopy = await pool.executeQuery(query, paramsCopy)
+                                        console.log(nameTable + ': ', resultCopy.rows[0].fn_import_table_from_copy)
+                                        arrCheck[i] = true;
+                                        let stop = true;
+                                        for(let j=0;j<arrCheck.length;j++) {
+                                            if(arrCheck[j] == false) {
+                                                stop = false;
+                                                break;
+                                            }
+                                        }
+                                        if(stop)
+                                            resolve('Terminada importacion')
+                                    })
+                                    fileStream.pipe(stream)
+
+                                }
+                            });
+                        }
+
+                    }
+                    catch(err){
+                        console.log(err)
+                        reject(err)
+                    }
+
+                }
+                else reject('Error de importación')
+            }
+        });
+
+    }
+    else {
+        reject('Error de importación')
+    }
+})
+
 
 const insertRegister = async (req, params_insert) => {
     const query = "SELECT cfgapl.fn_insert_register($1,$2,$3,$4,$5,$6)"

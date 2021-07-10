@@ -377,12 +377,17 @@ router.get('/capsules', async function (req, res) {
     return res.json({'success': result.success, 'datos': result.datos})
 })
 
-router.post('/importcapsule', async function (req, res) {
-    let id = ''
-    result = await objects.functions.importCapsule(req)
-    id = result.id
+router.post('/importcapsule', async function (req, res, next) {
+    let result = ''
+    let success = false
+    await objects.functions.importCapsule(req)
+        .then((value) => {
+            success = value[0]
+            result = value[1]
+            console.log(value)
+        }).catch(next);
 
-    return res.json({'success': result.success, 'datos': result.message})
+    return res.json({'success': success, 'datos': result})
 
 })
 

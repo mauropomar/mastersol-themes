@@ -10,7 +10,7 @@ var express = require("express"),
 global.appRootApp = path.resolve(__dirname).replace('\\node_js', '\\');
 global.appRootNodeJS = path.resolve(__dirname);
 
-app.use(timeout(120000));
+app.use(timeout(1000000));
 
 app.use(session({
     secret: 'keyboard secret mastersol',
@@ -25,11 +25,11 @@ app.use(session({
 app.use('/', express.static(appRootApp + "/"));
 
 //add body parser
-app.use( BodyParser.json({limit: '50mb', type: 'application/json'}));
+app.use( BodyParser.json({limit: '200mb', type: 'application/json'}));
 app.use(BodyParser.urlencoded({
-    limit: '50mb',
+    limit: '200mb',
     extended: true,
-    parameterLimit:50000
+    parameterLimit:200000
 }));
 
 //add the middlewares

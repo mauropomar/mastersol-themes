@@ -1,0 +1,83 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_insert_or_update_register
+(
+  IN  nombre_tabla  varchar,
+  IN  str_values    varchar
+)
+RETURNS varchar AS
+$$
+declare
+resultado varchar = '';
+error varchar;
+pos1 int;
+pos2 int;
+campo varchar;
+valor varchar;
+largo int;
+subcadena varchar;
+counter int = 0;
+conteo_columnas int = 0;
+values_part varchar;
+sentencia_update varchar;
+row_column record;
+nombre_esquema varchar;
+nombre_tabla varchar;
+
+begin 
+   BEGIN
+      EXECUTE('INSERT INTO '||$1||' VALUES('||$2||')');
+      resultado = 'Registro insertado';
+   EXCEPTION WHEN unique_violation THEN      
+      GET STACKED DIAGNOSTICS error = PG_EXCEPTION_DETAIL;
+      select length(error) into largo;
+      --Obtener campo
+      select position('(' in error) into pos1;
+      select position(')' in error) into pos2;
+      select substring(error from pos1+1 for pos2-pos1-1) into campo;
+      select substring(error from pos2+1 for largo-pos2) into subcadena;
+      --Obtener valor
+      select position('(' in subcadena) into pos1;
+      select position(')' in subcadena) into pos2;
+      select substring(subcadena from pos1+1 for pos2-pos1-1) into valor; 
+      --Hacer update con este registro
+      sentencia_update = 'UPDATE '||$1||' SET ';
+      SELECT split_part($1,'.',1) into nombre_esquema;
+      SELECT split_part($1,'.',2) into nombre_tabla;
+      
+      SELECT COUNT(*) INTO conteo_columnas FROM information_schema.columns 
+      WHERE table_name = nombre_tabla AND table_schema = nombre_esquema;
+      
+      FOR row_column IN EXECUTE('SELECT * FROM information_schema.columns 
+      WHERE table_name = '||quote_literal(nombre_tabla)||' 
+      AND table_schema = '||quote_literal(nombre_esquema)||' 
+      ORDER BY ordinal_position') LOOP
+             --Adicionar columnas al update   
+             counter = counter + 1;                                     
+             SELECT split_part($2,',',counter) into values_part;
+             values_part = values_part||'';
+             IF(row_column.column_name <> campo) THEN
+                sentencia_update = CONCAT(sentencia_update,row_column.column_name,'=',values_part);
+             END IF;   
+             --Separar por comas las columnas menos la última
+             IF (counter < conteo_columnas and row_column.column_name <> campo) THEN                            
+                sentencia_update = CONCAT(sentencia_update,', ');
+             END IF;   
+      END LOOP; 
+      sentencia_update = CONCAT(sentencia_update,' WHERE ',campo,'=',quote_literal(valor),';');
+      --Ejecutar sentencia UPDATE      
+      BEGIN 
+        --raise notice 'Sentencia Update %', sentencia_update; 
+         EXECUTE(sentencia_update);
+         resultado = 'Registro actualizado';
+      EXCEPTION WHEN others THEN  
+         GET STACKED DIAGNOSTICS error = MESSAGE_TEXT;
+         resultado = 'ERROR: '||error;  
+      END;         
+   END; 
+   
+  return resultado;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_insert_or_update_register(varchar, varchar)
+  OWNER TO postgres;

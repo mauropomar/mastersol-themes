@@ -1,0 +1,38 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_import_table_from_copy
+(
+  IN  nombre_tabla    varchar,
+  IN  tabla_temporal  varchar,
+  IN  campo_llave     varchar
+)
+RETURNS varchar AS
+$$
+declare
+row_id record;
+row_record record;
+var_id varchar;
+resultado varchar = '';
+
+begin 
+ BEGIN 
+  EXECUTE('ALTER TABLE '||$1||' DISABLE TRIGGER ALL');
+  FOR row_id IN EXECUTE('SELECT '||$3||' FROM '||$2||'') LOOP 
+      SELECT REPLACE(row_id::varchar, '(', '') INTO var_id;
+      SELECT REPLACE(var_id, ')', '') INTO var_id;  
+      EXECUTE('DELETE FROM '||$1||' WHERE '||$3||' = '||quote_literal(var_id)||'');
+      EXECUTE('SELECT * FROM '||$2||' WHERE '||$3||' = '||quote_literal(var_id)||'') INTO row_record;
+      EXECUTE('INSERT INTO '||$1||' SELECT * FROM '||$2||' 
+      WHERE '||$3||' = '||quote_literal(var_id)||'');       
+  END LOOP;
+  EXECUTE('DROP TABLE '||$2||'');    
+  EXECUTE('ALTER TABLE '||$1||' ENABLE TRIGGER ALL');
+  resultado = 'importacion exitosa';
+ EXCEPTION when others then  
+    GET STACKED DIAGNOSTICS resultado = MESSAGE_TEXT;     
+ END;
+ return resultado;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_import_table_from_copy(varchar, varchar, varchar)
+  OWNER TO postgres;

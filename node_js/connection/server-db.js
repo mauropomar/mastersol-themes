@@ -3,10 +3,10 @@ const ConPgSQL = {};
 var utf8 = require('utf8');
 var config_bd = {
     user: 'postgres',
-    password: 'root',
+    password: 'postgres',
     host: 'localhost',
-    database: 'mastersolNew',
-    port: 5433
+    database: 'mastersol3',
+    port: 5432
 }
 const pool = new Pool(config_bd)
 
