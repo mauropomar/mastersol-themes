@@ -6,9 +6,10 @@ Ext.define('MasterSol.view.capsule.WindowImportCapsule', {
     xtype: 'window-import-capsule',
     closable: true,
     closeAction: 'destroy',
+    height: 300,
     width: 600,
     title: 'Importar Capsula',
-    layout: 'fit',
+    layout: 'border',
     autoShow: true,
     requires: [
         'MasterSol.store.capsule.CapsuleExportStore'
@@ -16,6 +17,8 @@ Ext.define('MasterSol.view.capsule.WindowImportCapsule', {
     items: [{
         xtype: 'form',
         layout: 'fit',
+        region:'north',
+        frame:true,
         bodyPadding: 10,
         labelAlign:'top',
         items: [{
@@ -29,6 +32,16 @@ Ext.define('MasterSol.view.capsule.WindowImportCapsule', {
                 text: '',
                 iconCls: 'fa fa-file-text'
             }
+        }]
+    },{
+        xtype: 'form',
+        layout: 'fit',
+        region:'center',
+        bodyPadding: 10,
+        labelAlign:'top',
+        items: [{
+            xtype:'displayfield',
+            id:'display_proccess_import_capsule'
         }]
     }],
     buttons: [{

@@ -14,12 +14,6 @@ Ext.define('MasterSol.controller.capsule.CapsuleExportController', {
         });
     },
 
-    setNameFile: function (nameCapsule) {
-        var date = Ext.Date.format(new Date(), 'Ymdhis');
-        var name = nameCapsule + '_' + date;
-        Ext.ComponentQuery.query('#field_name_export')[0].setValue(name);
-    },
-
     clickCapsule: function (grid, record) {
         Ext.ComponentQuery.query('#btn_exportar_capsule')[0].setDisabled(false);
     },
