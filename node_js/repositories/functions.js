@@ -12,7 +12,6 @@ const fileType = require('file-type');
 const extract = require('extract-zip')
 const dirTree = require("directory-tree");
 var lineReader = require('line-reader');
-const invert = require('clean-directory');
 const objGenFunc = {}
 var arrCheck = [];
 
@@ -269,14 +268,14 @@ const executeFunctionsButtons = async (req, objects) => {
     return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name}
 }
 
-const saveCapsule = async (req) => {
+const saveCapsuleBD = async (idcapsule) => {
     let success = true
     let finalResult = ''
     let noSchema = false
     let noData = false
 
     const query = "SELECT cfgapl.fn_save_capsule($1)"
-    const param_capsule = [req.body.idcapsule]
+    const param_capsule = [idcapsule]
     const result = await pool.executeQuery(query, param_capsule)
     if (result.success === false)
         success = false
@@ -289,15 +288,15 @@ const saveCapsule = async (req) => {
     }
     else{
         //Crear carpeta para contener los ficheros generados
-        const param_cap = ['cfgapl.capsules',req.body.idcapsule]
+        const param_cap = ['cfgapl.capsules',idcapsule]
         const resultCap = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_cap)
         let name_capsule = ''
         if(resultCap){
             name_capsule =  resultCap.rows[0].fn_get_register[0].namex
         }
         let currentDate = new Date()
-        const dirFolder = global.appRootApp + '\\resources\\backups\\'+name_capsule+'[n]'+req.body.idcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
-        await generateExportFiles(req,dirFolder,resultSaveStructure)
+        const dirFolder = global.appRootApp + '\\resources\\backups\\'+name_capsule+'[n]'+idcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
+        await generateExportFilesBD(idcapsule,dirFolder,resultSaveStructure)
             .then((value) => {
                 if(value == 'noData') {
                     noData = true
@@ -334,7 +333,44 @@ const saveCapsule = async (req) => {
     return {'success': success, 'datos': finalResult}
 }
 
-const generateExportFiles = async (req,dirFolder,resultSaveStructure) => new Promise(async (resolve, reject) => {
+const saveCapsuleFiles = async (idcapsule) => {
+    let success = true
+    let finalResult = ''
+
+    let currentDate = new Date()
+    const dirFolder = global.appRootApp + '\\resources\\backups\\'+idcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
+    await generateExportFilesStructure(idcapsule,dirFolder)
+        .then((value) => {
+            finalResult = value
+        })
+        .catch((value) => {
+            success = false
+            finalResult = value
+        });
+
+    return {'success': success, 'datos': finalResult}
+}
+
+const generateExportFilesStructure = async (idcapsule, dirFolder) => new Promise(async (resolve, reject) => {
+    let success = true
+    await fs.mkdir(dirFolder, {recursive: true}, async (err) => {
+        if(!err){
+            fs.rename(global.appRootApp + '\\capsules\\' + 'c_'+idcapsule, dirFolder, (err) => {
+                if (!err) {
+                    console.log('movida capsula')
+                    resolve('Creado directorio')
+                }
+                else {
+                    reject(err)
+                }
+            });
+        }
+        else
+            reject(err)
+    });
+})
+
+const generateExportFilesBD = async (idcapsule, dirFolder, resultSaveStructure) => new Promise(async (resolve, reject) => {
     let success = true
     await fs.mkdir(dirFolder, {recursive: true}, async (err) => {
         if (!err) {
@@ -344,9 +380,24 @@ const generateExportFiles = async (req,dirFolder,resultSaveStructure) => new Pro
                 let fileStructure = fs.createWriteStream(dirFolder + '\\e_' + Math.random() + '.sql')
                 fileStructure.write(resultSaveStructure)
             }
+            const client = await pool.obj_pool.connect()
+            //Obtener aparte datos de la capsula
+            let writeStream = await fs.createWriteStream(dirFolder + '\\cap_' + Math.random() + '.txt');
+            var readStream = await client.query(copyTo("COPY (SELECT * FROM cfgapl.capsules WHERE id = '" + idcapsule + "') " +
+                "TO STDOUT WITH NULL as 'NULL' DELIMITER ',' "));
+            await copyStreamToFile(readStream, writeStream, 'Capsula')
+                .then((value) => {
+                    writeStream = value
+                })
+                .catch((value) => {
+                    success = false
+                    writeStream = value
+                    reject('Error exportando Capsula')
+                });
 
+            //Obtener datos tablas a exportar
             const query = "SELECT cfgapl.fn_get_ordered_tables_by_fk($1)"
-            const param_capsule = [req.body.idcapsule]
+            const param_capsule = [idcapsule]
             const result = await pool.executeQuery(query, param_capsule)
             if (result.success === false)
                 success = false
@@ -355,7 +406,6 @@ const generateExportFiles = async (req,dirFolder,resultSaveStructure) => new Pro
             if(resultOrdredTables) {
                 let arrTablas = resultOrdredTables.split(',');
                 let largo_arr = arrTablas.length
-                const client = await pool.obj_pool.connect()
                 try {
                     for(let i = 0; i < largo_arr; i++){
                         let tabla = arrTablas[i]
@@ -369,9 +419,9 @@ const generateExportFiles = async (req,dirFolder,resultSaveStructure) => new Pro
                         if(resultHijos && resultHijos.rows[0].conteo == 0) {
                             let writeStream = await fs.createWriteStream(dirFolder + '\\' + i + '_' + tabla + '[n]' + Math.random() + '.csv');
                             writeStream.setMaxListeners(0);
-                            var readStream = await client.query(copyTo("COPY (SELECT * FROM " + tabla + " WHERE id_capsules = '" + req.body.idcapsule + "') " +
+                            var readStream = await client.query(copyTo("COPY (SELECT * FROM " + tabla + " WHERE id_capsules = '" + idcapsule + "') " +
                                 "TO STDOUT WITH NULL as 'NULL' DELIMITER ';' "));
-                            await copyStreamToFile(req, readStream, writeStream, tabla)
+                            await copyStreamToFile(readStream, writeStream, tabla)
                                 .then((value) => {
                                     writeStream = value
                                 })
@@ -398,7 +448,7 @@ const generateExportFiles = async (req,dirFolder,resultSaveStructure) => new Pro
 })
 
 
-const copyStreamToFile = async (req,readStream,writeStream,tabla) => new Promise(async (resolve, reject) => {
+const copyStreamToFile = async (readStream,writeStream,tabla) => new Promise(async (resolve, reject) => {
     readStream.pipe(writeStream)
     writeStream.addListener('finish', function(){
         console.log(tabla, 'exportada')
@@ -489,6 +539,7 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
         const tipo = await fileType.fromFile(dirFile)
         //Comprobar fichero antes de iniciar el proceso
         if(tipo['ext'] == 'zip' && tipo['mime'] == 'application/zip'){
+            await extract(dirFile, { dir: dirTemp+'\\tmp' })
             //Comprobar si la capsula existe, sino, crearla
             let arrName = req.body.name.split('[n]')
             let nameCapsule = arrName[0]
@@ -510,6 +561,31 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
             const resultSectionCapsule = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSectionCapsule);
             if(resultSectionCapsule)
                 id_section = resultSectionCapsule.rows[0].fn_get_register[0].id
+
+            let version = '1.0';
+            let description = ' ';
+            let licencetext = ' ';
+            //Obtener valores de la capsula del fichero .txt
+            const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.txt/ });
+            if(tree.children) {
+                await lineReader.eachLine(dirTemp + '\\tmp\\' + tree.children[0].name, async function (line, last) {
+                    try {
+                        if(line) {
+                            let arrLine = line.split(',')
+                            nameCapsule = arrLine[1]
+                            description = arrLine[2]
+                            version = arrLine[4]
+                            licencetext = arrLine[6]
+                            id_language = arrLine[12]
+                        }
+                    }
+                    catch (err) {
+                        console.log('Error leyendo el fichero')
+                    }
+
+                });
+            }
+            await sleep(50)
             if(resultCapsule && !resultCapsule.rows[0].fn_get_register) {
                  var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
                  //Obtencion de lenguaje spanish
@@ -517,7 +593,7 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                  const resultLanguage = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsLanguage);
                  if(resultLanguage)
                      id_language = resultLanguage.rows[0].fn_get_register[0].id
-                //Obtencion de section
+
                  //columnas a insertar
                  columnasInsertAux.push('id')
                  columnasInsertAux.push('namex')
@@ -531,9 +607,9 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                      nameCapsule += ' '
                  valuesInsertAux.push(" '" + idCapsule + "'")
                  valuesInsertAux.push(" '" + nameCapsule + "'")
-                 valuesInsertAux.push(" '" + nameCapsule + "'")
-                 valuesInsertAux.push(" '1.0'")
-                 valuesInsertAux.push(" ' '")
+                 valuesInsertAux.push(" '" + description + "'")
+                 valuesInsertAux.push(" '"+version+"'")
+                 valuesInsertAux.push(" '"+licencetext+"'")
                  valuesInsertAux.push(" '" + id_language + "'")
                  valuesInsertAux.push("'" + req.session.id_user + "'")
 
@@ -550,6 +626,10 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
             else if(resultCapsule && resultCapsule.rows[0].fn_get_register){
                 var paramsInsert = [], valuesInsertAux = [];
                 valuesInsertAux.push("namex = '" + nameCapsule + "'" )
+                valuesInsertAux.push("description = '" + description + "'" )
+                valuesInsertAux.push("version = '" + version + "'" )
+                valuesInsertAux.push("licencetext = '" + licencetext + "'" )
+                valuesInsertAux.push("idlanguage = '" + id_language + "'" )
                 valuesInsertAux.push("modifier = '" + req.session.id_user + "'" )
 
                 paramsInsert.push(id_section)
@@ -577,7 +657,6 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
 
 const copyFromFiles = async (req, dirTemp, dirFile) => new Promise(async (resolve, reject) => {
     let nameFileStructure = ''
-    await extract(dirFile, { dir: dirTemp+'\\tmp' })
     //Después de extraer, procesar ficheros a importar
     const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.sql/ });
     if(tree.children) {
@@ -802,7 +881,8 @@ Array.prototype.orderByNumberInString=function(property){
 objGenFunc.generateFunctions = generateFunctions
 objGenFunc.generateFunctionsTimeEvents = generateFunctionsTimeEvents
 objGenFunc.executeFunctionsButtons = executeFunctionsButtons
-objGenFunc.saveCapsule = saveCapsule
+objGenFunc.saveCapsuleBD = saveCapsuleBD
+objGenFunc.saveCapsuleFiles = saveCapsuleFiles
 objGenFunc.getCapsules = getCapsules
 objGenFunc.importCapsule = importCapsule
 module.exports = objGenFunc

@@ -1,0 +1,10 @@
+--FK parent
+/* Buscar de las filas insertadas en cfgapl.tables_properties la correspondiente al campo 'name', coger su ID y sustituir en
+el value 'name1' del insert */
+alter table cfgapl.tables_foreignkeys disable trigger all;
+   insert into cfgapl.tables_foreignkeys (id_tables,namex,local_fields,foreign_fields,
+   creator,name1,foreign_table_schema,foreign_table) values 
+   ('1cb14991-647f-4606-b165-35549a9f9d0f','reports_informes_id_parent_fk',
+   '{id_parent}','{id}','7570c788-e3e8-4ffc-83d5-ac7996eb10ce',
+   '36329743-96f1-4d55-92d5-282ec570d5d2','reports','informs');
+alter table cfgapl.tables_foreignkeys enable trigger all;

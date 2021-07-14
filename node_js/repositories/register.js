@@ -15,7 +15,7 @@ const getForeignkey = async (req) => {
 }
 
 const insertRegister = async (req, objects) => {
-    const params_insert = getParamsInsert(req)
+    const params_insert = getParamsInsert(req, objects)    
     const query = "SELECT cfgapl.fn_insert_register($1,$2,$3,$4,$5,$6)"
     const result = await pool.executeQuery(query, params_insert)
     if (result.success === false) {
@@ -32,8 +32,8 @@ const insertRegister = async (req, objects) => {
     return result.rows[0].fn_insert_register
 }
 
-const updateRegister = async (req) => {
-    const params_insert = getParamsUpdate(req)
+const updateRegister = async (req, objects) => {
+    const params_insert = getParamsUpdate(req, objects)
     console.log(params_insert)
     const query = "SELECT cfgapl.fn_update_register($1,$2,$3,$4)"
     const result = await pool.executeQuery(query, params_insert)
@@ -85,7 +85,7 @@ const deleteRegister = async (req) => {
     return result.rows[0].fn_delete_register
 }
 
-const getParamsInsert = (req) => {
+const getParamsInsert = (req, objects) => {
     var result = [], valor = "", columnasInsertAux = [], valuesInsertAux = [];
     const params_parse = JSON.parse(req.body.data);
     params_parse.forEach(function (item, index, arr) {
@@ -139,7 +139,7 @@ const getParamsInsert = (req) => {
     return result
 }
 
-const getParamsUpdate = (req) => {
+const getParamsUpdate = (req, objects) => {
     var result = [], valor = "", valuesInsertAux = [];
     const params_parse = JSON.parse(req.body.data);
     params_parse.forEach(function (item, index, arr) {
