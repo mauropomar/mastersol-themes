@@ -1,19 +1,16 @@
 /**
  * Demonstrates a basic window control.
  */
-Ext.define('MasterSol.view.capsule.WindowImportCapsule', {
+Ext.define('MasterSol.view.database.WindowRestoreDatabase', {
     extend: 'Ext.window.Window',
-    xtype: 'window-import-capsule',
+    xtype: 'window-restore-database',
     closable: true,
     closeAction: 'destroy',
     height: 300,
     width: 600,
-    title: 'Importar Capsula',
+    title: 'Restaurar base de datos',
     layout: 'border',
     autoShow: true,
-    requires: [
-        'MasterSol.store.capsule.CapsuleExportStore'
-    ],
     items: [{
         xtype: 'form',
         layout: 'fit',
@@ -23,10 +20,10 @@ Ext.define('MasterSol.view.capsule.WindowImportCapsule', {
         labelAlign:'top',
         items: [{
             xtype: 'filefield',
-            emptyText: 'Seleccione la capsula a importar..',
+            emptyText: 'Seleccione la base de datos a importar..',
             fieldLabel: 'Fichero',
-            name: 'file_capsule',
-            id:'file_capsule',
+            name: 'file_database',
+            id:'file_database',
             flex:2,
             buttonConfig: {
                 text: '',
@@ -41,22 +38,22 @@ Ext.define('MasterSol.view.capsule.WindowImportCapsule', {
         labelAlign:'top',
         items: [{
             xtype:'displayfield',
-            id:'display_proccess_import_capsule'
+            id:'display_proccess_restore_database'
         }]
     }],
     buttons: [{
-        text: 'Importar',
-        id: 'btn_execute_importar_capsule',
+        text: 'Restaurar',
+        id: 'btn_execute_restore_database',
         iconCls: 'fa fa-save',
         handler: function () {
-            MasterApp.getController('MasterSol.controller.capsule.CapsuleImportController').import();
+            MasterApp.getController('MasterSol.controller.database.DatabaseRestoreController').import();
         }
     }, {
         text: 'Cancelar',
         iconCls: 'fa fa-close',
-        id: 'btn_cancelar_import_capsule',
+        id: 'btn_cancel_restore_database',
         handler: function () {
-            MasterApp.getController('MasterSol.controller.capsule.CapsuleImportController').cancel();
+            MasterApp.getController('MasterSol.controller.database.DatabaseRestoreController').cancel();
         }
     }]
 });

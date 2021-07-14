@@ -97,7 +97,7 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
 
                     comp = panels[i].items.items[0];
                     columns = this.getColumns(comp);
-                    data = this.getData(comp);
+                 //   data = this.getData(comp);
                     recSel = this.getRecordSelected(comp);
                     recSel = [];
                     register = this.getRegister();
@@ -112,7 +112,6 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
                         idsection: panels[i].idsection,
                         idparent: panels[i].idparent,
                         selected: recSel,
-                        data: data,
                         register: register,
                         totals: totals,
                         filters: filters,
@@ -127,7 +126,7 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
                     for (var j = 0; j < components.length; j++) {
                         comp = components[j].items.items[0];
                         columns = this.getColumns(comp);
-                        data = this.getData(comp);
+                     //   data = this.getData(comp);
                         recSel = this.getRecordSelected(comp);
                         register = this.getRegister();
                         totals = this.getTotals();
@@ -140,7 +139,6 @@ Ext.define('Capsules.siembra.controller.panel.JsonController', {
                             idsection: components[j].idsection,
                             idparent: components[j].idparent,
                             selected: recSel,
-                            data: data,
                             register: register,
                             totals: totals,
                             filters: filters,

@@ -57,7 +57,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.magnament.getData(grid.panel);
         MasterApp.tools.setButtons();
 
-      //  grid.resumeEvents();
+        //  grid.resumeEvents();
     },
 
     dblclickSection: function (grid, td, cellIndex, record) {
@@ -489,6 +489,11 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     // funcion para capturar el click en el tab seleccionados para tenerlo como referencia
     addEventClickTabSection: function (tabPanel, newCard) {
         var comp = tabPanel.getEl();
+        this.onClickTab(comp);
+        this.onDoubleClick(comp);
+    },
+
+    onClickTab: function (comp) {
         comp.on('click', function (e) {
             var isLoading = MasterApp.globals.isLoading;
             if (isLoading)
@@ -497,7 +502,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             var idtab = comp.id;
             setTimeout(function () {
                 var sectionActive = Ext.ComponentQuery.query('#' + idtab)[0].getActiveTab();
-                if(sectionActive) {
+                if (sectionActive) {
                     var gridsection = sectionActive.down('gridpanel');
                     MasterApp.globals.setGridSection(gridsection);
                     MasterApp.globals.setRecordSection(null);
@@ -505,8 +510,17 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                     MasterApp.globals.setLoading(false);
                     var container = gridsection.up('panel');
                     MasterApp.util.setStyleSection(container);
+                 //   var height = Ext.ComponentQuery.query('#' + idtab)[0].getHeight();
+                //    gridsection.setHeight(500);
                 }
             }, 500);
+        }, comp);
+    },
+
+    onDoubleClick: function (comp) {
+
+        comp.on('dblclick', function (e) {
+            MasterApp.section.setFullSectionOfWindow(this);
         }, comp);
     },
 
@@ -535,7 +549,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     afterrender: function (panel) {
-      //  this.actionKey(panel);
+        //  this.actionKey(panel);
     },
 
     actionKey: function (panel) {
@@ -586,5 +600,47 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             MasterApp.util.resizeWindow(window, panel);
             MasterApp.tools.showButtonsNotDefault(window, true);
         }
+    },
+
+    setFullSectionOfWindow:function(me){
+        var tabpanel = Ext.ComponentQuery.query('#' + me.id)[0];
+        var window = tabpanel.up('window');
+        var panel_principal = window.down('panel[name=panel_section]');
+        var height;
+        if (tabpanel.level == 0) {
+            if (!panel_principal.isHidden()) {
+                height = panel_principal.getHeight() + tabpanel.getHeight();
+                panel_principal['lastHeight'] = panel_principal.getHeight();
+                tabpanel['lastHeight'] = tabpanel.getHeight();
+                panel_principal.setHeight(0);
+                panel_principal.hide();
+                tabpanel.setHeight(height);
+            } else {
+                panel_principal.setHeight(panel_principal['lastHeight']);
+                tabpanel.setHeight(tabpanel['lastHeight']);
+                panel_principal.show();
+            }
+        }
+        ;
+        if (tabpanel.level === 1) {
+            var firstTabPanel = window.down('tabpanel');
+            if (!firstTabPanel.isHidden()) {
+                firstTabPanel['lastHeight'] = firstTabPanel.getHeight();
+                panel_principal['lastHeight'] = panel_principal.getHeight();
+                tabpanel['lastHeight'] = tabpanel.getHeight();
+                height = panel_principal.getHeight() + firstTabPanel.getHeight() + tabpanel.getHeight();
+                panel_principal.setHeight(0);
+                firstTabPanel.setHeight(0);
+                panel_principal.hide();
+                firstTabPanel.hide();
+                tabpanel.setHeight(height);
+            } else {
+                panel_principal.setHeight(panel_principal['lastHeight']);
+                firstTabPanel.setHeight(firstTabPanel['lastHeight']);
+                tabpanel.setHeight(tabpanel['lastHeight']);
+                panel_principal.show();
+                firstTabPanel.show();
+            }
+        };
     }
 })

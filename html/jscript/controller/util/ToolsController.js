@@ -168,6 +168,24 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     getButtonsDefaut: function (win) {
         return [{
             iconCls: 'fa fa-list-alt',
+            tooltip: 'Salvar base de datos',
+            default: true,
+            name: 'btn_save_bd',
+            handler: function (evt, toolEl, owner, tool) {
+                var window = owner.up('window');
+                MasterApp.getController('MasterSol.controller.database.DatabaseSaveController').showWindow();
+            }
+        }, {
+            iconCls: 'fa fa-database',
+            tooltip: 'Restaurar base de datos',
+            default: true,
+            name: 'btn_restore_bd',
+            handler: function (evt, toolEl, owner, tool) {
+                var window = owner.up('window');
+                MasterApp.getController('MasterSol.controller.database.DatabaseRestoreController').showWindow();
+            }
+        }, {
+            iconCls: 'fa fa-list-alt',
             tooltip: 'Exportar Capsula',
             default: true,
             name: 'btn_export_capsule',
@@ -175,7 +193,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 var window = owner.up('window');
                 MasterApp.getController('MasterSol.controller.capsule.CapsuleExportController').showWindow();
             }
-        },{
+        }, {
             iconCls: 'fa fa-database',
             tooltip: 'Importar Capsula',
             default: true,
@@ -184,7 +202,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 var window = owner.up('window');
                 MasterApp.getController('MasterSol.controller.capsule.CapsuleImportController').showWindow();
             }
-        },{
+        }, {
             iconCls: 'fa fa-plus',
             tooltip: 'Agregar',
             hidden: win.isAlert,
