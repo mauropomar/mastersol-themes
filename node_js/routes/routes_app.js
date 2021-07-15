@@ -185,7 +185,7 @@ router.post('/crudregister', async function (req, res) {
     if (req.body.accion === '13') { //Insert
         result = await objects.register.insertRegister(req, objects)
     } else if (req.body.accion === '14') { //Update
-        result = await objects.register.updateRegister(req)
+        result = await objects.register.updateRegister(req, objects)
     } else if (req.body.accion === '7') { //Delete
         result = await objects.register.deleteRegister(req)
     }
@@ -364,12 +364,18 @@ router.get('/newalerts', async function (req, res) {
 })
 
 router.post('/savecapsule', async function (req, res) {
-    var result = await objects.functions.saveCapsule(req)
-    let success = result.success
-    if (result.datos.includes('ERROR: '))
-        success = false
+    const idcapsule = req.body.idcapsule
+    let successFull = true
+    let dirResult = ''
+   // var resultBD = await objects.functions.saveCapsuleBD(idcapsule)
+    var resultFile = await objects.functions.saveCapsuleFiles(idcapsule)
+    console.log(resultFile)
+    // let successBD = resultBD.success
+    let successFile = resultFile.success
+    if(/*!successBD ||*/ !successFile)
+        successFull = false
 
-    return res.json({'success': success, 'datos': result.datos})
+    return res.json({'success': successFull, 'datos': dirResult})
 })
 
 router.get('/capsules', async function (req, res) {

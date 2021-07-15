@@ -1,0 +1,31 @@
+CREATE OR REPLACE FUNCTION "security".fn_change_pass
+(
+  IN  newpass  varchar,
+  IN  iduser   uuid   
+)
+RETURNS varchar AS
+$$
+declare
+msgerror varchar = '';
+
+begin
+
+ BEGIN
+   ALTER TABLE security.users DISABLE TRIGGER ALL;
+   EXECUTE('UPDATE "security".users SET passw = '||quote_literal($1)||' WHERE id = '||quote_literal($2)||' ');
+   ALTER TABLE security.users ENABLE TRIGGER ALL;
+   EXCEPTION when others then     
+      GET STACKED DIAGNOSTICS msgerror = MESSAGE_TEXT;  
+      msgerror = 'ERROR: '||msgerror;   
+ END;
+
+return msgerror;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION "security".fn_change_pass(varchar, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION "security".fn_change_pass(varchar, uuid)
+  IS 'To change pass to user';

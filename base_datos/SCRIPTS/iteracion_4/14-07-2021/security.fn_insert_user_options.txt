@@ -1,0 +1,37 @@
+CREATE OR REPLACE FUNCTION "security".fn_insert_user_options
+(
+  IN  id_capsules       uuid,
+  IN  id_organizations  uuid,
+  IN  id_users          uuid,
+  IN  id_languages      uuid,
+  IN  id_rol            uuid
+)
+RETURNS varchar AS
+$$
+declare
+respuesta varchar = '';
+begin
+  BEGIN 
+     ALTER TABLE security.users DISABLE TRIGGER ALL;      
+     --Actualizar valores por defecto de lenguaje y rol en tabla users
+     UPDATE security.users SET default_rol = $5, default_language = $4 WHERE id = $3; 
+     ALTER TABLE security.users ENABLE TRIGGER ALL;
+     respuesta = 'Lenguaje y rol por defecto, actualizados correctamente'; 
+  EXCEPTION 
+    WHEN invalid_parameter_value THEN
+       GET STACKED DIAGNOSTICS respuesta = MESSAGE_TEXT;     
+       respuesta = 'ERROR: '||respuesta;  
+    WHEN others THEN
+       GET STACKED DIAGNOSTICS respuesta = MESSAGE_TEXT; 
+       respuesta = 'ERROR: '||respuesta;  
+  END;
+ return respuesta; 
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION "security".fn_insert_user_options(uuid, uuid, uuid, uuid, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION "security".fn_insert_user_options(uuid, uuid, uuid, uuid, uuid)
+  IS 'Insert the user''s options';

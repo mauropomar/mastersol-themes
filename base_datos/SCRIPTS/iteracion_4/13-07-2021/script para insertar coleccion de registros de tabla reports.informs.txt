@@ -1,0 +1,97 @@
+DO $$
+DECLARE 
+    
+BEGIN
+   --Crear columna en informs
+   alter table reports.informs disable trigger all;
+   alter table reports.informs add column id_capsules uuid  not null;
+   ALTER TABLE reports.informs ADD CONSTRAINT reports_informes_id_capsules_fk 
+      FOREIGN KEY (id_capsules)
+      REFERENCES cfgapl.capsules(id)
+       ON DELETE RESTRICT
+       ON UPDATE CASCADE;
+   alter table reports.informs disable trigger all;
+   
+   --Insertar registros en tables_properties
+   alter table cfgapl.tables_properties disable trigger all;
+   --col ID
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','id','id',
+   '0baf5340-6c72-4f9f-8f19-01d53ce3c412','t',0,'gen_random_uuid()','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col id_organizations
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','id_organizations','id_organizations',
+   '0baf5340-6c72-4f9f-8f19-01d53ce3c412','t',0,'''b37ac1cb-93db-435a-bb2a-76f6b2fef10e''::uuid',
+   '7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+     --col active
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','active','active',
+   '612759bb-ef62-400e-bd18-3308d6746f46','t',0,'true','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col imported
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','imported','imported',
+   '612759bb-ef62-400e-bd18-3308d6746f46','t',0,'false','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col created
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','created','created',
+   '52d289f4-4548-4ffa-a4d6-faabd4b802d6','t',0,'CURRENT_TIMESTAMP','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col modified
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','modified','modified',
+   '52d289f4-4548-4ffa-a4d6-faabd4b802d6','t',0,'CURRENT_TIMESTAMP','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col creator
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','creator','creator',
+   '0baf5340-6c72-4f9f-8f19-01d53ce3c412','f',0,'','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col modifier
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','modifier','modifier',
+   '0baf5340-6c72-4f9f-8f19-01d53ce3c412','f',0,'','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col id_parent
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','id_parent','id_parent',
+   '0baf5340-6c72-4f9f-8f19-01d53ce3c412','f',0,'','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col path
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','path','path',
+   '93035751-b663-40e7-9b55-a0afd835fba5','f',0,'','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col orderx
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','orderx','orderx',
+   '27698fa8-0c93-4117-9636-abc7fe65f183','t',0,'','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col name
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','name','name',
+   'e090bf18-0984-4d32-948f-68f82ba03104','f',180,'','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col description
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','description','description',
+   'e090bf18-0984-4d32-948f-68f82ba03104','f',250,'','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col funtion
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','funtion','funtion',
+   '0baf5340-6c72-4f9f-8f19-01d53ce3c412','f',0,'','7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   --col id_capsules
+   insert into cfgapl.tables_properties (id_tables,namex,n_column,id_datatype,nonull,dec_count,
+   default_value,creator) values ('1cb14991-647f-4606-b165-35549a9f9d0f','id_capsules','id_capsules',
+   '0baf5340-6c72-4f9f-8f19-01d53ce3c412','t',0,'''5cdf1800-af89-4ce0-8c9a-ef659b8891c5''::uuid',
+   '7570c788-e3e8-4ffc-83d5-ac7996eb10ce');
+   
+   alter table cfgapl.tables_properties enable trigger all;
+   --Insertar registros en tables_foreignkeys
+   alter table cfgapl.tables_foreignkeys disable trigger all;
+   --FK capsules
+   insert into cfgapl.tables_foreignkeys (id_tables,namex,local_fields,foreign_fields,
+   creator,name1,foreign_table_schema,foreign_table) values ('1cb14991-647f-4606-b165-35549a9f9d0f','reports_informes_id_capsules_fk',
+   '{id_capsules}','{id}','7570c788-e3e8-4ffc-83d5-ac7996eb10ce',
+   'cd6727ab-c00f-40ad-bc11-291b0ccb68c1','cfgapl','capsules');
+   --FK organization
+   insert into cfgapl.tables_foreignkeys (id_tables,namex,local_fields,foreign_fields,
+   creator,name1,foreign_table_schema,foreign_table) values ('1cb14991-647f-4606-b165-35549a9f9d0f','reports_informes_id_organizations_fk',
+   '{id_organizations}','{id}','7570c788-e3e8-4ffc-83d5-ac7996eb10ce',
+   'd47460f5-e92c-4815-8570-d5831d97f45f','entities','organizations');
+   
+   
+   alter table cfgapl.tables_foreignkeys enable trigger all;
+END;
+$$;
