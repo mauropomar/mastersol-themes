@@ -510,17 +510,17 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                     MasterApp.globals.setLoading(false);
                     var container = gridsection.up('panel');
                     MasterApp.util.setStyleSection(container);
-                 //   var height = Ext.ComponentQuery.query('#' + idtab)[0].getHeight();
-                //    gridsection.setHeight(500);
+                    //   var height = Ext.ComponentQuery.query('#' + idtab)[0].getHeight();
+                    //    gridsection.setHeight(500);
                 }
             }, 500);
         }, comp);
     },
 
     onDoubleClick: function (comp) {
-
         comp.on('dblclick', function (e) {
             MasterApp.section.setFullSectionOfWindow(this);
+            e.cancelEvents();
         }, comp);
     },
 
@@ -602,7 +602,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         }
     },
 
-    setFullSectionOfWindow:function(me){
+    setFullSectionOfWindow: function (me) {
         var tabpanel = Ext.ComponentQuery.query('#' + me.id)[0];
         var window = tabpanel.up('window');
         var panel_principal = window.down('panel[name=panel_section]');
@@ -615,9 +615,11 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 panel_principal.setHeight(0);
                 panel_principal.hide();
                 tabpanel.setHeight(height);
+                tabpanel['expanded'] = true;
             } else {
                 panel_principal.setHeight(panel_principal['lastHeight']);
                 tabpanel.setHeight(tabpanel['lastHeight']);
+                tabpanel['expanded'] = false;
                 panel_principal.show();
             }
         }
@@ -641,6 +643,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 panel_principal.show();
                 firstTabPanel.show();
             }
-        };
+        }
+        ;
     }
 })
