@@ -231,6 +231,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             heightTabs = '25%';
         }
         p.setHeight(heightPanel);
+        // si recorren los tabs y se le setea la altura
         for (var i = 0; i < tabs.length; i++) {
             tabs[i].setHeight(heightTabs);
         }

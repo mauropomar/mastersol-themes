@@ -22,6 +22,13 @@ Ext.define('Capsules.siembra.view.panel.PanelJson', {
         handler:function(){
             MasterApp.getController("Capsules.siembra.controller.panel.JsonController").sendJson();
         }
+    },{
+        xtype: 'button',
+        iconCls: 'fa fa-check',
+        text: 'Infinite Scroll',
+        handler:function(){
+            MasterApp.getController('Capsules.siembra.controller.infiniteScroll.InfiniteController').showWindow();
+        }
     }],
     requires: [
         'MasterSol.view.magnament.Register',

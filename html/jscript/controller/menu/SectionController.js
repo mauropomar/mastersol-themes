@@ -628,7 +628,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             var firstTabPanel = window.down('tabpanel');
             if (!firstTabPanel.isHidden()) {
                 firstTabPanel['lastHeight'] = firstTabPanel.getHeight();
-                panel_principal['lastHeight'] = panel_principal.getHeight();
+                panel_principal['lastHeight'] = (panel_principal.getHeight() === 0) ? '33%' : panel_principal.getHeight();
                 tabpanel['lastHeight'] = tabpanel.getHeight();
                 height = panel_principal.getHeight() + firstTabPanel.getHeight() + tabpanel.getHeight();
                 panel_principal.setHeight(0);
@@ -636,12 +636,14 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 panel_principal.hide();
                 firstTabPanel.hide();
                 tabpanel.setHeight(height);
+                tabpanel['expanded'] = true;
             } else {
-                panel_principal.setHeight(panel_principal['lastHeight']);
-                firstTabPanel.setHeight(firstTabPanel['lastHeight']);
-                tabpanel.setHeight(tabpanel['lastHeight']);
                 panel_principal.show();
                 firstTabPanel.show();
+                panel_principal.setHeight('33%');
+                firstTabPanel.setHeight('33%');
+                tabpanel.setHeight('33%');
+                tabpanel['expanded'] = false;
             }
         }
         ;
