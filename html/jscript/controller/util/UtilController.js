@@ -94,7 +94,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         window.isminimize = false;
         var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
         btn.hide();
-        var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
+        var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd'];
         MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
         MasterApp.section.adjustOtherWindowsMinimize();
         var panel = Ext.ComponentQuery.query('#panel-center')[0];

@@ -538,7 +538,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var arrayBtn = ['btn_restore'];
         var isExpanded = MasterApp.util.isWindowExpand(win);
         MasterApp.tools.setVisibleBtn(win, arrayBtn, isExpanded);
-        arrayBtn = ['btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
+        arrayBtn = ['btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd'];
         if (widthPanel >= width) {
             MasterApp.tools.setVisibleBtn(win, arrayBtn, true);
             MasterApp.tools.showButtonsNotDefault(win, false);
@@ -593,7 +593,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             btn.show();
             btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
             btn.show();
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd'];
             MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
             this.adjustOtherWindowsMinimize();
             var panel = Ext.ComponentQuery.query('#panel-center')[0];
@@ -607,6 +607,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var window = tabpanel.up('window');
         var panel_principal = window.down('panel[name=panel_section]');
         var height;
+        // si es el primer tabpanel, ocultar el panel principal guardando su altura original, para utilizarla despues
         if (tabpanel.level == 0) {
             if (!panel_principal.isHidden()) {
                 height = panel_principal.getHeight() + tabpanel.getHeight();
