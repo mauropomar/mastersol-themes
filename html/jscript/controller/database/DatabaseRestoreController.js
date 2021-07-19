@@ -60,7 +60,7 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
                 url: 'app/restoredatabase',
                 method: 'POST',
                 scope: this,
-                timeout: 1000000,
+                timeout: 500000,
                 params: {
                     file: base64String,
                     name: nameFile
