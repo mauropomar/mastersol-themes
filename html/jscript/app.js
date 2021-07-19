@@ -22,6 +22,7 @@ Ext.application({
             Ext.create('MasterSol.view.layout.Viewport');
             MasterApp.theme.setStyle();
             this.loadAllOptions();
+
         }
     },
 
