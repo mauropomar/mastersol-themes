@@ -510,17 +510,17 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                     MasterApp.globals.setLoading(false);
                     var container = gridsection.up('panel');
                     MasterApp.util.setStyleSection(container);
-                 //   var height = Ext.ComponentQuery.query('#' + idtab)[0].getHeight();
-                //    gridsection.setHeight(500);
+                    //   var height = Ext.ComponentQuery.query('#' + idtab)[0].getHeight();
+                    //    gridsection.setHeight(500);
                 }
             }, 500);
         }, comp);
     },
 
     onDoubleClick: function (comp) {
-
         comp.on('dblclick', function (e) {
             MasterApp.section.setFullSectionOfWindow(this);
+            e.cancelEvents();
         }, comp);
     },
 
@@ -538,7 +538,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var arrayBtn = ['btn_restore'];
         var isExpanded = MasterApp.util.isWindowExpand(win);
         MasterApp.tools.setVisibleBtn(win, arrayBtn, isExpanded);
-        arrayBtn = ['btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
+        arrayBtn = ['btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd'];
         if (widthPanel >= width) {
             MasterApp.tools.setVisibleBtn(win, arrayBtn, true);
             MasterApp.tools.showButtonsNotDefault(win, false);
@@ -593,7 +593,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             btn.show();
             btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
             btn.show();
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report'];
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd'];
             MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
             this.adjustOtherWindowsMinimize();
             var panel = Ext.ComponentQuery.query('#panel-center')[0];
@@ -602,11 +602,12 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         }
     },
 
-    setFullSectionOfWindow:function(me){
+    setFullSectionOfWindow: function (me) {
         var tabpanel = Ext.ComponentQuery.query('#' + me.id)[0];
         var window = tabpanel.up('window');
         var panel_principal = window.down('panel[name=panel_section]');
         var height;
+        // si es el primer tabpanel, ocultar el panel principal guardando su altura original, para utilizarla despues
         if (tabpanel.level == 0) {
             if (!panel_principal.isHidden()) {
                 height = panel_principal.getHeight() + tabpanel.getHeight();
@@ -615,9 +616,11 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 panel_principal.setHeight(0);
                 panel_principal.hide();
                 tabpanel.setHeight(height);
+                tabpanel['expanded'] = true;
             } else {
                 panel_principal.setHeight(panel_principal['lastHeight']);
                 tabpanel.setHeight(tabpanel['lastHeight']);
+                tabpanel['expanded'] = false;
                 panel_principal.show();
             }
         }
@@ -626,7 +629,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             var firstTabPanel = window.down('tabpanel');
             if (!firstTabPanel.isHidden()) {
                 firstTabPanel['lastHeight'] = firstTabPanel.getHeight();
-                panel_principal['lastHeight'] = panel_principal.getHeight();
+                panel_principal['lastHeight'] = (panel_principal.getHeight() === 0) ? '33%' : panel_principal.getHeight();
                 tabpanel['lastHeight'] = tabpanel.getHeight();
                 height = panel_principal.getHeight() + firstTabPanel.getHeight() + tabpanel.getHeight();
                 panel_principal.setHeight(0);
@@ -634,13 +637,16 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 panel_principal.hide();
                 firstTabPanel.hide();
                 tabpanel.setHeight(height);
+                tabpanel['expanded'] = true;
             } else {
-                panel_principal.setHeight(panel_principal['lastHeight']);
-                firstTabPanel.setHeight(firstTabPanel['lastHeight']);
-                tabpanel.setHeight(tabpanel['lastHeight']);
                 panel_principal.show();
                 firstTabPanel.show();
+                panel_principal.setHeight('33%');
+                firstTabPanel.setHeight('33%');
+                tabpanel.setHeight('33%');
+                tabpanel['expanded'] = false;
             }
-        };
+        }
+        ;
     }
 })

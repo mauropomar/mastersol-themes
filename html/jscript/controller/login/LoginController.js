@@ -17,22 +17,13 @@ Ext.define('MasterSol.controller.login.LoginController', {
                 afterrender: function () {
                     this.actionKey();
                     document.getElementById("user_login").focus();
+                    setTimeout(function () {
+                        Ext.ComponentQuery.query('#options-toolbar')[0].hide();
+                    }, 120);
                 }
             }
         });
     },
-
-    /*  mostrarSplash() {
-          var div = document.getElementById('loading_inicio');
-          div.setAttribute("style", "visibility:hidden;");
-          var windowsplash = Ext.create('MasterSol.view.login.WindowSplash');
-          windowsplash.show();
-          var me = this;
-          setTimeout(function () {
-              windowsplash.hide();
-              me.mostrarLogin();
-          }, 3000);
-      },*/
 
     getHtml: function () {
         var html =
@@ -176,10 +167,10 @@ Ext.define('MasterSol.controller.login.LoginController', {
                 for (var i = 0; i < data.length; i++) {
                     var comps = data[i].components;
                     for (var j = 0; j < comps.length; j++) {
-                          var clasName = comps[j].view;
-                          var comp = Ext.create(clasName);
-                          var controller = comp.control;
-                          MasterApp.getController(controller).render(comp);
+                        var clasName = comps[j].view;
+                        var comp = Ext.create(clasName);
+                        var controller = comp.control;
+                        MasterApp.getController(controller).render(comp);
                     }
                 }
             }

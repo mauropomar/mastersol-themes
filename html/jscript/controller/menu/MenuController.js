@@ -135,13 +135,13 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         }
         if (json[0].niveles > 2) {
             this.setHeightTabs(window, 2);
-        }else{
+        } else {
             this.setHeightTabs(window);
         }
     },
     // crea una seccion y la agrega al tab
     insertSection(section, tab) {
-         var title = section.nombre;
+        var title = section.nombre;
         var height = tab.getHeight();
         var containerSection = MasterApp.containersections.getPanel(title, section, [], height, 'grid-section', this.windowParent);
         tab.add(containerSection);
@@ -150,12 +150,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         }
         MasterApp.section.addEventClickTabSection(tab);
     },
-    // activa el primer panel de cada tab.
-    /* activeFirstTab: function () {
-         var items = this.panelMenu.items.items;
-         var tabs = this.getTabsOfPanel(items);
-      //   tabs[1].setActiveTab(0);
-     }*/
+
 
     getTabsOfPanel: function (items) {
         var tabs = [];
@@ -185,7 +180,6 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             }
         }
         var window = tab.up('window');
-
         if (insert) {
             tab.show();
             tabs = MasterApp.util.getTabsOfWindow(window);
@@ -195,7 +189,11 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             tab.hide();
             tabs = MasterApp.util.getTabsOfWindow(window);
             level = tabs.length;
-            this.setHeightTabs(window, level + 1);
+            if (!panel.up('tabpanel').expanded)
+                this.setHeightTabs(window, level + 1);
+            else {
+                panel.up('tabpanel').setHeight('100%');
+            }
         }
     },
     //verificar si la ventana existe para que no se repita
@@ -217,19 +215,23 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         var tabs = MasterApp.util.getTabsOfWindow(window);
         var isSmallTheme = MasterApp.theme.isShortTheme();
         var heightPanel, heightTabs;
-        if (tabs.length == 1) {
+        // si tiene un solo nivel y el panel principal esta oculto
+        if (tabs.length == 1 || p.hidden) {
             heightPanel = isSmallTheme ? '44%' : '43%';
             heightTabs = '55%';
         }
-        if (tabs.length == 2) {
+        // si tiene dos niveles y el panel principal esta visible
+        if (tabs.length == 2 && !p.hidden) {
             heightPanel = isSmallTheme ? '28%' : '27%';
             heightTabs = '35%';
         }
+        // si tiene tres niveles
         if (tabs.length == 3) {
             heightPanel = isSmallTheme ? '25%' : '24%';
             heightTabs = '25%';
         }
         p.setHeight(heightPanel);
+        // si recorren los tabs y se le setea la altura
         for (var i = 0; i < tabs.length; i++) {
             tabs[i].setHeight(heightTabs);
         }

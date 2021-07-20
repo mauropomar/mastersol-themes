@@ -5,7 +5,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     getArrayBtn: function () {
-        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula'];
+        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd'];
         return array;
     },
 
@@ -167,7 +167,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
 
     getButtonsDefaut: function (win) {
         return [{
-            iconCls: 'fa fa-list-alt',
+            iconCls: 'fa fa-floppy-o',
             tooltip: 'Salvar base de datos',
             default: true,
             name: 'btn_save_bd',
@@ -194,7 +194,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 MasterApp.getController('MasterSol.controller.capsule.CapsuleExportController').showWindow();
             }
         }, {
-            iconCls: 'fa fa-database',
+            iconCls: 'fa fa-share',
             tooltip: 'Importar Capsula',
             default: true,
             name: 'btn_import_capsula',
