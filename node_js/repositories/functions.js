@@ -2,7 +2,7 @@ const pool = require('../connection/server-db')
 const cron = require('node-cron')
 const fs = require('fs')
 const objects = require('../modules');
-const child_process = require('child_process');
+const spawn = require('child_process').spawn;
 const copyTo = require('pg-copy-streams').to;
 const copyFrom = require('pg-copy-streams').from;
 var stream = require('stream');
@@ -12,8 +12,15 @@ const fileType = require('file-type');
 const extract = require('extract-zip')
 const dirTree = require("directory-tree");
 var lineReader = require('line-reader');
+var ncp = require('ncp').ncp;
 const objGenFunc = {}
 var arrCheck = [];
+var arrCheckJasperFiles = [];
+var arrCheckJrxmlFiles = [];
+var arrCheckAttachs = [];
+var arrCheckCopiedFolders = [];
+var arrCheckImport = [];
+var nameBackupBD = '';
 
 //schedule para recorrer todos los procesos activos y ejecutar las funciones que tengan asociadas según sus calendarios
 cron.schedule('* * * * *', async () => {
@@ -97,29 +104,36 @@ cron.schedule('* * * * *', async () => {
 
 });
 
-cron.schedule('1 * * * *', async () => {
-    const dirFolder = global.appRootApp + '\\resources\\reports\\tmp'
-    await rimraf(dirFolder, () => console.log('Borrado reports tmp!'));
+cron.schedule('1 23 * * *', async () => {
+    const dirFolderReports = global.appRootApp + '\\resources\\reports\\tmp'
+    const dirFolderBackups = global.appRootApp + '\\resources\\backups'
+    const dirFolderSaveRestore = global.appRootApp + '\\resources\\save_restore'
+
+    await rimraf(dirFolderReports, () => console.log('Borrado reports tmp!'));
+    await rimraf(dirFolderBackups, () => console.log('Borrado backups!'));
+    await rimraf(dirFolderSaveRestore, () => console.log('Borrado save_restore!'));
     await sleep(2000)
-    fs.mkdir(dirFolder, (err) => {
+    fs.mkdir(dirFolderReports, (err) => {
         if (err) {
             throw err;
         }
         console.log("Reports tmp creado.");
     });
-});
-
-cron.schedule('1 23 * * *', async () => {
-    const dirFolder = global.appRootApp + '\\resources\\backups'
-    await rimraf(dirFolder, () => console.log('Borrado backups!'));
-    await sleep(2000)
-    fs.mkdir(dirFolder, (err) => {
+    fs.mkdir(dirFolderBackups, (err) => {
         if (err) {
             throw err;
         }
         console.log("Backups creado.");
     });
+    fs.mkdir(dirFolderSaveRestore, (err) => {
+        if (err) {
+            throw err;
+        }
+        console.log("save_restore creado.");
+    });
+
 });
+
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -308,25 +322,9 @@ const saveCapsuleBD = async (idcapsule) => {
                 success = false
                 finalResult = value
             });
-        //Comprimir carpeta y devolver direccion de comprimido
-        if(finalResult === dirFolder && !noSchema && !noData) {
-            await archiveDirectory(dirFolder)
-                .then((value) => {
-                    finalResult = value
-                    //Borrar carpeta con ficheros(me quedo solo con el comprimido)
-                    rimraf(dirFolder, function () { console.log("Borrada carpeta exportacion"); });
-                })
-                .catch((value) => {
-                    success = false
-                    finalResult = value
-                });
-        }
-        else if(!noSchema && !noData) {
+        if(noSchema || noData) {
             success = false
             finalResult = 'No hay estructura o datos para exportar'
-        }
-        else{
-            success = false
         }
     }
 
@@ -335,35 +333,179 @@ const saveCapsuleBD = async (idcapsule) => {
 
 const saveCapsuleFiles = async (idcapsule) => {
     let success = true
-    let finalResult = ''
+    let resultStructure = true
+    let resultReports = true
+    let resultAttach = true
 
     let currentDate = new Date()
     const dirFolder = global.appRootApp + '\\resources\\backups\\'+idcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
-    await generateExportFilesStructure(idcapsule,dirFolder)
+    const dirFolderStructure = dirFolder + '\\structure\\' + 'c_' + idcapsule
+    const dirFolderReports = dirFolder + '\\reports'
+    const dirFolderAttach = dirFolder + '\\attach'
+    //Exportar estructura de la capsula
+    await generateExportFilesStructure(idcapsule,dirFolderStructure)
         .then((value) => {
-            finalResult = value
+           console.log(value)
         })
         .catch((value) => {
-            success = false
-            finalResult = value
+            resultStructure = false
+            console.log(value)
         });
+    //Exportar reportes de la capsula
+    await generateExportFilesReports(idcapsule,dirFolderReports)
+        .then((value) => {
+            console.log(value)
+        })
+        .catch((value) => {
+            resultReports = false
+            console.log(value)
+        });
+    //Exportar adjuntos de la capsula
+    await generateExportFilesAttach(idcapsule,dirFolderAttach)
+        .then((value) => {
+            console.log(value)
+        })
+        .catch((value) => {
+            resultAttach = false
+            console.log(value)
+        });
+    if(!resultStructure || !resultReports || !resultAttach)
+        success = false
 
-    return {'success': success, 'datos': finalResult}
+    return {'success': success, 'datos': dirFolder}
 }
 
-const generateExportFilesStructure = async (idcapsule, dirFolder) => new Promise(async (resolve, reject) => {
-    let success = true
-    await fs.mkdir(dirFolder, {recursive: true}, async (err) => {
+const generateExportFilesStructure = async (idcapsule, dirFolderStructure) => new Promise(async (resolve, reject) => {
+    await fs.mkdir(dirFolderStructure, {recursive: true}, async (err) => {
         if(!err){
-            fs.rename(global.appRootApp + '\\capsules\\' + 'c_'+idcapsule, dirFolder, (err) => {
-                if (!err) {
-                    console.log('movida capsula')
-                    resolve('Creado directorio')
-                }
-                else {
+            ncp.limit = 16;
+
+            ncp(global.appRootApp + '\\capsules\\' + 'c_'+idcapsule, dirFolderStructure, function (err) {
+                if (err) {
                     reject(err)
                 }
+                resolve('Estructura exportada!')
             });
+        }
+        else
+            reject(err)
+    });
+})
+
+const generateExportFilesReports = async (idcapsule, dirFolderReports) => new Promise(async (resolve, reject) => {
+    await fs.mkdir(dirFolderReports, {recursive: true}, async (err) => {
+        if(!err){
+            //Buscar ficheros de reportes asociados a esta capsula
+            const paramsReport = ['reports.informs',null,"WHERE id_capsules = '"+idcapsule+"' "]
+            const resultReport = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsReport)
+            if(resultReport && resultReport.rows && resultReport.rows[0].fn_get_register){
+                for (let i = 0; i < resultReport.rows[0].fn_get_register.length; i++) {
+                    arrCheckJasperFiles.push(false)
+                    arrCheckJrxmlFiles.push(false)
+                }
+                for(let i=0;i<resultReport.rows[0].fn_get_register.length;i++){
+                    const elem = resultReport.rows[0].fn_get_register[i]
+                    //Copiar .jasper
+                    await fs.copyFile(global.appRootApp + '\\resources\\reports\\informs\\' + elem.name + '.jasper', dirFolderReports + '\\' +  elem.name + '.jasper' , (err) => {
+                        if (err) {
+                            reject(err)
+                        }
+                        else {
+                            console.log(elem.name +'.jasper copiado!');
+                        }
+                        arrCheckJasperFiles[i] = true;
+                        let stopJasper = true;
+                        let stopJrxml = true;
+                        for(let j=0;j<arrCheckJasperFiles.length;j++) {
+                            if(arrCheckJasperFiles[j] == false) {
+                                stopJasper = false;
+                                break;
+                            }
+                        }
+                        for(let j=0;j<arrCheckJrxmlFiles.length;j++) {
+                            if(arrCheckJrxmlFiles[j] == false) {
+                                stopJrxml = false;
+                                break;
+                            }
+                        }
+                        if(stopJasper && stopJrxml)
+                            resolve('Reportes exportados')
+                    });
+                    //Copiar .jrxml
+                    await fs.copyFile(global.appRootApp + '\\resources\\reports\\informs\\' + elem.name + '.jrxml', dirFolderReports + '\\' +  elem.name + '.jrxml' , (err) => {
+                        if (err) {
+                            reject(err)
+                        }
+                        else {
+                            console.log(elem.name +'.jrxml copiado!');
+                        }
+                        arrCheckJrxmlFiles[i] = true;
+                        let stopJasper = true;
+                        let stopJrxml = true;
+                        for(let j=0;j<arrCheckJasperFiles.length;j++) {
+                            if(arrCheckJasperFiles[j] == false) {
+                                stopJasper = false;
+                                break;
+                            }
+                        }
+                        for(let j=0;j<arrCheckJrxmlFiles.length;j++) {
+                            if(arrCheckJrxmlFiles[j] == false) {
+                                stopJrxml = false;
+                                break;
+                            }
+                        }
+                        if(stopJasper && stopJrxml)
+                            resolve('Reportes exportados')
+                    });
+                }
+            }
+        }
+        else
+            reject(err)
+    });
+})
+
+const generateExportFilesAttach = async (idcapsule, dirFolderAttach) => new Promise(async (resolve, reject) => {
+    await fs.mkdir(dirFolderAttach, {recursive: true}, async (err) => {
+        if(!err){
+            //Buscar adjuntos asociados a esta capsula
+            const paramsAdjunto = ['cfgapl.attach',null,"WHERE id_capsules = '"+idcapsule+"' "]
+            const resultAdjunto = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsAdjunto)
+            if(resultAdjunto && resultAdjunto.rows && resultAdjunto.rows[0].fn_get_register){
+                for (let i = 0; i < resultAdjunto.rows[0].fn_get_register.length; i++) {
+                    arrCheckAttachs.push(false)
+                }
+                for(let i=0;i<resultAdjunto.rows[0].fn_get_register.length;i++){
+                    const elem = resultAdjunto.rows[0].fn_get_register[i]
+                    let arrPath = elem.path.split('/')
+                    const nameFolder = arrPath[3]
+                    //Obtener direccion de los adjuntos de parametros general
+                    const paramsAttach = ['cfgapl.general',null,"WHERE variable = 'dir_attach' "]
+                    const resultAttach = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsAttach)
+                    let paramDirAttach = ''
+                    if(resultAttach && resultAttach.rows && resultAttach.rows[0].fn_get_register){
+                        paramDirAttach = resultAttach.rows[0].fn_get_register[0].value
+                        paramDirAttach = paramDirAttach.replace('..', '')
+                        paramDirAttach = paramDirAttach.replace('/', '\\')
+                    }
+                    ncp.limit = 16;
+                    ncp(global.appRootApp + paramDirAttach + '\\' + nameFolder, dirFolderAttach + '\\' + nameFolder, function (err) {
+                        if (err) {
+                            reject(err)
+                        }
+                        arrCheckAttachs[i] = true;
+                        let stop = true;
+                        for(let j=0;j<arrCheckAttachs.length;j++) {
+                            if(arrCheckAttachs[j] == false) {
+                                stop = false;
+                                break;
+                            }
+                        }
+                        if(stop)
+                            resolve('Adjuntos exportados')
+                    });
+                }
+            }
         }
         else
             reject(err)
@@ -447,6 +589,70 @@ const generateExportFilesBD = async (idcapsule, dirFolder, resultSaveStructure) 
 
 })
 
+const generateFileCapsule = async (idcapsule, dirFolderBD, dirFolderFiles) => {
+    let success = true
+    let currentDate = new Date()
+    let dirFolder = global.appRootApp + '\\resources\\backups\\full_'+idcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
+    await copyFoldersForDirectory(dirFolder, dirFolderBD, dirFolderFiles)
+        .then((value) => {
+            console.log(value)
+        })
+        .catch((value) => {
+            success = false
+            console.log(value)
+        });
+    if(success){
+        await archiveDirectory(dirFolder)
+            .then((value) => {
+                console.log(value)
+                dirFolder = value
+            })
+            .catch((value) => {
+                success = false
+                console.log(value)
+            });
+    }
+
+    return {'success': success, 'datos': dirFolder}
+}
+
+const copyFoldersForDirectory = async (dirFolder, dirFolderBD, dirFolderFiles) => new Promise(async (resolve, reject) => {
+    await fs.mkdir(dirFolder, {recursive: true}, async (err) => {
+        if(!err){
+            ncp.limit = 16;
+            arrCheckCopiedFolders.push(false)
+            arrCheckCopiedFolders.push(false)
+
+            await ncp(dirFolderBD, dirFolder + '\\bd', function (err) {
+                if (err) {
+                    reject(err)
+                }
+                arrCheckCopiedFolders[0] = true;
+                let stop = true;
+                if(arrCheckCopiedFolders[1] == false) {
+                    stop = false;
+                }
+                if(stop)
+                    resolve('Comprimido creado')
+            });
+
+            await ncp(dirFolderFiles, dirFolder + '\\files', function (err) {
+                if (err) {
+                    reject(err)
+                }
+                arrCheckCopiedFolders[1] = true;
+                let stop = true;
+                if(arrCheckCopiedFolders[0] == false) {
+                    stop = false;
+                }
+                if(stop)
+                    resolve('Comprimido creado')
+            });
+        }
+        else
+            reject(err)
+    });
+})
 
 const copyStreamToFile = async (readStream,writeStream,tabla) => new Promise(async (resolve, reject) => {
     readStream.pipe(writeStream)
@@ -540,38 +746,22 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
         //Comprobar fichero antes de iniciar el proceso
         if(tipo['ext'] == 'zip' && tipo['mime'] == 'application/zip'){
             await extract(dirFile, { dir: dirTemp+'\\tmp' })
+            let id_section = ''
+            let id_language = ''
             //Comprobar si la capsula existe, sino, crearla
-            let arrName = req.body.name.split('[n]')
-            let nameCapsule = arrName[0]
-            let idCapsule = arrName[1]
-            let existeNameCap = false
-            //Buscar si existe una capsula con el mismo nombre
-            const paramsName = ['cfgapl.capsules',null,"WHERE namex = '"+nameCapsule+"' "]
-            const resultName = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsName)
-            if(resultName && resultName.rows[0].fn_get_register){
-                let idCap = resultName.rows[0].fn_get_register[0].id
-                if(idCap !== idCapsule)
-                    existeNameCap = true
-            }
-            const paramsCapsule = ['cfgapl.capsules',idCapsule]
-            const resultCapsule = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsCapsule)
-            let id_section, id_language;
-            //Obtencion de section capsule
-            const paramsSectionCapsule = ['cfgapl.sections',null,"WHERE namex = 'Sec_capsules' "];
-            const resultSectionCapsule = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSectionCapsule);
-            if(resultSectionCapsule)
-                id_section = resultSectionCapsule.rows[0].fn_get_register[0].id
-
             let version = '1.0';
             let description = ' ';
             let licencetext = ' ';
+            let nameCapsule = ''
+            let idCapsule = ''
             //Obtener valores de la capsula del fichero .txt
-            const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.txt/ });
+            const tree = await dirTree(dirTemp+'\\tmp\\bd', { extensions: /\.txt/ });
             if(tree.children) {
-                await lineReader.eachLine(dirTemp + '\\tmp\\' + tree.children[0].name, async function (line, last) {
+                await lineReader.eachLine(dirTemp + '\\tmp\\bd\\' + tree.children[0].name, async function (line, last) {
                     try {
                         if(line) {
                             let arrLine = line.split(',')
+                            idCapsule = arrLine[0]
                             nameCapsule = arrLine[1]
                             description = arrLine[2]
                             version = arrLine[4]
@@ -586,13 +776,32 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                 });
             }
             await sleep(50)
+            let existeNameCap = false
+            //Buscar si existe una capsula con el mismo nombre y distinto ID
+            const paramsName = ['cfgapl.capsules',null,"WHERE namex = '"+nameCapsule+"' "]
+            const resultName = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsName)
+            if(resultName && resultName.rows[0].fn_get_register){
+                let idCap = resultName.rows[0].fn_get_register[0].id
+                if(idCap !== idCapsule)
+                    existeNameCap = true
+            }
+            const paramsCapsule = ['cfgapl.capsules',idCapsule]
+            const resultCapsule = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsCapsule)
+            //Obtencion de section capsule
+            const paramsSectionCapsule = ['cfgapl.sections',null,"WHERE namex = 'Sec_capsules' "];
+            const resultSectionCapsule = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSectionCapsule);
+            if(resultSectionCapsule)
+                id_section = resultSectionCapsule.rows[0].fn_get_register[0].id
+
             if(resultCapsule && !resultCapsule.rows[0].fn_get_register) {
                  var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
                  //Obtencion de lenguaje spanish
-                 const paramsLanguage = ['cfgapl.languages',null,"WHERE namex = 'Spanish from Spain' "];
-                 const resultLanguage = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsLanguage);
-                 if(resultLanguage)
-                     id_language = resultLanguage.rows[0].fn_get_register[0].id
+                if(!id_language) {
+                    const paramsLanguage = ['cfgapl.languages', null, "WHERE namex = 'Spanish from Spain' "];
+                    const resultLanguage = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsLanguage);
+                    if (resultLanguage)
+                        id_language = resultLanguage.rows[0].fn_get_register[0].id
+                }
 
                  //columnas a insertar
                  columnasInsertAux.push('id')
@@ -639,9 +848,32 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                 await updateRegister(req, paramsInsert);
                 console.log('Actualizada capsula!')
             }
-            await copyFromFiles(req, dirTemp, dirFile)
+            //Chequear término de importación para hacer resolve
+            arrCheckImport.push(false)
+            arrCheckImport.push(false)
+            await copyFromFilesBD(req, dirTemp, dirFile)
                 .then((value) => {
-                    resolve(value)
+                    arrCheckImport[0] = true;
+                    let stop = true;
+                    if(arrCheckImport[1] == false) {
+                        stop = false;
+                    }
+                    if(stop)
+                        resolve(value)
+                })
+                .catch((value) => {
+                    reject(value)
+                });
+
+            await copyFromFilesStructure(req, dirTemp, dirFile)
+                .then((value) => {
+                    arrCheckImport[1] = true;
+                    let stop = true;
+                    if(arrCheckImport[0] == false) {
+                        stop = false;
+                    }
+                    if(stop)
+                        resolve(value)
                 })
                 .catch((value) => {
                     reject(value)
@@ -655,20 +887,20 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
 
 })
 
-const copyFromFiles = async (req, dirTemp, dirFile) => new Promise(async (resolve, reject) => {
+const copyFromFilesBD = async (req, dirTemp, dirFile) => new Promise(async (resolve, reject) => {
     let nameFileStructure = ''
     //Después de extraer, procesar ficheros a importar
-    const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.sql/ });
+    const tree = await dirTree(dirTemp+'\\tmp\\bd', { extensions: /\.sql/ });
     if(tree.children) {
         nameFileStructure = tree.children[0].name
-        await fs.readFile(dirTemp + '\\tmp\\' + nameFileStructure, 'utf-8', async (err, data) => {
+        await fs.readFile(dirTemp + '\\tmp\\bd\\' + nameFileStructure, 'utf-8', async (err, data) => {
             if (err) {
                 reject(err)
             } else {
                 await pool.executeQuery(data)
                 console.log('Importada estructura!')
                 //Proceder a importar datos
-                const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.csv/ });
+                const tree = await dirTree(dirTemp+'\\tmp\\bd', { extensions: /\.csv/ });
                 const client = await pool.obj_pool.connect()
                 let orderedArr = await quickSort(tree.children)
                 if(orderedArr){
@@ -698,7 +930,7 @@ const copyFromFiles = async (req, dirTemp, dirFile) => new Promise(async (resolv
                             if(resultKey && resultKey.rows[0])
                                 campoLlave = resultKey.rows[0].columna
                             //Importar de este fichero
-                            await fs.readFile(dirTemp + '\\tmp\\' + nameFile, 'utf-8', async (err, data) => {
+                            await fs.readFile(dirTemp + '\\tmp\\bd\\' + nameFile, 'utf-8', async (err, data) => {
                                 if (err) {
                                     reject(err)
                                 } else {
@@ -709,7 +941,7 @@ const copyFromFiles = async (req, dirTemp, dirFile) => new Promise(async (resolv
                                         "DELETE FROM " + nameTempTable + "; " +
                                         "COPY " + nameTempTable + " FROM STDIN WITH NULL as 'NULL' DELIMITER ';';";
                                     var stream = await client.query(copyFrom(queryCopy))
-                                    var fileStream = await fs.createReadStream(dirTemp + '\\tmp\\' + nameFile)
+                                    var fileStream = await fs.createReadStream(dirTemp + '\\tmp\\bd\\' + nameFile)
                                     fileStream.on('error', async function (err) {
                                         console.log(nameTable + ': ', err)
                                         //await pool.executeQuery("ALTER TABLE "+nameTable+" ENABLE TRIGGER ALL;")
@@ -756,6 +988,224 @@ const copyFromFiles = async (req, dirTemp, dirFile) => new Promise(async (resolv
     else {
         reject('Error de importación')
     }
+})
+
+const copyFromFilesStructure = async (req, dirTemp, dirFile) => new Promise(async (resolve, reject) => {
+    let resultStructure = true
+    let resultReports = true
+    let resultAttach = true
+    let msg = ''
+
+
+    const dirFolderStructure = dirTemp + '\\tmp\\files\\structure'
+    const dirFolderReports = dirTemp + '\\tmp\\files\\reports'
+    const dirFolderAttach = dirTemp + '\\tmp\\files\\attach'
+    //Importar estructura de la capsula
+    await generateImportFilesStructure(dirFolderStructure)
+        .then((value) => {
+            console.log(value)
+        })
+        .catch((value) => {
+            resultStructure = false
+            console.log(value)
+            msg = value
+        });
+    //Importar reportes de la capsula
+    await generateImportFilesReports(dirFolderReports)
+        .then((value) => {
+            console.log(value)
+        })
+        .catch((value) => {
+            resultReports = false
+            console.log(value)
+            msg = value
+        });
+    //Importar adjuntos de la capsula
+    await generateImportFilesAttach(dirFolderAttach)
+        .then((value) => {
+            console.log(value)
+        })
+        .catch((value) => {
+            resultAttach = false
+            console.log(value)
+            msg = value
+        });
+    if(resultStructure && resultReports && resultAttach)
+        resolve('Estructura importada correctamente')
+    else
+        reject(msg)
+})
+
+const generateImportFilesStructure = async (dirFolderStructure) => new Promise(async (resolve, reject) => {
+    ncp.limit = 16;
+
+    ncp(dirFolderStructure, global.appRootApp + '\\capsules\\', function (err) {
+        if (err) {
+            reject(err)
+        }
+        resolve('Estructura capsula importada!')
+    });
+})
+
+const generateImportFilesReports = async (dirFolderReports) => new Promise(async (resolve, reject) => {
+    ncp.limit = 16;
+
+    ncp(dirFolderReports, global.appRootApp + '\\resources\\reports\\informs\\', function (err) {
+        if (err) {
+            reject(err)
+        }
+        resolve('Reportes importados!')
+    });
+})
+
+const generateImportFilesAttach = async (dirFolderAttach) => new Promise(async (resolve, reject) => {
+    ncp.limit = 16;
+
+    ncp(dirFolderAttach, global.appRootApp + '\\resources\\files\\', function (err) {
+        if (err) {
+            reject(err)
+        }
+        resolve('Adjuntos importados!')
+    });
+})
+
+const saveDatabase = async () => {
+    let success = true
+    let msg = ''
+    let currentDate = new Date()
+    const rutaFichero = global.appRootApp + 'resources\\salva_bd.bat'
+    const rutaSalida = global.appRootApp + 'resources\\save_restore'
+    //Generar o sobrescribir el fichero .bat
+    //Obtener parametros ruta al pg dump
+    let pg_dump = ''
+    let nameFile = pool.config_bd.database+'_'+currentDate.getSeconds()+currentDate.getMilliseconds()+'.backup'
+    nameBackupBD = nameFile
+    const paramPgDump = ['cfgapl.general',null,"WHERE variable = 'dir_pg_dump' "]
+    const resultPgDump = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramPgDump)
+    if(resultPgDump && resultPgDump.rows && resultPgDump.rows[0] && resultPgDump.rows[0].fn_get_register)
+        pg_dump = resultPgDump.rows[0].fn_get_register[0].value
+    let content = '@echo off\nset pgpassword='+pool.config_bd.password+'\n' +
+        'CD "'+rutaSalida+'"\n"'+pg_dump+'" -h '+pool.config_bd.host+' -p '+pool.config_bd.port+' -U '+pool.config_bd.user+' ' +
+        '-F c -b -v -f "'+nameFile+'" '+pool.config_bd.database
+    try{
+        fs.writeFileSync(rutaFichero, content, 'utf8');
+    }catch (e){
+       msg = 'No se puede escribir el fichero '+e;
+    }
+
+    if(pg_dump !== '') {
+        await generateDatabaseBackup(rutaFichero)
+            .then((value) => {
+                msg = rutaSalida+'\\'+nameFile
+                console.log(value)
+            })
+            .catch((value) => {
+                success = false
+                console.log(value)
+                msg = value
+            });
+    }
+    else{
+        success = false
+        msg = 'No está registrado el parámetro: dir_pg_dump';
+    }
+
+    return {'success': success, 'datos': msg}
+}
+
+const generateDatabaseBackup = async (ruta) => new Promise(async (resolve, reject) => {
+    if(fs.existsSync(ruta)){
+        const ls = spawn(ruta);
+        ls.stdout.on('data', function (data) {
+            console.log('stdout: ' + data);
+        });
+
+        ls.stderr.on('data', function (data) {
+            //console.log('stderr: ' + data);
+        });
+
+        ls.on('exit', function (code) {
+            if(code === 0)
+               resolve('Backup de la BD generado satisfactoriamente')
+            else
+               reject('Error generando el backup con código '+code)
+        });
+    }
+    else
+        reject('El fichero no existe!')
+})
+
+const saveAplication = async () => {
+    let success = true
+    let msg = ''
+
+    //Exportar estructura de la capsula
+    let currentDate = new Date()
+    let dirApp = pool.config_bd.database+'_'+currentDate.getSeconds()+currentDate.getMilliseconds()
+
+    await generateBackupApplication(dirApp)
+        .then((value) => {
+           msg = value
+           console.log('Backup de la aplicación generado satisfactoriamente')
+            fs.mkdirSync(global.appRootApp + '\\resources\\save_restore\\'+dirApp+'\\resources\\save_restore', {recursive: true}, (err) => {
+                if (err) {
+                    success = false;
+                    msg = 'Ha ocurrido un error, ' + err
+                }
+            });
+        })
+        .catch((value) => {
+            success = false
+            msg = value
+        });
+    const tree = await dirTree(global.appRootApp + '\\resources\\save_restore', { extensions: /\.backup/ });
+    let nameFile = ''
+    if(tree.children) {
+        for(let i=0;i<tree.children.length;i++){
+            if(tree.children[0].name === nameBackupBD){
+                nameFile = tree.children[i].name
+                break;
+            }
+        }
+    }
+    await fs.copyFile(global.appRootApp + 'resources\\save_restore\\'+nameFile, global.appRootApp + '\\resources\\save_restore\\'+dirApp+'\\'+nameFile , (err) => {
+        if (err) {
+            msg = 'Error copiando la BD '+err
+        }
+        else {
+            console.log(nameFile + ' copiado!');
+        }
+    });
+
+    //Comprimir toda la salva para descargar
+    await archiveDirectory(global.appRootApp + 'resources\\save_restore\\'+dirApp)
+        .then((value) => {
+            console.log(value)
+            msg = value
+        })
+        .catch((value) => {
+            success = false
+            console.log(value)
+        });
+
+    return {'success': success, 'datos': msg}
+}
+
+const generateBackupApplication = async (dirApp) => new Promise(async (resolve, reject) => {
+    ncp.limit = 16;
+    let options = {
+        filter: function (file) {
+            let res = file.toString().indexOf("\\save_restore") !== -1;
+            return !res;
+        },
+    };
+    let dirDestination = global.appRootApp + '\\resources\\save_restore\\'+dirApp
+    ncp(global.appRootApp, dirDestination, options, function (err) {
+        if (err) {
+            reject(err)
+        }
+        resolve(dirDestination)
+    });
 })
 
 
@@ -862,27 +1312,30 @@ const quickSort = (
     return sortedArray;
 };
 
-Array.prototype.orderByNumberInString=function(property){
-    // Primero se verifica que la propiedad sortOrder tenga un dato válido.
-   // if (sortOrder!=-1 && sortOrder!=1) sortOrder=1;
-    this.sort(function(a,b){
-        // La función de ordenamiento devuelve la comparación entre property de a y b.
-        // El resultado será afectado por sortOrder.
-        let prop_a = a[property]
-        let prop_b = b[property]
-        let index_a = prop_a.indexOf("_")
-        let index_b = prop_b.indexOf("_")
-        let num_a = prop_a.substring(0, index_a)
-        let num_b = prop_b.substring(0, index_b)
-        return (num_a-num_b);
-    })
-}
+// Array.prototype.orderByNumberInString=function(property){
+//     // Primero se verifica que la propiedad sortOrder tenga un dato válido.
+//    // if (sortOrder!=-1 && sortOrder!=1) sortOrder=1;
+//     this.sort(function(a,b){
+//         // La función de ordenamiento devuelve la comparación entre property de a y b.
+//         // El resultado será afectado por sortOrder.
+//         let prop_a = a[property]
+//         let prop_b = b[property]
+//         let index_a = prop_a.indexOf("_")
+//         let index_b = prop_b.indexOf("_")
+//         let num_a = prop_a.substring(0, index_a)
+//         let num_b = prop_b.substring(0, index_b)
+//         return (num_a-num_b);
+//     })
+// }
 
 objGenFunc.generateFunctions = generateFunctions
 objGenFunc.generateFunctionsTimeEvents = generateFunctionsTimeEvents
 objGenFunc.executeFunctionsButtons = executeFunctionsButtons
 objGenFunc.saveCapsuleBD = saveCapsuleBD
 objGenFunc.saveCapsuleFiles = saveCapsuleFiles
+objGenFunc.generateFileCapsule = generateFileCapsule
 objGenFunc.getCapsules = getCapsules
 objGenFunc.importCapsule = importCapsule
+objGenFunc.saveDatabase = saveDatabase
+objGenFunc.saveAplication = saveAplication
 module.exports = objGenFunc

@@ -3,7 +3,7 @@ const ConPgSQL = {};
 var utf8 = require('utf8');
 var config_bd = {
     user: 'postgres',
-    password: 'root',
+    password: 'postgres',
     host: 'localhost',
     database: 'mastersol',
     port: 5432
