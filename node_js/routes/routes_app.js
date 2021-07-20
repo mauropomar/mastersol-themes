@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var fs = require('fs');
+const rimraf = require("rimraf");
 const objects = require('../modules');
 
 /*Obtener lenguajes*/
@@ -366,16 +367,15 @@ router.get('/newalerts', async function (req, res) {
 router.post('/savecapsule', async function (req, res) {
     const idcapsule = req.body.idcapsule
     let successFull = true
-    let dirResult = ''
-   // var resultBD = await objects.functions.saveCapsuleBD(idcapsule)
+    var resultBD = await objects.functions.saveCapsuleBD(idcapsule)
     var resultFile = await objects.functions.saveCapsuleFiles(idcapsule)
-    console.log(resultFile)
-    // let successBD = resultBD.success
+    let dirResult = await objects.functions.generateFileCapsule(idcapsule,resultBD.datos,resultFile.datos)
+    let successBD = resultBD.success
     let successFile = resultFile.success
-    if(/*!successBD ||*/ !successFile)
+    if(!successBD || !successFile)
         successFull = false
 
-    return res.json({'success': successFull, 'datos': dirResult})
+    return res.json({'success': successFull, 'datos': dirResult.datos})
 })
 
 router.get('/capsules', async function (req, res) {
@@ -395,6 +395,35 @@ router.post('/importcapsule', async function (req, res, next) {
 
     return res.json({'success': success, 'datos': result})
 
+})
+
+router.post('/savedatabase', async function (req, res) {
+    let success = true
+    let msg = ''
+    let resultBD = await objects.functions.saveDatabase()
+    let resultApp = ''
+    success = resultBD.success
+    msg = resultBD.datos
+    if(resultBD.success) {
+        resultApp = await objects.functions.saveAplication()
+        success = resultApp.success
+        msg = resultApp.datos
+    }
+
+    return res.json({'success': success, 'datos': msg})
+})
+
+router.post('/restoredatabase', async function (req, res) {
+    let result = ''
+    let success = false
+    await objects.functions.importBackup(req)
+        .then((value) => {
+            success = value[0]
+            result = value[1]
+            console.log(value)
+        }).catch(next);
+
+    return res.json({'success': success, 'datos': result})
 })
 
 

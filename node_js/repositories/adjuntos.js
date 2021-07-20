@@ -59,13 +59,13 @@ const insertAdjunto = async (req) => {
         id_section = resultSectionAttach.rows[0].fn_get_register[0].id
 
     let dirTemp = './' + Math.random()
-    fs.mkdirSync(dirTemp, {recursive: true}, (err) => {
+    await fs.mkdirSync(dirTemp, {recursive: true}, (err) => {
         if (err) {
             success = false;
             msg = 'Ha ocurrido un error, ' + err
         }
     });
-    fs.exists(dirTemp, (exists) => {
+    await fs.exists(dirTemp, (exists) => {
         if(!exists){
             success = false;
             msg = 'Ha ocurrido un error'
@@ -107,7 +107,7 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                 file_size = file_size / 1048576
 
                 if (resultMaxFileSize && resultMaxFileSize.rows[0].fn_get_register) {
-                    max_size = resultMaxFileSize.rows[0].fn_get_register[0].value
+                    let max_size = resultMaxFileSize.rows[0].fn_get_register[0].value
                     if (file_size > max_size) {
                         success = false;
                         msg = 'El tamaño del fichero sobrepasa el máximo permitido que es de ' + max_size + ' MB';
@@ -120,7 +120,7 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                     var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
                     //guardar en path extension del fichero
                     let extension = ''
-                    arrFileName = req.body.filename.split('.')
+                    let arrFileName = req.body.filename.split('.')
                     if (arrFileName) {
                         let lastPos = arrFileName.length - 1
                         extension = arrFileName[lastPos]
@@ -156,9 +156,12 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                         let address = resultInsert.path
                         let filename = resultInsert.id + '.' + extension
                         address = address.replace(filename, '')
+                        address = address.replace('..', '')
+                        address = address.replace('/', '\\')
+                        address = global.appRootApp + address
                         await fs.mkdir(address, {recursive: true}, (err) => {
                             if (!err) {
-                                fs.rename(dirTemp + '/' + req.body.filename, resultInsert.path, (err) => {
+                                fs.rename(dirTemp + '/' + req.body.filename, address + filename, (err) => {
                                     if (!err) {
                                         console.log("Archivo subido!")
                                         msg = resultInsert.name
