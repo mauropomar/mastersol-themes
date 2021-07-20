@@ -716,16 +716,22 @@ const importCapsule = (req) => new Promise(async (resolve, reject) => {
     if(success){
         var writeStream = await fs.createWriteStream(dirTemp + '\\' + req.body.name);
         readStream.pipe(writeStream);
-        await uploadFile(req,dirTemp,writeStream)
-            .then((value) => {
-                msg = value
-                console.log('Concluída importación satisfactoriamente')
-            })
-            .catch((value) => {
-                success = false
-                msg = value
-                console.log('Concluída importación con errores')
-            });
+        try {
+            await uploadFile(req, dirTemp, writeStream)
+                .then((value) => {
+                    msg = value
+                    console.log('Concluída importación satisfactoriamente')
+                })
+                .catch((value) => {
+                    success = false
+                    msg = value
+                    console.log('Concluída importación con errores')
+                });
+        }
+        catch(err){
+            msg = 'Ha ocurrido un error '+err
+            reject(msg)
+        }
         let arrresolve = []
         arrresolve.push(success)
         arrresolve.push(msg)
@@ -1207,6 +1213,125 @@ const generateBackupApplication = async (dirApp) => new Promise(async (resolve, 
     });
 })
 
+const importBackup = (req) => new Promise(async (resolve, reject) => {
+    let success = true
+    let msg = ''
+
+    var Readable = stream.Readable;
+    var fileBuffer = Buffer.from(req.body.file, 'base64');
+    var readStream = new Readable();
+    readStream.push(fileBuffer);
+    readStream.push(null)
+    const dirTemp = global.appRootApp + '\\resources\\save_restore\\'+Math.random()
+    fs.mkdirSync(dirTemp, {recursive: true}, (err) => {
+        if (err) {
+            success = false;
+            msg = 'Ha ocurrido un error, ' + err
+        }
+    });
+    fs.exists(dirTemp, (exists) => {
+        if(!exists){
+            success = false;
+            msg = 'Ha ocurrido un error'
+        }
+    });
+    if(success){
+        var writeStream = await fs.createWriteStream(dirTemp + '\\' + req.body.name);
+        readStream.pipe(writeStream);
+        try {
+            await uploadBackup(req, dirTemp, writeStream)
+                .then((value) => {
+                    msg = value
+                    console.log('Concluída restaura satisfactoriamente')
+                })
+                .catch((value) => {
+                    success = false
+                    msg = value
+                    console.log('Concluída restaura con errores')
+                });
+        }
+        catch(err){
+            msg = 'Ha ocurrido un error '+err
+            reject(msg)
+        }
+        let arrresolve = []
+        arrresolve.push(success)
+        arrresolve.push(msg)
+        resolve(arrresolve)
+    }
+    else{
+        msg = 'Ha ocurrido un error'
+        reject(msg)
+    }
+
+})
+
+const uploadBackup = (req,dirTemp,writeStream) => new Promise((resolve, reject) => {
+
+    writeStream.on('finish', async function () {
+        const dirFile = dirTemp + '/' + req.body.name
+        const tipo = await fileType.fromFile(dirFile)
+        //Comprobar fichero antes de iniciar el proceso
+        if(tipo['ext'] == 'zip' && tipo['mime'] == 'application/zip'){
+            await extract(dirFile, { dir: dirTemp+'\\tmp' })
+            resolve('extraido correctamente')
+            //Chequear término de importación para hacer resolve
+            arrCheckImport.push(false)
+            arrCheckImport.push(false)
+           /* await restoreBD(req, dirTemp, dirFile)
+                .then((value) => {
+                    arrCheckImport[0] = true;
+                    let stop = true;
+                    if(arrCheckImport[1] == false) {
+                        stop = false;
+                    }
+                    if(stop)
+                        resolve(value)
+                })
+                .catch((value) => {
+                    reject(value)
+                });*/
+
+            // await restoreApp(req, dirTemp, dirFile)
+            //     .then((value) => {
+            //         arrCheckImport[1] = true;
+            //         let stop = true;
+            //         if(arrCheckImport[0] == false) {
+            //             stop = false;
+            //         }
+            //         if(stop)
+            //             resolve(value)
+            //     })
+            //     .catch((value) => {
+            //         reject(value)
+            //     });
+        }
+        else{
+            reject('El archivo es incorrecto')
+        }
+
+    });
+
+})
+
+const restoreBD = (req,dirTemp,writeStream) => new Promise(async (resolve, reject) => {
+    let success = true
+    let msg = ''
+    const rutaFicheroRestaura = global.appRootApp + 'resources\\restaura_bd.bat'
+    let rutaBackup = ''
+    const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.backup/ });
+    if(tree && tree.children){
+        rutaBackup = tree.children[i].name
+    }
+    //Obtener parametros ruta al pg restore
+    let pg_restore = ''
+    const paramPgRestore = ['cfgapl.general',null,"WHERE variable = 'dir_pg_restore' "]
+    const resultPgRestore = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramPgRestore)
+    if(resultPgRestore && resultPgRestore.rows && resultPgRestore.rows[0] && resultPgRestore.rows[0].fn_get_register)
+        pg_restore = resultPgRestore.rows[0].fn_get_register[0].value
+    let content = '@echo off\nset pgpassword='+pool.config_bd.password+'\n"'+pg_restore+'" -C -U '+pool.config_bd.user+' -d ' +
+        ''+pool.config_bd.database+' '+rutaBackup+''
+})
 
 const insertRegister = async (req, params_insert) => {
     const query = "SELECT cfgapl.fn_insert_register($1,$2,$3,$4,$5,$6)"
@@ -1337,4 +1462,5 @@ objGenFunc.getCapsules = getCapsules
 objGenFunc.importCapsule = importCapsule
 objGenFunc.saveDatabase = saveDatabase
 objGenFunc.saveAplication = saveAplication
+objGenFunc.importBackup = importBackup
 module.exports = objGenFunc

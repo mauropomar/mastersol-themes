@@ -25,11 +25,11 @@ app.use(session({
 app.use('/', express.static(appRootApp + "/"));
 
 //add body parser
-app.use( BodyParser.json({limit: '200mb', type: 'application/json'}));
+app.use( BodyParser.json({limit: '700mb', type: 'application/json'}));
 app.use(BodyParser.urlencoded({
-    limit: '200mb',
+    limit: '700mb',
     extended: true,
-    parameterLimit:200000
+    parameterLimit:700000
 }));
 
 //add the middlewares
