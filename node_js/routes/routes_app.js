@@ -398,14 +398,17 @@ router.post('/importcapsule', async function (req, res, next) {
 })
 
 router.post('/savedatabase', async function (req, res) {
-    let resultBD = await objects.functions.saveDatabase()
-    let resultApp = await objects.functions.saveAplication()
     let success = true
     let msg = ''
-    if(!resultBD.success)
-        msg = resultBD.datos
-    else if(!resultApp.success)
+    let resultBD = await objects.functions.saveDatabase()
+    let resultApp = ''
+    success = resultBD.success
+    msg = resultBD.datos
+    if(resultBD.success) {
+        resultApp = await objects.functions.saveAplication()
+        success = resultApp.success
         msg = resultApp.datos
+    }
 
     return res.json({'success': success, 'datos': msg})
 })

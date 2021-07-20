@@ -1176,7 +1176,6 @@ const saveAplication = async () => {
             console.log(nameFile + ' copiado!');
         }
     });
-
     //Comprimir toda la salva para descargar
     await archiveDirectory(global.appRootApp + 'resources\\save_restore\\'+dirApp)
         .then((value) => {

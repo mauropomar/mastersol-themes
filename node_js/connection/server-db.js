@@ -5,8 +5,8 @@ var config_bd = {
     user: 'postgres',
     password: 'postgres',
     host: 'localhost',
-    database: 'mastersolNew',
-    port: 5433
+    database: 'mastersol',
+    port: 5432
 }
 const pool = new Pool(config_bd)
 
