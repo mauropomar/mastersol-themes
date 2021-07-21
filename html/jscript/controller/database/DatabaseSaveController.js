@@ -35,7 +35,7 @@ Ext.define('MasterSol.controller.database.DatabaseSaveController', {
             url: 'app/savedatabase',
             method: 'POST',
             scope: this,
-            timeout: 500000,
+            timeout: 800000,
             params: {
                 name: nameDB
             },
