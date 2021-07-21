@@ -413,5 +413,18 @@ router.post('/savedatabase', async function (req, res) {
     return res.json({'success': success, 'datos': msg})
 })
 
+router.post('/restoredatabase', async function (req, res) {
+    let result = ''
+    let success = false
+    await objects.functions.importBackup(req)
+        .then((value) => {
+            success = value[0]
+            result = value[1]
+            console.log(value)
+        }).catch(next);
+
+    return res.json({'success': success, 'datos': result})
+})
+
 
 module.exports = router
