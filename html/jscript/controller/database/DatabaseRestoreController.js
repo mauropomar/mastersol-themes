@@ -18,8 +18,7 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
         mask.show();
         var fileField = Ext.ComponentQuery.query('#file_database')[0];
         var file = fileField.fileInputEl.dom.files[0],
-            reader;
-        reader = new FileReader();
+            data = new FormData();
         if (file === undefined || !(file instanceof File)) {
             mask.hide();
             Ext.MessageBox.show({
@@ -42,52 +41,27 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
             });
             return;
         }
-        reader.onloadend = function (event) {
-            var binaryString = '',
-                bytes = new Uint8Array(event.target.result),
-                length = bytes.byteLength,
-                i,
-                base64String;
-
-            // convert to binary string
-            for (i = 0; i < length; i++) {
-                binaryString += String.fromCharCode(bytes[i]);
-            }
-
-            // convert to base64
-            base64String = btoa(binaryString);
-            var save = {
-                url: 'app/restoredatabase',
-                method: 'POST',
-                scope: this,
-                timeout: 500000,
-                params: {
-                    file: base64String,
-                    name: nameFile
-                },
-                success: function (response) {
-                    mask.hide();
-                    Ext.ComponentQuery.query('#btn_cancel_restore_database')[0].setDisabled(false);
-                    var json = Ext.JSON.decode(response.responseText);
-                    if (json.success == true) {
-                        Ext.toast('La base de datos fue restaurada con éxito.');
-                    } else {
-                        Ext.MessageBox.show({
-                            title: 'Información',
-                            msg: json.datos,
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.INFO
-                        });
-                    }
-                },
-                failure: function (response) {
-                    mask.hide();
+        data.append('file', file);
+        Ext.Ajax.request({
+            url: 'app/restoredatabase',
+            rawData: data,
+            headers: {'Content-Type':null}, //to use content type of FormData
+            success: function(response){
+                mask.hide();
+                Ext.ComponentQuery.query('#btn_cancel_restore_database')[0].setDisabled(false);
+                var json = Ext.JSON.decode(response.responseText);
+                if (json.success == true) {
+                    Ext.toast('La base de datos fue restaurada con éxito.');
+                } else {
+                    Ext.MessageBox.show({
+                        title: 'Información',
+                        msg: json.datos,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
                 }
-            };
-            Ext.Ajax.request(save);
-        };
-
-        reader.readAsArrayBuffer(file);
+            }
+        });
     },
 
     cancel: function () {

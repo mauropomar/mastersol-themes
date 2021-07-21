@@ -78,7 +78,17 @@ Ext.define('MasterSol.controller.util.ThemeController', {
 
     isShortTheme: function () {
         var theme = this.getNameTheme();
-        return (theme == 'gray' || theme == 'classic')
-    }
+        return (theme == 'gray' || theme == 'classic');
+    },
 
+    setHeaderHeightWindowCollpase: function (window) {
+        var panelMenu = Ext.ComponentQuery.query('#panel-center')[0];
+        var theme = this.getNameTheme();
+        if (theme !== 'gray' && theme !== 'classic') {
+            window.getHeader().setHeight(40);
+            window.setPosition(0, panelMenu.getHeight());
+            return;
+        }
+        window.alignTo(panelMenu, 'bl-bl');
+    }
 })

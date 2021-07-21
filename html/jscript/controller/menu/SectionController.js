@@ -216,7 +216,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     minimize: function (button, evt, toolEl, owner, tool) {
-        var panelMenu = Ext.ComponentQuery.query('#panel-center')[0];
         var window = owner.up('window');
         window.collapse();
         window.isminimize = true;
@@ -224,12 +223,10 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         winHeight = window.getHeight();
         window.setWidth(300);
         button.hide();
-        window.alignTo(panelMenu, 'bl-bl');
+        MasterApp.theme.setHeaderHeightWindowCollpase(window);
         this.setPositionWindow(window);
         MasterApp.magnament.isMenuTabMagnament(window);
         this.adjustOtherWindowsMaximize();
-
-
     },
 
     maximize: function (button, evt, toolEl, owner, tool) {
