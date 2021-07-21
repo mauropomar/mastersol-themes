@@ -45,6 +45,10 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
         Ext.Ajax.request({
             url: 'app/restoredatabase',
             rawData: data,
+            timeout: 800000,
+            params: {
+                name: nameFile
+            },
             headers: {'Content-Type':null}, //to use content type of FormData
             success: function(response){
                 mask.hide();
@@ -62,7 +66,7 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
                 }
             }
         });
-    },
+     },
 
     cancel: function () {
         Ext.ComponentQuery.query('#window_restore_database')[0].close();
