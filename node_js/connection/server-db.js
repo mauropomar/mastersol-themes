@@ -9,15 +9,19 @@ var config_bd = {
     port: 5432
 }
 const pool = new Pool(config_bd)
+pool.on('error', (err) => {
+    console.error('Un cliente inactivo ha experimentado un error', err.stack)
+})
 
 const executeQuery = async (query, params = []) => {
     var result;
+    const client = await pool.connect()
     try {
-        const client = await pool.connect()
         result = await client.query(query, params)
         client.release()
     } catch (err) {
         result = {'success': false, 'message': utf8.encode(err.message)}
+        client.release()
     }
     return result
 }
