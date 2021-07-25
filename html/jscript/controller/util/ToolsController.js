@@ -168,7 +168,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     getButtonsDefaut: function (win) {
         return [{
             iconCls: 'fa fa-floppy-o',
-            tooltip: 'Salvar base de datos',
+            tooltip: 'Salvar sistema y base de datos',
             default: true,
             name: 'btn_save_bd',
             handler: function (evt, toolEl, owner, tool) {
@@ -177,7 +177,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             }
         }, {
             iconCls: 'fa fa-database',
-            tooltip: 'Restaurar base de datos',
+            tooltip: 'Restaurar sistema y base de datos',
             default: true,
             name: 'btn_restore_bd',
             handler: function (evt, toolEl, owner, tool) {

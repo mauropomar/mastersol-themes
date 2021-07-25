@@ -45,7 +45,7 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
         Ext.Ajax.request({
             url: 'app/restoredatabase',
             rawData: data,
-            timeout: 800000,
+            timeout: 1000000,
             params: {
                 name: nameFile
             },
