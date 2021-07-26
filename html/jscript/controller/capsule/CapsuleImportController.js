@@ -71,6 +71,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
                     var json = Ext.JSON.decode(response.responseText);
                     if (json.success == true) {
                         Ext.toast('La capsula fue importado con éxito.');
+                        this.restarSystem();
                     } else {
                         Ext.MessageBox.show({
                             title: 'Información',
@@ -88,6 +89,24 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
         };
 
         reader.readAsArrayBuffer(file);
+    },
+
+    restarSystem:function(){
+        var panel = Ext.ComponentQuery.query('#panel-center')[0];
+        var mask = new Ext.LoadMask(panel, {
+            msg: 'Reiniciando sistema. Espere unos minutos por favor...'
+        });
+        mask.show();
+        var restart = {
+            url: 'app/restartsystem',
+            method: 'GET',
+            scope: this,
+            success: function (response) {
+                Mask.hide();
+                location.href = 'index.html';
+            }
+        };
+        Ext.Ajax.request(restart);
     },
 
     cancel: function () {

@@ -8,7 +8,7 @@ Ext.define('MasterSol.view.database.WindowSaveDatabase', {
     closeAction: 'destroy',
     height: 300,
     width: 600,
-    title: 'Salvar Base de Datos',
+    title: 'Salvar sistema y base de Datos',
     layout: 'fit',
     autoShow: true,
     tbar: [{
@@ -31,7 +31,7 @@ Ext.define('MasterSol.view.database.WindowSaveDatabase', {
         }]
     }],
     buttons: [{
-        text: 'Salvar',
+        text: 'Guardar',
         id: 'btn_save_database',
         iconCls: 'fa fa-save',
         handler: function () {

@@ -1,9 +1,7 @@
 Ext.define('MasterSol.controller.database.DatabaseSaveController', {
     extend: 'Ext.app.Controller',
     init: function () {
-        this.control({
-
-        });
+        this.control({});
     },
 
     setNameFile: function (nameCapsule) {
@@ -22,10 +20,10 @@ Ext.define('MasterSol.controller.database.DatabaseSaveController', {
     save: function () {
         var window = Ext.ComponentQuery.query('#window_save_database')[0];
         var mask = new Ext.LoadMask(window, {
-            msg: 'Salvando. Espere unos minutos por favor...'
+            msg: 'Guardando. Espere unos minutos por favor...'
         });
         var nameDB = Ext.ComponentQuery.query('#field_name_save_database')[0].getValue();
-        if(nameDB === ''){
+        if (nameDB === '') {
             Ext.ComponentQuery.query('#field_name_save_database')[0].markInvalid('Este campo es obligatorio.');
             return;
         }
@@ -50,7 +48,7 @@ Ext.define('MasterSol.controller.database.DatabaseSaveController', {
                     link.href = url;
                     link.download = name;
                     link.click();
-                    Ext.toast('La base de datos fue salvada con éxito.');
+                    Ext.toast('El sistema y la base de datos fue guardada con éxito.');
                 } else {
                     Ext.MessageBox.show({
                         title: 'Información',
@@ -68,7 +66,17 @@ Ext.define('MasterSol.controller.database.DatabaseSaveController', {
         Ext.Ajax.request(save);
     },
 
-    cancel:function(){
+    getPath: function (path) {
+        var index = path.indexOf('resources');
+        return path.substring(index, path.length);
+    },
+
+    getName: function (path) {
+        var index = path.lastIndexOf('\\');
+        return path.substring(index + 1, path.length);
+    },
+
+    cancel: function () {
         Ext.ComponentQuery.query('#window_save_database')[0].close();
     }
 });
