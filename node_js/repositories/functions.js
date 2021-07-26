@@ -1,6 +1,7 @@
 const pool = require('../connection/server-db')
 const cron = require('node-cron')
 const fs = require('fs')
+const fse = require('fs-extra')
 const objects = require('../modules');
 const spawn = require('child_process').spawn;
 const copyTo = require('pg-copy-streams').to;
@@ -13,6 +14,7 @@ const extract = require('extract-zip')
 const dirTree = require("directory-tree");
 var lineReader = require('line-reader');
 var ncp = require('ncp').ncp;
+var path = require("path")
 const objGenFunc = {}
 var arrCheck = [];
 var arrCheckJasperFiles = [];
@@ -1093,13 +1095,13 @@ const saveDatabase = async () => {
     let content = '@echo off\nset pgpassword='+pool.config_bd.password+'\n' +
         'CD "'+rutaSalida+'"\n"'+pg_dump+'" -h '+pool.config_bd.host+' -p '+pool.config_bd.port+' -U '+pool.config_bd.user+' ' +
         '-F c -b -v -f "'+nameFile+'" '+pool.config_bd.database
-    try{
-        fs.writeFileSync(rutaFichero, content, 'utf8');
-    }catch (e){
-       msg = 'No se puede escribir el fichero '+e;
-    }
 
     if(pg_dump !== '') {
+        try{
+            fs.writeFileSync(rutaFichero, content, 'utf8');
+        }catch (e){
+            msg = 'No se puede escribir el fichero '+e;
+        }
         await generateDatabaseBackup(rutaFichero)
             .then((value) => {
                 msg = rutaSalida+'\\'+nameFile
@@ -1164,40 +1166,38 @@ const saveAplication = async () => {
             success = false
             msg = value
         });
-    const tree = await dirTree(global.appRootApp + '\\resources\\save_restore', { extensions: /\.backup/ });
-    let nameFile = ''
-    if(tree.children) {
-        for(let i=0;i<tree.children.length;i++){
-            if(tree.children[0].name === nameBackupBD){
-                nameFile = tree.children[i].name
-                break;
+    if(success) {
+        const tree = await dirTree(global.appRootApp + '\\resources\\save_restore', {extensions: /\.backup/});
+        let nameFile = ''
+        if (tree.children) {
+            for (let i = 0; i < tree.children.length; i++) {
+                if (tree.children[i].name === nameBackupBD) {
+                    nameFile = tree.children[i].name
+                    break;
+                }
             }
         }
+
+        fs.copyFileSync(global.appRootApp + 'resources\\save_restore\\' + nameFile, global.appRootApp + '\\resources\\save_restore\\' + dirApp + '\\' + nameFile);
+        //Comprimir toda la salva para descargar
+        if (success) {
+            await archiveDirectory(global.appRootApp + 'resources\\save_restore\\' + dirApp)
+                .then((value) => {
+                    console.log(value)
+                    msg = value
+                })
+                .catch((value) => {
+                    success = false
+                    console.log(value)
+                });
+        }
     }
-    await fs.copyFile(global.appRootApp + 'resources\\save_restore\\'+nameFile, global.appRootApp + '\\resources\\save_restore\\'+dirApp+'\\'+nameFile , (err) => {
-        if (err) {
-            msg = 'Error copiando la BD '+err
-        }
-        else {
-            console.log(nameFile + ' copiado!');
-        }
-    });
-    //Comprimir toda la salva para descargar
-    await archiveDirectory(global.appRootApp + 'resources\\save_restore\\'+dirApp)
-        .then((value) => {
-            console.log(value)
-            msg = value
-        })
-        .catch((value) => {
-            success = false
-            console.log(value)
-        });
 
     return {'success': success, 'datos': msg}
 }
 
 const generateBackupApplication = async (dirApp) => new Promise(async (resolve, reject) => {
-    ncp.limit = 16;
+    ncp.limit = 30;
     let options = {
         filter: function (file) {
             let res = file.toString().indexOf("\\save_restore") !== -1;
@@ -1211,35 +1211,16 @@ const generateBackupApplication = async (dirApp) => new Promise(async (resolve, 
         }
         resolve(dirDestination)
     });
+
 })
 
-const importBackup = (req) => new Promise(async (resolve, reject) => {
+const importBackup = (req, dirFolderRestoreGlobal) => new Promise(async (resolve, reject) => {
     let success = true
     let msg = ''
-
-    var Readable = stream.Readable;
-    var fileBuffer = Buffer.from(req.body.file, 'base64');
-    var readStream = new Readable();
-    readStream.push(fileBuffer);
-    readStream.push(null)
-    const dirTemp = global.appRootApp + '\\resources\\save_restore\\'+Math.random()
-    fs.mkdirSync(dirTemp, {recursive: true}, (err) => {
-        if (err) {
-            success = false;
-            msg = 'Ha ocurrido un error, ' + err
-        }
-    });
-    fs.exists(dirTemp, (exists) => {
-        if(!exists){
-            success = false;
-            msg = 'Ha ocurrido un error'
-        }
-    });
-    if(success){
-        var writeStream = await fs.createWriteStream(dirTemp + '\\' + req.body.name);
-        readStream.pipe(writeStream);
+    const tree = await dirTree(dirFolderRestoreGlobal, { extensions: /\.zip/ });
+    if(tree.children) {
         try {
-            await uploadBackup(req, dirTemp, writeStream)
+            await uploadBackup(req, dirFolderRestoreGlobal, tree.children[0].name)
                 .then((value) => {
                     msg = value
                     console.log('Concluída restaura satisfactoriamente')
@@ -1250,35 +1231,33 @@ const importBackup = (req) => new Promise(async (resolve, reject) => {
                     console.log('Concluída restaura con errores')
                 });
         }
-        catch(err){
-            msg = 'Ha ocurrido un error '+err
+        catch (err) {
+            msg = 'Ha ocurrido un error ' + err
             reject(msg)
         }
-        let arrresolve = []
-        arrresolve.push(success)
-        arrresolve.push(msg)
-        resolve(arrresolve)
     }
     else{
-        msg = 'Ha ocurrido un error'
-        reject(msg)
+        success = false
+        msg = 'Ha ocurrido un error con el fichero subido'
     }
+    let arrresolve = []
+    arrresolve.push(success)
+    arrresolve.push(msg)
+    resolve(arrresolve)
 
 })
 
-const uploadBackup = (req,dirTemp,writeStream) => new Promise((resolve, reject) => {
 
-    writeStream.on('finish', async function () {
-        const dirFile = dirTemp + '/' + req.body.name
-        const tipo = await fileType.fromFile(dirFile)
-        //Comprobar fichero antes de iniciar el proceso
-        if(tipo['ext'] == 'zip' && tipo['mime'] == 'application/zip'){
-            await extract(dirFile, { dir: dirTemp+'\\tmp' })
-            resolve('extraido correctamente')
+const uploadBackup = (req,dirTemp,nameFile) => new Promise(async (resolve, reject) => {
+    const tipo = await fileType.fromFile(dirTemp + '/' + nameFile)
+    //Comprobar fichero antes de iniciar el proceso
+    if(tipo['ext'] == 'zip' && tipo['mime'] == 'application/zip'){
+        try {
+            await extract(dirTemp + '/' + nameFile, {dir: dirTemp + '\\tmp'})
             //Chequear término de importación para hacer resolve
             arrCheckImport.push(false)
             arrCheckImport.push(false)
-           /* await restoreBD(req, dirTemp, dirFile)
+            await restoreBD(req, dirTemp)
                 .then((value) => {
                     arrCheckImport[0] = true;
                     let stop = true;
@@ -1286,51 +1265,132 @@ const uploadBackup = (req,dirTemp,writeStream) => new Promise((resolve, reject) 
                         stop = false;
                     }
                     if(stop)
-                        resolve(value)
+                        resolve('Backup de la aplicacion y base de datos restaurado')
                 })
                 .catch((value) => {
                     reject(value)
-                });*/
+                });
 
-            // await restoreApp(req, dirTemp, dirFile)
-            //     .then((value) => {
-            //         arrCheckImport[1] = true;
-            //         let stop = true;
-            //         if(arrCheckImport[0] == false) {
-            //             stop = false;
-            //         }
-            //         if(stop)
-            //             resolve(value)
-            //     })
-            //     .catch((value) => {
-            //         reject(value)
-            //     });
+            await restoreApp(dirTemp)
+                .then((value) => {
+                    arrCheckImport[1] = true;
+                    let stop = true;
+                    if(arrCheckImport[0] == false) {
+                        stop = false;
+                    }
+                    if(stop)
+                        resolve('Backup de la aplicacion y base de datos restaurado')
+                })
+                .catch((value) => {
+                    reject(value)
+                });
         }
-        else{
-            reject('El archivo es incorrecto')
+        catch(err){
+            reject(err)
         }
-
-    });
+    }
+    else{
+        reject('El archivo es incorrecto')
+    }
 
 })
 
-const restoreBD = (req,dirTemp,writeStream) => new Promise(async (resolve, reject) => {
-    let success = true
-    let msg = ''
+const restoreBD = (req,dirTemp) => new Promise(async (resolve, reject) => {
     const rutaFicheroRestaura = global.appRootApp + 'resources\\restaura_bd.bat'
     let rutaBackup = ''
     const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.backup/ });
     if(tree && tree.children){
-        rutaBackup = tree.children[i].name
+        const largo = tree.children.length
+        for(let i=0;i<largo;i++){
+           if(tree.children[i].name.includes('.backup')){
+               rutaBackup = dirTemp+'\\tmp\\' + tree.children[i].name
+               break;
+           }
+        }
     }
-    //Obtener parametros ruta al pg restore
+    //Obtener parametros ruta al pg restore, dropdb y createdb
     let pg_restore = ''
+    let dropdb = ''
+    let createdb = ''
+    let psql = ''
     const paramPgRestore = ['cfgapl.general',null,"WHERE variable = 'dir_pg_restore' "]
     const resultPgRestore = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramPgRestore)
+    const paramDropdb = ['cfgapl.general',null,"WHERE variable = 'dir_dropdb' "]
+    const resultDropdb = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramDropdb)
+    const paramCreatedb = ['cfgapl.general',null,"WHERE variable = 'dir_createdb' "]
+    const resultCreatedb = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramCreatedb)
+    const paramPsql = ['cfgapl.general',null,"WHERE variable = 'dir_psql' "]
+    const resultPsql = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramPsql)
+    if(resultDropdb && resultDropdb.rows && resultDropdb.rows[0] && resultDropdb.rows[0].fn_get_register)
+        dropdb = resultDropdb.rows[0].fn_get_register[0].value
+    if(resultCreatedb && resultCreatedb.rows && resultCreatedb.rows[0] && resultCreatedb.rows[0].fn_get_register)
+        createdb = resultCreatedb.rows[0].fn_get_register[0].value
     if(resultPgRestore && resultPgRestore.rows && resultPgRestore.rows[0] && resultPgRestore.rows[0].fn_get_register)
         pg_restore = resultPgRestore.rows[0].fn_get_register[0].value
-    let content = '@echo off\nset pgpassword='+pool.config_bd.password+'\n"'+pg_restore+'" -C -U '+pool.config_bd.user+' -d ' +
-        ''+pool.config_bd.database+' '+rutaBackup+''
+    if(resultPsql && resultPsql.rows && resultPsql.rows[0] && resultPsql.rows[0].fn_get_register)
+        psql = resultPsql.rows[0].fn_get_register[0].value
+
+    if(pg_restore !== '' && dropdb !== '' && createdb !== '' && psql !== ''){
+        let dbName = "'"+pool.config_bd.database+"'"
+        let content = '@echo off\nset pgpassword='+pool.config_bd.password+'\n"'+psql+'" -d postgres -U '+pool.config_bd.user+' -p ' +
+            ''+pool.config_bd.port+' -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '+dbName+' "\n"'+dropdb+'" -h '+pool.config_bd.host+' ' +
+            '-U '+pool.config_bd.user+' '+pool.config_bd.database+'\n"'+createdb+'" -h '+pool.config_bd.host+' -p '+pool.config_bd.port+' ' +
+            '-U '+pool.config_bd.user+' '+pool.config_bd.database+'\n"'+pg_restore+'" -U '+pool.config_bd.user+' -d ' +
+            ''+pool.config_bd.database+' '+rutaBackup+''
+        content.replace("\\resources", "\resources");
+
+        try{
+            fs.writeFileSync(rutaFicheroRestaura, content, 'utf8');
+        }catch (e){
+            reject('No se puede escribir el fichero '+e);
+        }
+
+        if(fs.existsSync(rutaFicheroRestaura)){
+            const ls = spawn(rutaFicheroRestaura);
+            ls.stdout.on('data', function (data) {
+                console.log('stdout: ' + data);
+            });
+
+            ls.stderr.on('data', function (data) {
+                //console.log('stderr: ' + data);
+            });
+
+            ls.on('exit', function (code) {
+                if(code === 0){
+                    //Eliminar fichero .backup
+                    rutaBackup.replace("\\resources", "\resources");
+                    fs.unlinkSync(rutaBackup, (err => {
+                        if (err) {
+                            console.log('No hay fichero .backup para borrar')
+                            resolve('Backup de la BD importado satisfactoriamente')
+                        }
+                        else {
+                            resolve('Backup de la BD importado satisfactoriamente')
+                        }
+                    }));
+                    resolve('Backup de la BD importado satisfactoriamente')
+                }
+                else
+                    reject('Error importando el backup de la BD con código '+code)
+            });
+        }
+        else
+            reject('El fichero no existe!')
+    }
+    else{
+        reject('No están registrados todos los parámetros necesarios: dir_pg_restore, dropdb, createdb y psql')
+    }
+})
+
+const restoreApp = (dirTemp) => new Promise(async (resolve, reject) => {
+    ncp.limit = 30;
+
+    ncp(dirTemp + '\\tmp', global.appRootApp, function (err) {
+        if (err) {
+            reject(err)
+        }
+        resolve('Backup de la aplicacion importado satisfactoriamente')
+    });
 })
 
 const insertRegister = async (req, params_insert) => {

@@ -2,7 +2,11 @@ var express = require("express");
 var router = express.Router();
 var fs = require('fs');
 const rimraf = require("rimraf");
+const multer = require("multer")
+var path = require("path")
 const objects = require('../modules');
+const dirTree = require("directory-tree");
+var dirFolderRestoreGlobal = ''
 
 /*Obtener lenguajes*/
 router.get('/languages', async function (req, res) {
@@ -414,17 +418,95 @@ router.post('/savedatabase', async function (req, res) {
 })
 
 router.post('/restoredatabase', async function (req, res) {
-    let result = ''
-    let success = false
-    await objects.functions.importBackup(req)
-        .then((value) => {
-            success = value[0]
-            result = value[1]
-            console.log(value)
-        }).catch(next);
+    let msg = ''
+    let success = true
+    let subido = false
+    dirFolderRestoreGlobal = global.appRootApp + '\\resources\\save_restore\\'+ Math.random()
 
-    return res.json({'success': success, 'datos': result})
+    fs.mkdirSync(dirFolderRestoreGlobal, {recursive: true}, (err) => {
+        if (err) {
+            success = false;
+            msg = 'Ha ocurrido un error, ' + err
+        }
+    });
+    fs.exists(dirFolderRestoreGlobal, (exists) => {
+        if(!exists){
+            success = false;
+            msg = 'Ha ocurrido un error'
+        }
+    });
+    if(success) {
+        let upload = multer({storage: storage, fileFilter: zipFilter}).single('file');
+        upload(req, res, async function (err) {
+            // req.file contains information of uploaded file
+            // req.body contains information of text fields, if there were any
+            if (req.fileValidationError) {
+                success = false
+                msg = req.fileValidationError
+                subido = true
+            }
+            else if (!req.file) {
+                success = false
+                msg = 'Por favor seleccione un fichero .zip a subir';
+                subido = true
+            }
+            else if (err instanceof multer.MulterError) {
+                success = false
+                msg = err
+                subido = true
+            }
+            else if (err) {
+                success = false
+                msg = err
+                subido = true
+            }
+            else{
+                subido = true
+
+            }
+
+        });
+        while (!subido) {
+            await sleep(20)
+        }
+        if(success) {
+            await objects.functions.importBackup(req, dirFolderRestoreGlobal)
+                .then((value) => {
+                    success = value[0]
+                    result = value[1]
+                    console.log(value)
+                }).catch((value) => {
+                    success = false
+                    console.log(value)
+                });
+        }
+    }
+
+    return res.json({'success': success, 'datos': msg})
 })
+
+router.get('/restartsystem', async function (req, res) {
+    process.exit(1);
+})
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // Uploads is the Upload_folder_name
+        cb(null, dirFolderRestoreGlobal)
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname)
+    }
+})
+
+const zipFilter = function(req, file, cb) {
+    // Accept zip only
+    if (!file.originalname.match(/\.(zip|ZIP)$/)) {
+        req.fileValidationError = 'Solo se permiten ficheros .zip!';
+        return cb(new Error('Solo se permiten ficheros .zip!'), false);
+    }
+    cb(null, true);
+};
 
 
 module.exports = router
