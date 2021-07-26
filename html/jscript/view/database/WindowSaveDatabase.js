@@ -21,11 +21,11 @@ Ext.define('MasterSol.view.database.WindowSaveDatabase', {
         allowBlank: false
     }],
     requires: [
-       // 'MasterSol.store.capsule.CapsuleExportStore'
+        // 'MasterSol.store.capsule.CapsuleExportStore'
     ],
     items: [{
-        xtype:'form',
-        items:[{
+        xtype: 'form',
+        items: [{
             xtype: 'displayfield',
             id: 'display_process_save_database'
         }]

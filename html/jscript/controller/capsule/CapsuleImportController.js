@@ -91,7 +91,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
         reader.readAsArrayBuffer(file);
     },
 
-    restarSystem:function(){
+    restarSystem: function () {
         var panel = Ext.ComponentQuery.query('#panel-center')[0];
         var mask = new Ext.LoadMask(panel, {
             msg: 'Reiniciando sistema. Espere unos minutos por favor...'

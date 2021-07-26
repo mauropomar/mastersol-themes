@@ -45,13 +45,13 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
         Ext.Ajax.request({
             url: 'app/restoredatabase',
             rawData: data,
-            scope:this,
+            scope: this,
             timeout: 1000000,
             params: {
                 name: nameFile
             },
-            headers: {'Content-Type':null}, //to use content type of FormData
-            success: function(response){
+            headers: {'Content-Type': null}, //to use content type of FormData
+            success: function (response) {
                 mask.hide();
                 Ext.ComponentQuery.query('#btn_cancel_restore_database')[0].setDisabled(false);
                 var json = Ext.JSON.decode(response.responseText);
@@ -68,9 +68,9 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
                 }
             }
         });
-     },
+    },
 
-    restarSystem:function(){
+    restarSystem: function () {
         var panel = Ext.ComponentQuery.query('#panel-center')[0];
         var mask = new Ext.LoadMask(panel, {
             msg: 'Reiniciando sistema. Espere unos minutos por favor...'

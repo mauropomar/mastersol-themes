@@ -47,7 +47,7 @@ Ext.define('MasterSol.controller.database.DatabaseSaveController', {
                     var link = document.createElement('a');
                     link.href = url;
                     link.download = name;
-                    link.click();
+                      link.click();
                     Ext.toast('El sistema y la base de datos fue guardada con éxito.');
                 } else {
                     Ext.MessageBox.show({

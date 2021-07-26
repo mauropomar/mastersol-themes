@@ -17,15 +17,15 @@ Ext.define('MasterSol.view.capsule.WindowExportCapsule', {
     items: [{
         xtype: 'gridpanel',
         id: 'grid_list_capsules',
-      /*  tbar: [{
-            xtype: 'tbtext',
-            text: 'Nombre:'
-        }, {
-            xtype: 'textfield',
-            id: 'field_name_export',
-            width: '50%',
-            allowBlank: false
-        }],*/
+        /*  tbar: [{
+              xtype: 'tbtext',
+              text: 'Nombre:'
+          }, {
+              xtype: 'textfield',
+              id: 'field_name_export',
+              width: '50%',
+              allowBlank: false
+          }],*/
         store: {
             type: 'store_export_capsule'
         },
@@ -55,7 +55,7 @@ Ext.define('MasterSol.view.capsule.WindowExportCapsule', {
         iconCls: 'fa fa-close',
         id: 'btn_cancelar_capsule',
         handler: function () {
-           MasterApp.getController('MasterSol.controller.capsule.CapsuleExportController').cancel();
+            MasterApp.getController('MasterSol.controller.capsule.CapsuleExportController').cancel();
         }
     }]
 });
