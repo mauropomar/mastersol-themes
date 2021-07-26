@@ -16,6 +16,7 @@
     "express-session": "^1.17.1",
     "extract-zip": "^2.0.1",
     "file-type": "^16.5.0",
+    "forever": "^4.0.1",
     "fs": "0.0.1-security",
     "fs-extra": "^10.0.0",
     "js-sha256": "^0.9.0",
@@ -41,7 +42,8 @@
     "nodemon": "^2.0.7"
   },
   "scripts": {
-    "start": "nodemon node_js/server.js"
+    "start": "forever start node_js/server.js",
+    "start_test": "nodemon node_js/server.js"
   },
   "repository": {
     "type": "git",
@@ -52,5 +54,6 @@
   "bugs": {
     "url": "https://github.com/mauropomar/MasterSol/issues"
   },
+  "start": "forever start server.js",
   "homepage": "https://github.com/mauropomar/MasterSol#readme"
 }

@@ -485,6 +485,10 @@ router.post('/restoredatabase', async function (req, res) {
     return res.json({'success': success, 'datos': msg})
 })
 
+router.get('/restartsystem', async function (req, res) {
+    process.exit(1);
+})
+
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         // Uploads is the Upload_folder_name
