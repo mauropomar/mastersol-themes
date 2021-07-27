@@ -6,16 +6,17 @@ Ext.define('Capsules.siembra.store.infiniteScroll.InfiniteStore', {
     remoteSort: true,
     pageSize: 100,
     proxy: {
-        type: 'jsonp',
-        url: 'http://www.sencha.com/forum/remote_topics/index.php',
+        type: 'ajax',
+        url: 'http://localhost:3001/dev/localization/countries/get?page=0&start=0&limit=20',
         reader: {
-            rootProperty: 'topics',
-            totalProperty: 'totalCount'
+            type: 'json',
+            rootProperty: 'data',
+            totalProperty: 'total'
         },
         simpleSortMode: true
     },
     sorters: [{
-        property: 'lastpost',
-        direction: 'DESC'
+        property: 'name',
+        direction: 'ASC'
     }],
 });

@@ -164,7 +164,6 @@ Ext.define('MasterSol.controller.login.LoginController', {
             success: function (response) {
                 var json = Ext.JSON.decode(response.responseText);
                 var data = json.data;
-                debugger
                 for (var i = 0; i < data.length; i++) {
                     var comps = data[i].components;
                     for (var j = 0; j < comps.length; j++) {

@@ -10,7 +10,7 @@ Ext.define('Capsules.siembra.view.infiniteScroll.WindowScroll', {
     xtype: 'window-infinite-scroll',
     closable: true,
     closeAction: 'destroy',
-    height: 300,
+    height: 200,
     width: 600,
     title: 'Infinite Scroll',
     layout: 'fit',
@@ -22,48 +22,57 @@ Ext.define('Capsules.siembra.view.infiniteScroll.WindowScroll', {
         xtype: 'gridpanel',
         id: 'grid_scroll_infinite',
         loadMask: true,
-        selModel: {
-            pruneRemoved: false
-        },
+        page: 0,
         viewConfig: {
-            trackOver: false
+            trackOver: false,
+            singleSelect: true,
         },
+        features: [{
+            ftype: 'filters',
+            updateBuffer: 1000 // trigger load after a 1 second timer
+        }],
+        verticalScrollerType: 'paginggridscroller',
+        invalidateScrollerOnRefresh: false,
         store: {
             type: 'store_infinite_scroll'
         },
-        columns:[{
+        listeners: {
+            afterrender: function (comp) {
+                comp.getTargetEl().on('mouseup', function (e, t) {
+                    var height = comp.getTargetEl().getHeight();
+                    if (height + t.scrollTop >= t.scrollHeight) {
+                        MasterApp.getController('Capsules.siembra.controller.infiniteScroll.InfiniteController').loadOthers();
+                    }
+                });
+            }
+        },
+        columns: [{
             xtype: 'rownumberer',
             width: 50,
             sortable: false,
             locked: true,
             lockable: false
-        },{
-            tdCls: 'x-grid-cell-topic',
-            text: "Topic",
-            dataIndex: 'title',
+        }, {
+            text: "Nombre",
+            dataIndex: 'name',
             flex: 1,
-            renderer: function(value, p, record){
-                return MasterApp.getController('Capsules.siembra.controller.infiniteScroll.InfiniteController').renderTopic(value, p, record);
-            },
             sortable: false
-        },{
-            text: "Author",
-            dataIndex: 'username',
+        }, {
+            text: "Region",
+            dataIndex: 'region',
             width: 100,
             hidden: true,
             sortable: true
-        },{
-            text: "Replies",
-            dataIndex: 'replycount',
+        }, {
+            text: "Capital",
+            dataIndex: 'capital',
             align: 'center',
             width: 70,
             sortable: false
-        },{
-            id: 'last',
-            text: "Last Post",
-            dataIndex: 'lastpost',
+        }, {
+            text: "Sub region",
+            dataIndex: 'subregion',
             width: 130,
-            renderer: Ext.util.Format.dateRenderer('n/j/Y g:i A'),
             sortable: true
         }],
         features: [{
