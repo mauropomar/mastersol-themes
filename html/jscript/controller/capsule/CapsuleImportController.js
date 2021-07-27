@@ -71,7 +71,8 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
                     var json = Ext.JSON.decode(response.responseText);
                     if (json.success == true) {
                         Ext.toast('La capsula fue importado con éxito.');
-                        this.restarSystem();
+                        location.href = 'index.html';
+                       // this.restarSystem();
                     } else {
                         Ext.MessageBox.show({
                             title: 'Información',
