@@ -82,7 +82,7 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
             scope: this,
             success: function (response) {
                 Mask.hide();
-                location.href = 'index.html';
+                 location.href = 'index.html';
             }
         };
         Ext.Ajax.request(restart);

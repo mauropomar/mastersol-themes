@@ -26,8 +26,8 @@ Ext.define('Capsules.siembra.controller.infiniteScroll.InfiniteController', {
         Mask.show();
         var store = Ext.ComponentQuery.query('#grid_scroll_infinite')[0].getStore();
         var total = store.getCount();
-        var start = 0;
-        var limit = 30;
+      //  var start = 0;
+      //  var limit = 30;
         grid.page++;
         var url = 'http://localhost:3001/dev/localization/countries/get?page=' +
             grid.page;
