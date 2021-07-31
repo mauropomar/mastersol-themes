@@ -57,7 +57,7 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
                     Ext.toast('El sistema y la base de datos fue restaurada con éxito.');
-                    location.href = 'index.html';
+                     location.href = 'index.html';
                     this.restarSystem();
                 } else {
                     Ext.MessageBox.show({
