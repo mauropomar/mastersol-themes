@@ -80,12 +80,13 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
             url: 'app/restartsystem',
             method: 'GET',
             scope: this,
-            success: function (response) {
-                Mask.hide();
-                location.href = 'index.html';
-            }
+            // success: function (response) {
+            //     Mask.hide();
+            //     location.href = 'index.html';
+            // }
         };
         Ext.Ajax.request(restart);
+        location.href = 'index.html';
     },
 
     cancel: function () {

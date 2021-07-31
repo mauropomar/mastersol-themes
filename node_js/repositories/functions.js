@@ -284,7 +284,7 @@ const executeFunctionsButtons = async (req, objects) => {
     return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name}
 }
 
-const saveCapsuleBD = async (idcapsule) => {
+const saveCapsuleBD = async (idcapsule,dirFullFolder) => {
     let success = true
     let finalResult = ''
     let noSchema = false
@@ -311,7 +311,8 @@ const saveCapsuleBD = async (idcapsule) => {
             name_capsule =  resultCap.rows[0].fn_get_register[0].namex
         }
         let currentDate = new Date()
-        const dirFolder = global.appRootApp + '\\resources\\backups\\'+name_capsule+'[n]'+idcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
+        let subcapsule = idcapsule.substring(0,6)
+        const dirFolder = dirFullFolder + '\\'+subcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
         await generateExportFilesBD(idcapsule,dirFolder,resultSaveStructure)
             .then((value) => {
                 if(value == 'noData') {
@@ -333,14 +334,15 @@ const saveCapsuleBD = async (idcapsule) => {
     return {'success': success, 'datos': finalResult}
 }
 
-const saveCapsuleFiles = async (idcapsule) => {
+const saveCapsuleFiles = async (idcapsule,dirFullFolder) => {
     let success = true
     let resultStructure = true
     let resultReports = true
     let resultAttach = true
 
     let currentDate = new Date()
-    const dirFolder = global.appRootApp + '\\resources\\backups\\'+idcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
+    const subcapsule = idcapsule.substring(0,6)
+    const dirFolder = dirFullFolder + '\\'+subcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
     const dirFolderStructure = dirFolder + '\\structure\\' + 'c_' + idcapsule
     const dirFolderReports = dirFolder + '\\reports'
     const dirFolderAttach = dirFolder + '\\attach'
@@ -380,13 +382,18 @@ const saveCapsuleFiles = async (idcapsule) => {
 const generateExportFilesStructure = async (idcapsule, dirFolderStructure) => new Promise(async (resolve, reject) => {
     await fs.mkdir(dirFolderStructure, {recursive: true}, async (err) => {
         if(!err){
-            ncp.limit = 16;
-
-            ncp(global.appRootApp + '\\capsules\\' + 'c_'+idcapsule, dirFolderStructure, function (err) {
-                if (err) {
-                    reject(err)
+            fs.exists(global.appRootApp + '\\capsules\\' + 'c_'+idcapsule, (exists) => {
+                if(!exists){
+                    reject('La estructura de la cápsula no existe')
                 }
-                resolve('Estructura exportada!')
+                ncp.limit = 16;
+
+                ncp(global.appRootApp + '\\capsules\\' + 'c_'+idcapsule, dirFolderStructure, function (err) {
+                    if (err) {
+                        reject(err)
+                    }
+                    resolve('Estructura exportada!')
+                });
             });
         }
         else
@@ -401,66 +408,70 @@ const generateExportFilesReports = async (idcapsule, dirFolderReports) => new Pr
             const paramsReport = ['reports.informs',null,"WHERE id_capsules = '"+idcapsule+"' "]
             const resultReport = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsReport)
             if(resultReport && resultReport.rows && resultReport.rows[0].fn_get_register){
-                for (let i = 0; i < resultReport.rows[0].fn_get_register.length; i++) {
-                    arrCheckJasperFiles.push(false)
-                    arrCheckJrxmlFiles.push(false)
+                if(resultReport.rows[0].fn_get_register.length > 0) {
+                    for (let i = 0; i < resultReport.rows[0].fn_get_register.length; i++) {
+                        arrCheckJasperFiles.push(false)
+                        arrCheckJrxmlFiles.push(false)
+                    }
+                    for (let i = 0; i < resultReport.rows[0].fn_get_register.length; i++) {
+                        const elem = resultReport.rows[0].fn_get_register[i]
+                        //Copiar .jasper
+                        await fs.copyFile(global.appRootApp + '\\resources\\reports\\informs\\' + elem.name + '.jasper', dirFolderReports + '\\' + elem.name + '.jasper', (err) => {
+                            if (err) {
+                                reject(err)
+                            }
+                            else {
+                                console.log(elem.name + '.jasper copiado!');
+                            }
+                            arrCheckJasperFiles[i] = true;
+                            let stopJasper = true;
+                            let stopJrxml = true;
+                            for (let j = 0; j < arrCheckJasperFiles.length; j++) {
+                                if (arrCheckJasperFiles[j] == false) {
+                                    stopJasper = false;
+                                    break;
+                                }
+                            }
+                            for (let j = 0; j < arrCheckJrxmlFiles.length; j++) {
+                                if (arrCheckJrxmlFiles[j] == false) {
+                                    stopJrxml = false;
+                                    break;
+                                }
+                            }
+                            if (stopJasper && stopJrxml)
+                                resolve('Reportes exportados')
+                        });
+                        //Copiar .jrxml
+                        await fs.copyFile(global.appRootApp + '\\resources\\reports\\informs\\' + elem.name + '.jrxml', dirFolderReports + '\\' + elem.name + '.jrxml', (err) => {
+                            if (err) {
+                                reject(err)
+                            }
+                            else {
+                                console.log(elem.name + '.jrxml copiado!');
+                            }
+                            arrCheckJrxmlFiles[i] = true;
+                            let stopJasper = true;
+                            let stopJrxml = true;
+                            for (let j = 0; j < arrCheckJasperFiles.length; j++) {
+                                if (arrCheckJasperFiles[j] == false) {
+                                    stopJasper = false;
+                                    break;
+                                }
+                            }
+                            for (let j = 0; j < arrCheckJrxmlFiles.length; j++) {
+                                if (arrCheckJrxmlFiles[j] == false) {
+                                    stopJrxml = false;
+                                    break;
+                                }
+                            }
+                            if (stopJasper && stopJrxml)
+                                resolve('Reportes exportados')
+                        });
+                    }
                 }
-                for(let i=0;i<resultReport.rows[0].fn_get_register.length;i++){
-                    const elem = resultReport.rows[0].fn_get_register[i]
-                    //Copiar .jasper
-                    await fs.copyFile(global.appRootApp + '\\resources\\reports\\informs\\' + elem.name + '.jasper', dirFolderReports + '\\' +  elem.name + '.jasper' , (err) => {
-                        if (err) {
-                            reject(err)
-                        }
-                        else {
-                            console.log(elem.name +'.jasper copiado!');
-                        }
-                        arrCheckJasperFiles[i] = true;
-                        let stopJasper = true;
-                        let stopJrxml = true;
-                        for(let j=0;j<arrCheckJasperFiles.length;j++) {
-                            if(arrCheckJasperFiles[j] == false) {
-                                stopJasper = false;
-                                break;
-                            }
-                        }
-                        for(let j=0;j<arrCheckJrxmlFiles.length;j++) {
-                            if(arrCheckJrxmlFiles[j] == false) {
-                                stopJrxml = false;
-                                break;
-                            }
-                        }
-                        if(stopJasper && stopJrxml)
-                            resolve('Reportes exportados')
-                    });
-                    //Copiar .jrxml
-                    await fs.copyFile(global.appRootApp + '\\resources\\reports\\informs\\' + elem.name + '.jrxml', dirFolderReports + '\\' +  elem.name + '.jrxml' , (err) => {
-                        if (err) {
-                            reject(err)
-                        }
-                        else {
-                            console.log(elem.name +'.jrxml copiado!');
-                        }
-                        arrCheckJrxmlFiles[i] = true;
-                        let stopJasper = true;
-                        let stopJrxml = true;
-                        for(let j=0;j<arrCheckJasperFiles.length;j++) {
-                            if(arrCheckJasperFiles[j] == false) {
-                                stopJasper = false;
-                                break;
-                            }
-                        }
-                        for(let j=0;j<arrCheckJrxmlFiles.length;j++) {
-                            if(arrCheckJrxmlFiles[j] == false) {
-                                stopJrxml = false;
-                                break;
-                            }
-                        }
-                        if(stopJasper && stopJrxml)
-                            resolve('Reportes exportados')
-                    });
-                }
+                else resolve('No existen reportes para esta capsula')
             }
+            else resolve('No existen reportes para esta capsula')
         }
         else
             reject(err)
@@ -474,40 +485,44 @@ const generateExportFilesAttach = async (idcapsule, dirFolderAttach) => new Prom
             const paramsAdjunto = ['cfgapl.attach',null,"WHERE id_capsules = '"+idcapsule+"' "]
             const resultAdjunto = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsAdjunto)
             if(resultAdjunto && resultAdjunto.rows && resultAdjunto.rows[0].fn_get_register){
-                for (let i = 0; i < resultAdjunto.rows[0].fn_get_register.length; i++) {
-                    arrCheckAttachs.push(false)
-                }
-                for(let i=0;i<resultAdjunto.rows[0].fn_get_register.length;i++){
-                    const elem = resultAdjunto.rows[0].fn_get_register[i]
-                    let arrPath = elem.path.split('/')
-                    const nameFolder = arrPath[3]
-                    //Obtener direccion de los adjuntos de parametros general
-                    const paramsAttach = ['cfgapl.general',null,"WHERE variable = 'dir_attach' "]
-                    const resultAttach = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsAttach)
-                    let paramDirAttach = ''
-                    if(resultAttach && resultAttach.rows && resultAttach.rows[0].fn_get_register){
-                        paramDirAttach = resultAttach.rows[0].fn_get_register[0].value
-                        paramDirAttach = paramDirAttach.replace('..', '')
-                        paramDirAttach = paramDirAttach.replace('/', '\\')
+                if(resultAdjunto.rows[0].fn_get_register.length > 0) {
+                    for (let i = 0; i < resultAdjunto.rows[0].fn_get_register.length; i++) {
+                        arrCheckAttachs.push(false)
                     }
-                    ncp.limit = 16;
-                    ncp(global.appRootApp + paramDirAttach + '\\' + nameFolder, dirFolderAttach + '\\' + nameFolder, function (err) {
-                        if (err) {
-                            reject(err)
+                    for (let i = 0; i < resultAdjunto.rows[0].fn_get_register.length; i++) {
+                        const elem = resultAdjunto.rows[0].fn_get_register[i]
+                        let arrPath = elem.path.split('/')
+                        const nameFolder = arrPath[3]
+                        //Obtener direccion de los adjuntos de parametros general
+                        const paramsAttach = ['cfgapl.general', null, "WHERE variable = 'dir_attach' "]
+                        const resultAttach = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsAttach)
+                        let paramDirAttach = ''
+                        if (resultAttach && resultAttach.rows && resultAttach.rows[0].fn_get_register) {
+                            paramDirAttach = resultAttach.rows[0].fn_get_register[0].value
+                            paramDirAttach = paramDirAttach.replace('..', '')
+                            paramDirAttach = paramDirAttach.replace('/', '\\')
                         }
-                        arrCheckAttachs[i] = true;
-                        let stop = true;
-                        for(let j=0;j<arrCheckAttachs.length;j++) {
-                            if(arrCheckAttachs[j] == false) {
-                                stop = false;
-                                break;
+                        ncp.limit = 16;
+                        ncp(global.appRootApp + paramDirAttach + '\\' + nameFolder, dirFolderAttach + '\\' + nameFolder, function (err) {
+                            if (err) {
+                                reject(err)
                             }
-                        }
-                        if(stop)
-                            resolve('Adjuntos exportados')
-                    });
+                            arrCheckAttachs[i] = true;
+                            let stop = true;
+                            for (let j = 0; j < arrCheckAttachs.length; j++) {
+                                if (arrCheckAttachs[j] == false) {
+                                    stop = false;
+                                    break;
+                                }
+                            }
+                            if (stop)
+                                resolve('Adjuntos exportados')
+                        });
+                    }
                 }
+                else resolve('No existen adjuntos para exportar en esta capsula')
             }
+            else resolve('No existen adjuntos para exportar en esta capsula')
         }
         else
             reject(err)
@@ -521,8 +536,12 @@ const generateExportFilesBD = async (idcapsule, dirFolder, resultSaveStructure) 
             console.log('directorio salva creado')
             //Salvar fichero con estructura si existe
             if(resultSaveStructure) {
-                let fileStructure = fs.createWriteStream(dirFolder + '\\e_' + Math.random() + '.sql')
+                let fileStructure = await fs.createWriteStream(dirFolder + '\\e_' + Math.random() + '.sql')
                 fileStructure.write(resultSaveStructure)
+                fileStructure.on('finish', function() {
+                    console.log('Terminado stream estructura')
+                });
+                fileStructure.end()
             }
             const client = await pool.obj_pool.connect()
             //Obtener aparte datos de la capsula
@@ -591,10 +610,15 @@ const generateExportFilesBD = async (idcapsule, dirFolder, resultSaveStructure) 
 
 })
 
-const generateFileCapsule = async (idcapsule, dirFolderBD, dirFolderFiles) => {
+const generateFileCapsule = async (idcapsule,dirFullFolder, dirFolderBD, dirFolderFiles, es_dep = false) => {
     let success = true
     let currentDate = new Date()
-    let dirFolder = global.appRootApp + '\\resources\\backups\\full_'+idcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
+    let dirFolder = ''
+    const subcapsule = idcapsule.substring(0,6)
+    if(!es_dep)
+        dirFolder = dirFullFolder + '\\main_'+subcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
+    else
+        dirFolder = dirFullFolder + '\\dep_'+subcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
     await copyFoldersForDirectory(dirFolder, dirFolderBD, dirFolderFiles)
         .then((value) => {
             console.log(value)
@@ -603,19 +627,26 @@ const generateFileCapsule = async (idcapsule, dirFolderBD, dirFolderFiles) => {
             success = false
             console.log(value)
         });
-    if(success){
-        await archiveDirectory(dirFolder)
-            .then((value) => {
-                console.log(value)
-                dirFolder = value
-            })
-            .catch((value) => {
-                success = false
-                console.log(value)
-            });
-    }
 
     return {'success': success, 'datos': dirFolder}
+}
+
+const generateZipCapsule = async (dirFolder) => {
+    let success = true
+    let msg = ''
+
+    await archiveDirectory(dirFolder)
+        .then((value) => {
+            console.log(value)
+            msg = value
+        })
+        .catch((value) => {
+            success = false
+            msg = value
+            console.log(value)
+        });
+
+    return {'success': success, 'datos': msg}
 }
 
 const copyFoldersForDirectory = async (dirFolder, dirFolderBD, dirFolderFiles) => new Promise(async (resolve, reject) => {
@@ -635,7 +666,7 @@ const copyFoldersForDirectory = async (dirFolder, dirFolderBD, dirFolderFiles) =
                     stop = false;
                 }
                 if(stop)
-                    resolve('Comprimido creado')
+                    resolve('Ficheros para comprimir copiados')
             });
 
             await ncp(dirFolderFiles, dirFolder + '\\files', function (err) {
@@ -648,7 +679,7 @@ const copyFoldersForDirectory = async (dirFolder, dirFolderBD, dirFolderFiles) =
                     stop = false;
                 }
                 if(stop)
-                    resolve('Comprimido creado')
+                    resolve('Ficheros para comprimir copiados')
             });
         }
         else
@@ -753,21 +784,231 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
         const tipo = await fileType.fromFile(dirFile)
         //Comprobar fichero antes de iniciar el proceso
         if(tipo['ext'] == 'zip' && tipo['mime'] == 'application/zip'){
+            let breakImport = false
+            let msgBreakImport = ''
+            let arrCapsules = [];
             await extract(dirFile, { dir: dirTemp+'\\tmp' })
+            //Procesar primero capsulas dependencias si existen
+            await checkCapsulesVersion(dirTemp)
+                .then((value) => {
+                    console.log(value)
+                })
+                .catch((value) => {
+                    breakImport = true
+                    msgBreakImport = value
+                    console.log(value)
+                });
+            if(!breakImport) {
+                //Ciclar por todas las capsulas para su importacion
+                const treeTmp = await dirTree(dirTemp + '\\tmp');
+                for (let i = 0; i < treeTmp.children.length; i++) {
+                    if (treeTmp.children[i].name.indexOf("dep_") !== -1) {
+                        arrCapsules.push(treeTmp.children[i].name)
+                    }
+                }
+                for (let i = 0; i < treeTmp.children.length; i++) {
+                    if (treeTmp.children[i].name.indexOf("main_") !== -1) {
+                        arrCapsules.push(treeTmp.children[i].name)
+                    }
+                }
+                for(let i=0;i<arrCapsules.length;i++) {
+                    let temp = []
+                    temp.push(false)
+                    temp.push(false)
+                    arrCheckImport.push(temp)
+                }
+                if (treeTmp.children) {
+                    for (let i = 0; i < arrCapsules.length; i++) {
+                        elem = arrCapsules[i]
+
+                        let id_section = ''
+                        let id_language = ''
+                        //Comprobar si la capsula existe, sino, crearla
+                        //Checkear version de la capsula
+                        let version = '1.0';
+                        let description = ' ';
+                        let licencetext = ' ';
+                        let nameCapsule = ''
+                        let idCapsule = ''
+                        //Obtener valores de la capsula del fichero .txt
+                        const tree = await dirTree(dirTemp + '\\tmp\\' + elem + '\\bd', {extensions: /\.txt/});
+                        if (tree.children) {
+                            await lineReader.eachLine(dirTemp + '\\tmp\\' + elem + '\\bd\\' + tree.children[0].name, async function (line, last) {
+                                try {
+                                    if (line) {
+                                        let arrLine = line.split(',')
+                                        idCapsule = arrLine[0]
+                                        nameCapsule = arrLine[1]
+                                        description = arrLine[2]
+                                        version = arrLine[4]
+                                        licencetext = arrLine[6]
+                                        id_language = arrLine[12]
+                                    }
+                                }
+                                catch (err) {
+                                    console.log('Error leyendo el fichero')
+                                }
+
+                            });
+                        }
+                        await sleep(50)
+                        let existeNameCap = false
+                        //Buscar si existe una capsula con el mismo nombre y distinto ID
+                        const paramsName = ['cfgapl.capsules', null, "WHERE namex = '" + nameCapsule + "' "]
+                        const resultName = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsName)
+                        if (resultName && resultName.rows[0].fn_get_register) {
+                            let idCap = resultName.rows[0].fn_get_register[0].id
+                            existeCap = true
+                            if (idCap !== idCapsule)
+                                existeNameCap = true
+                        }
+
+                        const paramsCapsule = ['cfgapl.capsules', idCapsule]
+                        const resultCapsule = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsCapsule)
+                        //Obtencion de section capsule
+                        const paramsSectionCapsule = ['cfgapl.sections', null, "WHERE namex = 'Sec_capsules' "];
+                        const resultSectionCapsule = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSectionCapsule);
+                        if (resultSectionCapsule)
+                            id_section = resultSectionCapsule.rows[0].fn_get_register[0].id
+
+                        if (resultCapsule && !resultCapsule.rows[0].fn_get_register) {
+                            var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
+                            //Obtencion de lenguaje spanish
+                            if (!id_language) {
+                                const paramsLanguage = ['cfgapl.languages', null, "WHERE namex = 'Spanish from Spain' "];
+                                const resultLanguage = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsLanguage);
+                                if (resultLanguage)
+                                    id_language = resultLanguage.rows[0].fn_get_register[0].id
+                            }
+
+                            //columnas a insertar
+                            columnasInsertAux.push('id')
+                            columnasInsertAux.push('namex')
+                            columnasInsertAux.push('description')
+                            columnasInsertAux.push('version')
+                            columnasInsertAux.push('licencetext')
+                            columnasInsertAux.push('idlanguage')
+                            columnasInsertAux.push('creator')
+                            //valores a insertar
+                            if (existeNameCap)
+                                nameCapsule += ' '
+                            valuesInsertAux.push(" '" + idCapsule + "'")
+                            valuesInsertAux.push(" '" + nameCapsule + "'")
+                            valuesInsertAux.push(" '" + description + "'")
+                            valuesInsertAux.push(" '" + version + "'")
+                            valuesInsertAux.push(" '" + licencetext + "'")
+                            valuesInsertAux.push(" '" + id_language + "'")
+                            valuesInsertAux.push("'" + req.session.id_user + "'")
+
+                            paramsInsert.push(id_section)
+                            paramsInsert.push(columnasInsertAux.join(','))
+                            paramsInsert.push(valuesInsertAux.join(','))
+                            paramsInsert.push(null)
+                            paramsInsert.push(null)
+                            paramsInsert.push(req.session.id_user)
+
+                            await insertRegister(req, paramsInsert);
+                            console.log('Insertada capsula!')
+                        }
+                        else if (resultCapsule && resultCapsule.rows[0].fn_get_register) {
+                            var paramsInsert = [], valuesInsertAux = [];
+                            valuesInsertAux.push("namex = '" + nameCapsule + "'")
+                            valuesInsertAux.push("description = '" + description + "'")
+                            valuesInsertAux.push("version = '" + version + "'")
+                            valuesInsertAux.push("licencetext = '" + licencetext + "'")
+                            valuesInsertAux.push("idlanguage = '" + id_language + "'")
+                            valuesInsertAux.push("modifier = '" + req.session.id_user + "'")
+
+                            paramsInsert.push(id_section)
+                            paramsInsert.push(valuesInsertAux.join(','))
+                            paramsInsert.push(idCapsule)
+                            paramsInsert.push(req.session.id_user)
+                            await updateRegister(req, paramsInsert);
+                            console.log('Actualizada capsula!')
+                        }
+                        //Chequear término de importación para hacer resolve
+                        await copyFromFilesBD(req, dirTemp, elem)
+                            .then((value) => {
+                                arrCheckImport[i][0] = true;
+                                let stop = true;
+                                for(let j=0;j<arrCapsules.length;j++){
+                                    if(arrCheckImport[j][0] === false || arrCheckImport[j][1] === false){
+                                        stop = false
+                                        break;
+                                    }
+                                }
+                                arrCheck = []
+                                if (stop)
+                                    resolve(value)
+                            })
+                            .catch((value) => {
+                                reject(value)
+                            });
+
+                        await copyFromFilesStructure(req, dirTemp, elem)
+                            .then((value) => {
+                                arrCheckImport[i][1] = true;
+                                let stop = true;
+                                for(let j=0;j<arrCapsules.length;j++){
+                                    if(arrCheckImport[j][0] === false || arrCheckImport[j][1] === false){
+                                        stop = false
+                                        break;
+                                    }
+                                }
+                                if (stop)
+                                    resolve(value)
+                            })
+                            .catch((value) => {
+                                reject(value)
+                            });
+                    }
+                }
+            }
+            else
+                reject(msgBreakImport)
+        }
+        else{
+            reject('El archivo es incorrecto')
+        }
+
+    });
+
+})
+
+const checkCapsulesVersion = async (dirTemp) => new Promise(async (resolve, reject) => {
+    const treeTmp = await dirTree(dirTemp+'\\tmp');
+    let arrCapsules = [];
+    //Crear arreglo con las capsulas ordenadas, dejando la principal al final
+    if(treeTmp.children){
+        for(let i=0;i<treeTmp.children.length;i++){
+            if(treeTmp.children[i].name.indexOf("dep_") !== -1){
+                arrCapsules.push(treeTmp.children[i].name)
+            }
+        }
+        for(let i=0;i<treeTmp.children.length;i++){
+            if(treeTmp.children[i].name.indexOf("main_") !== -1){
+                arrCapsules.push(treeTmp.children[i].name)
+            }
+        }
+
+        for (let i = 0; i < arrCapsules.length; i++){
+            elem = arrCapsules[i]
+
             let id_section = ''
             let id_language = ''
             //Comprobar si la capsula existe, sino, crearla
+            //Checkear version de la capsula
             let version = '1.0';
             let description = ' ';
             let licencetext = ' ';
             let nameCapsule = ''
             let idCapsule = ''
             //Obtener valores de la capsula del fichero .txt
-            const tree = await dirTree(dirTemp+'\\tmp\\bd', { extensions: /\.txt/ });
-            if(tree.children) {
-                await lineReader.eachLine(dirTemp + '\\tmp\\bd\\' + tree.children[0].name, async function (line, last) {
+            const tree = await dirTree(dirTemp + '\\tmp\\' + elem + '\\bd', {extensions: /\.txt/});
+            if (tree.children) {
+                await lineReader.eachLine(dirTemp + '\\tmp\\' + elem + '\\bd\\' + tree.children[0].name, async function (line, last) {
                     try {
-                        if(line) {
+                        if (line) {
                             let arrLine = line.split(',')
                             idCapsule = arrLine[0]
                             nameCapsule = arrLine[1]
@@ -786,129 +1027,74 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
             await sleep(50)
             let existeNameCap = false
             //Buscar si existe una capsula con el mismo nombre y distinto ID
-            const paramsName = ['cfgapl.capsules',null,"WHERE namex = '"+nameCapsule+"' "]
+            const paramsName = ['cfgapl.capsules', null, "WHERE namex = '" + nameCapsule + "' "]
             const resultName = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsName)
-            if(resultName && resultName.rows[0].fn_get_register){
+            if (resultName && resultName.rows[0].fn_get_register) {
                 let idCap = resultName.rows[0].fn_get_register[0].id
-                if(idCap !== idCapsule)
+                existeCap = true
+                if (idCap !== idCapsule)
                     existeNameCap = true
-            }
-            const paramsCapsule = ['cfgapl.capsules',idCapsule]
-            const resultCapsule = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsCapsule)
-            //Obtencion de section capsule
-            const paramsSectionCapsule = ['cfgapl.sections',null,"WHERE namex = 'Sec_capsules' "];
-            const resultSectionCapsule = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSectionCapsule);
-            if(resultSectionCapsule)
-                id_section = resultSectionCapsule.rows[0].fn_get_register[0].id
-
-            if(resultCapsule && !resultCapsule.rows[0].fn_get_register) {
-                 var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
-                 //Obtencion de lenguaje spanish
-                if(!id_language) {
-                    const paramsLanguage = ['cfgapl.languages', null, "WHERE namex = 'Spanish from Spain' "];
-                    const resultLanguage = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsLanguage);
-                    if (resultLanguage)
-                        id_language = resultLanguage.rows[0].fn_get_register[0].id
+                //Comparar version actual contra version importada
+                let posCurrVersion = null
+                let posImportVersion = null
+                let currentVersion = resultName.rows[0].fn_get_register[0].version
+                let arrCurrentVersion = currentVersion.split('.')
+                let arrImportVersion = version.split('.')
+                //1er nivel
+                if (arrImportVersion)
+                    posImportVersion = arrImportVersion[0]
+                if (arrCurrentVersion)
+                    posCurrVersion = arrCurrentVersion[0]
+                if (posImportVersion && posCurrVersion) {
+                    if (parseInt(posImportVersion) < parseInt(posCurrVersion)) {
+                        console.log('La versión de ' + nameCapsule + ' es menor que la actual')
+                        reject('La versión de ' + nameCapsule + ' es menor que la actual')
+                    }
+                }
+                //2do nivel
+                if (arrImportVersion && arrImportVersion[1])
+                    posImportVersion = arrImportVersion[1]
+                if (arrCurrentVersion && arrCurrentVersion[1])
+                    posCurrVersion = arrCurrentVersion[1]
+                if (posImportVersion && posCurrVersion) {
+                    if (parseInt(posImportVersion) < parseInt(posCurrVersion)) {
+                        console.log('La versión de ' + nameCapsule + ' es menor que la actual')
+                        reject('La versión de ' + nameCapsule + ' es menor que la actual')
+                    }
+                }
+                //3er nivel
+                if (arrImportVersion && arrImportVersion[2])
+                    posImportVersion = arrImportVersion[2]
+                if (arrCurrentVersion && arrCurrentVersion[2])
+                    posCurrVersion = arrCurrentVersion[2]
+                if (posImportVersion && posCurrVersion) {
+                    if (parseInt(posImportVersion) < parseInt(posCurrVersion)) {
+                        console.log('La versión de ' + nameCapsule + ' es menor que la actual')
+                        reject('La versión de ' + nameCapsule + ' es menor que la actual')
+                    }
                 }
 
-                 //columnas a insertar
-                 columnasInsertAux.push('id')
-                 columnasInsertAux.push('namex')
-                 columnasInsertAux.push('description')
-                 columnasInsertAux.push('version')
-                 columnasInsertAux.push('licencetext')
-                 columnasInsertAux.push('idlanguage')
-                 columnasInsertAux.push('creator')
-                 //valores a insertar
-                 if(existeNameCap)
-                     nameCapsule += ' '
-                 valuesInsertAux.push(" '" + idCapsule + "'")
-                 valuesInsertAux.push(" '" + nameCapsule + "'")
-                 valuesInsertAux.push(" '" + description + "'")
-                 valuesInsertAux.push(" '"+version+"'")
-                 valuesInsertAux.push(" '"+licencetext+"'")
-                 valuesInsertAux.push(" '" + id_language + "'")
-                 valuesInsertAux.push("'" + req.session.id_user + "'")
-
-                 paramsInsert.push(id_section)
-                 paramsInsert.push(columnasInsertAux.join(','))
-                 paramsInsert.push(valuesInsertAux.join(','))
-                 paramsInsert.push(null)
-                 paramsInsert.push(null)
-                 paramsInsert.push(req.session.id_user)
-
-                await insertRegister(req, paramsInsert);
-                console.log('Insertada capsula!')
             }
-            else if(resultCapsule && resultCapsule.rows[0].fn_get_register){
-                var paramsInsert = [], valuesInsertAux = [];
-                valuesInsertAux.push("namex = '" + nameCapsule + "'" )
-                valuesInsertAux.push("description = '" + description + "'" )
-                valuesInsertAux.push("version = '" + version + "'" )
-                valuesInsertAux.push("licencetext = '" + licencetext + "'" )
-                valuesInsertAux.push("idlanguage = '" + id_language + "'" )
-                valuesInsertAux.push("modifier = '" + req.session.id_user + "'" )
-
-                paramsInsert.push(id_section)
-                paramsInsert.push(valuesInsertAux.join(','))
-                paramsInsert.push(idCapsule)
-                paramsInsert.push(req.session.id_user)
-                await updateRegister(req, paramsInsert);
-                console.log('Actualizada capsula!')
-            }
-            //Chequear término de importación para hacer resolve
-            arrCheckImport.push(false)
-            arrCheckImport.push(false)
-            await copyFromFilesBD(req, dirTemp, dirFile)
-                .then((value) => {
-                    arrCheckImport[0] = true;
-                    let stop = true;
-                    if(arrCheckImport[1] == false) {
-                        stop = false;
-                    }
-                    if(stop)
-                        resolve(value)
-                })
-                .catch((value) => {
-                    reject(value)
-                });
-
-            await copyFromFilesStructure(req, dirTemp, dirFile)
-                .then((value) => {
-                    arrCheckImport[1] = true;
-                    let stop = true;
-                    if(arrCheckImport[0] == false) {
-                        stop = false;
-                    }
-                    if(stop)
-                        resolve(value)
-                })
-                .catch((value) => {
-                    reject(value)
-                });
         }
-        else{
-            reject('El archivo es incorrecto')
-        }
-
-    });
-
+        resolve('Verificacion de capsulas correcta')
+    }
 })
 
-const copyFromFilesBD = async (req, dirTemp, dirFile) => new Promise(async (resolve, reject) => {
+const copyFromFilesBD = async (req, dirTemp, nameFolder) => new Promise(async (resolve, reject) => {
+
     let nameFileStructure = ''
     //Después de extraer, procesar ficheros a importar
-    const tree = await dirTree(dirTemp+'\\tmp\\bd', { extensions: /\.sql/ });
+    const tree = await dirTree(dirTemp+'\\tmp\\'+nameFolder+'\\bd', { extensions: /\.sql/ });
     if(tree.children) {
         nameFileStructure = tree.children[0].name
-        await fs.readFile(dirTemp + '\\tmp\\bd\\' + nameFileStructure, 'utf-8', async (err, data) => {
+        await fs.readFile(dirTemp + '\\tmp\\'+nameFolder+'\\bd\\' + nameFileStructure, 'utf-8', async (err, data) => {
             if (err) {
                 reject(err)
             } else {
                 await pool.executeQuery(data)
                 console.log('Importada estructura!')
                 //Proceder a importar datos
-                const tree = await dirTree(dirTemp+'\\tmp\\bd', { extensions: /\.csv/ });
+                const tree = await dirTree(dirTemp+'\\tmp\\'+nameFolder+'\\bd', { extensions: /\.csv/ });
                 const client = await pool.obj_pool.connect()
                 let orderedArr = await quickSort(tree.children)
                 if(orderedArr){
@@ -938,7 +1124,7 @@ const copyFromFilesBD = async (req, dirTemp, dirFile) => new Promise(async (reso
                             if(resultKey && resultKey.rows[0])
                                 campoLlave = resultKey.rows[0].columna
                             //Importar de este fichero
-                            await fs.readFile(dirTemp + '\\tmp\\bd\\' + nameFile, 'utf-8', async (err, data) => {
+                            await fs.readFile(dirTemp + '\\tmp\\'+nameFolder+'\\bd\\' + nameFile, 'utf-8', async (err, data) => {
                                 if (err) {
                                     reject(err)
                                 } else {
@@ -949,7 +1135,7 @@ const copyFromFilesBD = async (req, dirTemp, dirFile) => new Promise(async (reso
                                         "DELETE FROM " + nameTempTable + "; " +
                                         "COPY " + nameTempTable + " FROM STDIN WITH NULL as 'NULL' DELIMITER ';';";
                                     var stream = await client.query(copyFrom(queryCopy))
-                                    var fileStream = await fs.createReadStream(dirTemp + '\\tmp\\bd\\' + nameFile)
+                                    var fileStream = await fs.createReadStream(dirTemp + '\\tmp\\'+nameFolder+'\\bd\\' + nameFile)
                                     fileStream.on('error', async function (err) {
                                         console.log(nameTable + ': ', err)
                                         //await pool.executeQuery("ALTER TABLE "+nameTable+" ENABLE TRIGGER ALL;")
@@ -998,16 +1184,16 @@ const copyFromFilesBD = async (req, dirTemp, dirFile) => new Promise(async (reso
     }
 })
 
-const copyFromFilesStructure = async (req, dirTemp, dirFile) => new Promise(async (resolve, reject) => {
+const copyFromFilesStructure = async (req, dirTemp, nameFolder) => new Promise(async (resolve, reject) => {
     let resultStructure = true
     let resultReports = true
     let resultAttach = true
     let msg = ''
 
 
-    const dirFolderStructure = dirTemp + '\\tmp\\files\\structure'
-    const dirFolderReports = dirTemp + '\\tmp\\files\\reports'
-    const dirFolderAttach = dirTemp + '\\tmp\\files\\attach'
+    const dirFolderStructure = dirTemp + '\\tmp\\'+nameFolder+'\\files\\structure'
+    const dirFolderReports = dirTemp + '\\tmp\\'+nameFolder+'\\files\\reports'
+    const dirFolderAttach = dirTemp + '\\tmp\\'+nameFolder+'\\files\\attach'
     //Importar estructura de la capsula
     await generateImportFilesStructure(dirFolderStructure)
         .then((value) => {
@@ -1200,7 +1386,8 @@ const generateBackupApplication = async (dirApp) => new Promise(async (resolve, 
     ncp.limit = 30;
     let options = {
         filter: function (file) {
-            let res = file.toString().indexOf("\\save_restore") !== -1;
+            let res = (file.toString().indexOf("\\save_restore") !== -1 || file.toString().indexOf("\\node_modules") !== -1
+            || file.toString().indexOf("\\html") !== -1);
             return !res;
         },
     };
@@ -1214,13 +1401,13 @@ const generateBackupApplication = async (dirApp) => new Promise(async (resolve, 
 
 })
 
-const importBackup = (req, dirFolderRestoreGlobal) => new Promise(async (resolve, reject) => {
+const importBackup = (dirFolderRestoreGlobal,globalDir) => new Promise(async (resolve, reject) => {
     let success = true
     let msg = ''
     const tree = await dirTree(dirFolderRestoreGlobal, { extensions: /\.zip/ });
     if(tree.children) {
         try {
-            await uploadBackup(req, dirFolderRestoreGlobal, tree.children[0].name)
+            await uploadBackup(dirFolderRestoreGlobal, tree.children[0].name,globalDir)
                 .then((value) => {
                     msg = value
                     console.log('Concluída restaura satisfactoriamente')
@@ -1248,7 +1435,7 @@ const importBackup = (req, dirFolderRestoreGlobal) => new Promise(async (resolve
 })
 
 
-const uploadBackup = (req,dirTemp,nameFile) => new Promise(async (resolve, reject) => {
+const uploadBackup = (dirTemp,nameFile,globalDir) => new Promise(async (resolve, reject) => {
     const tipo = await fileType.fromFile(dirTemp + '/' + nameFile)
     //Comprobar fichero antes de iniciar el proceso
     if(tipo['ext'] == 'zip' && tipo['mime'] == 'application/zip'){
@@ -1257,7 +1444,7 @@ const uploadBackup = (req,dirTemp,nameFile) => new Promise(async (resolve, rejec
             //Chequear término de importación para hacer resolve
             arrCheckImport.push(false)
             arrCheckImport.push(false)
-            await restoreBD(req, dirTemp)
+            await restoreBD(dirTemp,globalDir)
                 .then((value) => {
                     arrCheckImport[0] = true;
                     let stop = true;
@@ -1271,7 +1458,7 @@ const uploadBackup = (req,dirTemp,nameFile) => new Promise(async (resolve, rejec
                     reject(value)
                 });
 
-            await restoreApp(dirTemp)
+            await restoreApp(dirTemp,globalDir)
                 .then((value) => {
                     arrCheckImport[1] = true;
                     let stop = true;
@@ -1295,8 +1482,8 @@ const uploadBackup = (req,dirTemp,nameFile) => new Promise(async (resolve, rejec
 
 })
 
-const restoreBD = (req,dirTemp) => new Promise(async (resolve, reject) => {
-    const rutaFicheroRestaura = global.appRootApp + 'resources\\restaura_bd.bat'
+const restoreBD = (dirTemp,globalDir) => new Promise(async (resolve, reject) => {
+    const rutaFicheroRestaura = globalDir + 'resources\\restaura_bd.bat'
     let rutaBackup = ''
     const tree = await dirTree(dirTemp+'\\tmp', { extensions: /\.backup/ });
     if(tree && tree.children){
@@ -1382,10 +1569,10 @@ const restoreBD = (req,dirTemp) => new Promise(async (resolve, reject) => {
     }
 })
 
-const restoreApp = (dirTemp) => new Promise(async (resolve, reject) => {
+const restoreApp = (dirTemp,globalDir) => new Promise(async (resolve, reject) => {
     ncp.limit = 30;
 
-    ncp(dirTemp + '\\tmp', global.appRootApp, function (err) {
+    ncp(dirTemp + '\\tmp', globalDir, function (err) {
         if (err) {
             reject(err)
         }
@@ -1416,6 +1603,37 @@ const updateRegister = async (req, params_insert) => {
     }
     return result.rows[0].fn_update_register
 }
+
+const cleanCapsuleFolder = async (tree,dirFullFolder) => new Promise(async (resolve, reject) => {
+    if(tree.children){
+        const largo = tree.children.length
+        let eliminados = []
+        for(let i=0;i<largo;i++)
+            eliminados.push(false)
+
+        for(let i=0;i<largo;i++){
+            const elem = tree.children[i]
+            if(elem.name.indexOf("dep_") !== -1 || elem.name.indexOf("main_") !== -1)
+                eliminados[i] = true
+            if(elem.name.indexOf("dep_") === -1 && elem.name.indexOf("main_") === -1){
+                await rimraf(dirFullFolder+'\\'+elem.name, () => {
+                    eliminados[i] = true;
+                    let stop = true;
+                    for(let j=0;j<largo;j++){
+                        if(eliminados[j] == false){
+                            stop = false
+                            break;
+                        }
+                    }
+                    if(stop)
+                        resolve('Limpiada carpeta capsula')
+                });
+            }
+        }
+
+    }
+    else reject('No existen carpetas a limpiar')
+})
 
 /*const deleteDir = (dirFile, filename) => {
     let result = ''
@@ -1523,4 +1741,6 @@ objGenFunc.importCapsule = importCapsule
 objGenFunc.saveDatabase = saveDatabase
 objGenFunc.saveAplication = saveAplication
 objGenFunc.importBackup = importBackup
+objGenFunc.generateZipCapsule = generateZipCapsule
+objGenFunc.cleanCapsuleFolder = cleanCapsuleFolder
 module.exports = objGenFunc
