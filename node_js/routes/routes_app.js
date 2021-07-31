@@ -1,4 +1,5 @@
 var express = require("express");
+const pool = require('../connection/server-db')
 var router = express.Router();
 var fs = require('fs');
 const rimraf = require("rimraf");
@@ -370,16 +371,87 @@ router.get('/newalerts', async function (req, res) {
 
 router.post('/savecapsule', async function (req, res) {
     const idcapsule = req.body.idcapsule
+    let msg = ''
     let successFull = true
-    var resultBD = await objects.functions.saveCapsuleBD(idcapsule)
-    var resultFile = await objects.functions.saveCapsuleFiles(idcapsule)
-    let dirResult = await objects.functions.generateFileCapsule(idcapsule,resultBD.datos,resultFile.datos)
-    let successBD = resultBD.success
-    let successFile = resultFile.success
-    if(!successBD || !successFile)
-        successFull = false
+    let currentDate = new Date()
+    const subcapsule = idcapsule.substring(0,6)
+    const dirFullFolder = global.appRootApp + '\\resources\\backups\\full_'+subcapsule+'[n]'+currentDate.getSeconds()+currentDate.getMilliseconds()
+    await fs.mkdirSync(dirFullFolder, {recursive: true}, (err) => {
+        if (err) {
+            successFull = false;
+            msg = 'Error creando la carpeta, ' + err
+        }
+    });
+    await fs.exists(dirFullFolder, (exists) => {
+        if(!exists){
+            successFull = false;
+            msg = 'Ha ocurrido un error'
+        }
+    });
+    if(successFull) {
+        //Buscar y exportar todas las dependencias, luego la principal
+        const paramsDependencies = ['cfgapl.capsules_dependency', null, "WHERE id_capsules = '" + idcapsule + "' "]
+        const resultDependencies = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsDependencies)
+        if (resultDependencies && resultDependencies.rows && resultDependencies.rows[0].fn_get_register) {
+            if (resultDependencies.rows[0].fn_get_register.length > 0) {
+                for (let i = 0; i < resultDependencies.rows[0].fn_get_register.length; i++) {
+                    const elem = resultDependencies.rows[0].fn_get_register[i]
+                    let idcapsule_dep = elem.id_capsules_dependency
+                    let resultBD = await objects.functions.saveCapsuleBD(idcapsule_dep, dirFullFolder)
+                    let resultFile = await objects.functions.saveCapsuleFiles(idcapsule_dep, dirFullFolder)
+                    let resultFolder = await objects.functions.generateFileCapsule(idcapsule_dep, dirFullFolder, resultBD.datos, resultFile.datos, true)
 
-    return res.json({'success': successFull, 'datos': dirResult.datos})
+                    let successFolder = resultFolder.success
+                    let successBD = resultBD.success
+                    let successFile = resultFile.success
+                    if (!successBD || !successFile || !successFolder) {
+                        msg = 'Ha ocurrido un error exportando una dependencia'
+                        break;
+                    }
+                }
+            }
+        }
+        if (msg === '') {
+            var resultBD = await objects.functions.saveCapsuleBD(idcapsule, dirFullFolder)
+            var resultFile = await objects.functions.saveCapsuleFiles(idcapsule, dirFullFolder)
+            let resultFolder = await objects.functions.generateFileCapsule(idcapsule, dirFullFolder, resultBD.datos, resultFile.datos)
+
+            let successFolder = resultFolder.success
+            let successBD = resultBD.success
+            let successFile = resultFile.success
+            if (!successBD || !successFile || !resultFolder) {
+                msg = 'Ha ocurrido un error exportando la cápsula'
+                successFull = false
+            }
+        }
+        if (msg === '') {
+            let cleaned = false
+            //Eliminar carpetas innecesarias antes de comprimir
+            const tree = await dirTree(dirFullFolder);
+            await objects.functions.cleanCapsuleFolder(tree,dirFullFolder)
+                .then((value) => {
+                    cleaned = true
+                    console.log('Limpiada carpeta a comprimir!')
+                })
+                .catch((value) => {
+                    msg = value
+                    console.log('Error al limpiar carpeta a comprimir!')
+                    cleaned = true
+                });
+            while (!cleaned) {
+                await sleep(10)
+            }
+            if(cleaned && msg === '') {
+                const result = await objects.functions.generateZipCapsule(dirFullFolder)
+                if (!result.success) {
+                    successFull = false
+                }
+                msg = result.datos
+            }
+        }
+    }
+
+    return res.json({'success': successFull, 'datos': msg})
 })
 
 router.get('/capsules', async function (req, res) {
@@ -470,7 +542,7 @@ router.post('/restoredatabase', async function (req, res) {
             await sleep(20)
         }
         if(success) {
-            await objects.functions.importBackup(req, dirFolderRestoreGlobal)
+            await objects.functions.importBackup(dirFolderRestoreGlobal)
                 .then((value) => {
                     success = value[0]
                     result = value[1]
