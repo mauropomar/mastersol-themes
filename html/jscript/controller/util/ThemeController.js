@@ -91,4 +91,4 @@ Ext.define('MasterSol.controller.util.ThemeController', {
         }
         window.alignTo(panelMenu, 'bl-bl');
     }
-})
+});
