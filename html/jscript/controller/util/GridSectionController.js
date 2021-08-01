@@ -10,6 +10,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             selType: (atributos.section_checked) ? 'checkboxmodel' : null,
             idsection: section.id,
             idmenu: windowParent.idmenu,
+            page:0,
             name: name,
             section_checked: atributos.section_checked,
             store: this.getStore(columns, data),

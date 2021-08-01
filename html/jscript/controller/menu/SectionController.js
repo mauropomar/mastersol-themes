@@ -653,16 +653,18 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         Mask.show();
         var store = grid.getStore();
         var total = store.getCount();
-        //  var start = 0;
-        //  var limit = 30;
         grid.page++;
-        var url = 'http://localhost:3001/dev/localization/countries/get?page=' +
-            grid.page;
+        var panel = grid.up('panel');
+        var idparent = (panel.idparent === null)?null:panel.idparent;
+        var idrecordparent = (panel.idrecordparent === null)?null:panel.idrecordparent;
+        var url = 'http://localhost:3001/dev/localization/countries/get?page=' +  grid.page;
         var load = {
             url: url,
             method: 'GET',
             scope: this,
             params: {
+                idseccionpadre:idparent,
+                idrecordparent:idrecordparent,
                 idmenu: grid.idmenu,
                 idsection: grid.idsection
             },
