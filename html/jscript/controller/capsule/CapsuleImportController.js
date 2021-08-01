@@ -104,7 +104,6 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
             scope: this,
             success: function (response) {
                 Mask.hide();
-                location.href = 'index.html';
             }
         };
         Ext.Ajax.request(restart);
