@@ -644,6 +644,40 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 tabpanel['expanded'] = false;
             }
         }
-        ;
+    },
+
+    paginate: function (grid) {
+        var Mask = new Ext.LoadMask(grid, {
+            msg: 'Cargando...'
+        });
+        Mask.show();
+        var store = grid.getStore();
+        var total = store.getCount();
+        //  var start = 0;
+        //  var limit = 30;
+        grid.page++;
+        var url = 'http://localhost:3001/dev/localization/countries/get?page=' +
+            grid.page;
+        var load = {
+            url: url,
+            method: 'GET',
+            scope: this,
+            params: {
+                idmenu: grid.idmenu,
+                idsection: grid.idsection
+            },
+            success: function (response) {
+                Mask.hide();
+                var json = Ext.JSON.decode(response.responseText);
+                var data = json.data;
+                var j = total;
+                for (var i = 0; i < data.length; i++) {
+                    store.insert(j + 1, data[i]);
+                    j++;
+                }
+
+            }
+        };
+        Ext.Ajax.request(load);
     }
 })

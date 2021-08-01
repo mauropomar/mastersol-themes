@@ -29,6 +29,15 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             listeners: {
                 'columnmove': function (ct, column, from, to, event) {
                     //     MasterApp.util.moveColumn(ct, column, from, to, event)
+                },
+                'afterrender': function (comp) {
+                    comp.getTargetEl().on('mouseup', function (e, t) {
+                        var height = comp.getTargetEl().getHeight();
+                        if (height + t.scrollTop >= t.scrollHeight) {
+                            MasterApp.section.paginate(comp);
+                        }
+                    });
+
                 }
             }
         })
