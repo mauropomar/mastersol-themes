@@ -6,7 +6,7 @@ const getSections = async (req) => {
         req.body.sectionId,
         req.session.id_rol,
         req.body.start ? req.body.start : 0,
-        req.body.limit ? req.body.limit : 1000,
+        req.body.limit ? req.body.limit : 50,
         req.session.id_user
     ]
     const query = "SELECT cfgapl.fn_get_sections($1,$2,$3,$4,$5)"

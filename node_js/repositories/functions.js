@@ -815,11 +815,17 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                     let temp = []
                     temp.push(false)
                     temp.push(false)
+                    temp.push(false)
                     arrCheckImport.push(temp)
                 }
+                let temp = []
+                temp.push(false)
+                temp.push(false)
+                temp.push(false)
+                arrCheckImport.push(temp)
                 if (treeTmp.children) {
                     for (let i = 0; i < arrCapsules.length; i++) {
-                        elem = arrCapsules[i]
+                        let elem = arrCapsules[i]
 
                         let id_section = ''
                         let id_language = ''
@@ -858,7 +864,6 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                         const resultName = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsName)
                         if (resultName && resultName.rows[0].fn_get_register) {
                             let idCap = resultName.rows[0].fn_get_register[0].id
-                            existeCap = true
                             if (idCap !== idCapsule)
                                 existeNameCap = true
                         }
@@ -929,10 +934,10 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                         //Chequear término de importación para hacer resolve
                         await copyFromFilesStructure(req, dirTemp, elem)
                             .then((value) => {
-                                arrCheckImport[i][1] = true;
+                                arrCheckImport[i][0] = true;
                                 let stop = true;
                                 for(let j=0;j<arrCapsules.length;j++){
-                                    if(arrCheckImport[j][0] === false || arrCheckImport[j][1] === false){
+                                    if(arrCheckImport[j][0] === false || arrCheckImport[j][1] === false || arrCheckImport[j][2] === false){
                                         stop = false
                                         break;
                                     }
@@ -944,13 +949,29 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                                 reject(value)
                             });
                         //Buscar si existen scripts en first.sql para ejecutarlos antes de insertar o actualizar la capsula
-                        
+                        let existeFirts = true
+                        let existeLast = true
+                        await fs.exists(dirTemp + '\\tmp\\' + elem + '\\files\\structure\\c_' + idCapsule + '\\scripts_db\\first.sql', (exists) => {
+                            if(!exists){
+                                existeFirts = false;
+                            }
+                        });
+                        if(existeFirts) {
+                            await fs.readFile(dirTemp + '\\tmp\\' + elem + '\\files\\structure\\c_' + idCapsule + '\\scripts_db\\first.sql', 'utf-8', async(err, data) => {
+                                if (err) {
+                                    console.log(err)
+                                } else {
+                                    await pool.executeQuery(data)
+                                    console.log('Ejecutado script first.sql')
+                                }
+                            });
+                        }
                         await copyFromFilesBD(req, dirTemp, elem)
                             .then((value) => {
-                                arrCheckImport[i][0] = true;
+                                arrCheckImport[i][1] = true;
                                 let stop = true;
                                 for(let j=0;j<arrCapsules.length;j++){
-                                    if(arrCheckImport[j][0] === false || arrCheckImport[j][1] === false){
+                                    if(arrCheckImport[j][0] === false || arrCheckImport[j][1] === false || arrCheckImport[j][2] === false){
                                         stop = false
                                         break;
                                     }
@@ -962,7 +983,33 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                             .catch((value) => {
                                 reject(value)
                             });
-
+                        //Buscar si existen scripts en last.sql para ejecutarlos después de insertar o actualizar la capsula
+                        await fs.exists(dirTemp + '\\tmp\\' + elem + '\\files\\structure\\c_' + idCapsule + '\\scripts_db\\last.sql', (exists) => {
+                            if(!exists){
+                                existeLast = false;
+                            }
+                        });
+                        if(existeLast) {
+                            await fs.readFile(dirTemp + '\\tmp\\' + elem + '\\files\\structure\\c_' + idCapsule + '\\scripts_db\\last.sql', 'utf-8', async(err, data) => {
+                                if (err) {
+                                    console.log(err)
+                                } else {
+                                    await pool.executeQuery(data)
+                                    console.log('Ejecutado script last.sql')
+                                    arrCheckImport[i][2] = true;
+                                    let stop = true;
+                                    for(let j=0;j<arrCapsules.length;j++){
+                                        if(arrCheckImport[j][0] === false || arrCheckImport[j][1] === false || arrCheckImport[j][2] === false){
+                                            stop = false
+                                            break;
+                                        }
+                                    }
+                                    arrCheck = []
+                                    if (stop)
+                                        resolve('Terminada importacion')
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -1033,7 +1080,6 @@ const checkCapsulesVersion = async (dirTemp) => new Promise(async (resolve, reje
             const resultName = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsName)
             if (resultName && resultName.rows[0].fn_get_register) {
                 let idCap = resultName.rows[0].fn_get_register[0].id
-                existeCap = true
                 if (idCap !== idCapsule)
                     existeNameCap = true
                 //Comparar version actual contra version importada

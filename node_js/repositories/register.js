@@ -188,8 +188,9 @@ const getParamsUpdate = (req, objects) => {
 }
 
 const getRegister = async (req) => {
-    const params = [req.query.idseccion, req.query.idproducto, req.query.idseccionpadre, req.session.id_rol]
-    const query = "SELECT cfgapl.fn_get_registers($1,$2,$3,$4)"
+    const params = [req.query.idseccion, req.query.idproducto, req.query.idseccionpadre,
+         req.session.id_rol, req.query.start ? req.query.start : 0, req.query.limit ? req.query.limit : 50]
+    const query = "SELECT cfgapl.fn_get_registers($1,$2,$3,$4,$5,$6)"
     const result = await pool.executeQuery(query, params)
     if (result.success === false) {
         return result
