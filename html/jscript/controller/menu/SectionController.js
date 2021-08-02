@@ -472,7 +472,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 idseccionpadre: newCard.idparent, //id del padre
                 idproducto: idrecordparent,
                 filtros: MasterApp.util.getFilterBySection(),
-                start:0
+                start: 0
             },
             success: function (response) {
                 mask.hide();
@@ -656,7 +656,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         Mask.show();
         var store = grid.getStore();
         var total = store.getCount();
-        grid.page++;
         var panel = grid.up('panel');
         var idparent = (panel.idparent === null) ? null : panel.idparent;
         var idrecordparent = (panel.idrecordparent === null) ? null : panel.idrecordparent;
@@ -676,10 +675,13 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 Mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 var data = json;
-                var j = total;
-                for (var i = 0; i < data.length; i++) {
-                    store.insert(j + 1, data[i]);
-                    j++;
+                if (data.length > 0) {
+                    var j = total;
+                    for (var i = 0; i < data.length; i++) {
+                        store.insert(j + 1, data[i]);
+                        j++;
+                    }
+                    grid.page++;
                 }
             }
         };
