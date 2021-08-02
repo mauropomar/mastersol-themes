@@ -28,19 +28,18 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                 loadingText: 'Cargando...'
             },
             listeners: {
-                'columnmove': function (ct, column, from, to, event) {
-                    //     MasterApp.util.moveColumn(ct, column, from, to, event)
-                },
-                /* 'afterrender': function (comp) {
+                 'afterrender': function (comp) {
                      comp.getTargetEl().on('mouseup', function (e, t) {
-                         var height = comp.getTargetEl().getHeight();
-                         if (height + t.scrollTop >= t.scrollHeight) {
-                             MasterApp.section.paginate(comp);
+                         if(t.scrollTop > 0) {
+                             var height = comp.getTargetEl().getHeight();
+                             if (height + t.scrollTop >= t.scrollHeight) {
+                                 MasterApp.section.paginate(comp);
+                             }
                          }
                      });
-                 }*/
+                 }
             }
-        })
+        });
     },
 
     getStore(columns, data) {
