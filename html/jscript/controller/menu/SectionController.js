@@ -168,7 +168,9 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 idseccion: newCard.idsection,  //id de la seccion activa que va a cargar los datos
                 idseccionpadre: newCard.idparent, //id del padre
                 idproducto: idrecordparent,
-                filtros: MasterApp.util.getFilterBySection()
+                filtros: MasterApp.util.getFilterBySection(),
+                start: 0,
+                page: 0
             },
             success: function (response) {
                 mask.hide();
@@ -461,6 +463,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             msg: 'Cargando...'
         });
         mask.show();
+        //    var start = 50 * grid.page;
         var getData = {
             url: 'app/getregisters',
             method: 'GET',
@@ -658,29 +661,27 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var idparent = (panel.idparent === null) ? null : panel.idparent;
         var idrecordparent = (panel.idrecordparent === null) ? null : panel.idrecordparent;
         var start = 50 * grid.page;
-        var url = 'http://localhost:3001/dev/localization/countries/get?page=' + grid.page;
         var load = {
-            url: url,
+            url: 'app/getregisters',
             method: 'GET',
             scope: this,
             params: {
-                idseccionpadre: idparent,
-                idrecordparent: idrecordparent,
-                idmenu: grid.idmenu,
-                idsection: grid.idsection,
+                idseccion: grid.idsection,  //id de la seccion activa que va a cargar los datos
+                idseccionpadre: idparent, //id del padre
+                idproducto: idrecordparent,
+                filtros: MasterApp.util.getFilterBySection(),
                 start: start,
                 page: grid.page
             },
             success: function (response) {
                 Mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
-                var data = json.data;
+                var data = json;
                 var j = total;
                 for (var i = 0; i < data.length; i++) {
                     store.insert(j + 1, data[i]);
                     j++;
                 }
-
             }
         };
         Ext.Ajax.request(load);
