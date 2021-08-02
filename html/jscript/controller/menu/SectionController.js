@@ -170,7 +170,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 idproducto: idrecordparent,
                 filtros: MasterApp.util.getFilterBySection(),
                 start: 0,
-                page: 0
             },
             success: function (response) {
                 mask.hide();
@@ -472,7 +471,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 idseccion: newCard.idsection,  //id de la seccion activa que va a cargar los datos
                 idseccionpadre: newCard.idparent, //id del padre
                 idproducto: idrecordparent,
-                filtros: MasterApp.util.getFilterBySection()
+                filtros: MasterApp.util.getFilterBySection(),
+                start:0
             },
             success: function (response) {
                 mask.hide();
@@ -670,8 +670,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 idseccionpadre: idparent, //id del padre
                 idproducto: idrecordparent,
                 filtros: MasterApp.util.getFilterBySection(),
-                start: start,
-                page: grid.page
+                start: start
             },
             success: function (response) {
                 Mask.hide();
