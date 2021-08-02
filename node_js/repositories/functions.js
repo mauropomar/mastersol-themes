@@ -927,6 +927,24 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                             console.log('Actualizada capsula!')
                         }
                         //Chequear término de importación para hacer resolve
+                        await copyFromFilesStructure(req, dirTemp, elem)
+                            .then((value) => {
+                                arrCheckImport[i][1] = true;
+                                let stop = true;
+                                for(let j=0;j<arrCapsules.length;j++){
+                                    if(arrCheckImport[j][0] === false || arrCheckImport[j][1] === false){
+                                        stop = false
+                                        break;
+                                    }
+                                }
+                                if (stop)
+                                    resolve(value)
+                            })
+                            .catch((value) => {
+                                reject(value)
+                            });
+                        //Buscar si existen scripts en first.sql para ejecutarlos antes de insertar o actualizar la capsula
+                        
                         await copyFromFilesBD(req, dirTemp, elem)
                             .then((value) => {
                                 arrCheckImport[i][0] = true;
@@ -945,22 +963,6 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                                 reject(value)
                             });
 
-                        await copyFromFilesStructure(req, dirTemp, elem)
-                            .then((value) => {
-                                arrCheckImport[i][1] = true;
-                                let stop = true;
-                                for(let j=0;j<arrCapsules.length;j++){
-                                    if(arrCheckImport[j][0] === false || arrCheckImport[j][1] === false){
-                                        stop = false
-                                        break;
-                                    }
-                                }
-                                if (stop)
-                                    resolve(value)
-                            })
-                            .catch((value) => {
-                                reject(value)
-                            });
                     }
                 }
             }

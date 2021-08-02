@@ -40,6 +40,7 @@ const generateFilesBySection = (req, result) => {
     params.dirHtml = params.dirCapsule + '\\html\\';
     params.dirNodeJs = params.dirCapsule + '\\node_js\\';
     params.dirSql = params.dirCapsule + '\\sql\\';
+    params.dirScriptsDb = params.dirCapsule + '\\scripts_db\\';
     //3er nivel
     params.dirAssets = params.dirHtml + '\\assets\\';
     params.dirScript = params.dirHtml + '\\script\\';
@@ -60,6 +61,9 @@ const generateFilesBySection = (req, result) => {
     params.nameFileJS = params.is_capsule === false ? params.js_name + '.js' : 'te_' + params.identifier + '.js'
     params.nameFunc = params.is_capsule === false ? params.js_name : 'te_' + params.identifier
     params.dirFileJS = params.dirButtons + params.nameFileJS
+
+    params.dirFileFirstSql = params.dirScriptsDb + 'first.sql'
+    params.dirFileLastSql = params.dirScriptsDb + 'last.sql'
 
     createDirectory(req, params);
 }
@@ -82,6 +86,12 @@ const createDirectory = (req, params) => {
             fs.mkdir(params.dirSql, {recursive: true}, (err) => {
                 if (err) {
                     return err;
+                }
+            });
+            fs.mkdir(params.dirScriptsDb, {recursive: true}, (err) => {
+                if (!err) {
+                    if(params.is_capsule === true)
+                        createFileSql(req, params)
                 }
             });
             fs.mkdir(params.dirAssets, {recursive: true}, (err) => {
@@ -182,6 +192,24 @@ const createFileJs = (req, params) => {
             flags: 'a' // conservar los archivos antiguos
         })
         fileJs.write(function_file + export_func_file)
+    }
+}
+
+const createFileSql = (req, params) => {
+    var fileFirstSql,fileLastSql
+    let comentario_first = "--Escriba aqui los scripts necesarios para ejecutar antes de importar la cápsula"
+    let comentario_last = "--Escriba aqui los scripts necesarios para ejecutar después de importar la cápsula"
+    if (!fs.existsSync(params.dirFileFirstSql)) {
+        fileFirstSql = fs.createWriteStream(params.dirFileFirstSql, {
+            flags: 'a' // conservar los archivos antiguos
+        })
+        fileFirstSql.write(comentario_first)
+    }
+    if (!fs.existsSync(params.dirFileFirstSql)) {
+        fileLastSql = fs.createWriteStream(params.dirFileLastSql, {
+            flags: 'a' // conservar los archivos antiguos
+        })
+        fileLastSql.write(comentario_last)
     }
 }
 
