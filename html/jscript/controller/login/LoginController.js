@@ -89,6 +89,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
                     Ext.ComponentQuery.query('#view_login')[0].hide();
                     Ext.create('MasterSol.view.layout.Viewport');
                     MasterApp.globals.setIdRol(json.rol);
+                    MasterApp.globals.setIdUser(json.user);
                     MasterApp.globals.setIdLanguage(json.language);
                     MasterApp.globals.setPassword(response.request.params.password);
                     this.loadOptions();

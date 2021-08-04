@@ -20,6 +20,7 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.selEnRows = false;
             this.selEnCascade = false;
             this.idRol = null;
+            this.idUser = null;
             this.idLanguage = null;
             this.actionKeyCrtlF = false;
             this.isLoading = false;
@@ -27,6 +28,9 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         },
         getIdRol: function () {
             return this.idRol;
+        },
+        getIdUser: function () {
+            return this.idUser;
         },
         getIdLanguage: function () {
             return this.idLanguage;
@@ -123,6 +127,9 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         },
         setIdRol: function (id) {
             this.idRol = id;
+        },
+        setIdUser: function (id) {
+            this.idUser = id;
         },
         setIdLanguage: function (id) {
             this.idLanguage = id;

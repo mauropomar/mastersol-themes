@@ -254,11 +254,13 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         }
         data.append('file', file);
         Ext.Ajax.request({
-            url: 'app/imageDesktop',
+            url: 'app/imagedesktop',
             rawData: data,
             scope: this,
             timeout: 1000000,
             params: {
+                rol: MasterApp.globals.getIdRol(),
+                user: MasterApp.globals.getIdUser(),
                 name: nameFile
             },
             headers: {'Content-Type': null}, //to use content type of FormData
@@ -279,7 +281,6 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             }
         });
     },
-
 
 
     cancelImageDesktop: function () {
