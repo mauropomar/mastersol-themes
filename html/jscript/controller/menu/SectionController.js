@@ -702,7 +702,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 sectionId: grid.idsection,
                 alerta_user: isAlert,
                 start: start,
-                limit: start + 30
+                limit: 30
             }
         } else {
             return {
@@ -711,7 +711,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 idproducto: idrecordparent,
                 filtros: MasterApp.util.getFilterBySection(),
                 start: start,
-                limit: start + 30
+                limit: 30
             }
         }
     }
