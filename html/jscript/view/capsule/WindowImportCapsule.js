@@ -5,6 +5,7 @@ Ext.define('MasterSol.view.capsule.WindowImportCapsule', {
     extend: 'Ext.window.Window',
     xtype: 'window-import-capsule',
     closable: true,
+    floated:true,
     closeAction: 'destroy',
     height: 300,
     width: 600,

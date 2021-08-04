@@ -382,6 +382,25 @@ Ext.define('MasterSol.controller.util.UtilController', {
             return false;
         }
         return true;
+    },
+
+    getName: function (path) {
+        var index = path.lastIndexOf('\\');
+        if (index > -1) {
+            var name = path.substring(index + 1, path.lengh);
+            return name;
+        }
+        return path;
+    },
+
+    isFileImage:function(file) {
+        return file && file['type'].split('/')[0] === 'image';
+    },
+
+    isValidFileZip: function (name) {
+        var index = name.lastIndexOf('.zip');
+        var valid = (index === -1) ? false : true;
+        return valid;
     }
 })
 ;

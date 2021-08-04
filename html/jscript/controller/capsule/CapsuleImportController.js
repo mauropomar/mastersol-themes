@@ -30,8 +30,8 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
             });
             return;
         }
-        var nameFile = this.getName(fileField.value);
-        if (!this.isValidFile(nameFile)) {
+        var nameFile = MasterApp.util.getName(fileField.value);
+        if (!MasterApp.util.isValidFileZip(nameFile)) {
             mask.hide();
             fileField.reset();
             Ext.MessageBox.show({
@@ -111,21 +111,5 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
 
     cancel: function () {
         Ext.ComponentQuery.query('#window_import_capsule')[0].close();
-    },
-
-    getName: function (path) {
-        var index = path.lastIndexOf('\\');
-        if (index > -1) {
-            var name = path.substring(index + 1, path.lengh);
-            return name;
-        }
-        return path;
-    },
-
-    isValidFile: function (name) {
-        var index = name.lastIndexOf('.zip');
-        var valid = (index === -1) ? false : true;
-        return valid;
     }
-
 });

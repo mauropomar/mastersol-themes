@@ -29,8 +29,8 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
             });
             return;
         }
-        var nameFile = this.getName(fileField.value);
-        if (!this.isValidFile(nameFile)) {
+        var nameFile = MasterApp.util.getName(fileField.value);
+        if (!MasterApp.util.isValidFileZip(nameFile)) {
             mask.hide();
             fileField.reset();
             Ext.MessageBox.show({
@@ -91,21 +91,6 @@ Ext.define('MasterSol.controller.database.DatabaseRestoreController', {
 
     cancel: function () {
         Ext.ComponentQuery.query('#window_restore_database')[0].close();
-    },
-
-    getName: function (path) {
-        var index = path.lastIndexOf('\\');
-        if (index > -1) {
-            var name = path.substring(index + 1, path.lengh);
-            return name;
-        }
-        return path;
-    },
-
-    isValidFile: function (name) {
-        var index = name.lastIndexOf('.zip');
-        var valid = (index === -1) ? false : true;
-        return valid;
     }
 
 });

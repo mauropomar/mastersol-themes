@@ -6,6 +6,7 @@ Ext.define('MasterSol.view.database.WindowRestoreDatabase', {
     xtype: 'window-restore-database',
     closable: true,
     closeAction: 'destroy',
+    floated:true,
     height: 300,
     width: 600,
     title: 'Restaurar sistema y base de datos',
