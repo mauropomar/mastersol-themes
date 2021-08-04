@@ -170,6 +170,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 idproducto: idrecordparent,
                 filtros: MasterApp.util.getFilterBySection(),
                 start: 0,
+                limit:15
             },
             success: function (response) {
                 mask.hide();
@@ -462,7 +463,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             msg: 'Cargando...'
         });
         mask.show();
-        //    var start = 50 * grid.page;
         var getData = {
             url: 'app/getregisters',
             method: 'GET',
@@ -472,7 +472,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 idseccionpadre: newCard.idparent, //id del padre
                 idproducto: idrecordparent,
                 filtros: MasterApp.util.getFilterBySection(),
-                start: 0
+                start: 0,
+                limit:15
             },
             success: function (response) {
                 mask.hide();
@@ -659,7 +660,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var panel = grid.up('panel');
         var idparent = (panel.idparent === null) ? null : panel.idparent;
         var idrecordparent = (panel.idrecordparent === null) ? null : panel.idrecordparent;
-        var start = 50 * grid.page;
+        var start = 15 * grid.page;
         var load = {
             url: 'app/getregisters',
             method: 'GET',
@@ -669,7 +670,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 idseccionpadre: idparent, //id del padre
                 idproducto: idrecordparent,
                 filtros: MasterApp.util.getFilterBySection(),
-                start: start
+                start: start,
+                limit:start + 15
             },
             success: function (response) {
                 Mask.hide();
