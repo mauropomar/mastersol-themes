@@ -35,7 +35,9 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             scope: this,
             params: {
                 sectionId: record.data.sectionId,
-                alerta_user: false
+                alerta_user: false,
+                start:0,
+                limit:30
             },
             success: function (response) {
                 mask.hide();

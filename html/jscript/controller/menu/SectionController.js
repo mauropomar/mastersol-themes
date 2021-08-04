@@ -170,7 +170,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 idproducto: idrecordparent,
                 filtros: MasterApp.util.getFilterBySection(),
                 start: 0,
-                limit:15
+                limit: 30
             },
             success: function (response) {
                 mask.hide();
@@ -473,7 +473,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 idproducto: idrecordparent,
                 filtros: MasterApp.util.getFilterBySection(),
                 start: 0,
-                limit:15
+                limit: 30
             },
             success: function (response) {
                 mask.hide();
@@ -658,25 +658,20 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var store = grid.getStore();
         var total = store.getCount();
         var panel = grid.up('panel');
-        var idparent = (panel.idparent === null) ? null : panel.idparent;
-        var idrecordparent = (panel.idrecordparent === null) ? null : panel.idrecordparent;
-        var start = 15 * grid.page;
+        var idparent = (panel.idparent == null) ? null : panel.idparent;
+        var idrecordparent = (panel.idrecordparent == null) ? null : panel.idrecordparent;
+        var start = 30 * grid.page;
         var load = {
-            url: 'app/getregisters',
-            method: 'GET',
+            url: this.getUrlPaginate(idparent),
+            method:this.getMethodPaginate(idparent),
             scope: this,
-            params: {
-                idseccion: grid.idsection,  //id de la seccion activa que va a cargar los datos
-                idseccionpadre: idparent, //id del padre
-                idproducto: idrecordparent,
-                filtros: MasterApp.util.getFilterBySection(),
-                start: start,
-                limit:start + 15
-            },
+            params: this.getParamsPaginate(grid, idparent, idrecordparent, start),
             success: function (response) {
                 Mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
-                var data = json;
+                var data = (idparent == null) ? json[0].datos : json;
+                if(data == null)
+                    return;
                 if (data.length > 0) {
                     var j = total;
                     for (var i = 0; i < data.length; i++) {
@@ -688,5 +683,36 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             }
         };
         Ext.Ajax.request(load);
+    },
+
+    getUrlPaginate: function (idparent) {
+        var url = (idparent == null) ? 'app/sections' : 'app/getregisters';
+        return url;
+    },
+
+    getMethodPaginate:function(idparent){
+        var method = (idparent == null) ? 'POST' : 'GET';
+        return method;
+    },
+
+    getParamsPaginate: function (grid, idparent, idrecordparent, start) {
+        if (idparent == null) {
+            var isAlert = grid.up('window').isAlert;
+            return {
+                sectionId: grid.idsection,
+                alerta_user: isAlert,
+                start: start,
+                limit: start + 30
+            }
+        } else {
+            return {
+                idseccion: grid.idsection,  //id de la seccion activa que va a cargar los datos
+                idseccionpadre: idparent, //id del padre
+                idproducto: idrecordparent,
+                filtros: MasterApp.util.getFilterBySection(),
+                start: start,
+                limit: start + 30
+            }
+        }
     }
 })
