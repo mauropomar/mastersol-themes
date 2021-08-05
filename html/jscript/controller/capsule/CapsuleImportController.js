@@ -67,7 +67,7 @@ Ext.define('MasterSol.controller.capsule.CapsuleImportController', {
                 },
                 success: function (response) {
                     mask.hide();
-                    Ext.ComponentQuery.query('#btn_cancelar_capsule')[0].setDisabled(false);
+                    Ext.ComponentQuery.query('#btn_cancelar_import_capsule')[0].setDisabled(false);
                     var json = Ext.JSON.decode(response.responseText);
                     if (json.success == true) {
                         Ext.toast('La capsula fue importado con éxito.');
