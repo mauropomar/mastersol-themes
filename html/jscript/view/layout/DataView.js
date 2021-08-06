@@ -20,6 +20,14 @@ Ext.define('MasterSol.view.layout.DataView', {
         name: 'principal',
         itemSelector: 'div.x-center-principal',
         trackOver: false,
+        style: {
+            backgroundImage: 'url("'+MasterApp.globals.getImageDesktop()+'")',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+            width:'100%',
+            height:'100%'
+        },
         viewConfig: {
             loadMask: false,
             loadingText: 'Cargando...'

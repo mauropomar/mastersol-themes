@@ -85,6 +85,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
                 Mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success === true) {
+                    MasterApp.globals.setImageDesktop('window.jpg');
                     Ext.ComponentQuery.query('#options-toolbar')[0].show();
                     Ext.ComponentQuery.query('#view_login')[0].hide();
                     Ext.create('MasterSol.view.layout.Viewport');
@@ -92,6 +93,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
                     MasterApp.globals.setIdUser(json.user);
                     MasterApp.globals.setIdLanguage(json.language);
                     MasterApp.globals.setPassword(response.request.params.password);
+
                     this.loadOptions();
                     this.loadCapsules();
                 } else {

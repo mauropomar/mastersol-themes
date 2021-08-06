@@ -6,6 +6,7 @@
 /.idea
 /.sencha
 /capsules
+/resources/desktop/*
 /resources/reports/*
 /resources/files/*
 

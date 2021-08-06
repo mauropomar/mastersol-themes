@@ -33,6 +33,7 @@
     -o-box-shadow: 1px 1px 6px rgb(144, 144, 144) !important;
     box-shadow: 1px 1px 6px rgb(144, 144, 144) !important;
     border-radius: 5px !important;
+    background-color: #61bd4f;
 }
 
 .x-center-principal {
@@ -50,6 +51,7 @@
     -o-box-shadow: 1px 1px 6px rgb(163, 163, 163);
     box-shadow: 1px 1px 6px rgb(163, 163, 163);
     border-radius: 5px !important;
+    background-color: #61bd4f;
 }
 
 span.modulo-nombre {

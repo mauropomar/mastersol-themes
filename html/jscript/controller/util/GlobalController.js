@@ -25,9 +25,13 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.actionKeyCrtlF = false;
             this.isLoading = false;
             this.password = '';
+            this.imageDesktop = '';
         },
         getIdRol: function () {
             return this.idRol;
+        },
+        getImageDesktop: function () {
+            return this.imageDesktop;
         },
         getIdUser: function () {
             return this.idUser;
@@ -139,6 +143,9 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         },
         setPassword: function (val) {
             this.password = val;
+        },
+        setImageDesktop: function (val) {
+            this.imageDesktop = 'resources/desktop/'+val;
         }
     }
 )
