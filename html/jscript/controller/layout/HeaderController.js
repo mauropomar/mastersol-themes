@@ -269,6 +269,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
                     Ext.toast('Los cambios fueron realizados con éxito.');
+                    this.changeImageDesktop(json.image);
                 } else {
                     Ext.MessageBox.show({
                         title: 'Información',
@@ -281,6 +282,18 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         });
     },
 
+    changeImageDesktop:function(image){
+        var dataview = Ext.ComponentQuery.query('dataview-home')[0].down('dataview');
+        MasterApp.globals.setImageDesktop(image);
+        dataview.setStyle({
+            backgroundImage: 'url("'+MasterApp.globals.getImageDesktop()+'")',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+            width:'100%',
+            height:'100%'
+        });
+    },
 
     cancelImageDesktop: function () {
         var window = Ext.ComponentQuery.query('window-image-desktop')[0];
