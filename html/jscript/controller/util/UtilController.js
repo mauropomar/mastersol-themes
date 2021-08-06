@@ -401,6 +401,19 @@ Ext.define('MasterSol.controller.util.UtilController', {
         var index = name.lastIndexOf('.zip');
         var valid = (index === -1) ? false : true;
         return valid;
-    }
+    },
+
+    changeImageDesktop:function(image){
+        var dataview = Ext.ComponentQuery.query('dataview-home')[0].down('dataview');
+        MasterApp.globals.setImageDesktop(image);
+        dataview.setStyle({
+            backgroundImage: 'url("'+MasterApp.globals.getImageDesktop()+'")',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+            width:'100%',
+            height:'100%'
+        });
+    },
 })
 ;
