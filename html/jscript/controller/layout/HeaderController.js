@@ -257,10 +257,9 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             url: 'app/imagedesktop',
             rawData: data,
             scope: this,
-            timeout: 1000000,
+            method: 'POST',
             params: {
                 rol: MasterApp.globals.getIdRol(),
-                user: MasterApp.globals.getIdUser(),
                 name: nameFile
             },
             headers: {'Content-Type': null}, //to use content type of FormData
