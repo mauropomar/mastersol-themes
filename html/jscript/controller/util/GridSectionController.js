@@ -19,9 +19,6 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             read_only: section.read_only,
             region: 'center',
             autoScroll: true,
-            plugins: [{
-                ptype: 'gridfilters'
-            }],
             columns: this.getColumns(columns),
             viewConfig: {
                 loadMask: false,

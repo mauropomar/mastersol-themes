@@ -36,8 +36,8 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             params: {
                 sectionId: record.data.sectionId,
                 alerta_user: false,
-                start:0,
-                limit:30
+                start: 0,
+                limit: 30
             },
             success: function (response) {
                 mask.hide();
@@ -105,7 +105,8 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         MasterApp.globals.setSectionPrincipal(gridSectionPrincipal);
         this.panelMenu.add(panel);
         MasterApp.footer.addWindow(this.menu);
-        MasterApp.util.setAplyMaxLine();
+        MasterApp.section.addEventClickSectionPrincipal(panel);
+     //   MasterApp.util.setAplyMaxLine();
     },
 
     generateSections: function (level, height) {
@@ -142,7 +143,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         }
     },
     // crea una seccion y la agrega al tab
-    insertSection(section, tab) {
+    insertSection (section, tab) {
         var title = section.nombre;
         var height = tab.getHeight();
         var containerSection = MasterApp.containersections.getPanel(title, section, [], height, 'grid-section', this.windowParent);

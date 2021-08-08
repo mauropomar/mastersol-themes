@@ -5,6 +5,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     extend: 'Ext.app.Controller',
     IdRecParent: null,
     posYFirts: null,
+    hasClickedSectionPrincipal: false,
     init: function () {
         this.control({
             'gridpanel[name=section-principal]': { // matches the view itself
@@ -28,10 +29,10 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     clickSectionPrincipal: function (grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+        this.hasClickedSectionPrincipal = true;
         MasterApp.globals.setRecordSection(record);
         MasterApp.globals.setGridSection(grid.panel);
         this.IdRecParent = record.data.id;
-        MasterApp.util.setAplyMaxLine();
         this.loadDataTabActive(grid, record, 0);
         MasterApp.util.setStyleWindow(grid.panel);
         MasterApp.util.setStyleSection();
@@ -50,7 +51,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.globals.setRecordSection(record);
         var level = grid.up('tabpanel').level + 1;
         this.loadDataTabActive(grid, record, level);
-        MasterApp.util.setAplyMaxLine();
         MasterApp.util.setStyleWindow(grid.panel);
         var container = grid.panel.up('panel');
         MasterApp.util.setStyleSection(container);
@@ -487,11 +487,28 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         };
         Ext.Ajax.request(getData);
     },
+
+    addEventClickSectionPrincipal: function (panel) {
+        var comp = panel.getEl();
+        var _this  = this;
+        comp.on('click', function (e) {
+            if (!_this.hasClickedSectionPrincipal) {
+                var idpanel = this.id;
+                var p = Ext.ComponentQuery.query('#' + idpanel)[0];
+                var grid = p.down('gridpanel');
+                MasterApp.globals.setGridSection(grid);
+                MasterApp.magnament.getData(grid);
+                MasterApp.tools.setButtons();
+            }
+            _this.hasClickedSectionPrincipal = false;
+        });
+    },
+
     // funcion para capturar el click en el tab seleccionados para tenerlo como referencia
     addEventClickTabSection: function (tabPanel, newCard) {
         var comp = tabPanel.getEl();
         this.onClickTab(comp);
-        this.onDoubleClick(comp);
+        this.onDoubleClick(tabPanel);
     },
 
     onClickTab: function (comp) {
@@ -511,16 +528,15 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                     MasterApp.globals.setLoading(false);
                     var container = gridsection.up('panel');
                     MasterApp.util.setStyleSection(container);
-                    //   var height = Ext.ComponentQuery.query('#' + idtab)[0].getHeight();
-                    //    gridsection.setHeight(500);
                 }
             }, 500);
         }, comp);
     },
 
-    onDoubleClick: function (comp) {
+    onDoubleClick: function (tabPanel) {
+        var comp = tabPanel.tabBar.getEl();
         comp.on('dblclick', function (e) {
-            MasterApp.section.setFullSectionOfWindow(this);
+            MasterApp.section.setFullSectionOfWindow(tabPanel.getEl());
             e.cancelEvents();
         }, comp);
     },
@@ -663,14 +679,14 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var start = 30 * grid.page;
         var load = {
             url: this.getUrlPaginate(idparent),
-            method:this.getMethodPaginate(idparent),
+            method: this.getMethodPaginate(idparent),
             scope: this,
             params: this.getParamsPaginate(grid, idparent, idrecordparent, start),
             success: function (response) {
                 Mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 var data = (idparent == null) ? json[0].datos : json;
-                if(data == null)
+                if (data == null)
                     return;
                 if (data.length > 0) {
                     var j = total;
@@ -690,7 +706,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         return url;
     },
 
-    getMethodPaginate:function(idparent){
+    getMethodPaginate: function (idparent) {
         var method = (idparent == null) ? 'POST' : 'GET';
         return method;
     },
