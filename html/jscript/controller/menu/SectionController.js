@@ -46,6 +46,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     clickSection: function (grid, td, cellIndex, record) {
+        this.hasClickedSectionPrincipal = true;
         MasterApp.globals.setLoading(true);
         MasterApp.globals.setGridSection(grid.panel);
         MasterApp.globals.setRecordSection(record);
@@ -487,15 +488,20 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         };
         Ext.Ajax.request(getData);
     },
-
+    // Evento para capturar el click en el cuerpo de la sesion principal
     addEventClickSectionPrincipal: function (panel) {
         var comp = panel.getEl();
-        var _this  = this;
+        var _this = this;
         comp.on('click', function (e) {
             if (!_this.hasClickedSectionPrincipal) {
                 var idpanel = this.id;
                 var p = Ext.ComponentQuery.query('#' + idpanel)[0];
                 var grid = p.down('gridpanel');
+                var hasSelection = grid.getSelectionModel().hasSelection();
+                if (hasSelection) {
+                    var rec = grid.getSelectionModel().getSelection()[0];
+                    MasterApp.globals.setRecordSection(rec);
+                }
                 MasterApp.globals.setGridSection(grid);
                 MasterApp.magnament.getData(grid);
                 MasterApp.tools.setButtons();
@@ -505,21 +511,24 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     // funcion para capturar el click en el tab seleccionados para tenerlo como referencia
-    addEventClickTabSection: function (tabPanel, newCard) {
+    addEventClickTabSection: function (tabPanel, containerSection) {
         var comp = tabPanel.getEl();
-        this.onClickTab(comp);
-        this.onDoubleClick(tabPanel);
+        this.onClickTab(tabPanel);
+        this.onClickSection(comp);
+        this.onDoubleClickTab(tabPanel);
     },
-
-    onClickTab: function (comp) {
+    // Evento para capturar el click en el tab de las sesion
+    onClickTab: function (tabPanel) {
+        var comp = tabPanel.tabBar.getEl();
         comp.on('click', function (e) {
             var isLoading = MasterApp.globals.isLoading;
             if (isLoading)
                 return;
             MasterApp.globals.setLoading(true);
-            var idtab = comp.id;
+            var _this = this;
             setTimeout(function () {
-                var sectionActive = Ext.ComponentQuery.query('#' + idtab)[0].getActiveTab();
+                var tabpanel = Ext.ComponentQuery.query('#' + _this.id)[0].up('tabpanel');
+                var sectionActive = tabpanel.getActiveTab();
                 if (sectionActive) {
                     var gridsection = sectionActive.down('gridpanel');
                     MasterApp.globals.setGridSection(gridsection);
@@ -532,8 +541,31 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             }, 500);
         }, comp);
     },
-
-    onDoubleClick: function (tabPanel) {
+    // Evento para capturar el click en el cuerpo de las sesion
+    onClickSection: function (comp) {
+        var _this = this;
+        comp.on('click', function (e) {
+            if (!_this.hasClickedSectionPrincipal) {
+                var tabpanel = Ext.ComponentQuery.query('#' + this.id)[0];
+                var sectionActive = tabpanel.getActiveTab();
+                var grid = sectionActive.down('gridpanel');
+                MasterApp.globals.setGridSection(grid);
+                var hasSelection = grid.getSelectionModel().hasSelection();
+                if (hasSelection) {
+                    var rec = grid.getSelectionModel().getSelection()[0];
+                    MasterApp.globals.setRecordSection(rec);
+                }else{
+                    MasterApp.globals.setRecordSection(null);
+                }
+                MasterApp.magnament.getData(grid);
+                var container = grid.up('panel');
+                MasterApp.util.setStyleSection(container);
+            }
+            _this.hasClickedSectionPrincipal = false;
+        });
+    },
+    // Evento para capturar el doble click en el tab title de las sesion
+    onDoubleClickTab: function (tabPanel) {
         var comp = tabPanel.tabBar.getEl();
         comp.on('dblclick', function (e) {
             MasterApp.section.setFullSectionOfWindow(tabPanel.getEl());
