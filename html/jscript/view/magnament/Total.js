@@ -60,7 +60,7 @@ Ext.define('MasterSol.view.magnament.Total', {
     }],
     listeners:{
         beforeedit: function (editor, e, eOpts) {
-           MasterApp.totals.beforeedit(editor, e, eOpts)
+           MasterApp.totals.beforeedit(editor, e, eOpts);
         }
     }
 });

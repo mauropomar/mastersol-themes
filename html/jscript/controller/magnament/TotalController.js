@@ -7,22 +7,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
     beforeedit: function (editor, obj, eOpts) {
         var record = obj.record;
         Ext.ComponentQuery.query('total-view toolbar button')[0].setDisabled(false);
-        var column = Ext.ComponentQuery.query('#total-view')[0].columns[1];
-        this.setComboFunction(record, column);
         this.loadFunctions(obj);
-    },
-
-    setComboFunction: function (rec, column) {
-        var combo = Ext.create('MasterSol.view.magnament.ComboFunction', {
-            listeners: {
-                scope: this,
-                specialKey: this.specialKey,
-                beforequery: function (record) {
-                    record.query = new RegExp(record.query, 'ig');
-                }
-            }
-        });
-        column.setEditor(combo);
     },
 
     loadFunctions: function (obj) {
@@ -52,10 +37,11 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                 var n_column = MasterApp.util.getNColumnSection();
                 if (this.getCount() > 0 && n_column != null) {
                     var index = this.findExact('nombrecampo', n_column);
-                    edit.startEditByPosition({
-                        row: index,
-                        column: 1
-                    });
+                    if (index > -1)
+                        edit.startEditByPosition({
+                            row: index,
+                            column: 1
+                        });
                 }
             }
         });

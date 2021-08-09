@@ -29,7 +29,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     },
 
     clickSectionPrincipal: function (grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-        this.hasClickedSectionPrincipal = true;
         MasterApp.globals.setRecordSection(record);
         MasterApp.globals.setGridSection(grid.panel);
         this.IdRecParent = record.data.id;
@@ -38,16 +37,16 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.util.setStyleSection();
         MasterApp.magnament.getData(grid.panel);
         MasterApp.tools.setButtons();
+        return false;
     },
 
     dblclickSectionPrincipal: function (grid, td, cellIndex, record) {
         MasterApp.magnament.getData(grid.panel, cellIndex);
         MasterApp.globals.setGridSection(grid.panel, cellIndex);
+        return false;
     },
 
     clickSection: function (grid, td, cellIndex, record) {
-        this.hasClickedSectionPrincipal = true;
-        MasterApp.globals.setLoading(true);
         MasterApp.globals.setGridSection(grid.panel);
         MasterApp.globals.setRecordSection(record);
         var level = grid.up('tabpanel').level + 1;
@@ -57,14 +56,14 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         MasterApp.util.setStyleSection(container);
         MasterApp.magnament.getData(grid.panel);
         MasterApp.tools.setButtons();
-
-        //  grid.resumeEvents();
+        return false;
     },
 
     dblclickSection: function (grid, td, cellIndex, record) {
         MasterApp.globals.setGridSection(grid.panel, cellIndex);
         MasterApp.globals.setRecordSection(record);
-        MasterApp.magnament.getData(grid.panel, cellIndex);
+      //  MasterApp.magnament.getData(grid.panel, cellIndex);
+        return false;
     },
 
     // activar y obtener los datos de la seccion hija activa
@@ -177,7 +176,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 var json = Ext.JSON.decode(response.responseText);
                 var grid = newCard.down('gridpanel');
                 grid.getStore().loadData(json);
-                MasterApp.globals.setLoading(false);
             },
             failure: function (response) {
                 mask.hide();
@@ -520,55 +518,47 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     onClickTab: function (tabPanel) {
         var comp = tabPanel.tabBar.getEl();
         comp.on('click', function (e) {
-            var isLoading = MasterApp.globals.isLoading;
-            if (isLoading)
-                return;
-            MasterApp.globals.setLoading(true);
-            var _this = this;
-            setTimeout(function () {
-                var tabpanel = Ext.ComponentQuery.query('#' + _this.id)[0].up('tabpanel');
-                var sectionActive = tabpanel.getActiveTab();
-                if (sectionActive) {
-                    var gridsection = sectionActive.down('gridpanel');
-                    MasterApp.globals.setGridSection(gridsection);
-                    MasterApp.globals.setRecordSection(null);
-                    MasterApp.magnament.getData(gridsection);
-                    MasterApp.globals.setLoading(false);
-                    var container = gridsection.up('panel');
-                    MasterApp.util.setStyleSection(container);
-                }
-            }, 500);
+            var tabpanel = Ext.ComponentQuery.query('#' + this.id)[0].up('tabpanel');
+            var sectionActive = tabpanel.getActiveTab();
+            if (sectionActive) {
+                var gridsection = sectionActive.down('gridpanel');
+                MasterApp.globals.setGridSection(gridsection);
+                MasterApp.globals.setRecordSection(null);
+                MasterApp.magnament.getData(gridsection);
+                var container = gridsection.up('panel');
+                MasterApp.util.setStyleSection(container);
+                return false;
+            }
         }, comp);
     },
     // Evento para capturar el click en el cuerpo de las sesion
     onClickSection: function (comp) {
-        var _this = this;
         comp.on('click', function (e) {
-            if (!_this.hasClickedSectionPrincipal) {
-                var tabpanel = Ext.ComponentQuery.query('#' + this.id)[0];
-                var sectionActive = tabpanel.getActiveTab();
+            var tabpanel = Ext.ComponentQuery.query('#' + this.id)[0];
+            var sectionActive = tabpanel.getActiveTab();
+            if(sectionActive.down('gridpanel')) {
                 var grid = sectionActive.down('gridpanel');
                 MasterApp.globals.setGridSection(grid);
                 var hasSelection = grid.getSelectionModel().hasSelection();
                 if (hasSelection) {
                     var rec = grid.getSelectionModel().getSelection()[0];
                     MasterApp.globals.setRecordSection(rec);
-                }else{
+                } else {
                     MasterApp.globals.setRecordSection(null);
                 }
                 MasterApp.magnament.getData(grid);
                 var container = grid.up('panel');
                 MasterApp.util.setStyleSection(container);
             }
-            _this.hasClickedSectionPrincipal = false;
+            return false;
         });
     },
-    // Evento para capturar el doble click en el tab title de las sesion
+// Evento para capturar el doble click en el tab title de las sesion
     onDoubleClickTab: function (tabPanel) {
         var comp = tabPanel.tabBar.getEl();
         comp.on('dblclick', function (e) {
             MasterApp.section.setFullSectionOfWindow(tabPanel.getEl());
-            e.cancelEvents();
+            return false;
         }, comp);
     },
 
@@ -594,11 +584,13 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             MasterApp.tools.showButtonsNotDefault(win, true);
         }
-    },
+    }
+    ,
 
     afterrender: function (panel) {
         //  this.actionKey(panel);
-    },
+    }
+    ,
 
     actionKey: function (panel) {
         Ext.create('Ext.util.KeyMap', {
@@ -618,7 +610,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 }
             }]
         });
-    },
+    }
+    ,
 
     dblClickHeader: function (window) {
         if (!window.isminimize) {
@@ -648,7 +641,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             MasterApp.util.resizeWindow(window, panel);
             MasterApp.tools.showButtonsNotDefault(window, true);
         }
-    },
+    }
+    ,
 
     setFullSectionOfWindow: function (me) {
         var tabpanel = Ext.ComponentQuery.query('#' + me.id)[0];
@@ -695,7 +689,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 tabpanel['expanded'] = false;
             }
         }
-    },
+    }
+    ,
 
     paginate: function (grid) {
         var Mask = new Ext.LoadMask(grid, {
@@ -730,17 +725,20 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             }
         };
         Ext.Ajax.request(load);
-    },
+    }
+    ,
 
     getUrlPaginate: function (idparent) {
         var url = (idparent == null) ? 'app/sections' : 'app/getregisters';
         return url;
-    },
+    }
+    ,
 
     getMethodPaginate: function (idparent) {
         var method = (idparent == null) ? 'POST' : 'GET';
         return method;
-    },
+    }
+    ,
 
     getParamsPaginate: function (grid, idparent, idrecordparent, start) {
         if (idparent == null) {
