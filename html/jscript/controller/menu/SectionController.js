@@ -678,7 +678,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 firstTabPanel.setHeight(0);
                 panel_principal.hide();
                 firstTabPanel.hide();
-                tabpanel.setHeight(height);
+                tabpanel.setHeight('100%');
                 tabpanel['expanded'] = true;
             } else {
                 panel_principal.show();
@@ -689,8 +689,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 tabpanel['expanded'] = false;
             }
         }
-    }
-    ,
+    },
 
     paginate: function (grid) {
         var Mask = new Ext.LoadMask(grid, {
