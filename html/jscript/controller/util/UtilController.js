@@ -393,7 +393,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         return path;
     },
 
-    isFileImage:function(file) {
+    isFileImage: function (file) {
         return file && file['type'].split('/')[0] === 'image';
     },
 
@@ -403,17 +403,28 @@ Ext.define('MasterSol.controller.util.UtilController', {
         return valid;
     },
 
-    changeImageDesktop:function(image){
+    changeImageDesktop: function (image) {
         var dataview = Ext.ComponentQuery.query('dataview-home')[0].down('dataview');
         MasterApp.globals.setImageDesktop(image);
         dataview.setStyle({
-            backgroundImage: 'url("'+MasterApp.globals.getImageDesktop()+'")',
+            backgroundImage: 'url("' + MasterApp.globals.getImageDesktop() + '")',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'cover',
-            width:'100%',
-            height:'100%'
+            width: '100%',
+            height: '100%'
         });
     },
+
+    hasChildSection: function (tabpanel) {
+        var level = tabpanel.level;
+        var next = level + 1;
+        if (!Ext.ComponentQuery.query('tabpanel[level=' + next + ']')[0]) {
+            return false;
+        } else {
+            var nextPanel = Ext.ComponentQuery.query('tabpanel[level=' + next + ']')[0];
+            return !nextPanel.isHidden();
+        }
+    }
 })
 ;

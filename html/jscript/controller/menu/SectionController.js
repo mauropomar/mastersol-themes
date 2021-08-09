@@ -62,7 +62,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     dblclickSection: function (grid, td, cellIndex, record) {
         MasterApp.globals.setGridSection(grid.panel, cellIndex);
         MasterApp.globals.setRecordSection(record);
-      //  MasterApp.magnament.getData(grid.panel, cellIndex);
+        //  MasterApp.magnament.getData(grid.panel, cellIndex);
         return false;
     },
 
@@ -536,7 +536,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         comp.on('click', function (e) {
             var tabpanel = Ext.ComponentQuery.query('#' + this.id)[0];
             var sectionActive = tabpanel.getActiveTab();
-            if(sectionActive.down('gridpanel')) {
+            if (sectionActive.down('gridpanel')) {
                 var grid = sectionActive.down('gridpanel');
                 MasterApp.globals.setGridSection(grid);
                 var hasSelection = grid.getSelectionModel().hasSelection();
@@ -657,7 +657,11 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 tabpanel['lastHeight'] = tabpanel.getHeight();
                 panel_principal.setHeight(0);
                 panel_principal.hide();
-                tabpanel.setHeight(height);
+                var hasChild = MasterApp.util.hasChildSection(tabpanel);
+                if (!hasChild)
+                    tabpanel.setHeight('100%');
+                else
+                    tabpanel.setHeight(height);
                 tabpanel['expanded'] = true;
             } else {
                 panel_principal.setHeight(panel_principal['lastHeight']);
