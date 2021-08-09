@@ -141,7 +141,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         tabMagnament.idmenumag = tabPanel.idmenu;
         tabMagnament.idsectionmag = newCard.idsection;
-        MasterApp.util.setAplyMaxLine();
     },
 
     findChildOfSection: function (tabPanel, newCard) {
