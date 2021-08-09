@@ -13,6 +13,7 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
             columnLines: true,
             hideHeaders: true,
             scrollable: false,
+            resizable: false,
             region: 'south',
             border: 1,
             columns: this.getColumns(columns),

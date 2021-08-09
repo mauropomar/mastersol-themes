@@ -57,8 +57,6 @@ Ext.define('MasterSol.controller.menu.MenuController', {
     },
 
     showMenu: function (json, isAlert = false) {
-        //   Ext.ComponentQuery.query('#panel-center')[0].removeAll();
-        //   Ext.ComponentQuery.query('#panel-center')[0].add(Ext.create('MasterSol.view.menu.Menu'));
         var panelmenu = Ext.ComponentQuery.query('#panel-center')[0];
         var window = Ext.create('MasterSol.view.menu.WindowMenu');
         var height = panelmenu.getHeight();
@@ -112,7 +110,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         var tabpanel = Ext.create('Ext.tab.Panel', {
             activeTab: 0,
             split: true,
-            resizable: true,
+            resizable: false,
             level: level - 1,
             idmenu: this.windowParent.idmenu,
             name: 'tab-section',

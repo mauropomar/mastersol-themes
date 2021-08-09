@@ -10,6 +10,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             selType: (atributos.section_checked) ? 'checkboxmodel' : null,
             idsection: section.id,
             idmenu: windowParent.idmenu,
+            resizable: false,
             page: 1,
             name: name,
             section_checked: atributos.section_checked,
@@ -25,16 +26,16 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                 loadingText: 'Cargando...'
             },
             listeners: {
-                 'afterrender': function (comp) {
-                     comp.getTargetEl().on('mouseup', function (e, t) {
-                         if(t.scrollTop > 0) {
-                             var height = comp.getTargetEl().getHeight();
-                             if (height + t.scrollTop >= t.scrollHeight) {
-                                 MasterApp.section.paginate(comp);
-                             }
-                         }
-                     });
-                 }
+                'afterrender': function (comp) {
+                    comp.getTargetEl().on('mouseup', function (e, t) {
+                        if (t.scrollTop > 0) {
+                            var height = comp.getTargetEl().getHeight();
+                            if (height + t.scrollTop >= t.scrollHeight) {
+                                MasterApp.section.paginate(comp);
+                            }
+                        }
+                    });
+                }
             }
         });
     },

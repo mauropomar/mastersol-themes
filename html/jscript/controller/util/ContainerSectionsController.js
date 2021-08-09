@@ -15,7 +15,6 @@ Ext.define('MasterSol.controller.util.ContainerSectionsController', {
         var gridtotal = MasterApp.gridtotal.getComponents(json, columns, [], 15, data, 'grid_total');
         if (!gridtotal.isVisible()) {
             gridtotal.setHeight(0);
-            var height = height;
             gridsection.setHeight(height);
         }
         return Ext.create('Ext.panel.Panel', {
@@ -24,6 +23,7 @@ Ext.define('MasterSol.controller.util.ContainerSectionsController', {
             title: title,
             idparent: json.idpadre,
             idsection: json.id,
+            resizable: false,
             items: [gridsection, gridtotal],
             layout:'border',
             idrecordparent: null,
