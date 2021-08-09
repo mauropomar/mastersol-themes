@@ -30,6 +30,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
 
     clickSectionPrincipal: function (grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
         MasterApp.globals.setRecordSection(record);
+        var index = grid.panel.getStore().findExact('id', record.getId());
+        grid.panel.getSelectionModel().select(index);
         MasterApp.globals.setGridSection(grid.panel);
         this.IdRecParent = record.data.id;
         this.loadDataTabActive(grid, record, 0);
@@ -48,6 +50,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
 
     clickSection: function (grid, td, cellIndex, record) {
         MasterApp.globals.setGridSection(grid.panel);
+        var index = grid.panel.getStore().findExact('id', record.getId());
+        grid.panel.getSelectionModel().select(index);
         MasterApp.globals.setRecordSection(record);
         var level = grid.up('tabpanel').level + 1;
         this.loadDataTabActive(grid, record, level);
