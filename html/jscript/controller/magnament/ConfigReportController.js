@@ -54,6 +54,57 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         });
     },
 
+    configReport:function(){
+        var grid = MasterApp.globals.getGridSection();
+        var mask = new Ext.LoadMask(grid, {
+            msg: 'Cargando...'
+        });
+        mask.show();
+        var idmenu = grid.idmenu;
+        var idsection = grid.idsection;
+        var record = MasterApp.globals.getRecordSection();
+        var recordId = (record != null) ? record.data.id : null;
+        var extra_params = MasterApp.tools.getExtraParams();
+        var execute = {
+            url: 'app/executebuttons',
+            method: 'GET',
+            scope: this,
+            params: {
+                idregister: recordId,
+                idsection: idsection,
+                idmenu: idmenu,
+                idbutton: button.id,
+                name: button.name,
+                action: button.action,
+                extra_params: extra_params,
+                report_format: 'html'
+            },
+            success: function (response) {
+                mask.hide();
+                var params = response.request.params;
+                var json = Ext.JSON.decode(response.responseText);
+                if (json.success) {
+                    if (json.type === 4) {
+                        MasterApp.report.loadValues(json.value);
+                    }
+                    if (json.type === 5) {
+                        var extraParams = MasterApp.tools.getExtraParams();
+                        MasterApp.report.removeAll();
+                        MasterApp.report.generateReport(params, json.value, json.name, extraParams);
+                    }
+                } else {
+                    Ext.MessageBox.show({
+                        title: 'Error',
+                        msg: json.msg,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
+                }
+            }
+        };
+        Ext.Ajax.request(execute);
+    },
+
     loadValues: function (values) {
         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
         tabMagnament.child('#config-report-view').tab.show();

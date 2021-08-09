@@ -40,6 +40,12 @@ Ext.define('MasterSol.view.magnament.ConfigReport', {
     }],
     viewConfig: {},
     tbar: [{
+        iconCls: 'fa fa-file-text-o',
+        tooltip: 'Generar Reporte',
+        handler: function () {
+            MasterApp.report.configReport();
+        }
+    },{
         iconCls: 'fa fa-close',
         tooltip: 'Cancelar',
         handler: function () {

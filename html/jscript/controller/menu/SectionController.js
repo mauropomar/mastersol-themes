@@ -490,31 +490,30 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var comp = panel.getEl();
         var _this = this;
         comp.on('click', function (e) {
-            if (!_this.hasClickedSectionPrincipal) {
-                var idpanel = this.id;
-                var p = Ext.ComponentQuery.query('#' + idpanel)[0];
-                var grid = p.down('gridpanel');
-                var hasSelection = grid.getSelectionModel().hasSelection();
-                if (hasSelection) {
-                    var rec = grid.getSelectionModel().getSelection()[0];
-                    MasterApp.globals.setRecordSection(rec);
-                }
-                MasterApp.globals.setGridSection(grid);
-                MasterApp.magnament.getData(grid);
-                MasterApp.tools.setButtons();
+            var idpanel = this.id;
+            var p = Ext.ComponentQuery.query('#' + idpanel)[0];
+            var grid = p.down('gridpanel');
+            var hasSelection = grid.getSelectionModel().hasSelection();
+            if (hasSelection) {
+                var rec = grid.getSelectionModel().getSelection()[0];
+                MasterApp.globals.setRecordSection(rec);
             }
-            _this.hasClickedSectionPrincipal = false;
+            MasterApp.globals.setGridSection(grid);
+            MasterApp.magnament.getData(grid);
+            MasterApp.tools.setButtons();
+            MasterApp.util.setStyleWindow(grid);
         });
     },
 
-    // funcion para capturar el click en el tab seleccionados para tenerlo como referencia
+// funcion para capturar el click en el tab seleccionados para tenerlo como referencia
     addEventClickTabSection: function (tabPanel, containerSection) {
         var comp = tabPanel.getEl();
         this.onClickTab(tabPanel);
         this.onClickSection(comp);
         this.onDoubleClickTab(tabPanel);
-    },
-    // Evento para capturar el click en el tab de las sesion
+    }
+    ,
+// Evento para capturar el click en el tab de las sesion
     onClickTab: function (tabPanel) {
         var comp = tabPanel.tabBar.getEl();
         comp.on('click', function (e) {
@@ -530,8 +529,9 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 return false;
             }
         }, comp);
-    },
-    // Evento para capturar el click en el cuerpo de las sesion
+    }
+    ,
+// Evento para capturar el click en el cuerpo de las sesion
     onClickSection: function (comp) {
         comp.on('click', function (e) {
             var tabpanel = Ext.ComponentQuery.query('#' + this.id)[0];
@@ -552,7 +552,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             }
             return false;
         });
-    },
+    }
+    ,
 // Evento para capturar el doble click en el tab title de las sesion
     onDoubleClickTab: function (tabPanel) {
         var comp = tabPanel.tabBar.getEl();
@@ -560,7 +561,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             MasterApp.section.setFullSectionOfWindow(tabPanel.getEl());
             return false;
         }, comp);
-    },
+    }
+    ,
 
     resizeSection: function (panel, info, eOpts) {
         var gridsection = panel.items.items[0];
@@ -568,7 +570,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var height = panel.getHeight();
         height = (gridtotal.isVisible()) ? height - 30 : height;
         gridsection.setHeight(height);
-    },
+    }
+    ,
 
     resizeWindow: function (win) {
         var widthPanel = Ext.ComponentQuery.query('#panel-center')[0].getWidth() / 2.5;
@@ -693,7 +696,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 tabpanel['expanded'] = false;
             }
         }
-    },
+    }
+    ,
 
     paginate: function (grid) {
         var Mask = new Ext.LoadMask(grid, {

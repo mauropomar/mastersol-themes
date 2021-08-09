@@ -137,6 +137,8 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         tabMagnament.setDisabled(false);
         tabMagnament.setActiveTab(0);
         MasterApp.register.new(window);
+        var title = MasterApp.util.getTitleSectionSelected();
+        Ext.ComponentQuery.query('#tbtext_magnament_register')[0].setText('Register: ' + title);
     },
 
     isMenuTabMagnament: function (window) {

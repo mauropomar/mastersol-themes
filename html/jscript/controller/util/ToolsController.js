@@ -194,7 +194,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 MasterApp.getController('MasterSol.controller.capsule.CapsuleExportController').showWindow();
             }
         }, {
-            iconCls: 'fa fa-share',
+            iconCls: 'fa fa-hdd-o',
             tooltip: 'Importar Capsula',
             default: true,
             name: 'btn_import_capsula',

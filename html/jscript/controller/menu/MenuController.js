@@ -76,6 +76,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         Ext.ComponentQuery.query('#btnEnRows')[0].setDisabled(false);
         Ext.ComponentQuery.query('#btnEnColumns')[0].setDisabled(false);
         Ext.ComponentQuery.query('#btnEnCascade')[0].setDisabled(false);
+        MasterApp.util.setStyleWindow(MasterApp.globals.getSectionPrincipal());
     },
     //configurar la cantidad de niveles que va a tener el menu
     generateLevels: function (json) {

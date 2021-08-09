@@ -207,8 +207,6 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
             columns[i]['funcion'] = undefined;
         }
         record.commit();
-        Ext.ComponentQuery.query('total-view toolbar button')[0].setDisabled(true);
-        Ext.ComponentQuery.query('total-view toolbar button')[1].setDisabled(true);
     },
 
     //configurar arreglo por registro y ventana
