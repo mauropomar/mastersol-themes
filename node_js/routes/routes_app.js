@@ -266,7 +266,7 @@ router.get('/executebuttons', async function (req, res) {
             if(!flag) {
                 try {
                     await sleep(time)
-                    resultado = await processJasper(jasper, result, req)
+                    resultado = await processJasper(jasper, result, req, result.name)
                     if(resultado.msg != 'No se pudo procesar el reporte')
                         flag = true
                 }
@@ -285,9 +285,10 @@ router.get('/executebuttons', async function (req, res) {
     }
 })
 
-const processJasper = async (jasper, result, req) => {
+const processJasper = async (jasper, result, req, nameReport) => {
     let print = null
-    let randomName = Math.random()
+    let currentDate = new Date()
+    let randomName = nameReport+'_'+currentDate.getSeconds()+currentDate.getMilliseconds()
     let tmpFile = global.appRootApp + '\\resources\\reports\\tmp\\' + randomName
     let dirFile = '../resources/reports/tmp/'+randomName
     if(jasper) {
