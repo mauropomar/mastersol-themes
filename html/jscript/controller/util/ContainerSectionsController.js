@@ -24,6 +24,7 @@ Ext.define('MasterSol.controller.util.ContainerSectionsController', {
             idparent: json.idpadre,
             idsection: json.id,
             resizable: false,
+            border:false,
             items: [gridsection, gridtotal],
             layout:'border',
             idrecordparent: null,

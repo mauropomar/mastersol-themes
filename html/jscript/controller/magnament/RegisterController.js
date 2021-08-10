@@ -62,10 +62,10 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 auditable: columns[i].audit,
                 real_name_in: columns[i].real_name_in,
                 tipo: columns[i].type,
-                valor: (rec != null) ? rec.data[dataIndex] : '',
+                valor: this.getValue(rec, dataIndex),
                 padre: 'Generales',
                 fk: columns[i].fk
-            })
+            });
         }
         store.loadData(data);
     },
@@ -248,7 +248,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         }
         var record = e.record;
         var column = Ext.ComponentQuery.query('#register-view')[0].columns[1];
-        if (record.data.fk == '1') {
+        if (record.data.fk == '1' || record.data.tipo == 'array') {
             this.setComboFk(record, column);
             return;
         }
@@ -349,15 +349,15 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     },
 
     setDateTimeField: function (rec, column) {
-        var edit = Ext.create('MasterSol.view.plugins.DateTime',{
-            className:'MasterSol.controller.magnament.RegisterController'
+        var edit = Ext.create('MasterSol.view.plugins.DateTime', {
+            className: 'MasterSol.controller.magnament.RegisterController'
         });
         var value = new Date(rec.data.valor);
         edit.setValue(value);
         column.setEditor(edit);
-        Ext.defer(()=>{
+        Ext.defer(() => {
             edit.dateField.focus('', false);
-        },1);
+        }, 1);
 
     },
 
@@ -406,7 +406,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             listeners: {
                 scope: this,
                 collapse: this.collapseFk,
-                specialKey:this.specialKey,
+                specialKey: this.specialKey,
                 beforequery: function (record) {
                     record.query = new RegExp(record.query, 'ig');
                 }
@@ -475,5 +475,11 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         var grid = Ext.ComponentQuery.query('#register-view')[0];
         var store = grid.getStore();
         store.rejectChanges();
+    },
+
+    getValue: function (rec, dataIndex) {
+        if(dataIndex == 'active' && rec == null)
+            return true;
+       return (rec != null) ? rec.data[dataIndex] : '';
     }
 })

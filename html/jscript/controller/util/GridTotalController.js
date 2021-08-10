@@ -15,7 +15,7 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
             scrollable: false,
             resizable: false,
             region: 'south',
-            border: 1,
+            border:false,
             columns: this.getColumns(columns),
             idsection: section.id,
             selModel: {
