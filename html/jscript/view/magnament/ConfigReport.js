@@ -53,7 +53,7 @@ Ext.define('MasterSol.view.magnament.ConfigReport', {
         }
     },  '->', {
         xtype: 'tbtext',
-        text: 'Configuración de Reporte',
+        text: 'Parámetros de reportes',
         id: 'tbtext_magnament_report',
         style: {
             fontSize: '10px',
