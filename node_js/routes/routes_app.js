@@ -648,7 +648,16 @@ router.post('/imagedesktop', async function (req, res) {
                 paramsInsert.push(valuesInsertAux.join(','))
                 paramsInsert.push(id_registro)
                 paramsInsert.push(req.session.id_user)
-                result = await objects.functions.updateRegister(paramsInsert)
+                let result = await objects.functions.updateRegister(paramsInsert)
+                if (result.success === false) {
+                    success = false
+                    msg = result.message
+                    fs.unlink(path, (err => {
+                        if (err) console.log(err);
+                    }));
+                }
+                else
+                    msg = path
             }
             else {
                 var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
@@ -674,8 +683,7 @@ router.post('/imagedesktop', async function (req, res) {
                     paramsInsert.push(null)
                     paramsInsert.push(req.session.id_user)
 
-                    result = await objects.functions.insertRegister(paramsInsert)
-                    console.log(result)
+                    let result = await objects.functions.insertRegister(paramsInsert)
                     if (result.success === false) {
                         success = false
                         msg = result.message
