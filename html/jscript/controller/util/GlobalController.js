@@ -130,21 +130,26 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.optionSelect = item;
         },
         setIdRol: function (id) {
+            localStorage.setItem('rol', id);
             this.idRol = id;
         },
         setIdUser: function (id) {
+            localStorage.setItem('user', id);
             this.idUser = id;
         },
         setIdLanguage: function (id) {
+            localStorage.setItem('language', id);
             this.idLanguage = id;
         },
         setLoading: function (val) {
             this.isLoading = val;
         },
         setPassword: function (val) {
+            localStorage.setItem('password', val);
             this.password = val;
         },
         setImageDesktop: function (val) {
+            localStorage.setItem('desktop', val);
             this.imageDesktop = 'resources/desktop/'+val;
         }
     }

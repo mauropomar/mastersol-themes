@@ -106,12 +106,15 @@ Ext.define('MasterSol.controller.login.LoginController', {
     },
 
     loadOptions: function () {
+        this.loadSession();
         this.loadRols();
         this.loadLanguages();
         Ext.ComponentQuery.query('#combolanguage')[0].getStore().load();
         MasterApp.theme.setStyle();
         MasterApp.alert.laodInitAlert();
     },
+
+
 
     loadRols: function () {
         var id = MasterApp.globals.getIdRol();
@@ -178,6 +181,19 @@ Ext.define('MasterSol.controller.login.LoginController', {
             }
         };
         Ext.Ajax.request(capsules);
+    },
+
+    loadSession:function(){
+        var user = localStorage.getItem('user');
+        var rol = localStorage.getItem('rol');
+        var lang = localStorage.getItem('language');
+        var desktop = localStorage.getItem('desktop');
+        var password = localStorage.getItem('password');
+        MasterApp.globals.idUser = user;
+        MasterApp.globals.idRol = rol;
+        MasterApp.globals.idLanguage = lang;
+        MasterApp.globals.password = password;
+        MasterApp.util.changeImageDesktop(desktop);
     },
 
     setImageDesktop: function (data) {
