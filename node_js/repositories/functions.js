@@ -912,7 +912,7 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                             paramsInsert.push(null)
                             paramsInsert.push(req.session.id_user)
 
-                            await insertRegister(req, paramsInsert);
+                            await insertRegister(paramsInsert);
                             console.log('Insertada capsula!')
                         }
                         else if (resultCapsule && resultCapsule.rows[0].fn_get_register) {
@@ -928,7 +928,7 @@ const uploadFile = (req,dirTemp,writeStream) => new Promise((resolve, reject) =>
                             paramsInsert.push(valuesInsertAux.join(','))
                             paramsInsert.push(idCapsule)
                             paramsInsert.push(req.session.id_user)
-                            await updateRegister(req, paramsInsert);
+                            await updateRegister(paramsInsert);
                             console.log('Actualizada capsula!')
                         }
                         //Chequear término de importación para hacer resolve
@@ -1628,7 +1628,7 @@ const restoreApp = (dirTemp,globalDir) => new Promise(async (resolve, reject) =>
     });
 })
 
-const insertRegister = async (req, params_insert) => {
+const insertRegister = async (params_insert) => {
     const query = "SELECT cfgapl.fn_insert_register($1,$2,$3,$4,$5,$6)"
     const result = await pool.executeQuery(query, params_insert)
 
@@ -1641,7 +1641,7 @@ const insertRegister = async (req, params_insert) => {
     return result.rows[0].fn_insert_register
 }
 
-const updateRegister = async (req, params_insert) => {
+const updateRegister = async (params_insert) => {
     const query = "SELECT cfgapl.fn_update_register($1,$2,$3,$4)"
     const result = await pool.executeQuery(query, params_insert)
     if (result.success === false) {
@@ -1762,21 +1762,6 @@ const quickSort = (
     return sortedArray;
 };
 
-// Array.prototype.orderByNumberInString=function(property){
-//     // Primero se verifica que la propiedad sortOrder tenga un dato válido.
-//    // if (sortOrder!=-1 && sortOrder!=1) sortOrder=1;
-//     this.sort(function(a,b){
-//         // La función de ordenamiento devuelve la comparación entre property de a y b.
-//         // El resultado será afectado por sortOrder.
-//         let prop_a = a[property]
-//         let prop_b = b[property]
-//         let index_a = prop_a.indexOf("_")
-//         let index_b = prop_b.indexOf("_")
-//         let num_a = prop_a.substring(0, index_a)
-//         let num_b = prop_b.substring(0, index_b)
-//         return (num_a-num_b);
-//     })
-// }
 
 objGenFunc.generateFunctions = generateFunctions
 objGenFunc.generateFunctionsTimeEvents = generateFunctionsTimeEvents
@@ -1791,4 +1776,6 @@ objGenFunc.saveAplication = saveAplication
 objGenFunc.importBackup = importBackup
 objGenFunc.generateZipCapsule = generateZipCapsule
 objGenFunc.cleanCapsuleFolder = cleanCapsuleFolder
+objGenFunc.insertRegister = insertRegister
+objGenFunc.updateRegister = updateRegister
 module.exports = objGenFunc

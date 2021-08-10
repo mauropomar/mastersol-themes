@@ -34,7 +34,6 @@ const insertRegister = async (req, objects) => {
 
 const updateRegister = async (req, objects) => {
     const params_insert = getParamsUpdate(req, objects)
-    console.log(params_insert)
     const query = "SELECT cfgapl.fn_update_register($1,$2,$3,$4)"
     const result = await pool.executeQuery(query, params_insert)
     if (result.success === false) {

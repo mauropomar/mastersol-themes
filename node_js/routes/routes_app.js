@@ -7,7 +7,9 @@ const multer = require("multer")
 var path = require("path")
 const objects = require('../modules');
 const dirTree = require("directory-tree");
-var dirFolderRestoreGlobal = ''
+var dirFolderRestoreGlobal = '';
+var dirFolderImageDesktopGlobal = '';
+var originalFileName = '';
 
 /*Obtener lenguajes*/
 router.get('/languages', async function (req, res) {
@@ -561,10 +563,150 @@ router.get('/restartsystem', async function (req, res) {
     process.exit(1);
 })
 
+router.post('/imagedesktop', async function (req, res) {
+    let msg = ''
+    let success = true
+    let subido = false
+    dirFolderImageDesktopGlobal = '../resources/desktop'
+
+    if(success) {
+        let upload = multer({storage: storageDesktop, fileFilter: imageFilter}).single('file');
+        upload(req, res, async function (err) {
+            // req.file contains information of uploaded file
+            // req.body contains information of text fields, if there were any
+            if (req.fileValidationError) {
+                success = false
+                msg = req.fileValidationError
+                subido = true
+            }
+            else if (!req.file) {
+                success = false
+                msg = 'Por favor seleccione un fichero .png, .jpg o .svg a subir';
+                subido = true
+            }
+            else if (err instanceof multer.MulterError) {
+                success = false
+                msg = err
+                subido = true
+            }
+            else if (err) {
+                success = false
+                msg = err
+                subido = true
+            }
+            else{
+                subido = true
+
+            }
+
+        });
+        while (!subido) {
+            await sleep(20)
+        }
+        if(success) {
+            // Si existe un registro para este rol y usuario, actualizo, sino, inserto
+            const paramsImage = ['cfgapl.imagedesktop',null,"WHERE id_users = '"+req.session.id_user+"' AND id_rol = '"+req.query.rol+"' "]
+            const resultImage = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsImage)
+            //-------Valores necesarios a insertar o actualizar
+            let path = ''
+            let id_section = ''
+            const paramsSectionImages = ['cfgapl.sections',null,"WHERE namex = 'Sec_imagedesktop' "];
+            const resultSectionImages = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSectionImages);
+            if(resultSectionImages && resultSectionImages.rows)
+                id_section = resultSectionImages.rows[0].fn_get_register[0].id
+            // Establecer path
+            let extension = ''
+            let nameFinal = originalFileName
+            let arrFileName = nameFinal.split('.')
+            if (arrFileName) {
+                let lastPos = arrFileName.length - 1
+                extension = arrFileName[lastPos]
+            }
+            nameFinal = nameFinal.replace('.'+extension,"")
+            let currentDate = new Date()
+            nameFinal += currentDate.getSeconds()+currentDate.getMilliseconds()+'.'+extension
+            path = dirFolderImageDesktopGlobal + '/' + nameFinal
+            await fs.rename(dirFolderImageDesktopGlobal + '/' + originalFileName, dirFolderImageDesktopGlobal + '/' + nameFinal, (err) => {
+                if (!err) {
+                    console.log("Archivo desktop renombrado!")
+                }
+                else {
+                    success = false
+                    msg = 'Ha ocurrido un error, ' + err
+                }
+            });
+            if (resultImage && resultImage.rows && resultImage.rows[0].fn_get_register) {
+                let id_registro = resultImage.rows[0].fn_get_register[0].id
+                var paramsInsert = [], valuesInsertAux = [];
+                valuesInsertAux.push("id_users = '" + req.session.id_user + "'")
+                valuesInsertAux.push("id_rol = '" + req.query.rol + "'")
+                valuesInsertAux.push("namex = '" + req.query.name + "'")
+                valuesInsertAux.push("path = '" + path + "'")
+                valuesInsertAux.push("modifier = '" + req.session.id_user + "'")
+
+                paramsInsert.push(id_section)
+                paramsInsert.push(valuesInsertAux.join(','))
+                paramsInsert.push(id_registro)
+                paramsInsert.push(req.session.id_user)
+                result = await objects.functions.updateRegister(paramsInsert)
+            }
+            else {
+                var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
+
+                if(success) {
+                    //columnas a insertar
+                    columnasInsertAux.push('id_users')
+                    columnasInsertAux.push('id_rol')
+                    columnasInsertAux.push('namex')
+                    columnasInsertAux.push('path')
+                    columnasInsertAux.push('creator')
+                    //valores a insertar
+                    valuesInsertAux.push("'" + req.session.id_user + "'")
+                    valuesInsertAux.push("'" + req.query.rol + "'")
+                    valuesInsertAux.push("'" + req.query.name + "'")
+                    valuesInsertAux.push("'" + path + "'")
+                    valuesInsertAux.push("'" + req.session.id_user + "'")
+
+                    paramsInsert.push(id_section)
+                    paramsInsert.push(columnasInsertAux.join(','))
+                    paramsInsert.push(valuesInsertAux.join(','))
+                    paramsInsert.push(null)
+                    paramsInsert.push(null)
+                    paramsInsert.push(req.session.id_user)
+
+                    result = await objects.functions.insertRegister(paramsInsert)
+                    console.log(result)
+                    if (result.success === false) {
+                        success = false
+                        msg = result.message
+                        fs.unlink(path, (err => {
+                            if (err) console.log(err);
+                        }));
+                    }
+                    else
+                        msg = path
+                }
+            }
+        }
+    }
+
+    return res.json({'success': success, 'datos': msg})
+})
+
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         // Uploads is the Upload_folder_name
         cb(null, dirFolderRestoreGlobal)
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname)
+    }
+})
+
+var storageDesktop = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // Uploads is the Upload_folder_name
+        cb(null, dirFolderImageDesktopGlobal)
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname)
@@ -577,6 +719,17 @@ const zipFilter = function(req, file, cb) {
         req.fileValidationError = 'Solo se permiten ficheros .zip!';
         return cb(new Error('Solo se permiten ficheros .zip!'), false);
     }
+    cb(null, true);
+};
+
+const imageFilter = function(req, file, cb) {
+    // Accept image files only
+    if (!file.originalname.match(/\.(png|PNG|jpg|JPG|svg|SVG)$/)) {
+        req.fileValidationError = 'Solo se permiten ficheros .png, .jpg o .svg!';
+        return cb(new Error('Solo se permiten ficheros .png, .jpg o .svg!'), false);
+    }
+    else
+        originalFileName = file.originalname
     cb(null, true);
 };
 

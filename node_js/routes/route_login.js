@@ -30,8 +30,15 @@ router.post("/login", async function (req, res) {
             default_rol = resultUser.rows[0].fn_get_register[0].default_rol
             req.session.language = resultUser.rows[0].fn_get_register[0].default_language
         }
+        //Buscar image desktop por usuario y rol
+        let pathImage = ''
+        let rol = default_rol != '' ? default_rol : req.session.id_rol
+        const paramsImage = ['cfgapl.imagedesktop',null,"WHERE id_users = '"+req.session.id_user+"' AND id_rol = '"+rol+"' "]
+        const resultImage = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsImage)
+        if (resultImage && resultImage.rows && resultImage.rows[0].fn_get_register)
+            pathImage = resultImage.rows[0].fn_get_register[0].path
 
-        res.json({'success': true, 'user': result.vals.id_user, 'rol': default_rol, 'language': req.session.language})
+        res.json({'success': true, 'user': result.vals.id_user, 'rol': default_rol, 'language': req.session.language, 'dektop': pathImage})
     } else {
         res.json({'success': false})
     }

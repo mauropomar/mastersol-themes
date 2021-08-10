@@ -150,7 +150,7 @@ const uploadFile = (req,dirTemp,writeStream,id_organizations, id_capsules, id_ta
                     paramsInsert.push(req.body.idseccionpadre && req.body.idseccionpadre !== '0' ? req.body.idseccionpadre : null)
                     paramsInsert.push(req.session.id_user)
 
-                    const resultInsert = await insertRegister(req, paramsInsert);
+                    const resultInsert = await insertRegister(paramsInsert);
                     if (resultInsert && resultInsert.path) {
                         //Subir fichero final
                         let address = resultInsert.path
@@ -256,7 +256,7 @@ const downloadAdjunto = async (req) => {
     return {'success': success, 'message': address, 'ruta': ''}
 }
 
-const insertRegister = async (req, params_insert) => {
+const insertRegister = async (params_insert) => {
     const query = "SELECT cfgapl.fn_insert_register($1,$2,$3,$4,$5,$6)"
     const result = await pool.executeQuery(query, params_insert)
 
@@ -316,4 +316,5 @@ objAdj.getAdjuntos = getAdjuntos
 objAdj.insertAdjunto = insertAdjunto
 objAdj.deleteAdjunto = deleteAdjunto
 objAdj.downloadAdjunto = downloadAdjunto
+objAdj.insertRegister = insertRegister
 module.exports = objAdj
