@@ -1,6 +1,7 @@
 Ext.define('MasterSol.controller.magnament.ConfigReportController', {
     extend: 'Ext.app.Controller',
     isEdit: false,
+    buttonReport: {},
     init: function () {
 
     },
@@ -54,7 +55,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         });
     },
 
-    configReport:function(){
+    configReport: function () {
         var grid = MasterApp.globals.getGridSection();
         var mask = new Ext.LoadMask(grid, {
             msg: 'Cargando...'
@@ -73,9 +74,9 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
                 idregister: recordId,
                 idsection: idsection,
                 idmenu: idmenu,
-                idbutton: button.id,
-                name: button.name,
-                action: button.action,
+                idbutton: this.buttonReport.id,
+                name: this.buttonReport.name,
+                action: this.buttonReport.action,
                 extra_params: extra_params,
                 report_format: 'html'
             },
@@ -84,9 +85,6 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
                 var params = response.request.params;
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success) {
-                    if (json.type === 4) {
-                        MasterApp.report.loadValues(json.value);
-                    }
                     if (json.type === 5) {
                         var extraParams = MasterApp.tools.getExtraParams();
                         MasterApp.report.removeAll();
@@ -105,7 +103,8 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         Ext.Ajax.request(execute);
     },
 
-    loadValues: function (values) {
+    loadValues: function (values, button) {
+        this.buttonReport = button;
         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
         tabMagnament.child('#config-report-view').tab.show();
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
@@ -238,13 +237,13 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
     },
 
     setDateTimeField: function (rec, column) {
-        var edit = Ext.create('MasterSol.view.plugins.DateTime',{
-            className:'MasterSol.controller.magnament.ConfigReportController'
+        var edit = Ext.create('MasterSol.view.plugins.DateTime', {
+            className: 'MasterSol.controller.magnament.ConfigReportController'
         });
         column.setEditor(edit);
-        Ext.defer(()=>{
+        Ext.defer(() => {
             edit.dateField.focus('', false);
-        },1);
+        }, 1);
     },
 
     //setear combo de funcion multiselect
