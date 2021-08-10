@@ -569,7 +569,7 @@ router.post('/imagedesktop', async function (req, res) {
     let subido = false
     dirFolderImageDesktopGlobal = '../resources/desktop'
 
-    if(success) {
+    if(req.query.rol && req.query.rol != "") {
         let upload = multer({storage: storageDesktop, fileFilter: imageFilter}).single('file');
         upload(req, res, async function (err) {
             // req.file contains information of uploaded file
@@ -594,7 +594,7 @@ router.post('/imagedesktop', async function (req, res) {
                 msg = err
                 subido = true
             }
-            else{
+            else {
                 subido = true
 
             }
@@ -603,16 +603,16 @@ router.post('/imagedesktop', async function (req, res) {
         while (!subido) {
             await sleep(20)
         }
-        if(success) {
+        if (success) {
             // Si existe un registro para este rol y usuario, actualizo, sino, inserto
-            const paramsImage = ['cfgapl.imagedesktop',null,"WHERE id_users = '"+req.session.id_user+"' AND id_rol = '"+req.query.rol+"' "]
+            const paramsImage = ['cfgapl.imagedesktop', null, "WHERE id_users = '" + req.session.id_user + "' AND id_rol = '" + req.query.rol + "' "]
             const resultImage = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsImage)
             //-------Valores necesarios a insertar o actualizar
             let path = ''
             let id_section = ''
-            const paramsSectionImages = ['cfgapl.sections',null,"WHERE namex = 'Sec_imagedesktop' "];
+            const paramsSectionImages = ['cfgapl.sections', null, "WHERE namex = 'Sec_imagedesktop' "];
             const resultSectionImages = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSectionImages);
-            if(resultSectionImages && resultSectionImages.rows)
+            if (resultSectionImages && resultSectionImages.rows)
                 id_section = resultSectionImages.rows[0].fn_get_register[0].id
             // Establecer path
             let extension = ''
@@ -622,9 +622,9 @@ router.post('/imagedesktop', async function (req, res) {
                 let lastPos = arrFileName.length - 1
                 extension = arrFileName[lastPos]
             }
-            nameFinal = nameFinal.replace('.'+extension,"")
+            nameFinal = nameFinal.replace('.' + extension, "")
             let currentDate = new Date()
-            nameFinal += currentDate.getSeconds()+currentDate.getMilliseconds()+'.'+extension
+            nameFinal += currentDate.getSeconds() + currentDate.getMilliseconds() + '.' + extension
             path = dirFolderImageDesktopGlobal + '/' + nameFinal
             await fs.rename(dirFolderImageDesktopGlobal + '/' + originalFileName, dirFolderImageDesktopGlobal + '/' + nameFinal, (err) => {
                 if (!err) {
@@ -662,7 +662,7 @@ router.post('/imagedesktop', async function (req, res) {
             else {
                 var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
 
-                if(success) {
+                if (success) {
                     //columnas a insertar
                     columnasInsertAux.push('id_users')
                     columnasInsertAux.push('id_rol')
@@ -696,6 +696,10 @@ router.post('/imagedesktop', async function (req, res) {
                 }
             }
         }
+    }
+    else{
+        success = false
+        msg = "Este usuario no tiene rol"
     }
 
     return res.json({'success': success, 'datos': msg})
