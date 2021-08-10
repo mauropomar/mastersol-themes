@@ -68,6 +68,8 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         window.idmenu = this.menu.id;
         window.isAlert = isAlert;
         window.showAt(0, 38);
+        if (json.length == 0)
+            return;
         MasterApp.tools.setButtonsInit(window, json[0].buttons);
         this.windowParent = window;
         this.panelMenu = window.down('panel').down('container');
@@ -141,7 +143,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         }
     },
     // crea una seccion y la agrega al tab
-    insertSection (section, tab) {
+    insertSection(section, tab) {
         var title = section.nombre;
         var height = tab.getHeight();
         var containerSection = MasterApp.containersections.getPanel(title, section, [], height, 'grid-section', this.windowParent);

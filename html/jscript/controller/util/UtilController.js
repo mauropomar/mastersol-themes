@@ -386,6 +386,8 @@ Ext.define('MasterSol.controller.util.UtilController', {
 
     getName: function (path) {
         var index = path.lastIndexOf('\\');
+        if (index == -1)
+            index = path.lastIndexOf('/');
         if (index > -1) {
             var name = path.substring(index + 1, path.lengh);
             return name;
