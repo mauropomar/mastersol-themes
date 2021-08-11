@@ -492,8 +492,9 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     // Evento para capturar el click en el cuerpo de la sesion principal
     addEventClickSectionPrincipal: function (panel) {
         var comp = panel.getEl();
-        var _this = this;
         comp.on('click', function (e) {
+            if (e.event.target.dataset.ref == 'triggerEl')
+                return false;
             var idpanel = this.id;
             var p = Ext.ComponentQuery.query('#' + idpanel)[0];
             var grid = p.down('gridpanel');
@@ -515,12 +516,13 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.onClickTab(tabPanel);
         this.onClickSection(comp);
         this.onDoubleClickTab(tabPanel);
-    }
-    ,
+    },
 // Evento para capturar el click en el tab de las sesion
     onClickTab: function (tabPanel) {
         var comp = tabPanel.tabBar.getEl();
         comp.on('click', function (e) {
+            if (e.event.target.dataset.ref == 'triggerEl')
+                return false;
             var tabpanel = Ext.ComponentQuery.query('#' + this.id)[0].up('tabpanel');
             var sectionActive = tabpanel.getActiveTab();
             if (sectionActive) {
