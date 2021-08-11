@@ -5,7 +5,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     getArrayBtn: function () {
-        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd'];
+        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
         return array;
     },
 
@@ -201,6 +201,34 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             handler: function (evt, toolEl, owner, tool) {
                 var window = owner.up('window');
                 MasterApp.getController('MasterSol.controller.capsule.CapsuleImportController').showWindow();
+            }
+        }, {
+            iconCls: 'fa fa-file-zip-o',
+            name: 'btn_import_section',
+            default: true,
+            listeners: {
+                'render': function (c) {
+                    Ext.create('Ext.tip.ToolTip', {
+                        target: c.getEl(),
+                        autoHide: false,
+                        items: [{
+                            xtype: 'button',
+                            tooltip: 'Importar excel',
+                            scope: this,
+                            iconCls: 'fa fa-file-excel-o',
+                            handler: function (evt, toolEl, owner, tool) {
+                                MasterApp.getController('MasterSol.controller.import.ImportExcelController').showWindow();
+                            }
+                        }, {
+                            xtype: 'button',
+                            tooltip: 'Importar cvs',
+                            iconCls: 'fa fa-file-zip-o',
+                            handler: function (evt, toolEl, owner, tool) {
+                                MasterApp.getController('MasterSol.controller.import.ImportCsvController').showWindow();
+                            }
+                        }]
+                    })
+                }
             }
         }, {
             iconCls: 'fa fa-plus',

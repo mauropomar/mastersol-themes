@@ -24,11 +24,21 @@ Ext.define('MasterSol.view.layout.Header', {
                     MasterApp.header.refreshDesktop();
                 }
             }, {
-                text: 'Cambiar Imagen Fondo',
+                text: 'Imagen Fondo',
                 iconCls: 'fa fa-file-image-o',
-                handler: function () {
-                    MasterApp.header.showWindowImageDesktop();
-                }
+                menu:[{
+                    text: 'Cambiar',
+                    iconCls: 'fa fa-refresh',
+                    handler: function () {
+                        MasterApp.header.showWindowImageDesktop();
+                    }
+                },{
+                    text: 'Restaurar',
+                    iconCls: 'fa fa-reply',
+                    handler: function () {
+                        MasterApp.header.restoreImageDesktopDefault();
+                    }
+                }]
             }]
         }, {
             xtype: 'button',

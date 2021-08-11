@@ -408,6 +408,17 @@ Ext.define('MasterSol.controller.util.UtilController', {
         return valid;
     },
 
+    isValidFileCsv: function (name) {
+        var index = name.lastIndexOf('.csv');
+        var valid = (index === -1) ? false : true;
+        return valid;
+    },
+    isValidFileExcel: function (name) {
+        var index = name.lastIndexOf('.xlsx');
+        var valid = (index === -1) ? false : true;
+        return valid;
+    },
+
     changeImageDesktop: function (image) {
         var dataview = Ext.ComponentQuery.query('dataview-home')[0].down('dataview');
         MasterApp.globals.setImageDesktop(image);

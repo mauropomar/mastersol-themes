@@ -39,7 +39,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             win.isminimize = false;
             var btnMinimize = MasterApp.tools.getBtnTools(win, 'btn_minimize');
             btnMinimize.show();
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd'];
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd', 'btn_export_capsule', 'btn_import_section'];
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             var btnMaximize = MasterApp.tools.getBtnTools(win, 'btn_restore');
             btnMaximize.hide();
@@ -66,7 +66,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             win.setY(posY);
             posX = width + posX;
             win.isminimize = false;
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd'];
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             var btnMaximize = MasterApp.tools.getBtnTools(win, 'btn_restore');
             btnMaximize.hide();
@@ -109,7 +109,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             win.isminimize = false;
             var btnMinimize = MasterApp.tools.getBtnTools(win, 'btn_minimize');
             btnMinimize.show();
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd'];
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             MasterApp.tools.showButtonsNotDefault(win, true);
         }
@@ -202,7 +202,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             windows[j].setWidth(300);
             var btn = MasterApp.tools.getBtnTools(windows[j], 'btn_restore');
             btn.show();
-            var arrayBtn = ['btn_minimize', 'btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd'];
+            var arrayBtn = ['btn_minimize', 'btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
             MasterApp.tools.setVisibleBtn(windows[j], arrayBtn, true);
             windows[j].alignTo(panelMenu, 'bl-bl');
             MasterApp.section.setPositionWindow(windows[j]);
@@ -283,7 +283,39 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         });
     },
 
-
+    restoreImageDesktopDefault:function(){
+        var panel = Ext.ComponentQuery.query('dataview-home')[0];
+        var mask = new Ext.LoadMask(panel, {
+            msg: 'Restaurando....'
+        });
+        mask.show();
+        Ext.Ajax.request({
+            url: 'app/restoreimagedesktop',
+            rawData: data,
+            scope: this,
+            method: 'POST',
+            params: {
+                rol: MasterApp.globals.getIdRol(),
+                user: MasterApp.globals.getIdUser(),
+            },
+            headers: {'Content-Type': null}, //to use content type of FormData
+            success: function (response) {
+                mask.hide();
+                var json = Ext.JSON.decode(response.responseText);
+                if (json.success == true) {
+                    Ext.toast('Los cambios fueron realizados con éxito.');
+                    MasterApp.util.changeImageDesktop('');
+                } else {
+                    Ext.MessageBox.show({
+                        title: 'Información',
+                        msg: json.datos,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
+                }
+            }
+        });
+    },
 
     cancelImageDesktop: function () {
         var window = Ext.ComponentQuery.query('window-image-desktop')[0];
