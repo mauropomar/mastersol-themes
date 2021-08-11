@@ -321,9 +321,12 @@ Ext.define('MasterSol.controller.util.UtilController', {
         window.setStyle({
             borderColor: '#e87b48'
         });
+        window.isSelect = true;
+        window.focus();
         var windows = Ext.ComponentQuery.query('window');
         for (var i = 0; i < windows.length; i++) {
             if (windows[i].id != idSelWindow) {
+                windows[i].isSelect = false;
                 windows[i].setStyle({
                     borderColor: 'transparent'
                 });

@@ -41,9 +41,11 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
         });
     },
 
-    getStore:function(columns, data) {
+    getStore: function (columns, data) {
         var data = (data) ? data : new Array();
-        var fields = []
+        columns = (columns) ? columns : new Array();
+        var fields = [];
+
         for (var i = 0; i < columns.length; i++) {
             fields.push(columns[i].dataIndex)
         }
@@ -56,7 +58,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
         return store;
     },
 
-    getColumns:function(cols) {
+    getColumns: function (cols) {
+        cols = (cols) ? cols : new Array();
         var columns = [];
         for (var i = 0; i < cols.length; i++) {
             if (!cols[i].hidden) {

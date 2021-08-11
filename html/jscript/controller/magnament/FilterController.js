@@ -512,8 +512,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
     setComboFk: function (rec, column) {
         var idsection = MasterApp.util.getIdSectionActive();
         var combo = Ext.create('MasterSol.view.magnament.ComboFk', {
-            //   multiSelect: (rec.data.tipo == 'array') ? true : false,
-            multiSelect: true,
+            multiSelect: (rec.data.tipo == 'array') ? true : false,
             listConfig: {
                 loadingText: 'Buscando...',
                 emptyText: 'No existen opciones....',

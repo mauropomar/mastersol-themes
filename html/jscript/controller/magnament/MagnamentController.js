@@ -39,7 +39,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             MasterApp.audit.getAll();
         }
         if (newCard.xtype === 'config-report-view') {
-           // MasterApp.report.getAll();
+            // MasterApp.report.getAll();
         }
     },
 
@@ -60,9 +60,8 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             tabMagnament.child('#register-view').tab.hide();
             Ext.ComponentQuery.query('#register-view')[0].hide();
             Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(1);
-        }
-        else {
-            if(!tabMagnament.child('#register-view').tab.isVisible()) {
+        } else {
+            if (!tabMagnament.child('#register-view').tab.isVisible()) {
                 tabMagnament.child('#register-view').tab.show();
                 Ext.ComponentQuery.query('#register-view')[0].show();
             }
@@ -157,7 +156,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
     },
 
     expand: function () {
-      //  MasterApp.util.resizeAllWindow();
+        //  MasterApp.util.resizeAllWindow();
     },
 
     resetTitle: function () {
@@ -168,5 +167,49 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         Ext.ComponentQuery.query('#tbtext_magnament_total')[0].setText('Totales');
         Ext.ComponentQuery.query('#tbtext_magnament_filter')[0].setText('Filtros');
     },
+
+    aplyKeyMap: function () {
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'F2' || e.key === 'F3' || e.key === 'F4' || e.key === 'F5' || e.key === 'F6'|| e.key === 'F7') {
+                e.cancelBubble = true;
+                e.cancelable = true;
+                e.stopPropagation();
+                e.preventDefault();
+                e.returnValue = false;
+                var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
+                tabMagnament.show();
+                tabMagnament.expand(false);
+                tabMagnament.setDisabled(false);
+                var gridSection = MasterApp.globals.getGridSection();
+                tabMagnament.idmenumag = gridSection.idmenu;
+                tabMagnament.idsectionmag = gridSection.idsection;
+                if(e.key === 'F2'){
+                    Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(0);
+                    MasterApp.register.editRegister(0);
+                }
+                if(e.key === 'F3'){
+                    Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(1);
+                    MasterApp.filter.getAll(0);
+                }
+                if(e.key === 'F4'){
+                    Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(2);
+                    MasterApp.totals.getAll(0);
+                }
+                if(e.key === 'F5'){
+                    Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(3);
+                    MasterApp.attached.getAll();
+                }
+                if(e.key === 'F6'){
+                    Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(4);
+                    MasterApp.note.getAll();
+                }
+                if(e.key === 'F7'){
+                    Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(5);
+                    MasterApp.audit.getAll();
+                }
+            }
+
+        });
+    }
 
 })

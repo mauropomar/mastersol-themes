@@ -5,7 +5,7 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
         this.hidden = true;
     },
 
-    getComponents(section, columns, tools, height, data, name) {
+    getComponents: function (section, columns, tools, height, data, name) {
         this.grid = Ext.create('Ext.grid.Panel', {
             store: this.getStore(columns, data),
             name: name,
@@ -15,7 +15,7 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
             scrollable: false,
             resizable: false,
             region: 'south',
-            border:false,
+            border: false,
             columns: this.getColumns(columns),
             idsection: section.id,
             selModel: {
@@ -34,8 +34,9 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
         return this.grid
     },
 
-    getStore(columns, data) {
+    getStore: function (columns, data) {
         var data = (data) ? data : new Array();
+        columns = (columns) ? columns : new Array();
         var fields = []
         for (var i = 0; i < columns.length; i++) {
             fields.push(columns[i].dataIndex)
@@ -46,11 +47,11 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
             alias: 'store.store_dinamic',
             fields: fields,
             data: data
-        })
+        });
         return store;
     },
 
-    getData(fields) {
+    getData: function (fields) {
         var datos = [];
         var obj = {};
         for (var j = 0; j < fields.length; j++) {
@@ -60,7 +61,8 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
         return datos;
     },
 
-    getColumns(cols) {
+    getColumns: function (cols) {
+        cols = (cols) ? cols : new Array();
         var columns = [];
         for (var i = 0; i < cols.length; i++) {
             if (cols[i].funcion) {
