@@ -42,13 +42,17 @@ Ext.define('MasterSol.controller.import.ImportExcelController', {
             return;
         }
         data.append('file', file);
+        var idsection = MasterApp.util.getIdSectionActive();
+        var idmenu = MasterApp.util.getIdMenuActive();
         Ext.Ajax.request({
             url: 'app/importtable',
             rawData: data,
             scope: this,
             timeout: 5000,
             params: {
-                name: nameFile
+                name: nameFile,
+                idsection:idsection,
+                idmenu:idmenu
             },
             headers: {'Content-Type': null}, //to use content type of FormData
             success: function (response) {
