@@ -48,6 +48,7 @@ Ext.define('MasterSol.controller.import.ImportCsvController', {
             url: 'app/importtable',
             rawData: data,
             scope: this,
+            method: 'POST',
             timeout: 5000,
             params: {
                 name: nameFile,
