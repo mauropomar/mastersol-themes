@@ -22,22 +22,40 @@ Ext.define('MasterSol.view.magnament.TabPanel', {
     ],
     items: [{
         xtype: 'register-view',
-        id: 'register-view'
+        id: 'register-view',
+        tabConfig: {
+            tooltip: 'Registros (F2)'
+        }
     }, {
         xtype: 'filter-view',
-        id: 'filter-view'
+        id: 'filter-view',
+        tabConfig: {
+            tooltip: 'Filtros (F3)'
+        }
     }, {
         xtype: 'total-view',
-        id: 'total-view'
+        id: 'total-view',
+        tabConfig: {
+            tooltip: 'Totales (F4)'
+        }
     }, {
         xtype: 'attached-view',
-        id: 'attached-view'
+        id: 'attached-view',
+        tabConfig: {
+            tooltip: 'Adjuntos (F5)'
+        }
     }, {
         xtype: 'note-view',
-        id: 'note-view'
+        id: 'note-view',
+        tabConfig: {
+            tooltip: 'Notas (F6)'
+        }
     }, {
         xtype: 'audit-view',
-        id: 'audit-view'
+        id: 'audit-view',
+        tabConfig: {
+            tooltip: 'Auditoría (F7)'
+        }
     }, {
         xtype: 'config-report-view',
         hidden: true,

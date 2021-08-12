@@ -152,6 +152,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             scope: this,
             callback: function (options, success, response) {
                 Mask.hide();
+                localStorage.clear();
                 location.href = 'index.html';
             }
         };

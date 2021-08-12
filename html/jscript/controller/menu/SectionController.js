@@ -361,7 +361,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var hasSelection = gridsection.getSelectionModel().hasSelection();
         if (!hasSelection) {
             MasterApp.util.showMessageInfo('Debe seleccionar un registro.');
-            return
+            return;
         }
         ;
         var selects = gridsection.getSelectionModel().getSelection();
@@ -393,9 +393,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                         if (json.success == true) {
                             for (var j = 0; j < selects.length; j++) {
                                 store.remove(selects[j]);
-                                this.afterDelete()
+                                this.afterDelete();
                             }
-                            button.setDisabled(true);
                         } else {
                             Ext.Msg.show({
                                 title: 'Informaci&oacute;n',
@@ -585,7 +584,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var arrayBtn = ['btn_restore'];
         var isExpanded = MasterApp.util.isWindowExpand(win);
         MasterApp.tools.setVisibleBtn(win, arrayBtn, isExpanded);
-        arrayBtn = ['btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd'];
+        arrayBtn = ['btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
         if (widthPanel >= width) {
             MasterApp.tools.setVisibleBtn(win, arrayBtn, true);
             MasterApp.tools.showButtonsNotDefault(win, false);
@@ -643,7 +642,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             btn.show();
             btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
             btn.show();
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd'];
+            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
             MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
             this.adjustOtherWindowsMinimize();
             var panel = Ext.ComponentQuery.query('#panel-center')[0];
