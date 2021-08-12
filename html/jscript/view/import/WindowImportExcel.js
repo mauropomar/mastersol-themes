@@ -33,7 +33,7 @@ Ext.define('MasterSol.view.import.WindowImportExcel', {
         }]
     }],
     buttons: [{
-        text: 'Imprtar',
+        text: 'Importar',
         id: 'btn_execute_import_excel',
         iconCls: 'fa fa-file-excel-o',
         handler: function () {
