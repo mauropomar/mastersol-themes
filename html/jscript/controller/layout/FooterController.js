@@ -54,6 +54,8 @@ Ext.define('MasterSol.controller.layout.FooterController', {
             window.isminimize = false;
             window.setPosition(0, 38);
             window.toFront();
+            var panel = window.down('panel');
+            MasterApp.util.setStyleWindow(panel);
             combo.reset();
         },
 

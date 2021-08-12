@@ -66,7 +66,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     dblclickSection: function (grid, td, cellIndex, record) {
         MasterApp.globals.setGridSection(grid.panel, cellIndex);
         MasterApp.globals.setRecordSection(record);
-        //  MasterApp.magnament.getData(grid.panel, cellIndex);
+        MasterApp.magnament.getData(grid.panel, cellIndex);
         return false;
     },
 
