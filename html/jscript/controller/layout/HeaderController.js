@@ -291,7 +291,6 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         mask.show();
         Ext.Ajax.request({
             url: 'app/restoreimagedesktop',
-            rawData: data,
             scope: this,
             method: 'POST',
             params: {
