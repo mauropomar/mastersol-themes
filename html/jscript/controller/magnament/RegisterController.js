@@ -237,7 +237,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 valor: MasterApp.util.getVal(records[j], records[j].data['valor'])
             })
         }
-        return data
+        return data;
     },
 
     beforeedit: function (editor, e, eOpts) {
@@ -272,12 +272,21 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     },
     //resetea los valores de los registros al insertar
     cleanValues: function () {
+        Ext.ComponentQuery.query('#btn_insert_register')[0].show();
+        Ext.ComponentQuery.query('#btn_save_register')[0].hide();
         var grid = Ext.ComponentQuery.query('#register-view')[0];
         var store = grid.getStore();
         store.each(function (rec) {
             rec.set('valor', '');
             rec.commit();
         });
+        this.isEdit = false;
+        var edit = grid.plugins[0];
+        edit.startEditByPosition({
+            row: 0,
+            column: 1
+        });
+
     },
 
     setNumberField: function (rec, column) {
@@ -481,5 +490,11 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         if(dataIndex == 'active' && rec == null)
             return true;
        return (rec != null) ? rec.data[dataIndex] : '';
+    },
+
+    removeAll:function(){
+        var grid = Ext.ComponentQuery.query('#register-view')[0];
+        var store = grid.getStore();
+        store.loadData([]);
     }
 })

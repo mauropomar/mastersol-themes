@@ -111,6 +111,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                     this.changeIconsTotals(data);
                 } else {
                     MasterApp.util.showMessageInfo('No existen totales para esta columna.');
+                    this.new();
                 }
             }
         };

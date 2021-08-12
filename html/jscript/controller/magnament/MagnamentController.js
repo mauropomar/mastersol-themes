@@ -100,7 +100,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         if (!tabMagnament.isVisible())
             return;
         if (optionActive.xtype === 'register-view') {
-            MasterApp.register.clean();
+            MasterApp.register.cleanValues();
             return;
         }
         if (optionActive.xtype === 'filter-view') {
