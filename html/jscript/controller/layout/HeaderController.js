@@ -289,7 +289,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             msg: 'Restaurando....'
         });
         mask.show();
-        Ext.Ajax.request({
+        var execute = {
             url: 'app/restoreimagedesktop',
             scope: this,
             method: 'POST',
@@ -297,7 +297,6 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
                 rol: MasterApp.globals.getIdRol(),
                 user: MasterApp.globals.getIdUser(),
             },
-            headers: {'Content-Type': null}, //to use content type of FormData
             success: function (response) {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
@@ -313,7 +312,8 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
                     });
                 }
             }
-        });
+        };
+        Ext.Ajax.request(execute);
     },
 
     cancelImageDesktop: function () {
