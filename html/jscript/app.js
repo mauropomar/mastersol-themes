@@ -2,9 +2,11 @@ Ext.Loader.setConfig({
     enabled : true,
     disableCaching: false,
     paths   : {
-        'Capsules' : 'html/jscript/capsules'
+        'Capsules' : 'html/jscript/capsules',
     }
 });
+Ext.require(['Ext.chart.*']);
+
 
 Ext.application({
     name: 'MasterSol',

@@ -4,24 +4,32 @@
 Ext.define('MasterSol.view.chart.WindowChart', {
     extend: 'Ext.window.Window',
     xtype: 'window-chart',
-    closable: false,
+    closable: true,
     closeAction: 'destroy',
-    height: 500,
-    width: 600,
+    height:'80%',
+    width:'80%',
+    modal:true,
     title: 'Gráficos',
     layout: 'fit',
     autoShow: true,
+    requires: [
+        'MasterSol.view.chart.ColumnChart',
+    ],
     items: [{
         xtype: 'panel',
         layout: 'border',
         items: [{
-            region:'west',
-            width:'20%',
-            split:true,
+            region: 'west',
+            width: '20%',
+            split: true,
             collapsible: true,
             collapseMode: 'mini',
-        },{
+        }, {
             region: 'center',
+            layout: 'fit',
+            items: [{
+                xtype:'column-chart'
+            }],
             tbar: [{
                 xtype: 'button',
                 iconCls: 'fa fa-bar-chart'
@@ -31,7 +39,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
             }, {
                 xtype: 'button',
                 iconCls: 'fa fa-pie-chart'
-            },{
+            }, {
                 xtype: 'button',
                 iconCls: 'fa fa-area-chart'
             }]

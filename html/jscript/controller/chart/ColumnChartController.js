@@ -1,92 +1,44 @@
 Ext.define('MasterSol.controller.chart.ColumnChartController', {
-    extend: 'Ext.app.Controller',
-    itemAnimationDuration: 0,
-    init: function () {
+        extend: 'Ext.app.Controller',
+        init: function () {
 
-    },
+        },
 
-
-    onEditTipRender: function (tooltip, item, target, e) {
-        tooltip.setHtml('Temperature °F: ' + target.yValue.toFixed(1));
-    },
-
-    onSeriesLabelRender: function (value) {
-        return value.toFixed(1);
-    },
-
-    onColumnEdit: function (chart, data) {
-        var threshold = 65,
-            delta = 20,
-            yValue = data.target.yValue,
-            coldness;
-
-        if (yValue < threshold) {
-            coldness = Ext.Number.constrain((threshold - yValue) / delta, 0, 1);
-            return {
-                fillStyle: 'rgba(133, 231, 252, ' + coldness.toString() + ')'
-            };
-        } else {
-            return {
-                fillStyle: 'none'
-            };
-        }
-    },
-
-    onAfterRender: function () {
-        var me = this,
-            chart = this.lookupReference('chart'),
-            axis = chart.getAxis(0),
-            store = chart.getStore();
-
-        function onAxisRangeChange() {
-            me.onAxisRangeChange(axis);
-        }
-
-        store.on({
-            datachanged: onAxisRangeChange,
-            update: onAxisRangeChange
-        });
-    },
-
-    onAxisRangeChange: function (axis, range) {
-        var chart = axis.getChart(),
-            store = chart.getStore(),
-            sum = 0,
-            mean;
-
-        store.each(function (rec) {
-            sum += rec.get('highF');
-        });
-
-        mean = sum / store.getCount();
-
-        axis.setLimits({
-            value: mean,
-            line: {
+        render: function () {
+            var chart = new CanvasJS.Chart("chartContainer", {
+                animationEnabled: true,
+                exportEnabled: true,
+                theme: "light2", // "light1", "light2", "dark1", "dark2"
                 title: {
-                    text: 'Average high: ' + mean.toFixed(2) + '°F'
+                    text: "GDP Growth Rate - 2016"
                 },
-                lineDash: [2,2]
-            }
-        });
-    },
+                axisY: {
+                    title: "Growth Rate (in %)",
+                    suffix: "%"
+                },
+                axisX: {
+                    title: "Countries"
+                },
+                data: [{
+                    type: "column",
+                    yValueFormatString: "#,##0.0#\"%\"",
+                    dataPoints: [
+                        {label: "India", y: 7.1},
+                        {label: "China", y: 6.70},
+                        {label: "Indonesia", y: 5.00},
+                        {label: "Australia", y: 2.50},
+                        {label: "Mexico", y: 2.30},
+                        {label: "UK", y: 1.80},
+                        {label: "United States", y: 1.60},
+                        {label: "Japan", y: 1.60}
 
-
-
-    onBeginItemEdit: function (chart, interaction, item) {
-        var itemsMarker = item.sprite.getMarker(item.category),
-            fx = itemsMarker.getTemplate().fx; // animation modifier
-
-        this.itemAnimationDuration = fx.getDuration();
-        fx.setDuration(0);
-    },
-
-
-    onEndItemEdit: function (chart, interaction, item, target) {
-        var itemsMarker = item.sprite.getMarker(item.category),
-            fx = itemsMarker.getTemplate().fx;
-
-        fx.setDuration(this.itemAnimationDuration);
+                    ]
+                }]
+            });
+            chart.render();
+            setTimeout(function () {
+                document.getElementsByClassName('canvasjs-chart-credit')[0].innerHTML = '';
+            }, 500);
+        }
     }
-
-});
+);

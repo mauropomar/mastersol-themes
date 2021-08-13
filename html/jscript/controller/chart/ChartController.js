@@ -8,6 +8,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         Ext.create('MasterSol.view.chart.WindowChart', {
             id: 'window_chart'
         });
+        MasterApp.getController('MasterSol.controller.chart.ColumnChartController').render();
     },
 
 
