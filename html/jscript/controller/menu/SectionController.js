@@ -348,7 +348,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             if (columns[i].dataIndex == column.dataIndex) {
                 var width = column.getWidth();
                 columns[i].setWidth(width);
-                break
+                break;
             }
         }
     },

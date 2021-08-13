@@ -6,6 +6,11 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
 
     },
 
+    getAll: function () {
+        var title = MasterApp.util.getTitleSectionSelected();
+        Ext.ComponentQuery.query('#tbtext_magnament_report')[0].setText('Parametros de Reportes: ' + title);
+    },
+
 
     beforeedit: function (editor, e, eOpts) {
         var gridsection = MasterApp.globals.getGridSection();
