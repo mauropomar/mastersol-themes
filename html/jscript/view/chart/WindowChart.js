@@ -37,21 +37,30 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                 handler:function(){
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('column');
                 }
-            }, {
+            },'-',{
                 xtype: 'button',
                 iconCls: 'fa fa-line-chart',
                 handler:function(){
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('line');
                 }
-            }, {
+            },'-',{
                 xtype: 'button',
                 iconCls: 'fa fa-pie-chart',
                 handler:function(){
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('pie');
                 }
-            }, {
+            },'-',{
                 xtype: 'button',
-                iconCls: 'fa fa-area-chart'
+                iconCls: 'fa fa-area-chart',
+                handler:function(){
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('area');
+                }
+            },'-',{
+                xtype: 'button',
+                iconCls: 'fa fa-align-left',
+                handler:function(){
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('stackbar');
+                }
             }]
         }]
     }],

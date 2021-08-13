@@ -16,8 +16,13 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         } else if (type === 'pie') {
             panel = Ext.create('MasterSol.view.chart.PieChart');
             Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+        }else if (type === 'area') {
+            panel = Ext.create('MasterSol.view.chart.AreaChart');
+            Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+        }else if (type === 'stackbar') {
+            panel = Ext.create('MasterSol.view.chart.StackBarChart');
+            Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
         }
-
     },
 
     showWindow: function () {
