@@ -539,6 +539,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
 // Evento para capturar el click en el cuerpo de las sesion
     onClickSection: function (comp) {
         comp.on('click', function (e) {
+            if (e.event.target.dataset.ref == 'triggerEl')
+                return false;
             var tabpanel = Ext.ComponentQuery.query('#' + this.id)[0];
             var sectionActive = tabpanel.getActiveTab();
             if (sectionActive.down('gridpanel')) {
