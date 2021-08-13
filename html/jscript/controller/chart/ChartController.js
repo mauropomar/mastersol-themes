@@ -4,11 +4,26 @@ Ext.define('MasterSol.controller.chart.ChartController', {
 
     },
 
+    addChart: function (type) {
+        var panel;
+        Ext.ComponentQuery.query('#container_chart_panel')[0].removeAll();
+        if (type === 'column') {
+            panel = Ext.create('MasterSol.view.chart.ColumnChart');
+            Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+        } else if (type === 'line') {
+            panel = Ext.create('MasterSol.view.chart.LineChart');
+            Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+        } else if (type === 'pie') {
+            panel = Ext.create('MasterSol.view.chart.PieChart');
+            Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+        }
+
+    },
+
     showWindow: function () {
         Ext.create('MasterSol.view.chart.WindowChart', {
             id: 'window_chart'
         });
-        MasterApp.getController('MasterSol.controller.chart.ColumnChartController').render();
     },
 
 

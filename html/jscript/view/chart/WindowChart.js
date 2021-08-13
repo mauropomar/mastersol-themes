@@ -7,7 +7,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
     closable: true,
     closeAction: 'destroy',
     height:'80%',
-    width:'80%',
+    width:'50%',
     modal:true,
     title: 'Gráficos',
     layout: 'fit',
@@ -27,18 +27,28 @@ Ext.define('MasterSol.view.chart.WindowChart', {
         }, {
             region: 'center',
             layout: 'fit',
+            id:'container_chart_panel',
             items: [{
                 xtype:'column-chart'
             }],
             tbar: [{
                 xtype: 'button',
-                iconCls: 'fa fa-bar-chart'
+                iconCls: 'fa fa-bar-chart',
+                handler:function(){
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('column');
+                }
             }, {
                 xtype: 'button',
-                iconCls: 'fa fa-line-chart'
+                iconCls: 'fa fa-line-chart',
+                handler:function(){
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('line');
+                }
             }, {
                 xtype: 'button',
-                iconCls: 'fa fa-pie-chart'
+                iconCls: 'fa fa-pie-chart',
+                handler:function(){
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('pie');
+                }
             }, {
                 xtype: 'button',
                 iconCls: 'fa fa-area-chart'

@@ -5,7 +5,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
         },
 
         render: function () {
-            var chart = new CanvasJS.Chart("chartContainer", {
+            var chart = new CanvasJS.Chart("chartColumnContainer", {
                 animationEnabled: true,
                 exportEnabled: true,
                 theme: "light2", // "light1", "light2", "dark1", "dark2"
@@ -36,9 +36,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                 }]
             });
             chart.render();
-            setTimeout(function () {
-                document.getElementsByClassName('canvasjs-chart-credit')[0].innerHTML = '';
-            }, 500);
+            document.getElementsByClassName('canvasjs-chart-credit')[0].innerHTML = '';
         }
     }
 );
