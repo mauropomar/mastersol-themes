@@ -167,6 +167,14 @@ Ext.define('MasterSol.controller.util.ToolsController', {
 
     getButtonsDefaut: function (win) {
         return [{
+            iconCls: 'fa fa-bar-chart',
+            tooltip: 'Gráfico',
+            default: true,
+            name: 'btn_graph',
+            handler: function (evt, toolEl, owner, tool) {
+                MasterApp.getController('MasterSol.controller.chart.ChartController').showWindow();
+            }
+        }, {
             iconCls: 'fa fa-floppy-o',
             tooltip: 'Salvar sistema y base de datos',
             default: true,
