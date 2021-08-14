@@ -15,6 +15,7 @@ const dirTree = require("directory-tree");
 var lineReader = require('line-reader');
 var ncp = require('ncp').ncp;
 var path = require("path")
+const xlsxFile = require('read-excel-file/node');
 const objGenFunc = {}
 var arrCheck = [];
 var arrCheckJasperFiles = [];
@@ -1682,6 +1683,51 @@ const cleanCapsuleFolder = async (tree,dirFullFolder) => new Promise(async (reso
     else reject('No existen carpetas a limpiar')
 })
 
+const importTable = (req,fileDir) => new Promise(async (resolve, reject) => {
+    let success = true
+    let msg = ''
+    //Buscar la tabla dado el id section
+    const params = ['cfgapl.sections',req.query.idsection]
+    const resultSection = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', params)
+    if (resultSection && resultSection.rows && resultSection.rows[0].fn_get_register){
+        const idtable = resultSection.rows[0].fn_get_register[0].id_tables
+        const params = ['cfgapl.tables',idtable]
+        const resultTable = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', params)
+        try {
+            if (resultTable && resultTable.rows && resultTable.rows[0].fn_get_register) {
+
+
+                //Si es excel leer con read-excel, si no leer con linereader
+                let extension = ''
+                let arrFileName = req.query.name.split('.')
+                if (arrFileName) {
+                    let lastPos = arrFileName.length - 1
+                    extension = arrFileName[lastPos]
+                }
+                if(extension === 'xls' || extension === 'xlsx') {
+                    xlsxFile(fileDir).then((rows) => {
+                        for (i in rows){
+
+                            console.log(rows[i])
+                            // for (j in rows[i]){
+                            //     console.log(rows[i][j]);
+                            // }
+                        }
+                    })
+                }
+                else{
+
+                }
+            }
+        }
+        catch(err){
+            console.log(err)
+            reject(err)
+        }
+
+    }
+})
+
 /*const deleteDir = (dirFile, filename) => {
     let result = ''
     fs.unlink(dirFile + '/' + filename, (err => {
@@ -1777,4 +1823,5 @@ objGenFunc.generateZipCapsule = generateZipCapsule
 objGenFunc.cleanCapsuleFolder = cleanCapsuleFolder
 objGenFunc.insertRegister = insertRegister
 objGenFunc.updateRegister = updateRegister
+objGenFunc.importTable = importTable
 module.exports = objGenFunc
