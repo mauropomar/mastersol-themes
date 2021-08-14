@@ -1,0 +1,48 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_create_main_index
+(
+  IN  table_name   varchar,
+  IN  schema_name  varchar
+)
+RETURNS varchar AS
+$$
+declare
+  resultado varchar;
+  cadenaIndex varchar;
+  str_index varchar = '';
+  record_table record;
+  index_columns varchar;
+  idtable uuid;
+  comando varchar;
+
+begin 
+   select id into idtable from cfgapl.tables where n_table = $1 and n_schema = $2;
+   str_index = CONCAT(str_index,$2,'_',$1,'_idx'); 
+   BEGIN
+      EXECUTE('DROP INDEX IF EXISTS '||str_index||';');
+      --Crear el indice con los valores unicos de la tabla, obtenidos de tables_properties
+      FOR record_table IN EXECUTE('SELECT * FROM cfgapl.tables_properties WHERE id_tables 
+      = '||quote_literal(idtable)||' AND unique_register = true') LOOP
+         cadenaIndex = CONCAT(cadenaIndex,record_table.namex,',');   
+     END LOOP;
+     IF cadenaIndex is not null THEN     
+        cadenaIndex = substring(cadenaIndex,1,length(cadenaIndex)-1);
+        EXECUTE('CREATE UNIQUE INDEX '||str_index||' ON '||$2||'.'||$1||' USING btree ('||cadenaIndex||');');
+        resultado = 'Índice creado satisfactoriamente';
+     END IF;     
+     EXCEPTION
+        WHEN others THEN
+          GET STACKED DIAGNOSTICS resultado = MESSAGE_TEXT; 
+          resultado = 'ERROR: '||resultado;  
+  END;
+  
+  return resultado;   
+end
+$$
+LANGUAGE 'plpgsql'
+COST 1;
+
+ALTER FUNCTION cfgapl.fn_create_main_index(varchar, varchar)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_create_main_index(varchar, varchar)
+  IS 'Create main index in a table';

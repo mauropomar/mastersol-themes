@@ -1,0 +1,53 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_update_register
+(
+  IN  id_section        uuid,
+  IN  values_update     varchar,
+  IN  idelem            uuid,
+  IN  id_user           uuid,
+  IN  idproduct_parent  uuid    = NULL::uuid
+)
+RETURNS json AS
+$$
+declare
+table_update varchar;
+sqlUpdate varchar;
+result_data record;
+err_message varchar;
+tabla varchar;
+esquema varchar;
+result_index varchar;
+begin
+  
+  SELECT CONCAT(tb.n_schema,'.',tb.n_table) INTO table_update
+  FROM cfgapl.sections s
+  JOIN cfgapl.tables tb on(s.id_tables = tb.id)
+  WHERE s.id = $1;  
+ 
+  sqlUpdate = CONCAT('UPDATE ',table_update,' SET ',$2, ' WHERE id = ','''',$3,''''); 
+    
+   --BEGIN       
+    EXECUTE(sqlUpdate);
+    result_data = cfgapl.fn_return_data_visible_after_insert_update($1,$3,table_update);
+   --EXCEPTION when others then 
+    --GET STACKED DIAGNOSTICS err_message = MESSAGE_TEXT; 
+    --result_data = row('ERROR: ' || err_message);
+   --END; 
+   --Crear indice principal con campos unicos
+   IF(select namex from cfgapl.sections where id = $1) = 'Sec_tables_properties' THEN
+      IF $5 is not null THEN
+         select n_table into tabla from cfgapl.tables where id = $5;
+         select n_schema into esquema from cfgapl.tables where id = $5;
+         result_index = cfgapl.fn_create_main_index(tabla,esquema);
+      END IF;      
+   END IF;   
+  
+  return row_to_json(result_data);
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_update_register(uuid, varchar, uuid, uuid, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_update_register(uuid, varchar, uuid, uuid, uuid)
+  IS 'Update the products (sections,tables,etc...)';

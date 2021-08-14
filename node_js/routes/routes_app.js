@@ -9,7 +9,9 @@ const objects = require('../modules');
 const dirTree = require("directory-tree");
 var dirFolderRestoreGlobal = '';
 var dirFolderImageDesktopGlobal = '';
+var dirFolderImportTableGlobal = '';
 var originalFileName = '';
+var originalImportFileName = '';
 
 /*Obtener lenguajes*/
 router.get('/languages', async function (req, res) {
@@ -288,7 +290,7 @@ router.get('/executebuttons', async function (req, res) {
 const processJasper = async (jasper, result, req, nameReport) => {
     let print = null
     let currentDate = new Date()
-    let randomName = nameReport+'_'+currentDate.getSeconds()+currentDate.getMilliseconds()
+    let randomName = nameReport+'_'+currentDate.getFullYear()+currentDate.getMonth()+currentDate.getDate()+currentDate.getMinutes()+currentDate.getSeconds()+currentDate.getMilliseconds()
     let tmpFile = global.appRootApp + '\\resources\\reports\\tmp\\' + randomName
     let dirFile = '../resources/reports/tmp/'+randomName
     if(jasper) {
@@ -706,6 +708,89 @@ router.post('/imagedesktop', async function (req, res) {
     return res.json({'success': success, 'datos': msg})
 })
 
+router.post('/restoreimagedesktop', async function (req, res) {
+    let msg = ''
+    let success = true
+
+    if(req.body.rol && req.body.rol != "") {
+        const paramsImage = ['cfgapl.imagedesktop', null, "WHERE id_users = '" + req.session.id_user + "' AND id_rol = '" + req.body.rol + "' "]
+        const resultImage = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsImage)
+        if (resultImage && resultImage.rows && resultImage.rows[0].fn_get_register){
+            const path =  resultImage.rows[0].fn_get_register[0].path
+            await fs.unlink(path, (err => {
+                if (err) {
+                    success = false
+                    msg = err
+                }
+            }));
+            try {
+                const resultDelete = await pool.executeQuery("DELETE FROM cfgapl.imagedesktop " +
+                    "WHERE id_users = '" + req.session.id_user + "' AND id_rol = '" + req.body.rol + "'")
+            }
+            catch(err){
+                success = false
+                msg = err
+            }
+        }
+    }
+    else{
+        success = false
+        msg = "Este usuario no tiene rol"
+    }
+
+    return res.json({'success': success, 'datos': msg})
+})
+
+router.post('/importtable', async function (req, res) {
+    let msg = ''
+    let success = true
+    let subido = false
+    dirFolderImportTableGlobal = '../resources/backups'
+
+    let upload = multer({storage: storageImportTable, fileFilter: csvOrXlsFilter}).single('file');
+    upload(req, res, async function (err) {
+        if (req.fileValidationError) {
+            success = false
+            msg = req.fileValidationError
+            subido = true
+        }
+        else if (!req.file) {
+            success = false
+            msg = 'Por favor seleccione un fichero .csv, .xls o .xlsx a subir';
+            subido = true
+        }
+        else if (err instanceof multer.MulterError) {
+            success = false
+            msg = err
+            subido = true
+        }
+        else if (err) {
+            success = false
+            msg = err
+            subido = true
+        }
+        else {
+            subido = true
+        }
+
+    });
+    while (!subido) {
+        await sleep(20)
+    }
+    if (success) {
+        const fileDir = dirFolderImportTableGlobal+'/'+originalImportFileName
+        await objects.functions.importTable(req,fileDir)
+            .then((value) => {
+                success = value[0]
+            }).catch((value) => {
+                success = false
+                msg = value
+            });
+    }
+
+    return res.json({'success': success, 'datos': msg})
+})
+
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         // Uploads is the Upload_folder_name
@@ -720,6 +805,16 @@ var storageDesktop = multer.diskStorage({
     destination: function (req, file, cb) {
         // Uploads is the Upload_folder_name
         cb(null, dirFolderImageDesktopGlobal)
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname)
+    }
+})
+
+var storageImportTable = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // Uploads is the Upload_folder_name
+        cb(null, dirFolderImportTableGlobal)
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname)
@@ -743,6 +838,17 @@ const imageFilter = function(req, file, cb) {
     }
     else
         originalFileName = file.originalname
+    cb(null, true);
+};
+
+const csvOrXlsFilter = function(req, file, cb) {
+    // Accept image files only
+    if (!file.originalname.match(/\.(csv|CSV|xls|XLS|xlsx|XLSX)$/)) {
+        req.fileValidationError = 'Solo se permiten ficheros .csv, .xls o .xlsx!';
+        return cb(new Error('Solo se permiten ficheros .csv, .xls o .xlsx!'), false);
+    }
+    else
+        originalImportFileName = file.originalname
     cb(null, true);
 };
 

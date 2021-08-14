@@ -1,0 +1,78 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_insert_register
+(
+  IN  id_section        uuid,
+  IN  columns_insert    varchar,
+  IN  values_insert     varchar,
+  IN  idproduct_parent  uuid    = NULL::uuid,
+  IN  idsection_padre   uuid    = NULL::uuid,
+  IN  id_user           uuid    = NULL::uuid
+)
+RETURNS json AS
+$$
+declare
+table_inserta varchar;
+sqlInsert varchar;
+result_data record;
+result_insert record;
+err_message varchar;
+foreign_key varchar = null;
+propiedades varchar = null;
+tabla varchar;
+esquema varchar;
+result_index varchar;
+begin 
+  
+  SELECT tb.n_schema||'.'||tb.n_table INTO table_inserta
+  FROM cfgapl.sections s
+  JOIN cfgapl.tables tb on(s.id_tables = tb.id)
+  WHERE s.id = $1::uuid;
+  
+  /*Aqui se busca el campo foreign_key en dependencia del idsectionpadre*/ 
+    SELECT tbp.n_column INTO foreign_key 
+    FROM cfgapl.sections sc
+    JOIN cfgapl.tables tb on (sc.id_tables = tb.id)
+    JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
+    WHERE sc.id = $1::uuid 
+	AND (select id from cfgapl.tables where n_schema||'.'||n_table in 
+    (select foreign_table_schema||'.'||foreign_table from cfgapl.tables_foreignkeys 
+    where id_tables = tb.id AND array_to_string(local_fields,',') = tbp.n_column 
+	AND tbp.n_column <> 'id')) =  (SELECT tb1.id FROM cfgapl.sections sc JOIN cfgapl.tables tb1 on (sc.id_tables = tb1.id)
+    WHERE sc.id = $5::uuid) 
+	and tbp.nonull is true;  
+  
+  IF $4 is null THEN 
+   sqlInsert = CONCAT('INSERT INTO ',table_inserta,'(',sqlInsert,$2,') VALUES (',$3,') returning id');
+   /*Aqui compruebo que la llave foranea no este en las columnas a insertar*/ 
+  ELSEIF position (foreign_key in $2) = 0  THEN
+   sqlInsert = CONCAT('INSERT INTO ',table_inserta,'(',sqlInsert,$2,',',foreign_key,') VALUES (',$3,',',$4,') returning id');
+  ELSEIF position (foreign_key in $2) > 0 or foreign_key is null THEN
+   sqlInsert = CONCAT('INSERT INTO ',table_inserta,'(',sqlInsert,$2,') VALUES (',$3,') returning id');
+  END IF;
+      
+  --BEGIN
+    EXECUTE(sqlInsert) INTO result_insert; 
+    result_data = cfgapl.fn_return_data_visible_after_insert_update($1,result_insert.id,table_inserta);
+  --EXCEPTION when others then
+   --GET STACKED DIAGNOSTICS err_message = MESSAGE_TEXT; 
+   --result_data = row('ERROR: ' || err_message);
+  --END;   
+  --Crear indice principal con campos unicos
+   IF(select namex from cfgapl.sections where id = $1) = 'Sec_tables_properties' THEN
+      IF $4 is not null THEN
+         select n_table into tabla from cfgapl.tables where id = $4;
+         select n_schema into esquema from cfgapl.tables where id = $4;
+         result_index = cfgapl.fn_create_main_index(tabla,esquema);
+      END IF;      
+   END IF; 
+  
+  return row_to_json(result_data);   
+end
+$$
+LANGUAGE 'plpgsql'
+COST 1;
+
+ALTER FUNCTION cfgapl.fn_insert_register(uuid, varchar, varchar, uuid, uuid, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_insert_register(uuid, varchar, varchar, uuid, uuid, uuid)
+  IS 'Insert the products (sections,tables,etc...)';

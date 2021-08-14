@@ -33,6 +33,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.3.3",
     "pg-copy-streams": "^5.1.1",
+    "read-excel-file": "^5.2.8",
     "rimraf": "^3.0.2",
     "stream": "0.0.2",
     "utf8": "^3.0.0"
@@ -41,7 +42,7 @@
     "nodemon": "^2.0.7"
   },
   "scripts": {
-      "start": "forever start node_js/server.js"
+    "start": "forever start node_js/server.js"
   },
   "repository": {
     "type": "git",
