@@ -5,7 +5,12 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     getArrayBtn: function () {
-        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
+        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section', 'btn_chart'];
+        return array;
+    },
+
+    getArrayBtnDefault: function () {
+        var array = ['btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section', 'btn_chart'];
         return array;
     },
 
@@ -170,7 +175,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             iconCls: 'fa fa-bar-chart',
             tooltip: 'Gráfico',
             default: true,
-            name: 'btn_graph',
+            name: 'btn_chart',
             handler: function (evt, toolEl, owner, tool) {
                 MasterApp.getController('MasterSol.controller.chart.ChartController').showWindow();
             }

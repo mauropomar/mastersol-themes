@@ -144,7 +144,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         }
     },
     // crea una seccion y la agrega al tab
-    insertSection(section, tab) {
+    insertSection: function (section, tab) {
         var title = section.nombre;
         var height = tab.getHeight();
         var containerSection = MasterApp.containersections.getPanel(title, section, [], height, 'grid-section', this.windowParent);

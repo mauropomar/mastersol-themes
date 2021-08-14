@@ -355,6 +355,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
 
     deleteRow: function (button, window) {
         var gridsection = MasterApp.globals.getGridSection();
+        var idrecordparent = gridsection.up('panel').idrecordparent;
+        var idregisterparent = (idrecordparent) ? idrecordparent : 0;
         if (window.idmenu != gridsection.idmenu) {
             gridsection = MasterApp.globals.getSectionPrincipalByWindow(window);
         }
@@ -383,6 +385,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                     method: 'POST',
                     scope: this,
                     params: {
+                        idpadreregistro: idregisterparent,
                         idsection: idsection,
                         id: Ext.encode(data),
                         accion: '7'
@@ -586,7 +589,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         var arrayBtn = ['btn_restore'];
         var isExpanded = MasterApp.util.isWindowExpand(win);
         MasterApp.tools.setVisibleBtn(win, arrayBtn, isExpanded);
-        arrayBtn = ['btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
+        arrayBtn = MasterApp.tools.getArrayBtnDefault();
         if (widthPanel >= width) {
             MasterApp.tools.setVisibleBtn(win, arrayBtn, true);
             MasterApp.tools.showButtonsNotDefault(win, false);
@@ -644,7 +647,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             btn.show();
             btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
             btn.show();
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
+            var arrayBtn = ['btn_minimize'];
+            arrayBtn = arrayBtn.concat(MasterApp.tools.getArrayBtnDefault());
             MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
             this.adjustOtherWindowsMinimize();
             var panel = Ext.ComponentQuery.query('#panel-center')[0];

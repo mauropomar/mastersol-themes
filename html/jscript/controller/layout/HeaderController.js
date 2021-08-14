@@ -28,7 +28,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         var posX = Ext.ComponentQuery.query('#panel-center')[0].getX();
         var posY = Ext.ComponentQuery.query('#panel-center')[0].getY();
         this.reconfigureWindows(height, width, posX, posY);
-        var height = height / windows.length;
+        height = height / windows.length;
         for (var j = 0; j < windows.length; j++) {
             win = windows[j];
             win.setX(posX);
@@ -39,7 +39,8 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             win.isminimize = false;
             var btnMinimize = MasterApp.tools.getBtnTools(win, 'btn_minimize');
             btnMinimize.show();
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd', 'btn_export_capsule', 'btn_import_section'];
+            var arrayBtn = ['btn_minimize'];
+            arrayBtn = arrayBtn.concat(MasterApp.tools.getArrayBtnDefault());
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             var btnMaximize = MasterApp.tools.getBtnTools(win, 'btn_restore');
             btnMaximize.hide();
@@ -57,7 +58,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         var posX = Ext.ComponentQuery.query('#panel-center')[0].getX();
         var posY = Ext.ComponentQuery.query('#panel-center')[0].getY();
         this.reconfigureWindows(height, width, posX, posY);
-        var width = width / windows.length;
+        width = width / windows.length;
         for (var j = 0; j < windows.length; j++) {
             win = windows[j];
             win.setHeight(height);
@@ -66,7 +67,8 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             win.setY(posY);
             posX = width + posX;
             win.isminimize = false;
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
+            var arrayBtn = ['btn_minimize'];
+            arrayBtn = arrayBtn.concat(MasterApp.tools.getArrayBtnDefault());
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             var btnMaximize = MasterApp.tools.getBtnTools(win, 'btn_restore');
             btnMaximize.hide();
@@ -109,7 +111,8 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             win.isminimize = false;
             var btnMinimize = MasterApp.tools.getBtnTools(win, 'btn_minimize');
             btnMinimize.show();
-            var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
+            var arrayBtn = ['btn_minimize'];
+            arrayBtn = arrayBtn.concat(MasterApp.tools.getArrayBtnDefault());
             MasterApp.tools.setVisibleBtn(win, arrayBtn, false);
             MasterApp.tools.showButtonsNotDefault(win, true);
         }
@@ -203,7 +206,8 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
             windows[j].setWidth(300);
             var btn = MasterApp.tools.getBtnTools(windows[j], 'btn_restore');
             btn.show();
-            var arrayBtn = ['btn_minimize', 'btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_report', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
+            var arrayBtn = ['btn_minimize', 'btn_maximize'];
+            arrayBtn = arrayBtn.concat(MasterApp.tools.getArrayBtnDefault());
             MasterApp.tools.setVisibleBtn(windows[j], arrayBtn, true);
             windows[j].alignTo(panelMenu, 'bl-bl');
             MasterApp.section.setPositionWindow(windows[j]);
@@ -284,7 +288,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
         });
     },
 
-    restoreImageDesktopDefault:function(){
+    restoreImageDesktopDefault: function () {
         var panel = Ext.ComponentQuery.query('dataview-home')[0];
         var mask = new Ext.LoadMask(panel, {
             msg: 'Restaurando....'
