@@ -5,46 +5,71 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
     },
 
     render: function () {
-        var _this = this;
-        var chart = new CanvasJS.Chart("chartPieContainer", {
-            exportEnabled: true,
-            animationEnabled: true,
-            title: {
-                text: "State Operating Funds"
-            },
+        var chart = Ext.create('Ext.chart.PolarChart', {
+            reference: 'chart',
+            store: this.getStore(),
+            theme: 'default-gradients',
+            insetPadding: 50,
+            innerPadding: 20,
             legend: {
-                cursor: "pointer",
-                itemclick: function (e) {
-                    _this.explodePie(e);
-                }
+                docked: 'bottom'
             },
-            data: [{
-                type: "pie",
-                showInLegend: true,
-                toolTipContent: "{name}: <strong>{y}%</strong>",
-                indexLabel: "{name} - {y}%",
-                dataPoints: [
-                    {y: 26, name: "School Aid", exploded: true},
-                    {y: 20, name: "Medical Aid"},
-                    {y: 5, name: "Debt/Capital"},
-                    {y: 3, name: "Elected Officials"},
-                    {y: 7, name: "University"},
-                    {y: 17, name: "Executive"},
-                    {y: 22, name: "Other Local Assistance"}
-                ]
+            interactions: ['rotate'],
+            sprites: [{
+                type: 'text',
+                text: 'Pie Charts - Basic',
+                fontSize: 22,
+                width: 100,
+                height: 30,
+                x: 40, // the sprite x position
+                y: 20  // the sprite y position
+            }, {
+                type: 'text',
+                text: 'Data: IDC Predictions - 2017',
+                x: 12,
+                y: 425
+            }, {
+                type: 'text',
+                text: 'Source: Internet',
+                x: 12,
+                y: 440
+            }],
+            series: [{
+                type: 'pie',
+                angleField: 'data1',
+                label: {
+                    field: 'os',
+                    calloutLine: {
+                        length: 60,
+                        width: 3
+                        // specifying 'color' is also possible here
+                    }
+                },
+                highlight: true,
+                tooltip: {
+                    trackMouse: true,
+                    renderer: this.onSeriesTooltipRender
+                }
             }]
         });
-        chart.render();
-        document.getElementsByClassName('canvasjs-chart-credit')[0].innerHTML = '';
+        Ext.ComponentQuery.query('pie-chart')[0].add(chart);
     },
 
-    explodePie: function (e) {
-        if (typeof (e.dataSeries.dataPoints[e.dataPointIndex].exploded) === "undefined" || !e.dataSeries.dataPoints[e.dataPointIndex].exploded) {
-            e.dataSeries.dataPoints[e.dataPointIndex].exploded = true;
-        } else {
-            e.dataSeries.dataPoints[e.dataPointIndex].exploded = false;
-        }
-        e.chart.render();
+    getStore: function () {
+        var store = {
+            fields: ['os', 'data1'],
+            data: [
+                {os: 'Android', data1: 68.3},
+                {os: 'BlackBerry', data1: 1.7},
+                {os: 'iOS', data1: 17.9},
+                {os: 'Windows Phone', data1: 10.2},
+                {os: 'Others', data1: 1.9}
+            ]
+        };
+        return store;
+    },
 
+    onSeriesTooltipRender: function (tooltip, record, item) {
+        tooltip.setHtml(record.get('os') + ': ' + record.get('data1') + '%');
     }
 });

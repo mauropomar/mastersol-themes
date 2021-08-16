@@ -6,98 +6,192 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
         },
 
         render: function () {
-            var _this = this;
-            this.chart = new CanvasJS.Chart("chartLineContainer", {
-                animationEnabled: true,
-                exportEnabled: true,
-                theme: "light2",
-                title: {
-                    text: "Site Traffic"
-                },
-                axisX: {
-                    valueFormatString: "DD MMM",
-                    crosshair: {
-                        enabled: true,
-                        snapToDataPoint: true
-                    }
-                },
-                axisY: {
-                    title: "Number of Visits",
-                    includeZero: true,
-                    crosshair: {
-                        enabled: true
-                    }
-                },
-                toolTip: {
-                    shared: true
-                },
+            var chart = Ext.create('Ext.chart.CartesianChart', {
+                reference: 'chart',
+                store: this.getStore(),
                 legend: {
-                    cursor: "pointer",
-                    verticalAlign: "bottom",
-                    horizontalAlign: "left",
-                    dockInsidePlotArea: true,
-                    itemclick: function (e) {
-                        _this.toogleDataSeries(e);
+                    type: 'sprite',
+                    docked: 'right'
+                },
+                insetPadding: 40,
+                sprites: [{
+                    type: 'text',
+                    text: 'Line Charts - Marked Lines',
+                    fontSize: 22,
+                    width: 100,
+                    height: 30,
+                    x: 40, // the sprite x position
+                    y: 20  // the sprite y position
+                }, {
+                    type: 'text',
+                    text: 'Data: Browser Stats 2012',
+                    fontSize: 10,
+                    x: 12,
+                    y: 470
+                }, {
+                    type: 'text',
+                    text: 'Source: http://www.w3schools.com/',
+                    fontSize: 10,
+                    x: 12,
+                    y: 485
+                }],
+                axes: [{
+                    type: 'numeric',
+                    fields: ['data1', 'data2', 'data3', 'data4'],
+                    position: 'left',
+                    grid: true,
+                    minimum: 0,
+                    renderer: this.onAxisLabelRender
+                }, {
+                    type: 'category',
+                    fields: 'month',
+                    position: 'bottom',
+                    grid: true,
+                    label: {
+                        rotate: {
+                            degrees: -45
+                        }
                     }
-                },
-                data: [{
-                    type: "line",
-                    showInLegend: true,
-                    name: "Total Visit",
-                    markerType: "square",
-                    xValueFormatString: "DD MMM, YYYY",
-                    color: "#F08080",
-                    dataPoints: [
-                        {x: new Date(2017, 0, 3), y: 650},
-                        {x: new Date(2017, 0, 4), y: 700},
-                        {x: new Date(2017, 0, 5), y: 710},
-                        {x: new Date(2017, 0, 6), y: 658},
-                        {x: new Date(2017, 0, 7), y: 734},
-                        {x: new Date(2017, 0, 8), y: 963},
-                        {x: new Date(2017, 0, 9), y: 847},
-                        {x: new Date(2017, 0, 10), y: 853},
-                        {x: new Date(2017, 0, 11), y: 869},
-                        {x: new Date(2017, 0, 12), y: 943},
-                        {x: new Date(2017, 0, 13), y: 970},
-                        {x: new Date(2017, 0, 14), y: 869},
-                        {x: new Date(2017, 0, 15), y: 890},
-                        {x: new Date(2017, 0, 16), y: 930}
-                    ]
-                },
-                    {
-                        type: "line",
-                        showInLegend: true,
-                        name: "Unique Visit",
-                        lineDashType: "dash",
-                        dataPoints: [
-                            {x: new Date(2017, 0, 3), y: 510},
-                            {x: new Date(2017, 0, 4), y: 560},
-                            {x: new Date(2017, 0, 5), y: 540},
-                            {x: new Date(2017, 0, 6), y: 558},
-                            {x: new Date(2017, 0, 7), y: 544},
-                            {x: new Date(2017, 0, 8), y: 693},
-                            {x: new Date(2017, 0, 9), y: 657},
-                            {x: new Date(2017, 0, 10), y: 663},
-                            {x: new Date(2017, 0, 11), y: 639},
-                            {x: new Date(2017, 0, 12), y: 673},
-                            {x: new Date(2017, 0, 13), y: 660},
-                            {x: new Date(2017, 0, 14), y: 562},
-                            {x: new Date(2017, 0, 15), y: 643},
-                            {x: new Date(2017, 0, 16), y: 570}
-                        ]
-                    }]
+                }],
+                series: [{
+                    type: 'line',
+                    title: 'IE',
+                    xField: 'month',
+                    yField: 'data1',
+                    marker: {
+                        type: 'square',
+                        fx: {
+                            duration: 200,
+                            easing: 'backOut'
+                        }
+                    },
+                    highlightCfg: {
+                        scaling: 2
+                    },
+                    tooltip: {
+                        trackMouse: true,
+                        renderer: this.onSeriesTooltipRender
+                    }
+                }, {
+                    type: 'line',
+                    title: 'Firefox',
+                    xField: 'month',
+                    yField: 'data2',
+                    marker: {
+                        type: 'triangle',
+                        fx: {
+                            duration: 200,
+                            easing: 'backOut'
+                        }
+                    },
+                    highlightCfg: {
+                        scaling: 2
+                    },
+                    tooltip: {
+                        trackMouse: true,
+                        renderer: this.onSeriesTooltipRender
+                    }
+                }, {
+                    type: 'line',
+                    title: 'Chrome',
+                    xField: 'month',
+                    yField: 'data3',
+                    marker: {
+                        type: 'arrow',
+                        fx: {
+                            duration: 200,
+                            easing: 'backOut'
+                        }
+                    },
+                    highlightCfg: {
+                        scaling: 2
+                    },
+                    tooltip: {
+                        trackMouse: true,
+                       renderer: this.onSeriesTooltipRender
+                    }
+                }, {
+                    type: 'line',
+                    title: 'Safari',
+                    xField: 'month',
+                    yField: 'data4',
+                    marker: {
+                        type: 'cross',
+                        fx: {
+                            duration: 200,
+                            easing: 'backOut'
+                        }
+                    },
+                    highlightCfg: {
+                        scaling: 2
+                    },
+                    tooltip: {
+                        trackMouse: true,
+                        renderer: this.onSeriesTooltipRender
+                    }
+                }]
             });
-            this.chart.render();
-            document.getElementsByClassName('canvasjs-chart-credit')[0].innerHTML = '';
+            Ext.ComponentQuery.query('line-chart')[0].add(chart);
         },
 
-        toogleDataSeries: function (e) {
-            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                e.dataSeries.visible = false;
-            } else {
-                e.dataSeries.visible = true;
+        getStore: function () {
+            var store = {
+                fields: ['month', 'data1', 'data2', 'data3', 'data4', 'other'],
+                data: [
+                    {month: 'Jan', data1: 20, data2: 37, data3: 35, data4: 4, other: 4},
+                    {month: 'Feb', data1: 20, data2: 37, data3: 36, data4: 5, other: 2},
+                    {month: 'Mar', data1: 19, data2: 36, data3: 37, data4: 4, other: 4},
+                    {month: 'Apr', data1: 18, data2: 36, data3: 38, data4: 5, other: 3},
+                    {month: 'May', data1: 18, data2: 35, data3: 39, data4: 4, other: 4},
+                    {month: 'Jun', data1: 17, data2: 34, data3: 42, data4: 4, other: 3},
+                    {month: 'Jul', data1: 16, data2: 34, data3: 43, data4: 4, other: 3},
+                    {month: 'Aug', data1: 16, data2: 33, data3: 44, data4: 4, other: 3},
+                    {month: 'Sep', data1: 16, data2: 32, data3: 44, data4: 4, other: 4},
+                    {month: 'Oct', data1: 16, data2: 32, data3: 45, data4: 4, other: 3},
+                    {month: 'Nov', data1: 15, data2: 31, data3: 46, data4: 4, other: 4},
+                    {month: 'Dec', data1: 15, data2: 31, data3: 47, data4: 4, other: 3}
+                ]
+            };
+            return store;
+        },
+
+        onAxisLabelRender: function (axis, label, layoutContext) {
+            return label.toFixed(label < 10 ? 1 : 0) + '%';
+        },
+
+        onSeriesTooltipRender: function (tooltip, record, item) {
+            var title = item.series.getTitle();
+
+            tooltip.setHtml(title + ' on ' + record.get('month') + ': ' +
+                record.get(item.series.getYField()) + '%');
+        },
+
+        onColumnRender: function (v) {
+            return v + '%';
+        },
+
+        onToggleMarkers: function () {
+            var chart = this.lookupReference('chart'),
+                seriesList = chart.getSeries(),
+                ln = seriesList.length,
+                i = 0,
+                series;
+
+            for (; i < ln; i++) {
+                series = seriesList[i];
+                series.setShowMarkers(!series.getShowMarkers());
             }
-            this.chart.render();
+
+            chart.redraw();
+        },
+
+        onPreview: function () {
+            if (Ext.isIE8) {
+                Ext.Msg.alert('Unsupported Operation', 'This operation requires a newer version of Internet Explorer.');
+                return;
+            }
+            var chart = this.lookupReference('chart');
+            chart.preview();
         }
     }
 );

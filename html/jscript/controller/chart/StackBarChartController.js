@@ -1,124 +1,64 @@
 Ext.define('MasterSol.controller.chart.StackBarChartController', {
         extend: 'Ext.app.Controller',
-        chart: '',
         init: function () {
 
         },
+
         render: function () {
-            var _this = this;
-            this.chart = new CanvasJS.Chart("chartStackBarContainer", {
-                animationEnabled: true,
-                exportEnabled: true,
-                title: {
-                    text: "Evening Sales in a Restaurant"
-                },
-                axisX: {
-                    valueFormatString: "DDD"
-                },
-                axisY: {
-                    prefix: "$"
-                },
-                toolTip: {
-                    shared: true
-                },
+            var chart = Ext.create('Ext.chart.CartesianChart', {
+                flipXY: true,
+                store: this.getStore(),
                 legend: {
-                    cursor: "pointer",
-                    itemclick: function (e) {
-                        _this.toogleDataSeries(e);
+                    docked: 'right'
+                },
+                axes: [{
+                    type: 'numeric',
+                    position: 'bottom',
+                    grid: true,
+                    minimum: 0
+                }, {
+                    type: 'category',
+                    position: 'left'
+                }],
+
+                //define the actual bar series.
+                series: [{
+                    type: 'bar',
+                    xField: 'name',
+                    yField: ['g1', 'g2'],
+                    axis: 'bottom',
+                    // Cycles the green and blue fill mode over 2008 and 2009
+                    // subStyle parameters also override style parameters
+                    subStyle: {
+                        fill: ["#115fa6", "#94ae0a"]
                     }
-                },
-                data: [{
-                    type: "stackedBar",
-                    name: "Meals",
-                    showInLegend: "true",
-                    xValueFormatString: "DD, MMM",
-                    yValueFormatString: "$#,##0",
-                    dataPoints: [
-                        {x: new Date(2017, 0, 30), y: 56},
-                        {x: new Date(2017, 0, 31), y: 45},
-                        {x: new Date(2017, 1, 1), y: 71},
-                        {x: new Date(2017, 1, 2), y: 41},
-                        {x: new Date(2017, 1, 3), y: 60},
-                        {x: new Date(2017, 1, 4), y: 75},
-                        {x: new Date(2017, 1, 5), y: 98}
-                    ]
-                },
-                    {
-                        type: "stackedBar",
-                        name: "Snacks",
-                        showInLegend: "true",
-                        xValueFormatString: "DD, MMM",
-                        yValueFormatString: "$#,##0",
-                        dataPoints: [
-                            {x: new Date(2017, 0, 30), y: 86},
-                            {x: new Date(2017, 0, 31), y: 95},
-                            {x: new Date(2017, 1, 1), y: 71},
-                            {x: new Date(2017, 1, 2), y: 58},
-                            {x: new Date(2017, 1, 3), y: 60},
-                            {x: new Date(2017, 1, 4), y: 65},
-                            {x: new Date(2017, 1, 5), y: 89}
-                        ]
-                    },
-                    {
-                        type: "stackedBar",
-                        name: "Drinks",
-                        showInLegend: "true",
-                        xValueFormatString: "DD, MMM",
-                        yValueFormatString: "$#,##0",
-                        dataPoints: [
-                            {x: new Date(2017, 0, 30), y: 48},
-                            {x: new Date(2017, 0, 31), y: 45},
-                            {x: new Date(2017, 1, 1), y: 41},
-                            {x: new Date(2017, 1, 2), y: 55},
-                            {x: new Date(2017, 1, 3), y: 80},
-                            {x: new Date(2017, 1, 4), y: 85},
-                            {x: new Date(2017, 1, 5), y: 83}
-                        ]
-                    },
-                    {
-                        type: "stackedBar",
-                        name: "Dessert",
-                        showInLegend: "true",
-                        xValueFormatString: "DD, MMM",
-                        yValueFormatString: "$#,##0",
-                        dataPoints: [
-                            {x: new Date(2017, 0, 30), y: 61},
-                            {x: new Date(2017, 0, 31), y: 55},
-                            {x: new Date(2017, 1, 1), y: 61},
-                            {x: new Date(2017, 1, 2), y: 75},
-                            {x: new Date(2017, 1, 3), y: 80},
-                            {x: new Date(2017, 1, 4), y: 85},
-                            {x: new Date(2017, 1, 5), y: 105}
-                        ]
-                    },
-                    {
-                        type: "stackedBar",
-                        name: "Takeaway",
-                        showInLegend: "true",
-                        xValueFormatString: "DD, MMM",
-                        yValueFormatString: "$#,##0",
-                        dataPoints: [
-                            {x: new Date(2017, 0, 30), y: 52},
-                            {x: new Date(2017, 0, 31), y: 55},
-                            {x: new Date(2017, 1, 1), y: 20},
-                            {x: new Date(2017, 1, 2), y: 35},
-                            {x: new Date(2017, 1, 3), y: 30},
-                            {x: new Date(2017, 1, 4), y: 45},
-                            {x: new Date(2017, 1, 5), y: 25}
-                        ]
-                    }]
+                }]
             });
-            this.chart.render();
-            document.getElementsByClassName('canvasjs-chart-credit')[0].innerHTML = '';
+            Ext.ComponentQuery.query('stack-chart')[0].add(chart);
         },
 
-        toogleDataSeries: function (e) {
-            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                e.dataSeries.visible = false;
-            } else {
-                e.dataSeries.visible = true;
-            }
-            this.chart.render();
-        }
+        getStore: function () {
+            var store = {
+                fields: ['name', 'g1', 'g2'],
+                data: [
+                    {"name": "Item-0", "g1": 18.34, "g2": 0.04},
+                    {"name": "Item-1", "g1": 2.67, "g2": 14.87},
+                    {"name": "Item-2", "g1": 1.90, "g2": 5.72},
+                    {"name": "Item-3", "g1": 21.37, "g2": 2.13},
+                    {"name": "Item-4", "g1": 2.67, "g2": 8.53},
+                    {"name": "Item-5", "g1": 18.22, "g2": 4.62},
+                    {"name": "Item-6", "g1": 28.51, "g2": 12.43},
+                    {"name": "Item-7", "g1": 34.43, "g2": 4.40},
+                    {"name": "Item-8", "g1": 21.65, "g2": 13.87},
+                    {"name": "Item-9", "g1": 12.98, "g2": 35.44},
+                    {"name": "Item-10", "g1": 22.96, "g2": 38.70},
+                    {"name": "Item-11", "g1": 0.49, "g2": 51.90},
+                    {"name": "Item-12", "g1": 20.87, "g2": 62.07},
+                    {"name": "Item-13", "g1": 25.10, "g2": 78.46},
+                    {"name": "Item-14", "g1": 16.87, "g2": 56.80}
+                ]
+            };
+            return store;
+        },
     }
 );
