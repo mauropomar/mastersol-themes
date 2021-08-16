@@ -22,6 +22,9 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         }else if (type === 'stackbar') {
             panel = Ext.create('MasterSol.view.chart.StackBarChart');
             Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+        }else if (type === 'radar') {
+            panel = Ext.create('MasterSol.view.chart.RadarChart');
+            Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
         }
     },
 

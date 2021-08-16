@@ -61,6 +61,12 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                 handler:function(){
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('stackbar');
                 }
+            },'-',{
+                xtype: 'button',
+                iconCls: 'fa fa-chrome',
+                handler:function(){
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('radar');
+                }
             }]
         }]
     }],
