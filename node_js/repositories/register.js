@@ -47,7 +47,7 @@ const updateRegister = async (req, objects) => {
 const deleteRegister = async (req) => {
     const params_parse = JSON.parse(req.body.id);
     const ids = "{" + params_parse.join(',') + "}"
-    const params_delete = [req.body.idsection, ids, req.session.id_user]
+    const params_delete = [req.body.idsection, ids, req.session.id_user, req.body.idpadreregistro && req.body.idpadreregistro !== '0' ? req.body.idpadreregistro : null]
     //Si se elimina un botón, borrar el .js asociado
     const param_section = ['cfgapl.sections',req.body.idsection]
     const resultSeccion = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_section)
@@ -73,7 +73,7 @@ const deleteRegister = async (req) => {
         }
     }
     //-----Eliminar despues de actualizar modifier
-    const query = "SELECT cfgapl.fn_delete_register($1,$2,$3)"
+    const query = "SELECT cfgapl.fn_delete_register($1,$2,$3,$4)"
     const result = await pool.executeQuery(query, params_delete)
     if (result.success === false) {
         return result
