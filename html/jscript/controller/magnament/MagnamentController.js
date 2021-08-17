@@ -174,6 +174,10 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
                 e.stopPropagation();
                 e.preventDefault();
                 e.returnValue = false;
+                var windowMaximize = Ext.ComponentQuery.query('window[isminimize=false]');
+                if(windowMaximize.length == 0){
+                    return;
+                };
                 MasterApp.util.setStyleWindowActive();
                 var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
                 tabMagnament.show();

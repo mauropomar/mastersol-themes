@@ -55,6 +55,8 @@ Ext.define('MasterSol.controller.layout.FooterController', {
             window.setPosition(0, 38);
             window.toFront();
             var panel = window.down('panel');
+            var grid = panel.down('gridpanel');
+            MasterApp.globals.setGridSection(grid);
             MasterApp.util.setStyleWindow(panel);
             combo.reset();
         },
