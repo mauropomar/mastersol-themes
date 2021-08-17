@@ -781,7 +781,7 @@ router.post('/importtable', async function (req, res) {
         const fileDir = dirFolderImportTableGlobal+'/'+originalImportFileName
         await objects.functions.importTable(req,fileDir)
             .then((value) => {
-                success = value[0]
+                msg = value
             }).catch((value) => {
                 success = false
                 msg = value

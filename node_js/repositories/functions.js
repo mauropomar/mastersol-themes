@@ -1695,8 +1695,6 @@ const importTable = (req,fileDir) => new Promise(async (resolve, reject) => {
         const resultTable = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', params)
         try {
             if (resultTable && resultTable.rows && resultTable.rows[0].fn_get_register) {
-
-
                 //Si es excel leer con read-excel, si no leer con linereader
                 let extension = ''
                 let arrFileName = req.query.name.split('.')
@@ -1704,24 +1702,188 @@ const importTable = (req,fileDir) => new Promise(async (resolve, reject) => {
                     let lastPos = arrFileName.length - 1
                     extension = arrFileName[lastPos]
                 }
+                //Obtener encabezado del fichero para buscar campos únicos, con esto se comprueba la inserción o actualización
+                let encabezado = ''
+                let arrHeader = []
+                let n_table = resultTable.rows[0].fn_get_register[0].n_table
+                let n_schema = resultTable.rows[0].fn_get_register[0].n_schema
+                const nameTable = n_schema+'.'+n_table
+                const main_index = n_schema+'_'+n_table+'_idx'
+                let resultIndex = await pool.executeQuery("select indexdef from pg_indexes where  tablename = '"+n_table+"' " +
+                    "AND schemaname = '"+n_schema+"' AND indexname = '"+main_index+"'")
+                let camposIndice = ''
+                let arrCamposMainIndex = []
+                let valoresIndice = ''
+                if(resultIndex && resultIndex.rows) {
+                    let indexdef = resultIndex.rows[0].indexdef
+                    //De la definicion del index quedarme solo con los campos
+                    const index1 = indexdef.indexOf("(")
+                    const index2 = indexdef.indexOf(")")
+                    camposIndice = indexdef.substring(index1+1,index2)
+                    arrCamposMainIndex = camposIndice.split(',')
+                }
+                let importable = true
                 if(extension === 'xls' || extension === 'xlsx') {
-                    xlsxFile(fileDir).then((rows) => {
-                        for (i in rows){
+                    xlsxFile(fileDir).then(async (rows) => {
+                        for (let i in rows){
+                            if(i == 0) {
+                                //console.log(rows[i])
+                                arrHeader = rows[i]
+                                for(let j in rows[i]){
+                                    encabezado += rows[i][j]+","
+                                }
+                                encabezado = encabezado.substring(0,encabezado.length - 1)
+                                //Chequear que los campos del main index existan en el encabezado
+                                for (let j in arrCamposMainIndex){
+                                    //console.log(rows[i][j]);
+                                    let field = arrCamposMainIndex[j]
+                                    field = field.trim()
+                                    let coincide = false
+                                    for(let k in rows[i]){
+                                        const elem = rows[i][k]
+                                        if(elem === field) {
+                                            coincide = true
+                                            break;
+                                        }
+                                    }
+                                    if(!coincide){
+                                        importable = false
+                                        break;
+                                    }
+                                }
+                                if(!importable)
+                                    reject('El fichero debe contener todos los campos únicos de la tabla: '+camposIndice)
+                            }
+                            else{
+                                if(!importable)
+                                    break;
+                                else{
+                                    let fila = ''
+                                    for(let k in rows[i]){
+                                        let elem = rows[i][k]
+                                        if(elem !== null) {
+                                            elem = "'" + elem + "'"
+                                            elem = elem.replace(',','.')
+                                        }
+                                        fila += elem+","
+                                    }
+                                    fila = fila.substring(0,fila.length - 1)
+                                    //Buscar valores de los campos indice
+                                    for(let j in arrCamposMainIndex){
+                                       let field = arrCamposMainIndex[j]
+                                       field = field.trim()
+                                       for(let k in rows[i]){
+                                            const elem = rows[0][k]
+                                            if(elem === field) {
+                                                let valor = null
+                                                if(rows[i][k] !== "" && rows[i][k] !== null) {
+                                                    valor = "'" + rows[i][k] + "'"
+                                                    valor = valor.replace(',', '.')
+                                                    valoresIndice += valor+","
+                                                }
+                                                break;
+                                            }
+                                       }
+                                    }
+                                    valoresIndice = valoresIndice.substring(0,valoresIndice.length - 1)
+                                    const params = [nameTable,encabezado,fila,camposIndice,valoresIndice]
+                                    const result = await pool.executeQuery("select cfgapl.fn_import_to_table_from_file($1,$2,$3,$4,$5)",params)
+                                    valoresIndice = ''
+                                }
+                            }
 
-                            console.log(rows[i])
-                            // for (j in rows[i]){
-                            //     console.log(rows[i][j]);
-                            // }
                         }
+                        resolve('Importación terminada')
                     })
                 }
                 else{
+                    let counter = 1;
+                    let firstLine = []
+                    await lineReader.eachLine(fileDir, async function (line, last) {
+                        try {
+                            if (line) {
+                                line = line.replace(/,/g, '.');
+                                let arrLine = line.split(';')
+                                if(counter == 1) {
+                                    firstLine = arrLine
+                                    encabezado = line
+                                    encabezado = encabezado.replace(/;/g, ',');
+                                    //Chequear que los campos del main index existan en el encabezado
+                                    for (let i in arrCamposMainIndex){
+                                        let field = arrCamposMainIndex[i]
+                                        field = field.trim()
+                                        let coincide = false
+                                        for(let j in arrLine){
+                                            const elem = arrLine[j]
+                                            if(elem === field) {
+                                                coincide = true
+                                                break;
+                                            }
+                                        }
+                                        if(!coincide){
+                                            importable = false
+                                            break;
+                                        }
+                                    }
+                                    if(!importable)
+                                        reject('El fichero debe contener todos los campos únicos de la tabla: '+camposIndice)
+                                }
+                                else {
+                                    if(importable) {
+                                        let fila = ''
+                                        valoresIndice = ''
+                                        for (let i in arrLine) {
+                                            let elem = arrLine[i]
+                                            if(elem !== "") {
+                                                elem = "'" + elem + "'"
+                                                elem = elem.replace(',','.')
+                                            }
+                                            else
+                                                elem = "null"
+                                            fila += elem+","
+                                        }
+                                        fila = fila.substring(0, fila.length - 1)
+                                        //Buscar valores de los campos indice
+                                        for(let i in arrCamposMainIndex){
+                                            let field = arrCamposMainIndex[i]
+                                            field = field.trim()
+                                            for(let j in arrLine){
+                                                const elem = firstLine[j]
+                                                if(elem === field) {
+                                                    let valor = ''
+                                                    if(arrLine[j] !== "" && arrLine[j] !== null) {
+                                                        valor = "'" + arrLine[j] + "'"
+                                                        valor = valor.replace(',', '.')
+                                                        valoresIndice += valor+","
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        valoresIndice = valoresIndice.substring(0,valoresIndice.length - 1)
+                                        const params = [nameTable,encabezado,fila,camposIndice,valoresIndice]
+                                        //console.log(params)
+                                        //console.log(line)
+                                        const result = await pool.executeQuery("select cfgapl.fn_import_to_table_from_file($1,$2,$3,$4,$5)",params)
+                                        //console.log(result.rows[0])
+                                    }
+                                    else
+                                        reject('El fichero debe contener todos los campos únicos de la tabla: '+camposIndice)
+                                }
+                                counter += 1
+                                if(last)
+                                    resolve('Importación terminada')
+                            }
+                        }
+                        catch (err) {
+                            reject('Error leyendo el fichero ',err)
+                        }
 
+                    });
                 }
             }
         }
         catch(err){
-            console.log(err)
             reject(err)
         }
 
