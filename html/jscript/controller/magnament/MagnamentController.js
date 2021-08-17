@@ -39,7 +39,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             MasterApp.audit.getAll();
         }
         if (newCard.xtype === 'config-report-view') {
-             MasterApp.report.getAll();
+            MasterApp.report.getAll();
         }
     },
 
@@ -132,6 +132,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         tabMagnament.expand(false);
         tabMagnament.setDisabled(false);
         tabMagnament.setActiveTab(0);
+        MasterApp.util.setStyleWindowActive();
         MasterApp.register.new(window);
         var title = MasterApp.util.getTitleSectionSelected();
         Ext.ComponentQuery.query('#tbtext_magnament_register')[0].setText('Register: ' + title);
@@ -167,42 +168,49 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
 
     aplyKeyMap: function () {
         document.addEventListener('keydown', function (e) {
-            if (e.key === 'F2' || e.key === 'F3' || e.key === 'F4' || e.key === 'F5' || e.key === 'F6'|| e.key === 'F7') {
+            if (e.key === 'F2' || e.key === 'F3' || e.key === 'F4' || e.key === 'F5' || e.key === 'F6' || e.key === 'F7') {
                 e.cancelBubble = true;
                 e.cancelable = true;
                 e.stopPropagation();
                 e.preventDefault();
                 e.returnValue = false;
+                MasterApp.util.setStyleWindowActive();
                 var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
                 tabMagnament.show();
                 tabMagnament.expand(false);
                 tabMagnament.setDisabled(false);
                 var gridSection = MasterApp.globals.getGridSection();
-                tabMagnament.idmenumag = gridSection.idmenu;
-                tabMagnament.idsectionmag = gridSection.idsection;
-                if(e.key === 'F2'){
+                tabMagnament.idmenumag = (gridSection.idmenu) ? gridSection.idmenu : '';
+                tabMagnament.idsectionmag = (gridSection.idsection) ? gridSection.idsection : '';
+                if (e.key === 'F2') {
                     Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(0);
                     MasterApp.register.editRegister(0);
+                    return false;
                 }
-                if(e.key === 'F3'){
+                if (e.key === 'F3') {
                     Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(1);
                     MasterApp.filter.getAll(0);
+                    return false;
                 }
-                if(e.key === 'F4'){
+                if (e.key === 'F4') {
                     Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(2);
                     MasterApp.totals.getAll(0);
+                    return false;
                 }
-                if(e.key === 'F5'){
+                if (e.key === 'F5') {
                     Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(3);
                     MasterApp.attached.getAll();
+                    return false;
                 }
-                if(e.key === 'F6'){
+                if (e.key === 'F6') {
                     Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(4);
                     MasterApp.note.getAll();
+                    return false;
                 }
-                if(e.key === 'F7'){
+                if (e.key === 'F7') {
                     Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(5);
                     MasterApp.audit.getAll();
+                    return false;
                 }
             }
 

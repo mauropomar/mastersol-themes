@@ -334,6 +334,20 @@ Ext.define('MasterSol.controller.util.UtilController', {
         }
     },
 
+    setStyleWindowActive: function () {
+        var windowSelect = Ext.ComponentQuery.query('window[isSelect=true]')[0];
+        if (windowSelect.isminimize) {
+            var windowMaximize = Ext.ComponentQuery.query('window[isminimize=false]');
+            if(windowMaximize.length > 0) {
+                var panel = windowMaximize[0].down('panel');
+                var grid = panel.down('gridpanel');
+                this.setStyleWindow(panel);
+                MasterApp.globals.setGridSection(grid);
+
+            }
+        }
+    },
+
     setStyleSection: function (newCard) {
         var containers = this.getContainerSections();
         if (newCard) {
