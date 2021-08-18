@@ -458,6 +458,13 @@ Ext.define('MasterSol.controller.util.UtilController', {
             var nextPanel = Ext.ComponentQuery.query('tabpanel[level=' + next + ']')[0];
             return !nextPanel.isHidden();
         }
+    },
+
+    refreshActiveSection: function () {
+        var gridSection = MasterApp.globals.getGridSection();
+        gridSection.page = 1;
+        var store = gridSection.getStore();
+        store.reload();
     }
 })
 ;

@@ -52,8 +52,8 @@ Ext.define('MasterSol.controller.import.ImportCsvController', {
             timeout: 5000,
             params: {
                 name: nameFile,
-                idsection:idsection,
-                idmenu:idmenu
+                idsection: idsection,
+                idmenu: idmenu
             },
             headers: {'Content-Type': null}, //to use content type of FormData
             success: function (response) {
@@ -62,6 +62,7 @@ Ext.define('MasterSol.controller.import.ImportCsvController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
                     Ext.toast('El fichero fue importado con éxito.');
+                    MasterApp.util.refreshActiveSection();
                 } else {
                     Ext.MessageBox.show({
                         title: 'Información',
@@ -77,5 +78,4 @@ Ext.define('MasterSol.controller.import.ImportCsvController', {
     cancel: function () {
         Ext.ComponentQuery.query('#window_import_csv')[0].close();
     }
-
 });

@@ -62,6 +62,7 @@ Ext.define('MasterSol.controller.import.ImportExcelController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
                     Ext.toast('El fichero fue importado con éxito.');
+                    MasterApp.util.refreshActiveSection();
                 } else {
                     Ext.MessageBox.show({
                         title: 'Información',
