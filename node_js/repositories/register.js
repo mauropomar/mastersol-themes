@@ -134,7 +134,7 @@ const getParamsInsert = async (req, objects) => {
     let tablaPadre = ''
     let esquemaPadre = ''
     let flagPadre = false
-    if(req.body.idpadreregistro && req.body.idpadreregistro !== "") {
+    if(req.body.idpadreregistro && req.body.idpadreregistro !== '0') {
         idpadre = req.body.idpadreregistro
         //Buscar tabla correspondiente a este registro padre mediante la seccion padre, usando el campo namex
         const paramsSection = ['cfgapl.sections', req.body.idseccionpadre];
@@ -150,7 +150,7 @@ const getParamsInsert = async (req, objects) => {
                 esquemaPadre = resultTable.rows[0].fn_get_register[0].n_schema
         }
     }
-    else if(req.body.idseccionpadre && req.body.idseccionpadre !== "") {
+    else if(req.body.idseccionpadre && req.body.idseccionpadre !== '0') {
         flagPadre = true
         idpadre = req.body.idseccionpadre
     }
@@ -182,8 +182,10 @@ const getParamsInsert = async (req, objects) => {
                     idcapsulepadre = resultPadre.rows[0].fn_get_register[0].id_capsules
             }
         }
-        columnasInsertAux.push('id_capsules')
-        valuesInsertAux.push("'" + idcapsulepadre + "'")
+        if(idcapsulepadre !== '') {
+            columnasInsertAux.push('id_capsules')
+            valuesInsertAux.push("'" + idcapsulepadre + "'")
+        }
     }
 
     result.push(req.body.idsection)
