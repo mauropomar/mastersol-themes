@@ -27,6 +27,11 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         if (window != null) {
             window.toFront();
             mask.hide();
+            var grid = window.down('gridpanel');
+            var panel = window.down('panel');
+            MasterApp.globals.setGridSection(grid);
+            MasterApp.util.setStyleWindow(panel);
+            MasterApp.magnament.setActiveTabDefault(window);
             return;
         }
         var getdata = {
@@ -80,6 +85,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         Ext.ComponentQuery.query('#btnEnCascade')[0].setDisabled(false);
         MasterApp.util.setStyleWindow(MasterApp.globals.getSectionPrincipal());
         MasterApp.magnament.aplyKeyMap();
+        MasterApp.magnament.setActiveTabDefault(window);
     },
     //configurar la cantidad de niveles que va a tener el menu
     generateLevels: function (json) {
