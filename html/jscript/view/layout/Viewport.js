@@ -39,7 +39,12 @@ Ext.define('MasterSol.view.layout.Viewport', {
             resize:true,
             split:true,
             collapsed: true,
-            width: '30%'
+            width: '30%',
+            listeners:{
+                afterrender:function(){
+                    MasterApp.magnament.render();
+                }
+            }
         }]
     }, {
         xtype: 'toolbar-footer',
