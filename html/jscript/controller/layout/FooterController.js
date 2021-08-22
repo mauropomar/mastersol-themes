@@ -58,6 +58,7 @@ Ext.define('MasterSol.controller.layout.FooterController', {
             var grid = panel.down('gridpanel');
             MasterApp.globals.setGridSection(grid);
             MasterApp.util.setStyleWindow(panel);
+            MasterApp.magnament.setActiveTabDefault(window);
             combo.reset();
         },
 

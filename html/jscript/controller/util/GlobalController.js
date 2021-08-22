@@ -64,8 +64,10 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             return this.recSection;
         },
         getGridSection: function () {
-            if (!this.gridSection) {
+            if (!this.gridSection && this.gridSectionPrincipal) {
                 return this.gridSectionPrincipal;
+            } else if (!this.gridSection && !this.gridSectionPrincipal) {
+                return this.getSectionByWindowSelected();
             }
             return this.gridSection;
         },
@@ -75,6 +77,18 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         getPanelPrincipalByWindow: function (window) {
             var p = this.getSectionPrincipalByWindow(window);
             return p.up('panel');
+        },
+        getSectionByWindowSelected: function () {
+            var window = Ext.ComponentQuery.query('window[isSelect=true]');
+            var section = (window.length > 0) ? window[0].down('gridpanel') : null;
+            if(section == null)
+                return this.getSectionByWindowMinimize();
+            return section;
+        },
+        getSectionByWindowMinimize: function () {
+            var window = Ext.ComponentQuery.query('window[isminimize=false]');
+            var section = (window.length > 0) ? window[0].down('gridpanel') : null;
+            return section;
         },
         getPassword: function () {
             return this.password;
@@ -150,7 +164,7 @@ Ext.define('MasterSol.controller.util.GlobalController', {
         },
         setImageDesktop: function (val) {
             localStorage.setItem('desktop', val);
-            this.imageDesktop = 'resources/desktop/'+val;
+            this.imageDesktop = 'resources/desktop/' + val;
         }
     }
 )

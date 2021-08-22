@@ -140,7 +140,8 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
 
     isMenuTabMagnament: function (window) {
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
-        if (window.idmenu == tabMagnament.idmenumag || tabMagnament.idmenumag == null) {
+        var windowMaximize = Ext.ComponentQuery.query('window[isminimize=false]');
+        if (windowMaximize.length == 0 || window.idmenu == tabMagnament.idmenumag || tabMagnament.idmenumag == null) {
             tabMagnament.idsectionmag = null;
             MasterApp.globals.resetGridSection();
             tabMagnament.hide();
@@ -184,8 +185,8 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
                 tabMagnament.expand(false);
                 tabMagnament.setDisabled(false);
                 var gridSection = MasterApp.globals.getGridSection();
-                tabMagnament.idmenumag = (gridSection.idmenu) ? gridSection.idmenu : '';
-                tabMagnament.idsectionmag = (gridSection.idsection) ? gridSection.idsection : '';
+                tabMagnament.idmenumag = (gridSection) ? gridSection.idmenu : '';
+                tabMagnament.idsectionmag = (gridSection) ? gridSection.idsection : '';
                 if (e.key === 'F2') {
                     Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(0);
                     MasterApp.register.editRegister(0);
@@ -219,6 +220,21 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             }
 
         });
+    },
+
+    setActiveTabDefault:function(window){
+        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        if(tabMagnament.expand){
+            tabMagnament.setActiveTab(0);
+            MasterApp.register.new(window);
+            MasterApp.globals.setRecordSection(null);
+            var title = MasterApp.util.getTitleSectionSelected();
+            Ext.ComponentQuery.query('#tbtext_magnament_register')[0].setText('Register: ' + title);
+        }
+    },
+
+    render:function(){
+        MasterApp.magnament.aplyKeyMap();
     }
 
 })
