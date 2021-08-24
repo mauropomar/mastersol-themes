@@ -40,7 +40,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         }
     },
 
-    getTitleSectionSelected() {
+    getTitleSectionSelected: function () {
         var section = MasterApp.globals.getGridSection().up('panel');
         if (section.title == '') {
             var window = section.up('window');
@@ -315,7 +315,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
             return false;
     },
 
-    setStyleWindow: function (panel) {
+    setStyleWindow: function (panel, headerClik = false) {
         var window = (panel.name !== 'window-menu') ? panel.up('window') : panel;
         var idSelWindow = window.id;
         window.setStyle({
@@ -323,6 +323,13 @@ Ext.define('MasterSol.controller.util.UtilController', {
         });
         window.isSelect = true;
         window.focus();
+        if (headerClik) {
+            var p = window.down('panel');
+            var grid = p.down('gridpanel');
+            MasterApp.globals.setGridSection(grid);
+            Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(0);
+            MasterApp.register.editRegister(0);
+        }
         var windows = Ext.ComponentQuery.query('window');
         for (var i = 0; i < windows.length; i++) {
             if (windows[i].id != idSelWindow) {
@@ -340,14 +347,14 @@ Ext.define('MasterSol.controller.util.UtilController', {
             windowSelect = Ext.ComponentQuery.query('window[isSelect=true]')[0];
         else
             windowSelect = Ext.ComponentQuery.query('window[isSelect=false]')[0];
-        if (windowSelect.isminimize) {
-            var windowMaximize = Ext.ComponentQuery.query('window[isminimize=false]');
-            if (windowMaximize.length > 0) {
-                var panel = windowMaximize[0].down('panel');
-                var grid = panel.down('gridpanel');
-                this.setStyleWindow(panel);
-                MasterApp.globals.setGridSection(grid);
-            }
+        var val = false;
+        if (!windowSelect.isminimize) {
+            this.setStyleWindow(windowSelect);
+            return;
+        }
+        var windowMaximize = Ext.ComponentQuery.query('window[isminimize=' + val + ']');
+        if (windowMaximize.length > 0) {
+            this.setStyleWindow(windowMaximize[0]);
         }
     },
 
