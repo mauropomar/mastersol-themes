@@ -182,7 +182,7 @@ const getParamsInsert = async (req, objects) => {
                     idcapsulepadre = resultPadre.rows[0].fn_get_register[0].id_capsules
             }
         }
-        if(idcapsulepadre !== '') {
+        if(idcapsulepadre !== '' && !columnasInsertAux.includes('id_capsules')) {
             columnasInsertAux.push('id_capsules')
             valuesInsertAux.push("'" + idcapsulepadre + "'")
         }
