@@ -342,17 +342,17 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     setStyleWindowActive: function () {
-        var windowSelect = Ext.ComponentQuery.query('window[isSelect=true]');
+        var windowSelect = Ext.ComponentQuery.query('window-menu[isSelect=true]');
         if (windowSelect.length > 0)
-            windowSelect = Ext.ComponentQuery.query('window[isSelect=true]')[0];
+            windowSelect = Ext.ComponentQuery.query('window-menu[isSelect=true]')[0];
         else
-            windowSelect = Ext.ComponentQuery.query('window[isSelect=false]')[0];
+            windowSelect = Ext.ComponentQuery.query('window-menu[isSelect=false]')[0];
         var val = false;
         if (!windowSelect.isminimize) {
             this.setStyleWindow(windowSelect);
             return;
         }
-        var windowMaximize = Ext.ComponentQuery.query('window[isminimize=' + val + ']');
+        var windowMaximize = Ext.ComponentQuery.query('window-menu[isminimize=' + val + ']');
         if (windowMaximize.length > 0) {
             this.setStyleWindow(windowMaximize[0]);
         }
