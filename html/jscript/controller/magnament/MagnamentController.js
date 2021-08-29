@@ -132,7 +132,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         tabMagnament.expand(false);
         tabMagnament.setDisabled(false);
         tabMagnament.setActiveTab(0);
-        MasterApp.util.setStyleWindowActive();
+        MasterApp.util.setStyleWindowActive(window);
         MasterApp.register.new(window);
         var title = MasterApp.util.getTitleSectionSelected();
         Ext.ComponentQuery.query('#tbtext_magnament_register')[0].setText('Register: ' + title);

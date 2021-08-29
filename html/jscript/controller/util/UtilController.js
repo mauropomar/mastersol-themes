@@ -324,11 +324,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         window.isSelect = true;
         window.focus();
         if (headerClik) {
-            var p = window.down('panel');
-            var grid = p.down('gridpanel');
-            MasterApp.globals.setGridSection(grid);
-            Ext.ComponentQuery.query('#tabmagnament')[0].setActiveTab(0);
-            MasterApp.register.editRegister(0);
+            MasterApp.util.setActiveSectionPrincipal(window);
         }
         var windows = Ext.ComponentQuery.query('window');
         for (var i = 0; i < windows.length; i++) {
@@ -341,12 +337,16 @@ Ext.define('MasterSol.controller.util.UtilController', {
         }
     },
 
-    setStyleWindowActive: function () {
-        var windowSelect = Ext.ComponentQuery.query('window-menu[isSelect=true]');
-        if (windowSelect.length > 0)
-            windowSelect = Ext.ComponentQuery.query('window-menu[isSelect=true]')[0];
-        else
-            windowSelect = Ext.ComponentQuery.query('window-menu[isSelect=false]')[0];
+    setStyleWindowActive: function (window) {
+        var windowSelect;
+        if (!window) {
+            windowSelect = Ext.ComponentQuery.query('window-menu[isSelect=true]');
+            if (windowSelect.length > 0)
+                windowSelect = Ext.ComponentQuery.query('window-menu[isSelect=true]')[0];
+            else
+                windowSelect = Ext.ComponentQuery.query('window-menu[isSelect=false]')[0];
+        } else
+            windowSelect = window;
         var val = false;
         if (!windowSelect.isminimize) {
             this.setStyleWindow(windowSelect);
@@ -472,6 +472,24 @@ Ext.define('MasterSol.controller.util.UtilController', {
         gridSection.page = 1;
         var store = gridSection.getStore();
         store.reload();
+    },
+
+    isSectionChildOfWindow: function (window) {
+        var gridSection = MasterApp.globals.getGridSection();
+        var idmenuWindow = window.idmenu;
+        return (gridSection.idmenu === idmenuWindow);
+    },
+
+    setActiveSectionPrincipal: function (window) {
+        var p = window.down('panel');
+        grid = p.down('gridpanel');
+        MasterApp.globals.setGridSection(grid);
+        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        if (tabMagnament.expand) {
+            tabMagnament.setActiveTab(0);
+            MasterApp.register.editRegister(0);
+        }
+
     }
 })
 ;
