@@ -82,6 +82,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         real_name_in: cols[i].real_name_in,
                         n_column: cols[i].n_column,
                         real_name_out: cols[i].real_name_out,
+                        link_parent: cols[i].link_parent,
                         fk: cols[i].fk,
                         filter: {
                             type: 'boolean',
@@ -115,6 +116,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         real_name_in: cols[i].real_name_in,
                         real_name_out: cols[i].real_name_out,
                         n_column: cols[i].n_column,
+                        link_parent: cols[i].link_parent,
                         fk: cols[i].fk,
                         filter: {
                             type: 'number',
@@ -141,6 +143,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         real_name_in: cols[i].real_name_in,
                         real_name_out: cols[i].real_name_out,
                         n_column: cols[i].n_column,
+                        link_parent: cols[i].link_parent,
                         fk: cols[i].fk,
                         filter: {
                             type: 'string',
@@ -167,6 +170,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         real_name_in: cols[i].real_name_in,
                         real_name_out: cols[i].real_name_out,
                         n_column: cols[i].n_column,
+                        link_parent: cols[i].link_parent,
                         fk: cols[i].fk,
                         filter: {
                             type: 'list'
@@ -192,6 +196,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         real_name_in: cols[i].real_name_in,
                         real_name_out: cols[i].real_name_out,
                         n_column: cols[i].n_column,
+                        link_parent: cols[i].link_parent,
                         fk: cols[i].fk,
                         filter: {
                             type: 'date',

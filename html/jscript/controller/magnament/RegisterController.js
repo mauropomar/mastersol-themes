@@ -61,6 +61,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 required: columns[i].required,
                 auditable: columns[i].audit,
                 real_name_in: columns[i].real_name_in,
+                link_parent: columns[i].link_parent,
                 tipo: columns[i].type,
                 valor: this.getValue(rec, dataIndex),
                 padre: 'Generales',
@@ -241,12 +242,12 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     },
 
     beforeedit: function (editor, e, eOpts) {
+        var record = e.record;
         var gridsection = MasterApp.globals.getGridSection();
-        if (gridsection.read_only) {
+        if (gridsection.read_only || record.data.link_parent) {
             e.cancel = true;
             return;
         }
-        var record = e.record;
         var column = Ext.ComponentQuery.query('#register-view')[0].columns[1];
         if (record.data.fk == '1' || record.data.tipo == 'array') {
             this.setComboFk(record, column);
@@ -487,12 +488,12 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     },
 
     getValue: function (rec, dataIndex) {
-        if(dataIndex == 'active' && rec == null)
+        if (dataIndex == 'active' && rec == null)
             return true;
-       return (rec != null) ? rec.data[dataIndex] : '';
+        return (rec != null) ? rec.data[dataIndex] : '';
     },
 
-    removeAll:function(){
+    removeAll: function () {
         var grid = Ext.ComponentQuery.query('#register-view')[0];
         var store = grid.getStore();
         store.loadData([]);
