@@ -105,7 +105,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         var grid = Ext.ComponentQuery.query('#register-view')[0];
         var store = grid.getStore();
         var idx = store.findBy(function (rec) {
-            return (rec.data.required == true && rec.data.valor == '')
+            return (!rec.data.link_parent && rec.data.required && rec.data.valor == '')
         });
         if (idx > -1) {
             this.showFieldRequired = true;
@@ -388,11 +388,11 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     },
 
     renderName: function (value, metaData, record) {
-        if (record.data.required == true) {
+        if (!record.data.link_parent && record.data.required) {
             var table = '<table width="100%" border="0">' +
                 '<tr><td class="left-cell">' + value + '</td>' +
                 '<td style="text-align: left; color: red">*</td></tr>' +
-                '</table>'
+                '</table>';
             return table;
         }
         return value;
