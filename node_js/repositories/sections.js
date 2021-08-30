@@ -4,10 +4,12 @@ objSections = {}
 const getSections = async (req) => {
     const params = [
         req.body.sectionId,
-        req.session.id_rol,
+        //req.session.id_rol,
+        'c2e9de83-6de6-4fe9-b933-3f4b4ec9c359',
         req.body.start ? req.body.start : 0,
         req.body.limit ? req.body.limit : 50,
-        req.session.id_user
+        //req.session.id_user
+        '7570c788-e3e8-4ffc-83d5-ac7996eb10ce'
     ]
     const query = "SELECT cfgapl.fn_get_sections($1,$2,$3,$4,$5)"
     const result = await pool.executeQuery(query, params)
