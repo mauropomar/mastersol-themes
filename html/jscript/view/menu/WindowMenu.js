@@ -45,7 +45,7 @@ Ext.define('MasterSol.view.menu.WindowMenu', {
         },
         afterrender: function (win) {
             win.header.el.on('click', function () {
-                MasterApp.util.setStyleWindow(win);
+                MasterApp.util.setStyleWindow(win, true);
             });
             win.header.el.on('dblclick', function () {
                 MasterApp.section.dblClickHeader(win);

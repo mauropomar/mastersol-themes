@@ -40,7 +40,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         }
     },
 
-    getTitleSectionSelected() {
+    getTitleSectionSelected: function () {
         var section = MasterApp.globals.getGridSection().up('panel');
         if (section.title == '') {
             var window = section.up('window');
@@ -315,7 +315,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
             return false;
     },
 
-    setStyleWindow: function (panel) {
+    setStyleWindow: function (panel, headerClik = false) {
         var window = (panel.name !== 'window-menu') ? panel.up('window') : panel;
         var idSelWindow = window.id;
         window.setStyle({
@@ -323,6 +323,9 @@ Ext.define('MasterSol.controller.util.UtilController', {
         });
         window.isSelect = true;
         window.focus();
+        if (headerClik) {
+            MasterApp.util.setActiveSectionPrincipal(window);
+        }
         var windows = Ext.ComponentQuery.query('window');
         for (var i = 0; i < windows.length; i++) {
             if (windows[i].id != idSelWindow) {
@@ -334,20 +337,24 @@ Ext.define('MasterSol.controller.util.UtilController', {
         }
     },
 
-    setStyleWindowActive: function () {
-        var windowSelect = Ext.ComponentQuery.query('window[isSelect=true]');
-        if (windowSelect.length > 0)
-            windowSelect = Ext.ComponentQuery.query('window[isSelect=true]')[0];
-        else
-            windowSelect = Ext.ComponentQuery.query('window[isSelect=false]')[0];
-        if (windowSelect.isminimize) {
-            var windowMaximize = Ext.ComponentQuery.query('window[isminimize=false]');
-            if (windowMaximize.length > 0) {
-                var panel = windowMaximize[0].down('panel');
-                var grid = panel.down('gridpanel');
-                this.setStyleWindow(panel);
-                MasterApp.globals.setGridSection(grid);
-            }
+    setStyleWindowActive: function (window) {
+        var windowSelect;
+        if (!window) {
+            windowSelect = Ext.ComponentQuery.query('window-menu[isSelect=true]');
+            if (windowSelect.length > 0)
+                windowSelect = Ext.ComponentQuery.query('window-menu[isSelect=true]')[0];
+            else
+                windowSelect = Ext.ComponentQuery.query('window-menu[isSelect=false]')[0];
+        } else
+            windowSelect = window;
+        var val = false;
+        if (!windowSelect.isminimize) {
+            this.setStyleWindow(windowSelect);
+            return;
+        }
+        var windowMaximize = Ext.ComponentQuery.query('window-menu[isminimize=' + val + ']');
+        if (windowMaximize.length > 0) {
+            this.setStyleWindow(windowMaximize[0]);
         }
     },
 
@@ -465,6 +472,24 @@ Ext.define('MasterSol.controller.util.UtilController', {
         gridSection.page = 1;
         var store = gridSection.getStore();
         store.reload();
+    },
+
+    isSectionChildOfWindow: function (window) {
+        var gridSection = MasterApp.globals.getGridSection();
+        var idmenuWindow = window.idmenu;
+        return (gridSection.idmenu === idmenuWindow);
+    },
+
+    setActiveSectionPrincipal: function (window) {
+        var p = window.down('panel');
+        grid = p.down('gridpanel');
+        MasterApp.globals.setGridSection(grid);
+        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        if (tabMagnament.expand) {
+            tabMagnament.setActiveTab(0);
+            MasterApp.register.editRegister(0);
+        }
+
     }
 })
 ;

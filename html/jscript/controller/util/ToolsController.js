@@ -102,6 +102,12 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     callFunction: function (evt, toolEl, owner, button) {
+        var window = owner.up('window');
+        var isChild = MasterApp.util.isSectionChildOfWindow(window);
+        if (!isChild) {
+            MasterApp.util.setStyleWindowActive(window);
+            MasterApp.util.setActiveSectionPrincipal(window);
+        }
         var grid = MasterApp.globals.getGridSection();
         var mask = new Ext.LoadMask(grid, {
             msg: 'Cargando...'
