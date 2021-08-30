@@ -388,7 +388,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     },
 
     renderName: function (value, metaData, record) {
-        if (!record.data.link_parent && record.data.required) {
+         if (!record.data.link_parent && record.data.required) {
             var table = '<table width="100%" border="0">' +
                 '<tr><td class="left-cell">' + value + '</td>' +
                 '<td style="text-align: left; color: red">*</td></tr>' +
