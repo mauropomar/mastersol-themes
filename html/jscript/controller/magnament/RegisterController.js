@@ -502,17 +502,10 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
 
     aggregateFieldOfLinkParent: function (store, data) {
         var gridsection = MasterApp.globals.getGridSection();
-        var idparent = gridsection.up('panel').idparent;
-        if (idparent == null)
-            return;
-        var gridSection = Ext.ComponentQuery.query('gridpanel[idsection=' + idparent + ']')[0];
-        var hasSelection = gridSection.getSelectionModel().hasSelection();
-        if (!hasSelection)
-            return;
-        var recordParentSel = gridSection.getSelectionModel().getSelection()[0];
+        var idrecordparent = gridsection.up('panel').idrecordparent;
+        var idregisterparent = (idrecordparent) ? idrecordparent : 0;
         store.each(function (rec) {
             if (rec.data.link_parent) {
-                var field = rec.data.field;
                 data.push({
                     id: rec.data.id,
                     tipo: rec.data.tipo,
@@ -522,8 +515,8 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                     real_name_in: rec.data.real_name_in,
                     auditable: rec.data.auditable,
                     field: rec.data.field,
-                    idvalor: recordParentSel.data[field],
-                    valor: recordParentSel.data[field]
+                    idvalor: idregisterparent,
+                    valor: idregisterparent
                 });
             }
         });
