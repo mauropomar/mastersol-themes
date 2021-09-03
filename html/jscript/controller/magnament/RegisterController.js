@@ -250,7 +250,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             return;
         }
         var column = Ext.ComponentQuery.query('#register-view')[0].columns[1];
-        if (record.data.fk == '1' || record.data.tipo == 'array') {
+        if (record.data.fk == '1') {
             this.setComboFk(record, column);
             return;
         }
@@ -258,7 +258,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         if (record.data.tipo == 'number') {
             this.setNumberField(record, column);
         }
-        if (record.data.tipo == 'string') {
+        if (record.data.tipo == 'string' || record.data.tipo == 'array') {
             this.setTextField(column);
         }
         if (record.data.tipo == 'boolean') {
