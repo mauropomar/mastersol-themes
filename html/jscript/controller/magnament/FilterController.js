@@ -101,7 +101,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
         var gridsection = MasterApp.globals.getGridSection();
         var grid = Ext.ComponentQuery.query('#filter-view')[0];
         var mask = new Ext.LoadMask(grid, {
-            msg: 'Guardando Cambios...'
+            msg: 'Filtrando...'
         });
         var store = grid.getStore();
         mask.show();

@@ -75,7 +75,7 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         var gridsection = MasterApp.globals.getGridSection();
         var grid = Ext.ComponentQuery.query('#total-view')[0];
         var mask = new Ext.LoadMask(grid, {
-            msg: 'Guardando Cambios...'
+            msg: 'Calculando...'
         });
         var store = grid.getStore();
         mask.show();
