@@ -228,7 +228,7 @@ const executeFunctionsButtons = async (req, objects) => {
         const param_button = ['cfgapl.sections_buttons',idbutton]
         const resultButton = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_button)
 
-        if (resultButton) {
+        if (resultButton && resultButton.rows) {
             let requireDir = '../../capsules/' + 'c_' + resultButton.rows[0].fn_get_register[0].id_capsules + '/node_js/buttons/' + resultButton.rows[0].fn_get_register[0].js_name
             let dirFile = global.appRootApp + '\\capsules\\' + 'c_' + resultButton.rows[0].fn_get_register[0].id_capsules + '\\node_js\\buttons\\' + resultButton.rows[0].fn_get_register[0].js_name +'.js'
             const operacion = require(requireDir)
@@ -238,7 +238,7 @@ const executeFunctionsButtons = async (req, objects) => {
                 if(resultButton.rows[0].fn_get_register[0].id_inform != null){
                     const param_inform = ['reports.informs',resultButton.rows[0].fn_get_register[0].id_inform]
                     const resultInform = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_inform)
-                    if(resultInform) {
+                    if(resultInform && resultInform.rows) {
                         report_name = resultInform.rows[0].fn_get_register[0].name                        
                         //Si los parametros vienen vacíos buscar los params del reporte y devolverlos
                         if(!extra_params || extra_params == '') {                            
@@ -273,6 +273,41 @@ const executeFunctionsButtons = async (req, objects) => {
                         }
                     }
                 }
+                else if(resultButton.rows[0].fn_get_register[0].id_graphic != null){
+                    const param_graphic = ['cfgapl.graphic',resultButton.rows[0].fn_get_register[0].id_graphic]
+                    const resultGraphic = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_graphic)
+                    if(resultGraphic && resultGraphic.rows){
+                        const graphic_name = resultGraphic.rows[0].fn_get_register[0].namex
+                        //Si los parametros vienen vacíos buscar los params del grafico y devolverlos
+                        if(!extra_params || extra_params == ''){
+                            const paramsParamsGraphic = ['cfgapl.graphic_params', null, "WHERE id_graphic = '" + resultGraphic.rows[0].fn_get_register[0].id + "' "];
+                            const resultParamsGraphic = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsParamsGraphic);
+
+                        }
+                        else{
+                            //devolver consulta del gráfico
+                            const sql_graphic = resultGraphic.rows[0].fn_get_register[0].sql_values
+                            let msg = ''
+                            let resultSql = ''
+                            success = true;
+                            try {
+                                resultSql = await pool.executeQuery(sql_graphic)
+                            }
+                            catch(err){
+                                msg = err
+                            }
+                            const name = resultGraphic.rows[0].fn_get_register[0].namex
+                            const title = resultGraphic.rows[0].fn_get_register[0].title
+                            const label_x = resultGraphic.rows[0].fn_get_register[0].label_x
+                            const label_y = resultGraphic.rows[0].fn_get_register[0].label_y
+                            const legend = resultGraphic.rows[0].fn_get_register[0].show_legend
+                            const pos_legend = resultGraphic.rows[0].fn_get_register[0].legend_pos
+							const sql_label = resultGraphic.rows[0].fn_get_register[0].sql_label
+                            result = {'btn': idbutton, 'type': 6, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
+                            flagResult = true
+                        }
+                    }
+                }
                 if(!flagResult) {
                     result = await operacion.function(idsection, idregister, idbutton, iduser, idrol, report_name)
                     if (result)
@@ -281,7 +316,10 @@ const executeFunctionsButtons = async (req, objects) => {
             }
         }
     }
-    return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name}
+    if(result.type != 6)
+        return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name}
+    else
+        return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name, 'title': result.title, 'label_x': result.label_x, 'label_y': result.label_y, 'legend': result.legend, 'legend_pos': result.legend_pos, 'sql_label': result.sql_label}
 }
 
 const saveCapsuleBD = async (idcapsule,dirFullFolder) => {

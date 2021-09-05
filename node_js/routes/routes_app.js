@@ -281,7 +281,11 @@ router.get('/executebuttons', async function (req, res) {
             time += 500
         }
         return res.json(resultado)
-    }    
+    }
+    else if(result.type == 6){
+        //Código para gráficos
+        return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name, 'title': result.title, 'label_x': result.label_x, 'label_y': result.label_y, 'legend': result.legend, 'legend_pos': result.legend_pos, 'sql_label': result.sql_label})
+    }
     else {
         return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name})
     }
