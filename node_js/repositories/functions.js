@@ -282,7 +282,41 @@ const executeFunctionsButtons = async (req, objects) => {
                         if(!extra_params || extra_params == ''){
                             const paramsParamsGraphic = ['cfgapl.graphic_params', null, "WHERE id_graphic = '" + resultGraphic.rows[0].fn_get_register[0].id + "' "];
                             const resultParamsGraphic = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsParamsGraphic);
-
+                            //Buscar parámetros para devolverlos
+                            if (resultParamsGraphic && resultParamsGraphic.rows[0].fn_get_register != null
+                                && resultParamsGraphic.rows[0].fn_get_register.length > 0){
+                                //Devolver arreglo de parametros a la vista para el panel de filtro del gráfico
+                                for(let i=0;i<resultParamsGraphic.rows[0].fn_get_register.length;i++){
+                                    const param_datatype = ['cfgapl.datatypes',resultParamsGraphic.rows[0].fn_get_register[i].datatype]
+                                    const resultDatatype = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_datatype)
+                                    if(resultDatatype && resultDatatype.rows)
+                                        resultParamsGraphic.rows[0].fn_get_register[i].datatype = resultDatatype.rows[0].fn_get_register[0].real_name_ext
+                                }
+                                success = true;
+                                result = {'btn': idbutton, 'type': 4, 'value': resultParamsGraphic.rows[0].fn_get_register, 'msg': 'filter_params'}
+                                flagResult = true
+                            }
+                            else{
+                                const sql_graphic = resultGraphic.rows[0].fn_get_register[0].sql_values
+                                let msg = ''
+                                let resultSql = ''
+                                success = true;
+                                try {
+                                    resultSql = await pool.executeQuery(sql_graphic)
+                                }
+                                catch(err){
+                                    msg = err
+                                }
+                                const name = resultGraphic.rows[0].fn_get_register[0].namex
+                                const title = resultGraphic.rows[0].fn_get_register[0].title
+                                const label_x = resultGraphic.rows[0].fn_get_register[0].label_x
+                                const label_y = resultGraphic.rows[0].fn_get_register[0].label_y
+                                const legend = resultGraphic.rows[0].fn_get_register[0].show_legend
+                                const pos_legend = resultGraphic.rows[0].fn_get_register[0].legend_pos
+                                const sql_label = resultGraphic.rows[0].fn_get_register[0].sql_label
+                                result = {'btn': idbutton, 'type': 6, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
+                                flagResult = true
+                            }
                         }
                         else{
                             //devolver consulta del gráfico
