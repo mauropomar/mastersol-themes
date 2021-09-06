@@ -293,7 +293,7 @@ const executeFunctionsButtons = async (req, objects) => {
                                         resultParamsGraphic.rows[0].fn_get_register[i].datatype = resultDatatype.rows[0].fn_get_register[0].real_name_ext
                                 }
                                 success = true;
-                                result = {'btn': idbutton, 'type': 4, 'value': resultParamsGraphic.rows[0].fn_get_register, 'msg': 'filter_params'}
+                                result = {'btn': idbutton, 'type': 6, 'value': resultParamsGraphic.rows[0].fn_get_register, 'msg': 'filter_params'}
                                 flagResult = true
                             }
                             else{
@@ -314,7 +314,7 @@ const executeFunctionsButtons = async (req, objects) => {
                                 const legend = resultGraphic.rows[0].fn_get_register[0].show_legend
                                 const pos_legend = resultGraphic.rows[0].fn_get_register[0].legend_pos
                                 const sql_label = resultGraphic.rows[0].fn_get_register[0].sql_label
-                                result = {'btn': idbutton, 'type': 6, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
+                                result = {'btn': idbutton, 'type': 7, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
                                 flagResult = true
                             }
                         }
@@ -337,7 +337,7 @@ const executeFunctionsButtons = async (req, objects) => {
                             const legend = resultGraphic.rows[0].fn_get_register[0].show_legend
                             const pos_legend = resultGraphic.rows[0].fn_get_register[0].legend_pos
 							const sql_label = resultGraphic.rows[0].fn_get_register[0].sql_label
-                            result = {'btn': idbutton, 'type': 6, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
+                            result = {'btn': idbutton, 'type': 7, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
                             flagResult = true
                         }
                     }
