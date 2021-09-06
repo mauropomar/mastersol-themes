@@ -1,5 +1,6 @@
 Ext.define('MasterSol.controller.chart.ChartController', {
     extend: 'Ext.app.Controller',
+    jsonData: null,
     init: function () {
 
     },
@@ -16,19 +17,20 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         } else if (type === 'pie') {
             panel = Ext.create('MasterSol.view.chart.PieChart');
             Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
-        }else if (type === 'area') {
+        } else if (type === 'area') {
             panel = Ext.create('MasterSol.view.chart.AreaChart');
             Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
-        }else if (type === 'stackbar') {
+        } else if (type === 'stackbar') {
             panel = Ext.create('MasterSol.view.chart.StackBarChart');
             Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
-        }else if (type === 'radar') {
+        } else if (type === 'radar') {
             panel = Ext.create('MasterSol.view.chart.RadarChart');
             Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
         }
     },
 
-    showWindow: function () {
+    showWindow: function (json) {
+        this.jsonData = json;
         Ext.create('MasterSol.view.chart.WindowChart', {
             id: 'window_chart'
         });

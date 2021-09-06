@@ -5,12 +5,12 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     getArrayBtn: function () {
-        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section', 'btn_chart'];
+        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
         return array;
     },
 
     getArrayBtnDefault: function () {
-        var array = ['btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section', 'btn_chart'];
+        var array = ['btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
         return array;
     },
 
@@ -150,6 +150,9 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         MasterApp.report.removeAll();
                         MasterApp.report.generateReport(params, json.value, json.name, extraParams);
                     }
+                    if (json.type === 6) {
+                        MasterApp.getController('MasterSol.controller.chart.ChartController').showWindow(json);
+                    }
                 } else {
                     Ext.MessageBox.show({
                         title: 'Error',
@@ -170,14 +173,12 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 var query = '#' + tools[j]['id'];
                 if (Ext.ComponentQuery.query(query)[0])
                     Ext.ComponentQuery.query(query)[0].setVisible(show);
-                else
-                    console.log(tools[j]['name']);
             }
         }
     },
 
     getButtonsDefaut: function (win) {
-        return [{
+        return [/*{
             iconCls: 'fa fa-bar-chart',
             tooltip: 'Gráfico',
             default: true,
@@ -185,7 +186,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             handler: function (evt, toolEl, owner, tool) {
                 MasterApp.getController('MasterSol.controller.chart.ChartController').showWindow();
             }
-        }, {
+        }, */{
             iconCls: 'fa fa-floppy-o',
             tooltip: 'Salvar sistema y base de datos',
             default: true,

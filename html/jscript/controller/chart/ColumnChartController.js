@@ -7,9 +7,11 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
         },
 
         render: function () {
+            var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
+            json['fields'] = ['label', 'valor'];
             this.chart = Ext.create('Ext.chart.CartesianChart', {
                 reference: 'chart',
-                store: this.getStore(),
+                store: this.getStore(json),
                 insetPadding: {
                     top: 40,
                     bottom: 40,
@@ -29,20 +31,23 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                     minimum: 30,
                     titleMargin: 20,
                     title: {
-                        text: 'Temperature in °F'
+                        text: json['label_y']
                     },
                     listeners: {
                         rangechange: this.onAxisRangeChange
                     }
                 }, {
                     type: 'category',
-                    position: 'bottom'
+                    position: 'bottom',
+                    title: {
+                        text: json['label_x']
+                    }
                 }],
                 animation: Ext.isIE8 ? false : true,
                 series: {
                     type: 'bar',
-                    xField: 'month',
-                    yField: 'highF',
+                    xField:this.getXField(json),
+                    yField: this.getYField(json),
                     style: {
                         minGapWidth: 20
                     },
@@ -51,7 +56,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                         fillStyle: 'gold'
                     },
                     label: {
-                        field: 'highF',
+                        field: this.getYField(json),
                         display: 'insideEnd',
                         renderer: this.onSeriesLabelRender
                     },
@@ -62,7 +67,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                 },
                 sprites: {
                     type: 'text',
-                    text: 'Redwood City Climate Data',
+                    text: json.title,
                     fontSize: 22,
                     width: 100,
                     height: 30,
@@ -79,39 +84,10 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
             Ext.ComponentQuery.query('column-chart')[0].add(this.chart);
         },
 
-        getStore: function () {
+        getStore: function (json) {
             var store = {
-                fields: [
-                    'month',
-                    'high',
-                    'low',
-                    {
-                        name: 'highF',
-                        calculate: function (data) {
-                            return data.high * 1.8 + 32;
-                        }
-                    },
-                    {
-                        name: 'lowF',
-                        calculate: function (data) {
-                            return data.low * 1.8 + 32;
-                        }
-                    }
-                ],
-                data: [
-                    {month: 'Jan', high: 14.7, low: 5.6},
-                    {month: 'Feb', high: 16.5, low: 6.6},
-                    {month: 'Mar', high: 18.6, low: 7.3},
-                    {month: 'Apr', high: 20.8, low: 8.1},
-                    {month: 'May', high: 23.3, low: 9.9},
-                    {month: 'Jun', high: 26.2, low: 11.9},
-                    {month: 'Jul', high: 27.7, low: 13.3},
-                    {month: 'Aug', high: 27.6, low: 13.2},
-                    {month: 'Sep', high: 26.4, low: 12.1},
-                    {month: 'Oct', high: 23.6, low: 9.9},
-                    {month: 'Nov', high: 17, low: 6.8},
-                    {month: 'Dec', high: 14.7, low: 5.8}
-                ]
+                fields: json.fields,
+                data: json.value
             };
             return store;
         },
@@ -171,20 +147,10 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                 mean;
 
             store.each(function (rec) {
-                sum += rec.get('highF');
+                sum += rec.get('valor');
             });
 
             mean = sum / store.getCount();
-
-            axis.setLimits({
-                value: mean,
-                line: {
-                    title: {
-                        text: 'Average high: ' + mean.toFixed(2) + '°F'
-                    },
-                    lineDash: [2, 2]
-                }
-            });
         },
 
 
@@ -206,8 +172,22 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
         },
 
         onTooltipRender: function (tooltip, record, item) {
-            tooltip.setHtml(record.get('month') + ': ' +
-                Ext.util.Format.number(record.get('high'), '0,000 (millions of USD)'));
+            tooltip.setHtml(record.get('label') + ': ' +
+                Ext.util.Format.number(record.get('valor')));
         },
+
+        getXField: function (json) {
+            var fields = json.fields;
+            return fields[0];
+        },
+
+        getYField: function (json) {
+            var f = [];
+            var fields = json.fields;
+            for (var i = 1; i < fields.length; i++) {
+                f.push(fields[i]);
+            }
+            return f;
+        }
     }
 );

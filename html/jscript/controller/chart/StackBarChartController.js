@@ -5,9 +5,11 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
         },
 
         render: function () {
+            var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
+            json['fields'] = ['label', 'valor'];
             var chart = Ext.create('Ext.chart.CartesianChart', {
                 flipXY: true,
-                store: this.getStore(),
+                store: this.getStore(json),
                 legend: {
                     docked: 'right'
                 },
@@ -24,41 +26,48 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
                 //define the actual bar series.
                 series: [{
                     type: 'bar',
-                    xField: 'name',
-                    yField: ['g1', 'g2'],
+                    xField: this.getXField(json),
+                    yField: this.getYField(json),
                     axis: 'bottom',
                     // Cycles the green and blue fill mode over 2008 and 2009
                     // subStyle parameters also override style parameters
                     subStyle: {
                         fill: ["#115fa6", "#94ae0a"]
+                    },
+                    tooltip: {
+                        trackMouse: true,
+                        renderer: this.onTooltipRender
                     }
                 }]
             });
             Ext.ComponentQuery.query('stack-chart')[0].add(chart);
         },
 
-        getStore: function () {
+        getStore: function (json) {
             var store = {
-                fields: ['name', 'g1', 'g2'],
-                data: [
-                    {"name": "Item-0", "g1": 18.34, "g2": 0.04},
-                    {"name": "Item-1", "g1": 2.67, "g2": 14.87},
-                    {"name": "Item-2", "g1": 1.90, "g2": 5.72},
-                    {"name": "Item-3", "g1": 21.37, "g2": 2.13},
-                    {"name": "Item-4", "g1": 2.67, "g2": 8.53},
-                    {"name": "Item-5", "g1": 18.22, "g2": 4.62},
-                    {"name": "Item-6", "g1": 28.51, "g2": 12.43},
-                    {"name": "Item-7", "g1": 34.43, "g2": 4.40},
-                    {"name": "Item-8", "g1": 21.65, "g2": 13.87},
-                    {"name": "Item-9", "g1": 12.98, "g2": 35.44},
-                    {"name": "Item-10", "g1": 22.96, "g2": 38.70},
-                    {"name": "Item-11", "g1": 0.49, "g2": 51.90},
-                    {"name": "Item-12", "g1": 20.87, "g2": 62.07},
-                    {"name": "Item-13", "g1": 25.10, "g2": 78.46},
-                    {"name": "Item-14", "g1": 16.87, "g2": 56.80}
-                ]
+                fields: json.fields,
+                data: json.value
             };
             return store;
+        },
+
+        getXField: function (json) {
+            var fields = json.fields;
+            return fields[0];
+        },
+
+        getYField: function (json) {
+            var f = [];
+            var fields = json.fields;
+            for (var i = 1; i < fields.length; i++) {
+                f.push(fields[i]);
+            }
+            return f;
+        },
+
+        onTooltipRender: function (tooltip, record, item) {
+            tooltip.setHtml(record.get('label') + ': ' +
+                Ext.util.Format.number(record.get('valor')));
         },
     }
 );

@@ -5,9 +5,11 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
     },
 
     render: function () {
+        var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
+        json['fields'] = ['label', 'valor'];
         var chart = Ext.create('Ext.chart.PolarChart', {
             reference: 'chart',
-            store: this.getStore(),
+            store: this.getStore(json),
             theme: 'default-gradients',
             insetPadding: 50,
             innerPadding: 20,
@@ -17,7 +19,7 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
             interactions: ['rotate'],
             sprites: [{
                 type: 'text',
-                text: 'Pie Charts - Basic',
+                text: json.title,
                 fontSize: 22,
                 width: 100,
                 height: 30,
@@ -36,9 +38,9 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
             }],
             series: [{
                 type: 'pie',
-                angleField: 'data1',
+                angleField: this.getYField(json),
                 label: {
-                    field: 'os',
+                    field: this.getXField(json),
                     calloutLine: {
                         length: 60,
                         width: 3
@@ -55,21 +57,29 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
         Ext.ComponentQuery.query('pie-chart')[0].add(chart);
     },
 
-    getStore: function () {
+    getStore: function (json) {
         var store = {
-            fields: ['os', 'data1'],
-            data: [
-                {os: 'Android', data1: 68.3},
-                {os: 'BlackBerry', data1: 1.7},
-                {os: 'iOS', data1: 17.9},
-                {os: 'Windows Phone', data1: 10.2},
-                {os: 'Others', data1: 1.9}
-            ]
+            fields: json.fields,
+            data: json.value
         };
         return store;
     },
 
+    getXField: function (json) {
+        var fields = json.fields;
+        return fields[0];
+    },
+
+    getYField: function (json) {
+        var f = [];
+        var fields = json.fields;
+        for (var i = 1; i < fields.length; i++) {
+            f.push(fields[i]);
+        }
+        return f;
+    },
+
     onSeriesTooltipRender: function (tooltip, record, item) {
-        tooltip.setHtml(record.get('os') + ': ' + record.get('data1') + '%');
+        tooltip.setHtml(record.get('label') + ': ' + record.get('valor') + '%');
     }
 });
