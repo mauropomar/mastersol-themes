@@ -17,14 +17,8 @@ Ext.define('MasterSol.view.chart.WindowChart', {
     ],
     items: [{
         xtype: 'panel',
-        layout: 'border',
+        layout: 'fit',
         items: [{
-            region: 'west',
-            width: '20%',
-            split: true,
-            collapsible: true,
-            collapseMode: 'mini',
-        }, {
             region: 'center',
             layout: 'fit',
             id:'container_chart_panel',
@@ -33,36 +27,48 @@ Ext.define('MasterSol.view.chart.WindowChart', {
             }],
             tbar: [{
                 xtype: 'button',
+                tooltip:'Gráficos de Columnas',
+                tooltipType:'title',
                 iconCls: 'fa fa-bar-chart',
                 handler:function(){
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('column');
                 }
             },'-',{
                 xtype: 'button',
+                tooltip:'Gráficos de Línea',
+                tooltipType:'title',
                 iconCls: 'fa fa-line-chart',
                 handler:function(){
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('line');
                 }
             },'-',{
                 xtype: 'button',
+                tooltip:'Gráficos de Pie',
+                tooltipType:'title',
                 iconCls: 'fa fa-pie-chart',
                 handler:function(){
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('pie');
                 }
             },'-',{
                 xtype: 'button',
+                tooltip:'Gráficos de Área',
+                tooltipType:'title',
                 iconCls: 'fa fa-area-chart',
                 handler:function(){
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('area');
                 }
             },'-',{
                 xtype: 'button',
+                tooltip:'Gráficos de Barras',
+                tooltipType:'title',
                 iconCls: 'fa fa-align-left',
                 handler:function(){
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('stackbar');
                 }
             },'-',{
                 xtype: 'button',
+                tooltip:'Gráficos Radar',
+                tooltipType:'title',
                 iconCls: 'fa fa-chrome',
                 handler:function(){
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('radar');

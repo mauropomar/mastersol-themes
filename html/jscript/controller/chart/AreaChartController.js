@@ -6,7 +6,6 @@ Ext.define('MasterSol.controller.chart.AreaChartController', {
     },
     render: function () {
         var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
-        json['fields'] = ['label', 'valor'];
         this.chart = Ext.create('Ext.chart.CartesianChart', {
             reference: 'chart',
             store: this.getStore(json),

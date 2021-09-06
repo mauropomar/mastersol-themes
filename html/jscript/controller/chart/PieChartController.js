@@ -6,7 +6,6 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
 
     render: function () {
         var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
-        json['fields'] = ['label', 'valor'];
         var chart = Ext.create('Ext.chart.PolarChart', {
             reference: 'chart',
             store: this.getStore(json),

@@ -30,12 +30,12 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     },
 
     showWindow: function (json) {
+        json['fields'] = ['label', 'valor'];
         this.jsonData = json;
         Ext.create('MasterSol.view.chart.WindowChart', {
             id: 'window_chart'
         });
     },
-
 
     cancel: function () {
         Ext.ComponentQuery.query('#window_chart')[0].close();

@@ -6,9 +6,10 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
         },
 
         render: function () {
+            var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
             var chart = Ext.create('Ext.chart.CartesianChart', {
                 reference: 'chart',
-                store: this.getStore(),
+                store: this.getStore(json),
                 legend: {
                     type: 'sprite',
                     docked: 'right'
@@ -37,14 +38,14 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
                 }],
                 axes: [{
                     type: 'numeric',
-                    fields: ['data1', 'data2', 'data3', 'data4'],
+                    fields:this.getYField(json),
                     position: 'left',
                     grid: true,
                     minimum: 0,
                     renderer: this.onAxisLabelRender
                 }, {
                     type: 'category',
-                    fields: 'month',
+                    fields: this.getXField(json),
                     position: 'bottom',
                     grid: true,
                     label: {
@@ -53,117 +54,28 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
                         }
                     }
                 }],
-                series: [{
-                    type: 'line',
-                    title: 'IE',
-                    xField: 'month',
-                    yField: 'data1',
-                    marker: {
-                        type: 'square',
-                        fx: {
-                            duration: 200,
-                            easing: 'backOut'
-                        }
-                    },
-                    highlightCfg: {
-                        scaling: 2
-                    },
-                    tooltip: {
-                        trackMouse: true,
-                        renderer: this.onSeriesTooltipRender
-                    }
-                }, {
-                    type: 'line',
-                    title: 'Firefox',
-                    xField: 'month',
-                    yField: 'data2',
-                    marker: {
-                        type: 'triangle',
-                        fx: {
-                            duration: 200,
-                            easing: 'backOut'
-                        }
-                    },
-                    highlightCfg: {
-                        scaling: 2
-                    },
-                    tooltip: {
-                        trackMouse: true,
-                        renderer: this.onSeriesTooltipRender
-                    }
-                }, {
-                    type: 'line',
-                    title: 'Chrome',
-                    xField: 'month',
-                    yField: 'data3',
-                    marker: {
-                        type: 'arrow',
-                        fx: {
-                            duration: 200,
-                            easing: 'backOut'
-                        }
-                    },
-                    highlightCfg: {
-                        scaling: 2
-                    },
-                    tooltip: {
-                        trackMouse: true,
-                       renderer: this.onSeriesTooltipRender
-                    }
-                }, {
-                    type: 'line',
-                    title: 'Safari',
-                    xField: 'month',
-                    yField: 'data4',
-                    marker: {
-                        type: 'cross',
-                        fx: {
-                            duration: 200,
-                            easing: 'backOut'
-                        }
-                    },
-                    highlightCfg: {
-                        scaling: 2
-                    },
-                    tooltip: {
-                        trackMouse: true,
-                        renderer: this.onSeriesTooltipRender
-                    }
-                }]
+                series: this.getSeries(json)
             });
             Ext.ComponentQuery.query('line-chart')[0].add(chart);
         },
 
-        getStore: function () {
+        getStore: function (json) {
             var store = {
-                fields: ['month', 'data1', 'data2', 'data3', 'data4', 'other'],
-                data: [
-                    {month: 'Jan', data1: 20, data2: 37, data3: 35, data4: 4, other: 4},
-                    {month: 'Feb', data1: 20, data2: 37, data3: 36, data4: 5, other: 2},
-                    {month: 'Mar', data1: 19, data2: 36, data3: 37, data4: 4, other: 4},
-                    {month: 'Apr', data1: 18, data2: 36, data3: 38, data4: 5, other: 3},
-                    {month: 'May', data1: 18, data2: 35, data3: 39, data4: 4, other: 4},
-                    {month: 'Jun', data1: 17, data2: 34, data3: 42, data4: 4, other: 3},
-                    {month: 'Jul', data1: 16, data2: 34, data3: 43, data4: 4, other: 3},
-                    {month: 'Aug', data1: 16, data2: 33, data3: 44, data4: 4, other: 3},
-                    {month: 'Sep', data1: 16, data2: 32, data3: 44, data4: 4, other: 4},
-                    {month: 'Oct', data1: 16, data2: 32, data3: 45, data4: 4, other: 3},
-                    {month: 'Nov', data1: 15, data2: 31, data3: 46, data4: 4, other: 4},
-                    {month: 'Dec', data1: 15, data2: 31, data3: 47, data4: 4, other: 3}
-                ]
+                fields: json.fields,
+                data: json.value
             };
             return store;
         },
 
         onAxisLabelRender: function (axis, label, layoutContext) {
-            return label.toFixed(label < 10 ? 1 : 0) + '%';
+            return label.toFixed(label < 10 ? 1 : 0);
         },
 
         onSeriesTooltipRender: function (tooltip, record, item) {
             var title = item.series.getTitle();
 
-            tooltip.setHtml(title + ' on ' + record.get('month') + ': ' +
-                record.get(item.series.getYField()) + '%');
+            tooltip.setHtml(title + ' on ' + record.get('label') + ': ' +
+                record.get(item.series.getYField()));
         },
 
         onColumnRender: function (v) {
@@ -192,6 +104,49 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
             }
             var chart = this.lookupReference('chart');
             chart.preview();
-        }
+        },
+
+        getXField: function (json) {
+            var fields = json.fields;
+            return fields[0];
+        },
+
+        getYField: function (json) {
+            var f = [];
+            var fields = json.fields;
+            for (var i = 1; i < fields.length; i++) {
+                f.push(fields[i]);
+            }
+            return f;
+        },
+
+         getSeries:function(json){
+             var label = this.getXField(json);
+             var fields = this.getYField(json);
+             var series = [];
+             for (var i = 0; i < fields.length; i++) {
+                 series.push({
+                     type: 'line',
+                     title: 'Safari',
+                     xField: label,
+                     yField: fields[i],
+                     marker: {
+                         type: 'cross',
+                         fx: {
+                             duration: 200,
+                             easing: 'backOut'
+                         }
+                     },
+                     highlightCfg: {
+                         scaling: 2
+                     },
+                     tooltip: {
+                         trackMouse: true,
+                         renderer: this.onSeriesTooltipRender
+                     }
+                 });
+             }
+             return series;
+         }
     }
 );
