@@ -1,6 +1,6 @@
 Ext.define('MasterSol.controller.chart.LineChartController', {
         extend: 'Ext.app.Controller',
-        chart: '',
+        json: null,
         init: function () {
 
         },
@@ -38,7 +38,7 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
                 }],
                 axes: [{
                     type: 'numeric',
-                    fields:this.getYField(json),
+                    fields: this.getYField(json),
                     position: 'left',
                     grid: true,
                     minimum: 0,
@@ -69,13 +69,6 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
 
         onAxisLabelRender: function (axis, label, layoutContext) {
             return label.toFixed(label < 10 ? 1 : 0);
-        },
-
-        onSeriesTooltipRender: function (tooltip, record, item) {
-            var title = item.series.getTitle();
-
-            tooltip.setHtml(title + ' on ' + record.get('label') + ': ' +
-                record.get(item.series.getYField()));
         },
 
         onColumnRender: function (v) {
@@ -120,33 +113,39 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
             return f;
         },
 
-         getSeries:function(json){
-             var label = this.getXField(json);
-             var fields = this.getYField(json);
-             var series = [];
-             for (var i = 0; i < fields.length; i++) {
-                 series.push({
-                     type: 'line',
-                     title: 'Safari',
-                     xField: label,
-                     yField: fields[i],
-                     marker: {
-                         type: 'cross',
-                         fx: {
-                             duration: 200,
-                             easing: 'backOut'
-                         }
-                     },
-                     highlightCfg: {
-                         scaling: 2
-                     },
-                     tooltip: {
-                         trackMouse: true,
-                         renderer: this.onSeriesTooltipRender
-                     }
-                 });
-             }
-             return series;
-         }
+        getSeries: function (json) {
+            var label = this.getXField(json);
+            var fields = this.getYField(json);
+            var series = [];
+            for (var i = 0; i < fields.length; i++) {
+                series.push({
+                    type: 'line',
+                    title: fields[i],
+                    xField: label,
+                    yField: fields[i],
+                    marker: {
+                        type: 'cross',
+                        fx: {
+                            duration: 200,
+                            easing: 'backOut'
+                        }
+                    },
+                    highlightCfg: {
+                        scaling: 2
+                    },
+                    tooltip: {
+                        trackMouse: true,
+                        scope: this,
+                        renderer: function (tooltip, record, item) {
+                            var title = item.series.getTitle();
+                            var l = this.getXField(json);
+                            tooltip.setHtml(title + ' en ' + record.get(l) + ': ' +
+                                record.get(item.series.getYField()));
+                        }
+                    }
+                });
+            }
+            return series;
+        }
     }
 );

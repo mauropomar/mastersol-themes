@@ -79,6 +79,6 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
     },
 
     onSeriesTooltipRender: function (tooltip, record, item) {
-        tooltip.setHtml(record.get('label') + ': ' + record.get('valor') + '%');
+        tooltip.setHtml(record.get('label') + ': ' + record.get(item.field));
     }
 });

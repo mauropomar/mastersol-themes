@@ -35,7 +35,12 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
                     },
                     tooltip: {
                         trackMouse: true,
-                        renderer: this.onTooltipRender
+                        scope:this,
+                        renderer: function (tooltip, record, item) {
+                            var label = this.getXField(json);
+                            tooltip.setHtml(record.get(label) + ': ' +
+                                Ext.util.Format.number(record.get(item.field)));
+                        },
                     }
                 }]
             });
@@ -66,7 +71,7 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
 
         onTooltipRender: function (tooltip, record, item) {
             tooltip.setHtml(record.get('label') + ': ' +
-                Ext.util.Format.number(record.get('valor')));
+                Ext.util.Format.number(record.get(item.field)));
         },
     }
 );

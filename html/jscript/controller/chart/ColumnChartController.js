@@ -172,7 +172,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
 
         onTooltipRender: function (tooltip, record, item) {
             tooltip.setHtml(record.get('label') + ': ' +
-                Ext.util.Format.number(record.get('valor')));
+                Ext.util.Format.number(record.get(item.field)));
         },
 
         getXField: function (json) {
