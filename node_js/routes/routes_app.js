@@ -282,26 +282,11 @@ router.get('/executebuttons', async function (req, res) {
         }
         return res.json(resultado)
     }
-    else if(result.type == 7){
-        //Código para gráficos
-        // Si hay parámetros preparar consulta
-        let params = req.query.extra_params ? req.query.extra_params : ""
-        //Tratar cadena report params
-        let objParams = {}
-        let arr = params.split(',');
-        for(let i=0;i<arr.length;i++){
-            let elem = arr[i]
-            let arrElem = elem.split('=>')
-            if(arrElem) {
-                objParams[''+arrElem[0]+''] = arrElem[1]
-            }
-        }
-        
+    else if(result.type == 7)
         return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name, 'title': result.title, 'label_x': result.label_x, 'label_y': result.label_y, 'legend': result.legend, 'legend_pos': result.legend_pos, 'sql_label': result.sql_label})
-    }
-    else {
+    else
         return res.json({'success': true, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name})
-    }
+
 })
 
 const processJasper = async (jasper, result, req, nameReport) => {
