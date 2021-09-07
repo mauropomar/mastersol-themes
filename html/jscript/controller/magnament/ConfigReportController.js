@@ -18,7 +18,10 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
     },
 
     isReport:function(){
-        var title = Ext.ComponentQuery.query('#config-report-view toolbar button')[0].tooltip;
+        var toolbar = Ext.ComponentQuery.query('#config-report-view toolbar tbtext')[0];
+        if(!toolbar.html)
+            return true;
+        var title = toolbar.html;
         var result = (title.indexOf('reporte') > -1)?true:false;
         return result;
     },
@@ -103,7 +106,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var mask = new Ext.LoadMask(grid, {
             msg: 'Cargando...'
         });
-        mask.show();
+       mask.show();
         var idmenu = grid.idmenu;
         var idsection = grid.idsection;
         var record = MasterApp.globals.getRecordSection();

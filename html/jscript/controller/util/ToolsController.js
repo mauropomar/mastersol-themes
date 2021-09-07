@@ -387,7 +387,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
 
     getExtraParams: function () {
         var isReport = MasterApp.report.isReport();
-        var params = (isReport)?MasterApp.report.getArrayStringKey():MasterApp.report.getArrayStringKeyChart();
+        var params = (isReport) ? MasterApp.report.getArrayStringKey() : MasterApp.report.getArrayStringKeyChart();
         params = (params === '') ? '' : params;
         return params;
     }
