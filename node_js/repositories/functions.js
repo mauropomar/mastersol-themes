@@ -287,10 +287,10 @@ const executeFunctionsButtons = async (req, objects) => {
                                 && resultParamsGraphic.rows[0].fn_get_register.length > 0){
                                 //Devolver arreglo de parametros a la vista para el panel de filtro del gráfico
                                 for(let i=0;i<resultParamsGraphic.rows[0].fn_get_register.length;i++){
-                                    const param_datatype = ['cfgapl.datatypes',resultParamsGraphic.rows[0].fn_get_register[i].datatype]
+                                    const param_datatype = ['cfgapl.datatypes',resultParamsGraphic.rows[0].fn_get_register[i].id_datatype]
                                     const resultDatatype = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_datatype)
                                     if(resultDatatype && resultDatatype.rows)
-                                        resultParamsGraphic.rows[0].fn_get_register[i].datatype = resultDatatype.rows[0].fn_get_register[0].real_name_ext
+                                        resultParamsGraphic.rows[0].fn_get_register[i].id_datatype = resultDatatype.rows[0].fn_get_register[0].real_name_ext
                                 }
                                 success = true;
                                 result = {'btn': idbutton, 'type': 6, 'value': resultParamsGraphic.rows[0].fn_get_register, 'msg': 'filter_params'}
