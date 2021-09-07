@@ -11,15 +11,25 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         Ext.ComponentQuery.query('#tbtext_magnament_report')[0].setText('Parametros de Reportes: ' + title);
     },
 
+    setTitle: function (text) {
+        var title = MasterApp.util.getTitleSectionSelected();
+        Ext.ComponentQuery.query('#tbtext_magnament_report')[0].setText('Parametros de ' + text + ': ' + title);
+        Ext.ComponentQuery.query('#config-report-view toolbar button')[0].setTooltip('Generar '+text);
+        },
 
     beforeedit: function (editor, e, eOpts) {
+        var col = e.colIdx;
         var gridsection = MasterApp.globals.getGridSection();
         if (gridsection.read_only) {
             e.cancel = true;
             return;
         }
         var record = e.record;
-        var column = Ext.ComponentQuery.query('#config-report-view')[0].columns[1];
+        var column = Ext.ComponentQuery.query('#config-report-view')[0].columns[col];
+        if (column.dataIndex == 'operador') {
+            this.loadOperators(e);
+            return;
+        }
         if (record.data.fk == '1') {
             this.setComboFk(record, column);
             return;
@@ -40,6 +50,28 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         if (record.data.tipo == 'datetime') {
             this.setDateTimeField(record, column);
         }
+    },
+
+    // en dependencia del tipo de datos cargar los filtros correspondientes
+    loadOperators: function (obj) {
+        var record = obj.record;
+        var column = obj.column;
+        var edit = column.getEditor();
+        var store = edit.getStore();
+        var data = (record.data.operadores == null) ? [] : record.data.operadores;
+        var array = this.getArrayOperator(data);
+        store.loadData(array);
+    },
+
+    getArrayOperator: function (data) {
+        var array = [];
+        for (var i = 0; i < data.length; i++) {
+            array.push({
+                id:data[i]['id'],
+                simbolo: data[i]['namex']
+            });
+        }
+        return array;
     },
 
     edit: function (editor, obj) {
@@ -90,10 +122,16 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
                 var params = response.request.params;
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success) {
+                    var extraParams;
                     if (json.type === 5) {
-                        var extraParams = MasterApp.tools.getExtraParams();
+                        extraParams = MasterApp.tools.getExtraParams();
                         MasterApp.report.removeAll();
                         MasterApp.report.generateReport(params, json.value, json.name, extraParams);
+                    }
+                    if (json.type === 7) {
+                        extraParams = MasterApp.tools.getExtraParams();
+                        MasterApp.report.removeAll();
+                        MasterApp.getController('MasterSol.controller.chart.ChartController').showWindow(json);
                     }
                 } else {
                     Ext.MessageBox.show({
@@ -133,6 +171,32 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         });
     },
 
+    loadValuesGraf: function (values, button) {
+        this.buttonReport = button;
+        var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
+        tabMagnament.child('#config-report-view').tab.show();
+        var grid = Ext.ComponentQuery.query('#config-report-view')[0];
+        var store = grid.getStore();
+        store.removeAll();
+        var array = [];
+        for (var i = 0; i < values.length; i++) {
+            var elem = values[i];
+            array.push({
+                id: elem.id,
+                name: elem.namex,
+                tipo: elem.id_datatype,
+                operadores: elem.operadores,
+                valor: elem.default_value,
+            });
+        }
+        store.loadData(array);
+        var edit = grid.plugins[0];
+        edit.startEditByPosition({
+            row: 0,
+            column: 1
+        });
+    },
+
     isValid: function () {
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
@@ -155,8 +219,9 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var store = grid.getStore();
         store.each(function (rec) {
             var field = rec.data.name;
+            var operador = (rec.data.operador)?rec.data.operador:'=';
             var value = MasterApp.util.getVal(rec, rec.data.valor);
-            stringArray += field + '=>' + value + ',';
+            stringArray += field + operador + value + ',';
         });
         stringArray = stringArray.substring(0, stringArray.length - 1);
         return stringArray;
@@ -339,6 +404,4 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var store = grid.getStore();
         store.loadData([]);
     }
-
-
 });

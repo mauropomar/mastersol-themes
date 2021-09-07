@@ -2,7 +2,7 @@ Ext.define('MasterSol.view.magnament.ConfigReport', {
     extend: 'Ext.grid.Panel',
     xtype: 'config-report-view',
     requires: [
-        //  'Ext.grid.feature.Grouping',
+        'MasterSol.view.magnament.ComboSign',
         'MasterSol.store.magnament.ConfigReportStore',
         'Ext.selection.CellModel'
     ],
@@ -23,6 +23,23 @@ Ext.define('MasterSol.view.magnament.ConfigReport', {
         text: 'Nombre',
         dataIndex: 'name',
         flex: 1
+    }, {
+        text: '',
+        dataIndex: 'operador',
+        align: 'center',
+        hideable: false,
+        sortable: false,
+        flex: 0.3,
+        editor: {
+            xtype: 'combo-sign'
+        },
+        renderer: function (value, metaData, record) {
+            if (value){
+                var name = MasterApp.util.getNameOperatorByRecord(record);
+                metaData.tdAttr = 'data-qtip="' + name + '"';
+            }
+            return value;
+        }
     }, {
         text: 'Valor',
         dataIndex: 'valor',

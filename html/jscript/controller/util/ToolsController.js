@@ -102,6 +102,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     callFunction: function (evt, toolEl, owner, button) {
+        var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
         var window = owner.up('window');
         var isChild = MasterApp.util.isSectionChildOfWindow(window);
         if (!isChild) {
@@ -138,11 +139,11 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success) {
                     if (json.type === 4) {
-                        var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
                         tabMagnament.show();
                         tabMagnament.setActiveTab(6);
                         tabMagnament.expand(false);
                         tabMagnament.setDisabled(false);
+                        MasterApp.report.setTitle('reporte');
                         MasterApp.report.loadValues(json.value, button);
                     }
                     if (json.type === 5) {
@@ -151,6 +152,14 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         MasterApp.report.generateReport(params, json.value, json.name, extraParams);
                     }
                     if (json.type === 6) {
+                        tabMagnament.show();
+                        tabMagnament.setActiveTab(6);
+                        tabMagnament.expand(false);
+                        tabMagnament.setDisabled(false);
+                        MasterApp.report.setTitle('gráfico');
+                        MasterApp.report.loadValuesGraf(json.value, button);
+                    }
+                    if (json.type === 7) {
                         MasterApp.getController('MasterSol.controller.chart.ChartController').showWindow(json);
                     }
                 } else {
