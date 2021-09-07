@@ -14,8 +14,14 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
     setTitle: function (text) {
         var title = MasterApp.util.getTitleSectionSelected();
         Ext.ComponentQuery.query('#tbtext_magnament_report')[0].setText('Parametros de ' + text + ': ' + title);
-        Ext.ComponentQuery.query('#config-report-view toolbar button')[0].setTooltip('Generar '+text);
-        },
+        Ext.ComponentQuery.query('#config-report-view toolbar button')[0].setTooltip('Generar ' + text);
+    },
+
+    isReport:function(){
+        var title = Ext.ComponentQuery.query('#config-report-view toolbar button')[0].tooltip;
+        var result = (title.indexOf('reporte') > -1)?true:false;
+        return result;
+    },
 
     beforeedit: function (editor, e, eOpts) {
         var col = e.colIdx;
@@ -67,7 +73,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var array = [];
         for (var i = 0; i < data.length; i++) {
             array.push({
-                id:data[i]['id'],
+                id: data[i]['id'],
                 simbolo: data[i]['namex']
             });
         }
@@ -219,12 +225,28 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var store = grid.getStore();
         store.each(function (rec) {
             var field = rec.data.name;
-            var operador = (rec.data.operador)?rec.data.operador:'=';
             var value = MasterApp.util.getVal(rec, rec.data.valor);
-            stringArray += field + operador + value + ',';
+            stringArray += field + '=>' + value + ',';
         });
         stringArray = stringArray.substring(0, stringArray.length - 1);
         return stringArray;
+    },
+
+    getArrayStringKeyChart:function(){
+        var grid = Ext.ComponentQuery.query('#config-report-view')[0];
+        var store = grid.getStore();
+        var data = [];
+        store.each(function (rec) {
+            var field = rec.data.name;
+            var operador = (rec.data.operador) ? rec.data.operador : '=';
+            var value = MasterApp.util.getVal(rec, rec.data.valor);
+            data.push({
+                name:field,
+                operador:operador,
+                value:value
+            });
+        });
+        return Ext.encode(data);
     },
 
     generateReport: function (params, url, title, extraParams) {
