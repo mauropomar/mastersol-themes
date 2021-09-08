@@ -224,17 +224,23 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
     },
 
     getArrayStringKey: function () {
-        var stringArray = '';
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
+        var data = [];
         store.each(function (rec) {
             var field = rec.data.name;
             var value = MasterApp.util.getVal(rec, rec.data.valor);
-            if (value)
-                stringArray += field + '=>' + value + ',';
+            var operador = (rec.data.operador) ? rec.data.operador : '=';
+            if (value) {
+                data.push({
+                    name: field,
+                    operador: operador,
+                    value: value
+                });
+            }
         });
-        stringArray = stringArray.substring(0, stringArray.length - 1);
-        return stringArray;
+        data = (data.length > 0) ? Ext.encode(data) : '';
+        return data;
     },
 
     getArrayStringKeyChart: function () {
