@@ -251,7 +251,13 @@ const executeFunctionsButtons = async (req, objects) => {
                                 for(let i=0;i<resultParamsReport.rows[0].fn_get_register.length;i++){
                                     const param_datatype = ['cfgapl.datatypes',resultParamsReport.rows[0].fn_get_register[i].datatype]
                                     const resultDatatype = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_datatype)
-                                    if(resultDatatype)
+                                    //Buscar operadores para el tipo de dato
+                                    const paramsOpers = ['cfgapl.datatypes_comp_operators',null,"WHERE id_datatypes = '"+resultParamsReport.rows[0].fn_get_register[i].datatype+"' "]
+                                    const resultOpers = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsOpers)
+                                    if(resultOpers && resultOpers.rows){
+                                        resultParamsReport.rows[0].fn_get_register[i]['operadores'] = resultOpers.rows[0].fn_get_register
+                                    }
+                                    if(resultDatatype && resultDatatype.rows)
                                         resultParamsReport.rows[0].fn_get_register[i].datatype = resultDatatype.rows[0].fn_get_register[0].real_name_ext
                                 }
                                 success = true;
@@ -329,27 +335,24 @@ const executeFunctionsButtons = async (req, objects) => {
                             //devolver consulta del gráfico
                             //Tratar cadena grafico params para incluirlos a la consulta
                             let filters = ''
-                            const sql_graphic = resultGraphic.rows[0].fn_get_register[0].sql_values
+                            let sql_graphic = resultGraphic.rows[0].fn_get_register[0].sql_values
                             let arrSql = sql_graphic.split('[filters]');
                             let tieneWhere = arrSql[0].includes('where')
                             if(!tieneWhere)
                                 tieneWhere = arrSql[0].includes('WHERE')
                             //Buscar donde insertar el filtro en dependencias de la posicion de [filters]
-                            let arr = extra_params.split(',');
-                            for(let i=0;i<arr.length;i++){
-                                let elem = arr[i]
-                                let arrElem = elem.split('=>')
-                                if(arrElem && arrElem.length == 3) {
-                                    //Concatenar a la consulta los filtros en dependencia de las sentencias q tenga
-                                    filters += (!tieneWhere ? " where " : " and ") + " " + arrElem[0] + " " + arrElem[2] + " '" + arrElem[1] + "'"
-                                    tieneWhere = true
-                                }
+                            let jsonParams = JSON.parse(extra_params);
+                            for(let i=0;i<jsonParams.length;i++){
+                                let elem = jsonParams[i]
+                                //Concatenar a la consulta los filtros en dependencia de las sentencias q tenga
+                                filters += (!tieneWhere ? " where " : " and ") + " " + elem.name + " " + elem.operador + " '" + elem.value + "'";
+                                tieneWhere = true
                             }
                             if(sql_graphic.includes('[filters]'))
-                                sql_graphic.replace('[filters]', filters)
+                                sql_graphic = sql_graphic.replace('[filters]', filters)
                             else
                                 sql_graphic += filters
-                            console.log(sql_graphic)
+
                             let msg = ''
                             let resultSql = ''
                             success = true;
