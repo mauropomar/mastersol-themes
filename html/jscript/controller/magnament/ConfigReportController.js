@@ -169,6 +169,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
                 id: elem.id,
                 name: elem.name,
                 tipo: elem.datatype,
+                operadores: elem.operadores,
                 valor: ''
             });
         }
