@@ -17,12 +17,12 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         Ext.ComponentQuery.query('#config-report-view toolbar button')[0].setTooltip('Generar ' + text);
     },
 
-    isReport:function(){
+    isReport: function () {
         var toolbar = Ext.ComponentQuery.query('#config-report-view toolbar tbtext')[0];
-        if(!toolbar.html)
+        if (!toolbar.html)
             return true;
         var title = toolbar.html;
-        var result = (title.indexOf('reporte') > -1)?true:false;
+        var result = (title.indexOf('reporte') > -1) ? true : false;
         return result;
     },
 
@@ -106,7 +106,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var mask = new Ext.LoadMask(grid, {
             msg: 'Cargando...'
         });
-       mask.show();
+        mask.show();
         var idmenu = grid.idmenu;
         var idsection = grid.idsection;
         var record = MasterApp.globals.getRecordSection();
@@ -229,13 +229,14 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         store.each(function (rec) {
             var field = rec.data.name;
             var value = MasterApp.util.getVal(rec, rec.data.valor);
-            stringArray += field + '=>' + value + ',';
+            if (value)
+                stringArray += field + '=>' + value + ',';
         });
         stringArray = stringArray.substring(0, stringArray.length - 1);
         return stringArray;
     },
 
-    getArrayStringKeyChart:function(){
+    getArrayStringKeyChart: function () {
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
         var data = [];
@@ -243,13 +244,16 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
             var field = rec.data.name;
             var operador = (rec.data.operador) ? rec.data.operador : '=';
             var value = MasterApp.util.getVal(rec, rec.data.valor);
-            data.push({
-                name:field,
-                operador:operador,
-                value:value
-            });
+            if (value) {
+                data.push({
+                    name: field,
+                    operador: operador,
+                    value: value
+                });
+            }
         });
-        return Ext.encode(data);
+        data = (data.length > 0) ? Ext.encode(data) : '';
+        return data;
     },
 
     generateReport: function (params, url, title, extraParams) {
