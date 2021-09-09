@@ -345,6 +345,9 @@ const executeFunctionsButtons = async (req, objects) => {
                             for(let i=0;i<jsonParams.length;i++){
                                 let elem = jsonParams[i]
                                 //Concatenar a la consulta los filtros en dependencia de las sentencias q tenga
+                                //Transformar operadores si es necesario
+                                if(elem.operador == 'contiene')
+                                    elem.operador = 'ilike'
                                 filters += (!tieneWhere ? " where " : " and ") + " " + elem.name + " " + elem.operador + " '" + elem.value + "'";
                                 tieneWhere = true
                             }
@@ -356,6 +359,7 @@ const executeFunctionsButtons = async (req, objects) => {
                             let msg = ''
                             let resultSql = ''
                             success = true;
+                            
                             try {
                                 resultSql = await pool.executeQuery(sql_graphic)
                             }
