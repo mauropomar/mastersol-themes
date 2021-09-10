@@ -211,7 +211,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
         var idx = store.findBy(function (rec) {
-            return (rec.data.required == true && rec.data.valor == '')
+            return (rec.data.required == true && rec.data.valor == '');
         });
         if (idx > -1) {
             this.showFieldRequired = true;

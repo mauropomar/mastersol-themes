@@ -9,7 +9,7 @@ Ext.define('MasterSol.view.plugins.DateTime', {
     height: 22,
     combineErrors: true,
     msgTarget: 'side',
-    className:'',
+    className: '',
     dateCfg: {},
     timeCfg: {},
 
@@ -28,7 +28,7 @@ Ext.define('MasterSol.view.plugins.DateTime', {
             Ext.apply({
                 xtype: 'datefield',
                 format: 'd-m-Y',
-                hasfocus:true,
+                hasfocus: true,
                 width: 100,
                 focusOnToFront: false,
                 listeners: {
@@ -89,9 +89,12 @@ Ext.define('MasterSol.view.plugins.DateTime', {
     },
 
     setValue: function (value) {
-        value = this.formatValue(value);
-        this.dateField.setValue(value);
-        this.timeField.setValue(value);
+        if (this.isValidDate(value)) {
+            value = this.formatValue(value);
+            this.dateField.setValue(value);
+            this.timeField.setValue(value);
+        }
+        return false;
     },
 
     formatValue: function (value) {
@@ -108,5 +111,9 @@ Ext.define('MasterSol.view.plugins.DateTime', {
         var seconds = value.substring(17, 21);
         var newValue = year + '/' + month + '/' + day + ' ' + hour + ':' + minute + ':' + seconds;
         return new Date(newValue);
+    },
+
+    isValidDate: function (value) {
+        return (Object.prototype.toString.call(value) !== '[object Date]' && value !== '') ? true : false;
     }
 })
