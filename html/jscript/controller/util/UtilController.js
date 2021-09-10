@@ -489,7 +489,14 @@ Ext.define('MasterSol.controller.util.UtilController', {
             tabMagnament.setActiveTab(0);
             MasterApp.register.editRegister(0);
         }
+    },
 
+    getObjectKey: function (data) {
+        var keys = [];
+        if (data.length > 0) {
+            keys = Object.keys(data[0])
+        }
+        return keys;
     }
 })
 ;
