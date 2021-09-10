@@ -296,22 +296,31 @@ const processJasper = async (jasper, result, req, nameReport) => {
     let tmpFile = global.appRootApp + '\\resources\\reports\\tmp\\' + randomName
     let dirFile = '../resources/reports/tmp/'+randomName
     if(jasper) {
-        let report_params = req.query.extra_params ? req.query.extra_params : ""
-        //Tratar cadena report params
         let objParams = {}
-        let arr = report_params.split(',');
-        for(let i=0;i<arr.length;i++){
-            let elem = arr[i]
-            let arrElem = elem.split('=>')
-            if(arrElem) {
-                objParams[''+arrElem[0]+''] = arrElem[1]
+        let jsonParams = req.query.extra_params != "" ? JSON.parse(req.query.extra_params) : "";
+        //Tratar report params
+        let sql_filters = ''
+        if(jsonParams != "") {
+            let where = false
+            for (let i = 0; i < jsonParams.length; i++) {
+                let elem = jsonParams[i]
+                //Concatenar a la consulta los filtros en dependencia de las sentencias q tenga
+                //Transformar operadores si es necesario
+                if (elem.operador == 'contiene') {
+                    elem.operador = 'ilike'
+                    elem.value = '%' + elem.value + '%'
+                }
+                sql_filters += (!where ? " where " : " and ") + " " + elem.name + " " + elem.operador + " '" + elem.value + "'";
+                where = true
             }
         }
+
+        objParams['filtros'] = sql_filters
         let report = {
             report: 'hw',
             data: objParams
         };
-
+        //console.log(objParams)
         if(req.query.report_format === 'html') {
             tmpFile = tmpFile + '.html'
             dirFile = dirFile + '.html'
