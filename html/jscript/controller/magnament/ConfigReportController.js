@@ -139,7 +139,6 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
                     }
                     if (json.type === 7) {
                         extraParams = MasterApp.tools.getExtraParams();
-                        MasterApp.report.removeAll();
                         MasterApp.getController('MasterSol.controller.chart.ChartController').showWindow(json);
                     }
                 } else {
