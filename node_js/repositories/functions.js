@@ -341,23 +341,25 @@ const executeFunctionsButtons = async (req, objects) => {
                             if(!tieneWhere)
                                 tieneWhere = arrSql[0].includes('WHERE')
                             //Buscar donde insertar el filtro en dependencias de la posicion de [filters]
-                            let jsonParams = JSON.parse(extra_params);
-                            for(let i=0;i<jsonParams.length;i++){
-                                let elem = jsonParams[i]
-                                //Concatenar a la consulta los filtros en dependencia de las sentencias q tenga
-                                //Transformar operadores si es necesario
-                                if(elem.operador == 'contiene') {
-                                    elem.operador = 'ilike'
-                                    elem.value = '%'+elem.value+'%'
+                            if(extra_params != 'empty') {
+                                let jsonParams = JSON.parse(extra_params);
+                                for (let i = 0; i < jsonParams.length; i++) {
+                                    let elem = jsonParams[i]
+                                    //Concatenar a la consulta los filtros en dependencia de las sentencias q tenga
+                                    //Transformar operadores si es necesario
+                                    if (elem.operador == 'contiene') {
+                                        elem.operador = 'ilike'
+                                        elem.value = '%' + elem.value + '%'
+                                    }
+                                    filters += (!tieneWhere ? " where " : " and ") + " " + elem.name + " " + elem.operador + " '" + elem.value + "'";
+                                    tieneWhere = true
                                 }
-                                filters += (!tieneWhere ? " where " : " and ") + " " + elem.name + " " + elem.operador + " '" + elem.value + "'";
-                                tieneWhere = true
                             }
                             if(sql_graphic.includes('[filters]'))
                                 sql_graphic = sql_graphic.replace('[filters]', filters)
                             else
                                 sql_graphic += filters
-                            console.log(sql_graphic)
+                            
                             let msg = ''
                             let resultSql = ''
                             success = true;
