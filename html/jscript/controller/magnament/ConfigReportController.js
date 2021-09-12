@@ -112,6 +112,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var record = MasterApp.globals.getRecordSection();
         var recordId = (record != null) ? record.data.id : null;
         var extra_params = MasterApp.tools.getExtraParams();
+        extra_params = (extra_params !== '') ? extra_params : [];
         var execute = {
             url: 'app/executebuttons',
             method: 'GET',
@@ -136,6 +137,16 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
                         extraParams = MasterApp.tools.getExtraParams();
                         MasterApp.report.removeAll();
                         MasterApp.report.generateReport(params, json.value, json.name, extraParams);
+                        return;
+                    }
+                    if (json.type === 6) {
+                        Ext.MessageBox.show({
+                            title: 'Información',
+                            msg: 'Debe introducir al menos un parámetro para filtrar.',
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                        return;
                     }
                     if (json.type === 7) {
                         extraParams = MasterApp.tools.getExtraParams();
@@ -160,7 +171,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         tabMagnament.child('#config-report-view').tab.show();
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
-        store.removeAll();
+        store.loadData([]);
         var array = [];
         for (var i = 0; i < values.length; i++) {
             var elem = values[i];
@@ -186,7 +197,7 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         tabMagnament.child('#config-report-view').tab.show();
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
-        store.removeAll();
+        store.loadData([]);
         var array = [];
         for (var i = 0; i < values.length; i++) {
             var elem = values[i];

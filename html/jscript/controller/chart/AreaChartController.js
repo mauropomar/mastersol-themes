@@ -42,7 +42,7 @@ Ext.define('MasterSol.controller.chart.AreaChartController', {
                 title: 'GDP in billions of US Dollars',
                 grid: true,
                 minimum: 0,
-                maximum: 20000,
+                maximum: 25,
                 majorTickSteps: 10,
                 renderer: this.onAxisLabelRender
             }, {
