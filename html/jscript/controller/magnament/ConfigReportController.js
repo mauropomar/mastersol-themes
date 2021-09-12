@@ -112,7 +112,6 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var record = MasterApp.globals.getRecordSection();
         var recordId = (record != null) ? record.data.id : null;
         var extra_params = MasterApp.tools.getExtraParams();
-        extra_params = (extra_params !== '') ? extra_params : [];
         var execute = {
             url: 'app/executebuttons',
             method: 'GET',
@@ -133,15 +132,6 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success) {
                     var extraParams;
-                    if (json.type === 4 || json.type === 6) {
-                        Ext.MessageBox.show({
-                            title: 'Información',
-                            msg: 'Debe introducir al menos un parámetro para filtrar.',
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.INFO
-                        });
-                        return;
-                    }
                     if (json.type === 5) {
                         extraParams = MasterApp.tools.getExtraParams();
                         MasterApp.report.removeAll();
@@ -249,6 +239,8 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
                 });
             }
         });
+        if(this.isActiveTab() && data.length == 0)
+            return 'empty';
         data = (data.length > 0) ? Ext.encode(data) : '';
         return data;
     },
@@ -269,6 +261,8 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
                 });
             }
         });
+        if(this.isActiveTab() && data.length == 0)
+            return 'empty';
         data = (data.length > 0) ? Ext.encode(data) : '';
         return data;
     },
@@ -449,5 +443,11 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var grid = Ext.ComponentQuery.query('#config-report-view')[0];
         var store = grid.getStore();
         store.loadData([]);
+    },
+
+    isActiveTab:function(){
+        var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
+        var activeTab = tabMagnament.getActiveTab();
+        return (activeTab.xtype === 'config-report-view');
     }
 });

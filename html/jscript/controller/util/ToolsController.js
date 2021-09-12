@@ -119,7 +119,6 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         var record = MasterApp.globals.getRecordSection();
         var recordId = (record != null) ? record.data.id : null;
         var extra_params = this.getExtraParams();
-        extra_params = (extra_params !== '') ? extra_params : [];
         var execute = {
             url: 'app/executebuttons',
             method: 'GET',
