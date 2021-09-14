@@ -297,7 +297,7 @@ const processJasper = async (jasper, result, req, nameReport) => {
     let dirFile = '../resources/reports/tmp/'+randomName
     if(jasper) {
         let objParams = {}
-        let jsonParams = req.query.extra_params != "" ? JSON.parse(req.query.extra_params) : "";
+        let jsonParams = (req.query.extra_params != "" && req.query.extra_params != "empty") ? JSON.parse(req.query.extra_params) : "";
         //Tratar report params
         let sql_filters = ''
         if(jsonParams != "") {
