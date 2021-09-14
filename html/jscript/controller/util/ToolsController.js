@@ -90,6 +90,14 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         }
     },
 
+    setButtonsDefault: function (window) {
+        var header = window.getHeader();
+        var others = this.getButtonsDefaut(window);
+        for (var i = 0; i < others.length; i++) {
+            header.add(others[i]);
+        }
+    },
+
     //devuelve un boton del tool de la ventana especifico
     getBtnTools: function (comp, text) {
         var tools = (comp.xtype === 'window-menu') ? comp.tools : comp.up('window').tools;
@@ -187,15 +195,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     getButtonsDefaut: function (win) {
-        return [/*{
-            iconCls: 'fa fa-bar-chart',
-            tooltip: 'Gráfico',
-            default: true,
-            name: 'btn_chart',
-            handler: function (evt, toolEl, owner, tool) {
-                MasterApp.getController('MasterSol.controller.chart.ChartController').showWindow();
-            }
-        }, */{
+        return [{
             iconCls: 'fa fa-floppy-o',
             tooltip: 'Salvar sistema y base de datos',
             default: true,

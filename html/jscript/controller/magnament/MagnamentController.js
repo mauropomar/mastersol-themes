@@ -127,6 +127,15 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
 
     //llama a la funcion para crear un nuevo registo
     newRegister: function (window) {
+        if(window.down('grid') === null) {
+            Ext.MessageBox.show({
+                title: 'Información',
+                msg: 'Debe configurar la información de la sección.',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.INFO
+            });
+            return;
+        }
         var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         tabMagnament.show();
         tabMagnament.expand(false);
