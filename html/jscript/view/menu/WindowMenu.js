@@ -10,7 +10,7 @@ Ext.define('MasterSol.view.menu.WindowMenu', {
     bodyPadding: 3,
     constrain: true,
     constrainTo: 'panel-center',
-    requires: ['Ext.resizer.Splitter', 'Ext.layout.container.VBox', 'Ext.panel.Panel'],
+    requires: ['Ext.resizer.Splitter', 'Ext.layout.container.VBox', 'Ext.panel.Panel', 'Ext.dd.DropTarget'],
     closable: false,
     autoScroll: false,
     closeAction: 'destroy',

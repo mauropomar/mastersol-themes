@@ -22,18 +22,62 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             region: 'center',
             autoScroll: true,
             columns: this.getColumns(columns),
+            enableDragDrop: true,
             viewConfig: {
                 loadMask: false,
-                loadingText: 'Cargando...'
+                loadingText: 'Cargando...',
+                plugins: {
+                    ddGroup: 'grid-to-form',
+                    ptype: 'gridviewdragdrop',
+                    enableDrop: false
+                }
             },
             listeners: {
                 'afterrender': function (comp) {
+                    var gridView = this.getView();
+                    var gridStore = this.store;
                     comp.getTargetEl().on('mouseup', function (e, t) {
                         if (t.scrollTop > 0) {
                             var height = comp.getTargetEl().getHeight();
                             if (height + t.scrollTop >= t.scrollHeight) {
                                 MasterApp.section.paginate(comp);
                             }
+                        }
+                    });
+                    var body = comp.body;
+                    this.formPanelDropTarget = new Ext.dd.DropTarget(body, {
+                        ddGroup: 'grid-to-form',
+                        notifyEnter: function (ddSource, e, data) {
+                            body.stopAnimation();
+                            body.highlight();
+                        },
+
+                        notifyDrop: function (ddSource, e, data) {
+                            var draggedRec = ddSource.dragData.records[0];
+                            var droppedOnIdx = (e.recordIndex) ? e.recordIndex : gridStore.getCount() - 1;
+                            var droppedOnRec = gridStore
+                                .getAt(droppedOnIdx);
+                            var items = [];
+                            gridStore.each((record) => {
+                                var id = record.get('id');
+                                items.push(id);
+                            });
+                            var draggedRecId = draggedRec.get('id');
+                            var idxToRemove = items.indexOf(draggedRecId);
+                            var removedItem = items.splice(idxToRemove, 1)[0];
+                            var droppedOnRecId = droppedOnRec.get('id');
+                            var droppedOnRecIdx = items
+                                .indexOf(droppedOnRecId);
+                            items.splice(droppedOnRecIdx + 1, 0, removedItem);
+                            gridStore.each((record) => {
+                                var recordId = record.get('id');
+                                var newOrder = items.indexOf(recordId);
+                                record.set('sortOrder', newOrder);
+                            });
+                            gridStore.sort('sortOrder', 'ASC');
+                            gridStore.commitChanges();
+                            MasterApp.section.updateRowOrder(draggedRec, droppedOnRec);
+                            return true;
                         }
                     });
                 }
