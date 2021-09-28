@@ -783,10 +783,9 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     updateRowOrder: function (recordDrag, recordDrop) {
         var idsection = MasterApp.util.getIdSectionActive();
         var save = {
-            url: 'app/updatedorder',
+            url: 'app/updateorder',
             method: 'POST',
             scope: this,
-            timeout: 800000,
             params: {
                 idsection:idsection,
                 idfirst: recordDrag.data.id,
@@ -795,7 +794,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             callback: function (options, success, response) {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
-                    Ext.toast('El orden de la fila fue actualizado con éxito.');
+                    Ext.toast(json.datos);
                 }
             }
         };
