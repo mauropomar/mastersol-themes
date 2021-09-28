@@ -2003,6 +2003,21 @@ const importTable = (req,fileDir) => new Promise(async (resolve, reject) => {
     }
 })
 
+const updateOrder = async (req) => {
+
+    const params_order = [req.body.idsection, req.body.idfirst, req.body.idsecond]
+
+    const query = "SELECT cfgapl.fn_update_order($1,$2,$3)"
+    const result = await pool.executeQuery(query, params_order)
+    if (result.success === false) {
+        return 'ERROR: '+result.message
+    } else if (!result.rows || result.rows[0].fn_update_order == null) {
+        return ''
+    }
+
+    return result.rows[0].fn_update_order
+}
+
 /*const deleteDir = (dirFile, filename) => {
     let result = ''
     fs.unlink(dirFile + '/' + filename, (err => {
@@ -2099,4 +2114,5 @@ objGenFunc.cleanCapsuleFolder = cleanCapsuleFolder
 objGenFunc.insertRegister = insertRegister
 objGenFunc.updateRegister = updateRegister
 objGenFunc.importTable = importTable
+objGenFunc.updateOrder = updateOrder
 module.exports = objGenFunc
