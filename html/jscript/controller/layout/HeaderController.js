@@ -276,6 +276,7 @@ Ext.define('MasterSol.controller.layout.HeaderController', {
                     Ext.toast('Los cambios fueron realizados con éxito.');
                     var name = MasterApp.util.getName(json.datos);
                     MasterApp.util.changeImageDesktop(name);
+                    window.close();
                 } else {
                     Ext.MessageBox.show({
                         title: 'Información',
