@@ -1,0 +1,52 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_update_order
+(
+  IN  idsection  uuid,
+  IN  idfirst    uuid,
+  IN  idsecond   uuid
+)
+RETURNS varchar AS
+$$
+declare
+
+result varchar;
+idtable uuid;
+orderx1 integer;
+orderx2 integer;
+full_name_table varchar;
+name_table varchar;
+name_schema varchar;
+column_pk varchar;
+error varchar;
+
+begin
+  -- Buscar tabla dado el idsection
+  SELECT id_tables INTO idtable FROM cfgapl.sections WHERE id = $1;
+  SELECT n_schema||'.'||n_table INTO full_name_table FROM cfgapl.tables WHERE id = idtable;
+  SELECT n_schema INTO name_schema FROM cfgapl.tables WHERE id = idtable;
+  SELECT n_table INTO name_table FROM cfgapl.tables WHERE id = idtable;
+  SELECT col.column_name INTO column_pk FROM information_schema.key_column_usage AS col LEFT JOIN 
+  information_schema.table_constraints AS t ON t.constraint_name = col.constraint_name 
+  WHERE t.table_name = name_table AND t.table_schema = name_schema AND t.constraint_type = 'PRIMARY KEY'; 
+  
+  --SELECT orderx INTO orderx1 FROM ||full_name_table|| WHERE column_pk = quote_literal($2);
+  EXECUTE ('SELECT orderx FROM '||full_name_table||' WHERE '||column_pk||' = '||quote_literal($2)||' ') INTO orderx1;
+  EXECUTE ('SELECT orderx FROM '||full_name_table||' WHERE '||column_pk||' = '||quote_literal($3)||' ') INTO orderx2;
+  BEGIN
+	EXECUTE('UPDATE '||full_name_table||' SET orderx = '||orderx1||' WHERE '||column_pk||' = '||quote_literal($3)||' ');
+   	EXECUTE('UPDATE '||full_name_table||' SET orderx = '||orderx2||' WHERE '||column_pk||' = '||quote_literal($2)||' '); 
+    result = 'Orden cambiado satisfactoriamente';    
+   EXCEPTION when others then  
+    GET STACKED DIAGNOSTICS error = MESSAGE_TEXT; 
+    result = 'ERROR: '||error;    
+   END;
+
+return result;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_update_order(uuid, uuid, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_update_order(uuid, uuid, uuid)
+  IS 'Update registers order';
