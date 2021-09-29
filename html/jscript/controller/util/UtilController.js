@@ -369,6 +369,8 @@ Ext.define('MasterSol.controller.util.UtilController', {
         var tab,
             hasColor = false,
             containers = this.getContainerSections();
+        if(containers.length === 0)
+            return;
         if (newCard) {
             document.getElementById(newCard.tab.id).style.borderTop = '2px solid #49db32';
             for (var i = 0; i < containers.length; i++) {
