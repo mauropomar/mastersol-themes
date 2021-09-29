@@ -806,7 +806,6 @@ router.post('/updateorder', async function (req, res) {
     let result = ''
     let success = true
     result = await objects.functions.updateOrder(req)
-    console.log(result)
     if(result.includes('ERROR') || result == '')
         success = false
     return res.json({'success': success, 'datos': result != '' ? result : 'Ha ocurrido un error ejecutando el procedimiento'})
