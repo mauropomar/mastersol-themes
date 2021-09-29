@@ -1,0 +1,31 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_create_index_in_table()
+RETURNS trigger AS
+$$
+DECLARE
+  rec_table record;
+
+begin 
+  EXECUTE('select * from cfgapl.tables where id='''||NEW.id_tables||'''') INTO rec_table;
+ 
+ IF TG_OP = 'UPDATE' THEN     
+   EXECUTE ' DROP INDEX '||rec_table.n_schema||'.'||OLD.namex;
+ END IF;
+  
+  IF NEW.is_pk=true  THEN 
+   EXECUTE ('alter table '||rec_table.n_schema||'."'||rec_table.n_table||'" ADD PRIMARY KEY ('||replace(array_to_string(NEW.n_names_tables_properties,','),'''','')||')');
+   EXECUTE ('alter table '||rec_table.n_schema||'."'||rec_table.n_table||'" RENAME CONSTRAINT "'||rec_table.n_table||'_pkey" TO '||NEW.namex);         
+  ELSE         
+   EXECUTE ('CREATE UNIQUE INDEX '||NEW.namex||' ON '||rec_table.n_schema||'."'||rec_table.n_table||'" ('||replace(array_to_string(NEW.n_names_tables_properties,','),'''','')||')');
+   EXECUTE  ('COMMENT ON INDEX '||rec_table.n_schema||'.'||NEW.namex ||' IS '||''''||COALESCE(NEW.description,'')||''''||';');      
+  END IF;
+  
+  return NEW;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_create_index_in_table()
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_create_index_in_table()
+  IS 'Aggregate index to the table';
