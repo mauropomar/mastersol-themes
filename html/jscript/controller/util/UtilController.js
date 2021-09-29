@@ -183,19 +183,26 @@ Ext.define('MasterSol.controller.util.UtilController', {
         return idparent;
     },
 
-    getTabsOfWindow(window, onlyShow = true) {
+    getTabsOfWindow: function (window, onlyShow = true) {
         var idwindow = window.id;
         var queryId = (onlyShow) ? '#' + idwindow + ' tabpanel[hidden=false]' : '#' + idwindow + ' tabpanel';
         var tabs = Ext.ComponentQuery.query(queryId);
         return tabs;
     },
 
-    getContainerSections() {
-        var containerSections = Ext.ComponentQuery.query('tab[title!=null]');
-        return containerSections;
+    getContainerSections: function () {
+        var containers = Ext.ComponentQuery.query('tab[title!=null]');
+        var array = [];
+        for (var i = 0; i < containers.length; i++) {
+            var tab = containers[i];
+            if (tab.card.idsection) {
+                array.push(tab);
+            }
+        }
+        return array;
     },
 
-    getSectionById(window, idsection) {
+    getSectionById: function (window, idsection) {
         var idwindow = window.id;
         var queryId = '#' + idwindow + ' gridpanel';
         var childs = Ext.ComponentQuery.query(queryId);
@@ -359,23 +366,61 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     setStyleSection: function (newCard) {
-        var containers = this.getContainerSections();
+        var tab,
+            hasColor = false,
+            containers = this.getContainerSections();
         if (newCard) {
             document.getElementById(newCard.tab.id).style.borderTop = '2px solid #49db32';
             for (var i = 0; i < containers.length; i++) {
-                var tab = containers[i];
-                if (tab.card.idsection && (tab.card.idsection !== newCard.idsection)) {
-                    if (document.getElementById(tab.id))
-                        document.getElementById(tab.id).style.borderTop = 'transparent';
+                tab = containers[i];
+                if (tab.card.idsection !== newCard.idsection) {
+                    if (document.getElementById(tab.id)) {
+                        var borderColor = document.getElementById(tab.id).style.borderTop;
+                        var hasColorParent = this.hasColorParent(tab.card.idparent);
+                        if (hasColorParent)
+                            document.getElementById(tab.id).style.borderTop = '2px solid #49db32';
+                        else
+                            document.getElementById(tab.id).style.borderTop = 'transparent';
+                    }
                 }
             }
         } else {
             for (var j = 0; j < containers.length; j++) {
-                var tab = containers[j];
-                if (tab.card.idsection && document.getElementById(tab.id))
-                    document.getElementById(tab.id).style.borderTop = 'transparent';
+                tab = containers[j];
+                if (document.getElementById(tab.id)) {
+                    var borderColor = document.getElementById(tab.id).style.borderTop;
+                    if (borderColor.indexOf('2px solid') > -1) {
+                        hasColor = true;
+                    }
+                }
+            }
+            if (!hasColor) {
+                tab = containers[0];
+                if (tab.id)
+                    document.getElementById(tab.id).style.borderTop = '2px solid #49db32';
             }
         }
+    },
+
+    hasColorParent: function (idparent) {
+        var tab,
+            hasColor = false,
+            containers = this.getContainerSections();
+        for (var i = 0; i < containers.length; i++) {
+            tab = containers[i];
+            if (tab.card.idsection === idparent) {
+                if (document.getElementById(tab.id)) {
+                    var borderColor = document.getElementById(tab.id).style.borderTop;
+                    var grid = tab.card.down('grid');
+                    var hasSelection = grid.getSelectionModel().hasSelection();
+                    if (borderColor.indexOf('2px solid') > -1 && hasSelection) {
+                        hasColor = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return hasColor;
     },
 
     getNameOperatorByRecord: function (record) {
