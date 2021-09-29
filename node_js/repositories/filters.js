@@ -48,7 +48,7 @@ const getResultFiltersOperators = async (req, objects) => {
 const getResultFiltersFunctions = async (req, objects) => {
     const params_parse_data = JSON.parse(req.body.data);
     const params_parse_filtros = JSON.parse(req.body.filtros);
-    var resultF = [], valor;
+    var resultF = [], valor = 0;
     const result = [];
     if(params_parse_data.length > 0) {
         const params_filter_fn = getParamsResultFunctions(req, objects, params_parse_data, params_parse_filtros)       
@@ -63,9 +63,11 @@ const getResultFiltersFunctions = async (req, objects) => {
         const resultAux = result.rows[0].fn_get_result_filter_functions
 
         params_parse_data.forEach(function (item, index, arr) {
-            valor = resultAux[index]
-            if (resultAux[index].indexOf('-') !== -1) { //if date
-                valor = moment(resultAux[index], "YYYY-MM-DD' H:m:s").format('DD/MM/YYYY H:m:s')
+            if(resultAux[index] != null) {
+                valor = resultAux[index]
+                if (resultAux[index].indexOf('-') !== -1) { //if date
+                    valor = moment(resultAux[index], "YYYY-MM-DD' H:m:s").format('DD/MM/YYYY H:m:s')
+                }
             }
             resultF.push({
                 'dataIndex': item.nombrecampo,
@@ -93,11 +95,13 @@ const getTotalsFilterFunction = async (filtros, totales, objects, req) => {
     }
 
     const resultAux = result.rows[0].fn_get_result_filter_functions
-    var resultF = [], valor;
+    var resultF = [], valor = 0;
     params_parse_data.forEach(function (item, index, arr) {
-        valor = resultAux[index]
-        if (resultAux[index].indexOf('-') !== -1) { //if date
-            valor = moment(resultAux[index], "YYYY-MM-DD' H:m:s").format('DD/MM/YYYY H:m:s')
+        if(resultAux[index] != null) {
+            valor = resultAux[index]
+            if (resultAux[index].indexOf('-') !== -1) { //if date
+                valor = moment(resultAux[index], "YYYY-MM-DD' H:m:s").format('DD/MM/YYYY H:m:s')
+            }
         }
         resultF.push({
             'dataIndex': item.nombrecampo,
