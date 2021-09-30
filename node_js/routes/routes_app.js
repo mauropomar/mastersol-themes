@@ -256,6 +256,7 @@ router.get('/managerfunctionsevent', async function (req, res) {
 
 router.get('/executebuttons', async function (req, res) {
     var result = await objects.functions.executeFunctionsButtons(req, objects)
+
     if (result.success === false) {
         return res.json(result)
     }

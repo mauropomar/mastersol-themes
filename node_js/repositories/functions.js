@@ -222,7 +222,7 @@ const executeFunctionsButtons = async (req, objects) => {
     let extra_params = req.query.extra_params;
 
     var success = false;
-    var result = {'btn': '', 'type': '', 'value': '', 'msg': '', 'name':''}
+    var result = {'btn': '', 'type': '', 'value': '', 'msg': '', 'name':'', 'title': '', 'label_x': '', 'label_y': '', 'legend': '', 'legend_pos': '', 'sql_label': ''}
     let flagResult = false
     if(idbutton) {
         const param_button = ['cfgapl.sections_buttons',idbutton]
@@ -326,6 +326,7 @@ const executeFunctionsButtons = async (req, objects) => {
                                 const legend = resultGraphic.rows[0].fn_get_register[0].show_legend
                                 const pos_legend = resultGraphic.rows[0].fn_get_register[0].legend_pos
                                 const sql_label = resultGraphic.rows[0].fn_get_register[0].sql_label
+                                console.log('Result sin params: ',result)
                                 result = {'btn': idbutton, 'type': 7, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
                                 flagResult = true
                             }
@@ -376,6 +377,7 @@ const executeFunctionsButtons = async (req, objects) => {
                             const legend = resultGraphic.rows[0].fn_get_register[0].show_legend
                             const pos_legend = resultGraphic.rows[0].fn_get_register[0].legend_pos
 							const sql_label = resultGraphic.rows[0].fn_get_register[0].sql_label
+                            console.log('Result con params: ',result)
                             result = {'btn': idbutton, 'type': 7, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
                             flagResult = true
                         }
@@ -391,10 +393,7 @@ const executeFunctionsButtons = async (req, objects) => {
 
         }
     }
-    if(result.type != 6)
-        return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name}
-    else
-        return {'success': success, 'btn': result.btn, 'type': result.type, 'value': result.value, 'msg': result.msg, 'name': result.name, 'title': result.title, 'label_x': result.label_x, 'label_y': result.label_y, 'legend': result.legend, 'legend_pos': result.legend_pos, 'sql_label': result.sql_label}
+    return result
 }
 
 const saveCapsuleBD = async (idcapsule,dirFullFolder) => {
