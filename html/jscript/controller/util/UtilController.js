@@ -191,11 +191,13 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     getContainerSections: function () {
+        var gridSection = MasterApp.globals.getGridSection();
+        var window = gridSection.up('window');
         var containers = Ext.ComponentQuery.query('tab[title!=null]');
         var array = [];
         for (var i = 0; i < containers.length; i++) {
             var tab = containers[i];
-            if (tab.card.idsection) {
+            if (tab.card.idsection && tab.up('window').idmenu === window.idmenu) {
                 array.push(tab);
             }
         }
@@ -369,7 +371,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
         var tab,
             hasColor = false,
             containers = this.getContainerSections();
-        if(containers.length === 0)
+        if (containers.length === 0)
             return;
         if (newCard) {
             document.getElementById(newCard.tab.id).style.borderTop = '2px solid #49db32';

@@ -6,10 +6,9 @@ Ext.define('MasterSol.view.chart.WindowChart', {
     xtype: 'window-chart',
     closable: true,
     closeAction: 'destroy',
-    height:'80%',
-    width:'50%',
-    modal:true,
-    title: 'Gráficos',
+    height: '80%',
+    width: '50%',
+    modal: true,
     layout: 'fit',
     autoShow: true,
     requires: [
@@ -21,67 +20,67 @@ Ext.define('MasterSol.view.chart.WindowChart', {
         items: [{
             region: 'center',
             layout: 'fit',
-            id:'container_chart_panel',
+            id: 'container_chart_panel',
             items: [{
-                xtype:'column-chart'
+                xtype: 'column-chart'
             }],
             tbar: [{
                 xtype: 'button',
-                tooltip:'Gráficos de Columnas',
-                tooltipType:'title',
+                tooltip: 'Gráficos de Columnas',
+                tooltipType: 'title',
                 iconCls: 'fa fa-bar-chart',
-                handler:function(){
+                handler: function () {
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('column');
                 }
-            },'-',{
+            }, '-', {
                 xtype: 'button',
-                tooltip:'Gráficos de Línea',
-                tooltipType:'title',
+                tooltip: 'Gráficos de Línea',
+                tooltipType: 'title',
                 iconCls: 'fa fa-line-chart',
-                handler:function(){
+                handler: function () {
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('line');
                 }
-            },'-',{
+            }, '-', {
                 xtype: 'button',
-                tooltip:'Gráficos de Pie',
-                tooltipType:'title',
+                tooltip: 'Gráficos de Pie',
+                tooltipType: 'title',
                 iconCls: 'fa fa-pie-chart',
-                handler:function(){
+                handler: function () {
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('pie');
                 }
-            },'-',{
+            }, '-', {
                 xtype: 'button',
-                tooltip:'Gráficos de Área',
-                tooltipType:'title',
+                tooltip: 'Gráficos de Área',
+                tooltipType: 'title',
                 iconCls: 'fa fa-area-chart',
-                handler:function(){
+                handler: function () {
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('area');
                 }
-            },'-',{
+            }, '-', {
                 xtype: 'button',
-                tooltip:'Gráficos de Barras',
-                tooltipType:'title',
+                tooltip: 'Gráficos de Barras',
+                tooltipType: 'title',
                 iconCls: 'fa fa-align-left',
-                handler:function(){
+                handler: function () {
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('stackbar');
                 }
-            },'-',{
+            }, '-', {
                 xtype: 'button',
-                tooltip:'Gráficos Radar',
-                tooltipType:'title',
+                tooltip: 'Gráficos Radar',
+                tooltipType: 'title',
                 iconCls: 'fa fa-chrome',
-                handler:function(){
+                handler: function () {
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('radar');
+                }
+            }, '->',{
+                xtype: 'button',
+                text: 'Cancelar',
+                iconCls: 'fa fa-close',
+                id: 'btn_cancelar_chart',
+                handler: function () {
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').cancel();
                 }
             }]
         }]
-    }],
-    buttons: [{
-        text: 'Cancelar',
-        iconCls: 'fa fa-close',
-        id: 'btn_cancelar_chart',
-        handler: function () {
-            MasterApp.getController('MasterSol.controller.chart.ChartController').cancel();
-        }
     }]
 });

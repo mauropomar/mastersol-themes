@@ -12,7 +12,7 @@ Ext.define('MasterSol.controller.chart.AreaChartController', {
             store: this.getStore(this.json),
             insetPadding: '40 40 40 40',
             legend: {
-                docked: 'bottom'
+                docked: 'right'
             },
             sprites: [{
                 type: 'text',

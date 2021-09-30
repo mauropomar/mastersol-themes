@@ -33,7 +33,8 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         json['fields'] = MasterApp.util.getObjectKey(json.value);
         this.jsonData = json;
         Ext.create('MasterSol.view.chart.WindowChart', {
-            id: 'window_chart'
+            id: 'window_chart',
+            title: json.name
         });
     },
 

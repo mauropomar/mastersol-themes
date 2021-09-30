@@ -17,6 +17,10 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                     left: 20,
                     right: 40
                 },
+                legend: {
+                    type: 'sprite',
+                    docked: 'right'
+                },
                 interactions: {
                     type: 'itemedit',
                     tooltip: {
