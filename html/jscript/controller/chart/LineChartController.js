@@ -12,7 +12,7 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
                 store: this.getStore(json),
                 legend: {
                     type: 'sprite',
-                    docked: 'right'
+                    docked: json['legend_pos']
                 },
                 insetPadding: 40,
                 sprites: [{
@@ -42,12 +42,18 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
                     position: 'left',
                     grid: true,
                     minimum: 0,
-                    renderer: this.onAxisLabelRender
+                    renderer: this.onAxisLabelRender,
+                    title: {
+                        text: json['label_y']
+                    }
                 }, {
                     type: 'category',
                     fields: this.getXField(json),
                     position: 'bottom',
                     grid: true,
+                    title: {
+                        text: json['label_x']
+                    },
                     label: {
                         rotate: {
                             degrees: -45

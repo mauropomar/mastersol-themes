@@ -19,7 +19,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                 },
                 legend: {
                     type: 'sprite',
-                    docked: 'right'
+                    docked: json['legend_pos']
                 },
                 interactions: {
                     type: 'itemedit',
@@ -49,7 +49,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                 animation: Ext.isIE8 ? false : true,
                 series: {
                     type: 'bar',
-                    xField:this.getXField(json),
+                    xField: this.getXField(json),
                     yField: this.getYField(json),
                     style: {
                         minGapWidth: 20
@@ -70,7 +70,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                 },
                 sprites: {
                     type: 'text',
-                    text: json.title,
+                  //  text: json['label_y'],
                     fontSize: 22,
                     width: 100,
                     height: 30,
@@ -192,5 +192,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
             }
             return f;
         }
+
+
     }
 );

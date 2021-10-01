@@ -12,43 +12,28 @@ Ext.define('MasterSol.controller.chart.AreaChartController', {
             store: this.getStore(this.json),
             insetPadding: '40 40 40 40',
             legend: {
-                docked: 'right'
+                docked: this.json['legend_pos']
             },
-            sprites: [{
-                type: 'text',
-                text: 'Economic Development in the USA, Japan and China',
-                fontSize: 22,
-                width: 100,
-                height: 30,
-                x: 40, // the sprite x position
-                y: 20  // the sprite y position
-            }, {
-                type: 'text',
-                text: 'Data: Gross domestic product based on purchasing-power-parity (PPP) valuation of country GDP. Figures for FY2014 are forecasts.',
-                fontSize: 10,
-                x: 12,
-                y: 525
-            }, {
-                type: 'text',
-                text: 'Source: http://www.imf.org/ World Economic Outlook Database October 2014.',
-                fontSize: 10,
-                x: 12,
-                y: 540
-            }],
+            sprites: [],
             axes: [{
                 type: 'numeric',
                 position: 'left',
                 fields: this.getYField(this.json),
-                title: 'GDP in billions of US Dollars',
                 grid: true,
                 minimum: 0,
-                maximum: 25,
+                maximum: this.json['sql_label'],
                 majorTickSteps: 10,
-                renderer: this.onAxisLabelRender
+                renderer: this.onAxisLabelRender,
+                title: {
+                    text: this.json['label_y']
+                }
             }, {
                 type: 'category',
                 position: 'bottom',
                 fields: this.getXField(this.json),
+                title: {
+                    text: this.json['label_x']
+                },
                 label: {
                     rotate: {
                         degrees: -45
@@ -75,7 +60,7 @@ Ext.define('MasterSol.controller.chart.AreaChartController', {
         // don't want to loose the formatting done by the native renderer,
         // we let the native renderer process the value first.
         var value = layoutContext.renderer(label);
-        return value !== '0' ? (value / 1000 + ',000') : value;
+        return  value;
     },
 
     onPreview: function () {

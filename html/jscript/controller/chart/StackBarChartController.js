@@ -10,16 +10,22 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
                 flipXY: true,
                 store: this.getStore(json),
                 legend: {
-                    docked: 'right'
+                    docked: json['legend_pos']
                 },
                 axes: [{
                     type: 'numeric',
                     position: 'bottom',
                     grid: true,
-                    minimum: 0
+                    minimum: 0,
+                    title: {
+                        text: json['label_y']
+                    }
                 }, {
                     type: 'category',
-                    position: 'left'
+                    position: 'left',
+                    title: {
+                        text: json['label_x']
+                    }
                 }],
 
                 //define the actual bar series.

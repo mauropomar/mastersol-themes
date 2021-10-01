@@ -27,29 +27,9 @@ Ext.define('MasterSol.controller.chart.RadarChartController', {
             insetPadding: '40 40 60 40',
             interactions: ['rotate'],
             legend: {
-                docked: 'right'
+                docked: json['legend_pos']
             },
-            sprites: [{
-                type: 'text',
-                text: 'Radar Charts - Basic',
-                fontSize: 22,
-                width: 100,
-                height: 30,
-                x: 40, // the sprite x position
-                y: 20  // the sprite y position
-            }, {
-                type: 'text',
-                text: 'Data: Browser Stats 2012 - Internet Explorer',
-                fontSize: 10,
-                x: 12,
-                y: 480
-            }, {
-                type: 'text',
-                text: 'Source: http://www.w3schools.com/',
-                fontSize: 10,
-                x: 12,
-                y: 495
-            }],
+            sprites: [],
             axes: [{
                 type: 'numeric',
                 position: 'radial',
@@ -58,11 +38,17 @@ Ext.define('MasterSol.controller.chart.RadarChartController', {
                 grid: true,
                 minimum: 0,
                 maximum: 25,
-                majorTickSteps: 4
+                majorTickSteps: 4,
+                title: {
+                    text: json['label_y']
+                }
             }, {
                 type: 'category',
                 position: 'angular',
-                grid: true
+                grid: true,
+                title: {
+                    text: json['label_x']
+                }
             }],
             series: this.getSeries(json)
         });
@@ -112,7 +98,7 @@ Ext.define('MasterSol.controller.chart.RadarChartController', {
         for (var i = 0; i < fields.length; i++) {
             series.push({
                 type: 'radar',
-                title: fields[i],
+               // title: fields[i],
                 angleField: label,
                 radiusField: fields[i],
                 style: {

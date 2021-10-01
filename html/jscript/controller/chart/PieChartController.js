@@ -13,12 +13,11 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
             insetPadding: 50,
             innerPadding: 20,
             legend: {
-                docked: 'right'
+                docked: json['legend_pos']
             },
             interactions: ['rotate'],
             sprites: [{
                 type: 'text',
-                text: json.title,
                 fontSize: 22,
                 width: 100,
                 height: 30,
