@@ -10,10 +10,7 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
             var chart = Ext.create('Ext.chart.CartesianChart', {
                 reference: 'chart',
                 store: this.getStore(json),
-                legend: {
-                    type: 'sprite',
-                    docked: json['legend_pos']
-                },
+                legend: json['legend'],
                 insetPadding: 40,
                 sprites: [{
                     type: 'text',

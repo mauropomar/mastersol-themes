@@ -9,9 +9,7 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
             var chart = Ext.create('Ext.chart.CartesianChart', {
                 flipXY: true,
                 store: this.getStore(json),
-                legend: {
-                    docked: json['legend_pos']
-                },
+                legend: json['legend'],
                 axes: [{
                     type: 'numeric',
                     position: 'bottom',

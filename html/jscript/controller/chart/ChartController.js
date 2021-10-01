@@ -31,7 +31,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
 
     showWindow: function (json) {
         json['fields'] = MasterApp.util.getObjectKey(json.value);
-        json['legend_pos'] = this.getPositionLegend(json);
+        json['legend'] = this.getLegend(json);
         this.jsonData = json;
         Ext.create('MasterSol.view.chart.WindowChart', {
             id: 'window_chart',
@@ -43,17 +43,20 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         Ext.ComponentQuery.query('#window_chart')[0].close();
     },
 
-    getPositionLegend: function (json) {
+    getLegend: function (json) {
+        var docked = 'right';
         if (!json['legend'])
-            return 'none';
-        if (json['legend_pos'] === 'D')
-            return 'right';
+            return null;
         if (json['legend_pos'] === 'I')
-            return 'left';
+            docked = 'left';
         if (json['legend_pos'] === 'T')
-            return 'top';
+            docked = 'top';
         if (json['legend_pos'] === 'B')
-            return 'bottom';
+            docked = 'bottom';
+          return {
+              type: 'sprite',
+              docked: docked
+          };
     },
 
 });
