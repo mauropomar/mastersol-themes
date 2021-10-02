@@ -14,7 +14,7 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
                 insetPadding: 40,
                 sprites: [{
                     type: 'text',
-                  //  text: 'Line Charts - Marked Lines',
+                    //  text: 'Line Charts - Marked Lines',
                     fontSize: 22,
                     width: 100,
                     height: 30,
@@ -149,6 +149,13 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
                 });
             }
             return series;
+        },
+
+        fireEventPrint: function (ext) {
+            var chart = Ext.ComponentQuery.query('line-chart')[0].items.items[0];
+            var title = Ext.ComponentQuery.query('window-chart')[0].getTitle();
+            var fileName = title + '.' + ext;
+            MasterApp.getController('MasterSol.controller.chart.ChartController').saveBase64AsFile(chart.getImage("stream").data, fileName);
         }
     }
 );

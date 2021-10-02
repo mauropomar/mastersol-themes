@@ -1,12 +1,14 @@
 Ext.define('MasterSol.controller.chart.ChartController', {
     extend: 'Ext.app.Controller',
     jsonData: null,
+    type:'column',
     init: function () {
 
     },
 
     addChart: function (type) {
         var panel;
+        this.type = type;
         Ext.ComponentQuery.query('#container_chart_panel')[0].removeAll();
         if (type === 'column') {
             panel = Ext.create('MasterSol.view.chart.ColumnChart');
@@ -26,6 +28,23 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         } else if (type === 'radar') {
             panel = Ext.create('MasterSol.view.chart.RadarChart');
             Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+        }
+    },
+
+    printChart:function(ext){
+        var type = this.type;
+        if (type === 'column') {
+            MasterApp.getController('MasterSol.controller.chart.ColumnChartController').fireEventPrint(ext);
+        } else if (type === 'line') {
+            MasterApp.getController('MasterSol.controller.chart.LineChartController').fireEventPrint(ext);
+        } else if (type === 'pie') {
+            MasterApp.getController('MasterSol.controller.chart.PieChartController').fireEventPrint(ext);
+        } else if (type === 'area') {
+            MasterApp.getController('MasterSol.controller.chart.AreaChartController').fireEventPrint(ext);
+        } else if (type === 'stackbar') {
+            MasterApp.getController('MasterSol.controller.chart.StackBarChartController').fireEventPrint(ext);
+        } else if (type === 'radar') {
+            MasterApp.getController('MasterSol.controller.chart.RadarChartController').fireEventPrint(ext);
         }
     },
 
@@ -53,10 +72,17 @@ Ext.define('MasterSol.controller.chart.ChartController', {
             docked = 'top';
         if (json['legend_pos'] === 'B')
             docked = 'bottom';
-          return {
-              type: 'sprite',
-              docked: docked
-          };
+        return {
+            type: 'sprite',
+            docked: docked
+        };
     },
+
+    saveBase64AsFile: function (base64, fileName) {
+        var link = document.createElement("a");
+        link.setAttribute("href", base64);
+        link.setAttribute("download", fileName);
+        link.click();
+    }
 
 });

@@ -39,7 +39,7 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
                     },
                     tooltip: {
                         trackMouse: true,
-                        scope:this,
+                        scope: this,
                         renderer: function (tooltip, record, item) {
                             var label = this.getXField(json);
                             tooltip.setHtml(record.get(label) + ': ' +
@@ -77,5 +77,12 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
             tooltip.setHtml(record.get('label') + ': ' +
                 Ext.util.Format.number(record.get(item.field)));
         },
+
+        fireEventPrint: function (ext) {
+            var chart = Ext.ComponentQuery.query('stack-chart')[0].items.items[0];
+            var title = Ext.ComponentQuery.query('window-chart')[0].getTitle();
+            var fileName = title + '.' + ext;
+            MasterApp.getController('MasterSol.controller.chart.ChartController').saveBase64AsFile(chart.getImage("stream").data, fileName);
+        }
     }
 );

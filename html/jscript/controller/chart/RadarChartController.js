@@ -97,5 +97,12 @@ Ext.define('MasterSol.controller.chart.RadarChartController', {
             });
         }
         return series;
+    },
+
+    fireEventPrint: function (ext) {
+        var chart = Ext.ComponentQuery.query('radar-chart')[0].items.items[0];
+        var title = Ext.ComponentQuery.query('window-chart')[0].getTitle();
+        var fileName = title + '.' + ext;
+        MasterApp.getController('MasterSol.controller.chart.ChartController').saveBase64AsFile(chart.getImage("stream").data, fileName);
     }
 });

@@ -2,6 +2,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
         extend: 'Ext.app.Controller',
         itemAnimationDuration: 0,
         chart: '',
+        title: '',
         init: function () {
 
         },
@@ -67,7 +68,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                 },
                 sprites: {
                     type: 'text',
-                  //  text: json['label_y'],
+                    //  text: json['label_y'],
                     fontSize: 22,
                     width: 100,
                     height: 30,
@@ -188,8 +189,12 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                 f.push(fields[i]);
             }
             return f;
+        },
+
+        fireEventPrint: function (ext) {
+            var title = Ext.ComponentQuery.query('window-chart')[0].getTitle();
+            var fileName = title + '.' + ext;
+            MasterApp.getController('MasterSol.controller.chart.ChartController').saveBase64AsFile(this.chart.getImage("stream").data, fileName);
         }
-
-
     }
 );

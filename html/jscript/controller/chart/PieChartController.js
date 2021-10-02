@@ -77,5 +77,12 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
 
     onSeriesTooltipRender: function (tooltip, record, item) {
         tooltip.setHtml(record.get('label') + ': ' + record.get(item.field));
+    },
+
+    fireEventPrint: function (ext) {
+        var chart = Ext.ComponentQuery.query('pie-chart')[0].items.items[0];
+        var title = Ext.ComponentQuery.query('window-chart')[0].getTitle();
+        var fileName = title + '.' + ext;
+        MasterApp.getController('MasterSol.controller.chart.ChartController').saveBase64AsFile(chart.getImage("stream").data, fileName);
     }
 });
