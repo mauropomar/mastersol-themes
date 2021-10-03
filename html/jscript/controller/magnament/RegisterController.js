@@ -270,6 +270,10 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         if (record.data.tipo == 'datetime') {
             this.setDateTimeField(record, column);
         }
+        if (record.data.tipo == 'bytea') {
+            e.cancel = true;
+            this.setFileButton(record, column);
+        }
 
     },
     //resetea los valores de los registros al insertar
@@ -370,6 +374,45 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             edit.dateField.focus('', false);
         }, 1);
 
+    },
+
+    setFileButton: function (rec, column) {
+        var grid = Ext.ComponentQuery.query('register-view')[0];
+        var select = grid.getSelectionModel().getSelection()[0];
+        var idx = grid.getStore().indexOf(select);
+        var cell = grid.getView().getCell(idx, 1);
+        var pos = Ext.fly(cell).getXY();
+        //    Ext.create('MasterSol.view.magnament.WindowFileButton'
+        if (Ext.ComponentQuery.query('filefield[name=file_editor]')[0]) {
+            Ext.ComponentQuery.query('filefield[name=file_editor]')[0].show();
+            return;
+        }
+        var edit = Ext.create('Ext.form.field.File', {
+            buttonOnly: true,
+            hideLabel: true,
+            allowBlank: true,
+            floating: true,
+            hasFocus: true,
+            name: 'file_editor',
+        //    width: 30,
+            x: pos[0] + 100,
+            y: pos[1],
+            buttonConfig: {
+                text: 'Seleccione una imagen',
+                iconCls: 'fa fa-image',
+                tooltip: 'Subir archivo',
+            },
+            listeners: {
+                change: function (view) {
+
+                },
+                blur: function () {
+                    edit.hide();
+                }
+            }
+        });
+        edit.show();
+        edit.focus();
     },
 
     specialKey: function (field, e) {
@@ -520,5 +563,24 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 });
             }
         });
+    },
+
+    onSelectFileImage: function (view, rec) {
+        var file = view.fileInputEl.el.dom.files[0];
+        if (MasterApp.util.isFileImage(file)) {
+            Ext.MessageBox.show({
+                title: 'Información',
+                msg: 'La extensión de la imagen no es correcta.',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.INFO
+            });
+            return;
+        }
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function (evt) {
+            debugger
+            var result = evt.target.result;
+        }
     }
 })

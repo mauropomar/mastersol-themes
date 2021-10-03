@@ -24,6 +24,7 @@ Ext.application({
             Ext.create('MasterSol.view.layout.Viewport');
             MasterApp.theme.setStyle();
             this.loadAllOptions();
+
         }
     },
 
@@ -55,5 +56,5 @@ Ext.application({
         MasterApp.totals = MasterApp.getController('MasterSol.controller.magnament.TotalController');
         MasterApp.report = MasterApp.getController('MasterSol.controller.magnament.ConfigReportController');
         MasterApp.capsule = MasterApp.getController('MasterSol.controller.capsule.CapsuleExportController');
-    }
+    },
 });

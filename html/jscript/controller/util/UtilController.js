@@ -543,7 +543,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
     getObjectKey: function (data) {
         var keys = [];
         if (data.length > 0) {
-            keys = Object.keys(data[0])
+            keys = Object.keys(data[0]);
         }
         return keys;
     }
