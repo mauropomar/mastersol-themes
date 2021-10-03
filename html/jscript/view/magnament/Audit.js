@@ -17,7 +17,7 @@ Ext.define("MasterSol.view.magnament.Audit", {
         rowBodyTpl : new Ext.XTemplate(
             '<p><b>Usuario:</b> {usuario}</p>',
             '<p><b>Valor Anterior:</b> {valor_anterior}</p>',
-            '<p><b>Valor Nuevo:</b> {valor_nuevo}</p>'
+            '<p><b>Nuevo Valor:</b> {valor_nuevo}</p>'
         )
     }],
     tbar: [{
@@ -41,19 +41,6 @@ Ext.define("MasterSol.view.magnament.Audit", {
             fontWeight:'bold'
         }
     }],
-    /* bbar: Ext.create('Ext.PagingToolbar', {
-         store: {
-             type: 'store_auditoria'
-         },
-         displayInfo: true,
-         nextText: 'P&aacute;gina siguiente',
-         beforePageText: 'P&aacute;gina',
-         firstText: 'Primera p&aacute;gina',
-         prevText: 'P&aacute;gina anterior',
-         lastText: '&Uacute;ltima p&aacute;gina',
-         displayMsg: 'Mostrando registros {0} - {1} de {2}',
-         emptyMsg: 'No existen registros.'
-     }),*/
     store: {
         type: 'store-audit'
     },

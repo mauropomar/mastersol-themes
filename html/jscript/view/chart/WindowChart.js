@@ -73,20 +73,18 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('radar');
                 }
             }, '->',{
-                text: 'Exportar',
-                iconCls: 'fa fa-print',
+                text: 'Guardar',
+                iconCls: 'fa fa-save',
                 xtype: 'splitbutton',
                 menu: [{
                     text: 'PNG',
                     iconCls: 'fa fa-image',
-                //    id: 'btn_export_chart',
                     handler: function () {
                         MasterApp.getController('MasterSol.controller.chart.ChartController').printChart('png');
                     }
                 },{
                     text: 'JPG',
                     iconCls: 'fa fa-image',
-              //      id: 'btn_export_chart',
                     handler: function () {
                         MasterApp.getController('MasterSol.controller.chart.ChartController').printChart('jpg');
                     }
