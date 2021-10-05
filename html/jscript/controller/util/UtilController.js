@@ -28,7 +28,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     getDataIndex: function (col) {
-        return (col.fk == 1) ? col['n_fk'] : col.dataIndex;
+        return (col.fk == 1 && col['n_fk']) ? col['n_fk'] : col.dataIndex;
     },
 
     getMenuByName: function (name) {

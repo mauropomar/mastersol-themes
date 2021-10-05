@@ -271,7 +271,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
         var url = btn.dirFile;
         var link = document.createElement('a');
         link.href = url;
-        link.download = url.substr(url.lastIndexOf('/') + 1);
+        link.download = btn.nameFile;
         link.click();
     },
 
@@ -367,6 +367,7 @@ Ext.define('MasterSol.controller.magnament.AttachedController', {
                     frame: false,
                     idComp: file.id,
                     dirFile: file.valor,
+                    nameFile:file.nombre,
                     iconCls: 'fa fa-download',
                     tooltip: 'Descargar',
                     cls: 'x-btn-form',

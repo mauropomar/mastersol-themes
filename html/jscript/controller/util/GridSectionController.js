@@ -5,6 +5,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
     },
 
     getComponents: function (section, columns, tools, height, data, name, windowParent, atributos) {
+        var _this = this;
         return Ext.create('Ext.grid.Panel', {
             btnTools: tools,
             selType: (atributos.section_checked) ? 'checkboxmodel' : null,
@@ -19,7 +20,9 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             height: height,
             max_line: section.max_lines,
             read_only: section.read_only,
+            orderable: section.orderable,
             region: 'center',
+            isMoveColumn: false,
             autoScroll: true,
             columns: this.getColumns(columns),
             enableDragDrop: true,
@@ -44,42 +47,16 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                             }
                         }
                     });
-                    var body = comp.body;
-                    this.formPanelDropTarget = new Ext.dd.DropTarget(body, {
-                        ddGroup: 'grid-to-form',
-                        notifyEnter: function (ddSource, e, data) {
-                            body.stopAnimation();
-                            body.highlight();
-                        },
-
-                        notifyDrop: function (ddSource, e, data) {
-                            var draggedRec = ddSource.dragData.records[0];
-                            var droppedOnIdx = (e.recordIndex) ? e.recordIndex : gridStore.getCount() - 1;
-                            var droppedOnRec = gridStore
-                                .getAt(droppedOnIdx);
-                            var items = [];
-                            gridStore.each((record) => {
-                                var id = record.get('id');
-                                items.push(id);
-                            });
-                            var draggedRecId = draggedRec.get('id');
-                            var idxToRemove = items.indexOf(draggedRecId);
-                            var removedItem = items.splice(idxToRemove, 1)[0];
-                            var droppedOnRecId = droppedOnRec.get('id');
-                            var droppedOnRecIdx = items
-                                .indexOf(droppedOnRecId);
-                            items.splice(droppedOnRecIdx + 1, 0, removedItem);
-                            gridStore.each((record) => {
-                                var recordId = record.get('id');
-                                var newOrder = items.indexOf(recordId);
-                                record.set('sortOrder', newOrder);
-                            });
-                            gridStore.sort('sortOrder', 'ASC');
-                            gridStore.commitChanges();
-                            MasterApp.section.updateRowOrder(draggedRec, droppedOnRec);
-                            return true;
-                        }
-                    });
+                    if (comp.orderable)
+                        _this.eventMoveRow(comp, gridView, gridStore);
+                },
+                columnmove: function (view, column, fromIndex, toIndex, eOpts) {
+                    //  MasterApp.section.updateColOrder(column, fromIndex, toIndex);
+                    var grid = view.grid;
+                    var container = grid.up('panel');
+                    var gridTotal = container.items.items[1];
+                    var cols = grid.getView().getHeaderCt().getGridColumns();
+                    MasterApp.gridtotal.reconfigure(gridTotal, cols);
                 }
             }
         });
@@ -91,7 +68,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
         var fields = [];
 
         for (var i = 0; i < columns.length; i++) {
-            fields.push(columns[i].dataIndex)
+            fields.push(columns[i].dataIndex);
         }
         var name = 'store_' + Math.floor;
         var store = Ext.create('Ext.data.Store', {
@@ -127,16 +104,12 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         n_column: cols[i].n_column,
                         real_name_out: cols[i].real_name_out,
                         link_parent: cols[i].link_parent,
+                        draggable: !cols[i].no_move,
                         fk: cols[i].fk,
                         filter: {
                             type: 'boolean',
                             yesText: 'Verdadero',
                             noText: 'Falso'
-                        },
-                        listeners: {
-                            beforecheckchange: function (me, rowIndex, checked, record, e, eOpts) {
-                                return false;
-                            }
                         }
                     })
                 }
@@ -162,6 +135,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         n_column: cols[i].n_column,
                         link_parent: cols[i].link_parent,
                         fk: cols[i].fk,
+                        draggable: !cols[i].no_move,
                         filter: {
                             type: 'number',
                             emptyText: 'Instroduzca un ' + cols[i].text + '.'
@@ -189,6 +163,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         n_column: cols[i].n_column,
                         link_parent: cols[i].link_parent,
                         fk: cols[i].fk,
+                        orderable: cols[i].orderable,
+                        draggable: !cols[i].no_move,
                         filter: {
                             type: 'string',
                             emptyText: 'Instroduzca un ' + cols[i].text + '.'
@@ -216,6 +192,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         n_column: cols[i].n_column,
                         link_parent: cols[i].link_parent,
                         fk: cols[i].fk,
+                        orderable: cols[i].orderable,
+                        draggable: !cols[i].no_move,
                         filter: {
                             type: 'list'
                         }
@@ -242,6 +220,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         n_column: cols[i].n_column,
                         link_parent: cols[i].link_parent,
                         fk: cols[i].fk,
+                        orderable: cols[i].orderable,
+                        draggable: !cols[i].no_move,
                         filter: {
                             type: 'date',
                             beforeText: 'Antes',
@@ -263,5 +243,43 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             }
         }
         return columns;
+    },
+
+    eventMoveRow: function (comp, gridView, gridStore) {
+        var body = comp.body;
+        this.formPanelDropTarget = new Ext.dd.DropTarget(body, {
+            ddGroup: 'grid-to-form',
+            notifyEnter: function (ddSource, e, data) {
+                body.stopAnimation();
+                body.highlight();
+            },
+            notifyDrop: function (ddSource, e, data) {
+                var draggedRec = ddSource.dragData.records[0];
+                var droppedOnIdx = (e.recordIndex) ? e.recordIndex : gridStore.getCount() - 1;
+                var droppedOnRec = gridStore
+                    .getAt(droppedOnIdx);
+                var items = [];
+                gridStore.each((record) => {
+                    var id = record.get('id');
+                    items.push(id);
+                });
+                var draggedRecId = draggedRec.get('id');
+                var idxToRemove = items.indexOf(draggedRecId);
+                var removedItem = items.splice(idxToRemove, 1)[0];
+                var droppedOnRecId = droppedOnRec.get('id');
+                var droppedOnRecIdx = items
+                    .indexOf(droppedOnRecId);
+                items.splice(droppedOnRecIdx + 1, 0, removedItem);
+                gridStore.each((record) => {
+                    var recordId = record.get('id');
+                    var newOrder = items.indexOf(recordId);
+                    record.set('sortOrder', newOrder);
+                });
+                gridStore.sort('sortOrder', 'ASC');
+                gridStore.commitChanges();
+                MasterApp.section.updateRowOrder(draggedRec, droppedOnRec);
+                return true;
+            }
+        });
     }
 })

@@ -97,6 +97,12 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
             }
         }
         return columns;
+    },
+
+    reconfigure: function (grid, columns) {
+        var newColumns = this.getColumns(columns);
+        var store = grid.getStore();
+        grid.reconfigure(store, newColumns);
     }
 
 })

@@ -795,6 +795,45 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
                     Ext.toast(json.datos);
+                }else{
+                    Ext.Msg.show({
+                        title: 'Informaci&oacute;n',
+                        msg: json.datos,
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.INFO
+                    });
+                }
+            }
+        };
+        Ext.Ajax.request(save);
+    },
+
+    updateColOrder:function(column, fromIndex, toIndex){
+        var idsection = MasterApp.util.getIdSectionActive();
+        var save = {
+            url: 'app/updateordercolumn',
+            method: 'POST',
+            scope: this,
+            params: {
+                idsection:idsection,
+                idfirst: fromIndex,
+                idsecond: toIndex
+            },
+            callback: function (options, success, response) {
+                var json = Ext.JSON.decode(response.responseText);
+                if (json.success == true) {
+                    Ext.toast(json.datos);
+                 /*   var container = grid.up('panel');
+                    var gridTotal = container.items.items[1];
+                    var columns = grid.getView().getHeaderCt().getGridColumns();
+                    MasterApp.gridtotal.reconfigure(gridTotal, columns);*/
+                }else{
+                    Ext.Msg.show({
+                        title: 'Informaci&oacute;n',
+                        msg: json.datos,
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.INFO
+                    });
                 }
             }
         };
