@@ -823,10 +823,6 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
                     Ext.toast(json.datos);
-                 /*   var container = grid.up('panel');
-                    var gridTotal = container.items.items[1];
-                    var columns = grid.getView().getHeaderCt().getGridColumns();
-                    MasterApp.gridtotal.reconfigure(gridTotal, columns);*/
                 }else{
                     Ext.Msg.show({
                         title: 'Informaci&oacute;n',

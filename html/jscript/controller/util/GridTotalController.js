@@ -1,6 +1,7 @@
 Ext.define('MasterSol.controller.util.GridTotalController', {
     extend: 'Ext.app.Controller',
     init: function () {
+        this.data = [];
         this.grid = [];
         this.hidden = true;
     },
@@ -74,7 +75,7 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
                     width: cols[i].width,
                     operator: cols[i].funcion,
                     renderer: function (value, metaData, record, row, col) {
-                        var col = this.ownerGrid.columns[col];
+                        var col = this.ownerGrid.getView().getHeaderCt().getGridColumns()[col];
                         if (col.funcion) {
                             var operator = col.funcion;
                             var icon = '';
@@ -100,9 +101,11 @@ Ext.define('MasterSol.controller.util.GridTotalController', {
     },
 
     reconfigure: function (grid, columns) {
-        var newColumns = this.getColumns(columns);
-        var store = grid.getStore();
-        grid.reconfigure(store, newColumns);
+        var data,
+            newColumns = this.getColumns(columns),
+            store = grid.getStore();
+        var newStore = this.getStore(columns, []);
+        grid.reconfigure(newStore, newColumns);
     }
 
 })

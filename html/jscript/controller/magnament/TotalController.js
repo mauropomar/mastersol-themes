@@ -199,10 +199,10 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
         this.cleanDataTotal(grid);
     },
 
-    cleanDataTotal(grid) {
+    cleanDataTotal: function (grid) {
         var store = grid.getStore();
         var record = store.getAt(0);
-        var columns = grid.columns;
+        var columns = grid.getView().getHeaderCt().getGridColumns();
         for (var i = 0; i < columns.length; i++) {
             record.set(columns[i].dataIndex, 0);
             columns[i]['funcion'] = undefined;

@@ -55,6 +55,10 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                     var grid = view.grid;
                     var container = grid.up('panel');
                     var gridTotal = container.items.items[1];
+                    if (gridTotal.getHeight() > 0) {
+                        var gridSection = MasterApp.globals.getGridSection();
+                        MasterApp.totals.hideGridTotals(gridSection);
+                    }
                     var cols = grid.getView().getHeaderCt().getGridColumns();
                     MasterApp.gridtotal.reconfigure(gridTotal, cols);
                 }
