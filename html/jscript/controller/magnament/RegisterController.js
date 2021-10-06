@@ -403,8 +403,9 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 tooltip: 'Subir archivo',
             },
             listeners: {
+                scope:this,
                 change: function (view) {
-
+                   this.selectImageBytea(view, rec, edit);
                 },
                 blur: function () {
                     edit.hide();
@@ -565,9 +566,9 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         });
     },
 
-    onSelectFileImage: function (view, rec) {
+    selectImageBytea: function (view, rec, comp) {
         var file = view.fileInputEl.el.dom.files[0];
-        if (MasterApp.util.isFileImage(file)) {
+        if (!MasterApp.util.isFileImage(file)) {
             Ext.MessageBox.show({
                 title: 'Información',
                 msg: 'La extensión de la imagen no es correcta.',
@@ -579,8 +580,9 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         var reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = function (evt) {
-            debugger
             var result = evt.target.result;
+            rec.set('valor', result);
+            comp.hide();
         }
     }
 })

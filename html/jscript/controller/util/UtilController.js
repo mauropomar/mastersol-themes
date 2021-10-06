@@ -8,6 +8,13 @@ Ext.define('MasterSol.controller.util.UtilController', {
         if (record.data.fk == '1') {
             return value;
         }
+        if (record.data.tipo == 'bytea') {
+            if (value == '' || value == null) {
+                return '';
+            } else {
+                return 'Imagen Seleccionada';
+            }
+        }
         if (record.data.tipo == 'boolean') {
             if (value == true || value == 't' || value == 'true') {
                 return '<div style="text-align: center"><img  src="html/assets/icon/others/activo.png"/></div>';

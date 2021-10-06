@@ -146,7 +146,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         }
                     })
                 }
-                if (cols[i].type === 'string') {
+                if (cols[i].type === 'string' || cols[i].type === 'bytea') {
                     columns.push({
                         dataIndex: MasterApp.util.getDataIndex(cols[i]),
                         width: cols[i].width,
