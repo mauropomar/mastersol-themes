@@ -124,6 +124,38 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
 
         selectDateEnd: function (field, newValue, oldValue) {
             Ext.ComponentQuery.query('#startdt')[0].setMaxValue(newValue);
+        },
+
+        getAllRemoved: function () {
+            var grid = Ext.ComponentQuery.query('audit-view')[0];
+            var store = grid.getStore();
+            store.removeAll();
+            var mask = new Ext.LoadMask(grid, {
+                msg: 'Cargando...'
+            });
+            mask.show();
+            var idsection = MasterApp.util.getIdSectionActive();
+            var getAll = {
+                url: 'app/auditorias_eliminados',
+                method: 'GET',
+                scope: this,
+                params: {
+                    'idsection': idsection
+                },
+                success: function (response) {
+                    mask.hide();
+                    var json = Ext.JSON.decode(response.responseText);
+                    if (data != null) {
+                        store.loadData(json.data);
+                    } else {
+                        MasterApp.util.showMessageInfo('No existen datos eliminados.');
+                    }
+                },
+                failure: function (response) {
+                    mask.hide();
+                }
+            };
+            Ext.Ajax.request(getAll);
         }
     }
 )

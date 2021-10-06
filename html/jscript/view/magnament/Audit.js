@@ -26,11 +26,17 @@ Ext.define("MasterSol.view.magnament.Audit", {
         handler:function(){
             MasterApp.audit.showWindow();
         }
-    },{
+    },'-',{
         iconCls: 'fa fa-eraser',
         tooltip: 'Limpiar filtro',
         handler: function () {
             MasterApp.audit.clean();
+        }
+    },'-', {
+        iconCls: 'fa fa-list-alt',
+        tooltip: 'Mostrar Elimnados',
+        handler: function () {
+            MasterApp.audit.getAllRemoved();
         }
     }, '->', {
         xtype: 'tbtext',
@@ -75,7 +81,7 @@ Ext.define("MasterSol.view.magnament.Audit", {
     },
     listeners:{
         afterrender:function(){
-            MasterApp.audit = MasterApp.getController('MasterSol.controller.magnament.AuditController')
+            MasterApp.audit = MasterApp.getController('MasterSol.controller.magnament.AuditController');
         }
     }
 });
