@@ -172,6 +172,11 @@ router.get('/auditorias', async function (req, res) {
     res.json(result)
 })
 
+router.get('/auditorias_eliminados', async function (req, res) {
+    const result = await objects.auditorias.getAuditoriasEliminadas(req)
+    res.json(result)
+})
+
 /*Filtrar auditorias*/
 router.get('/filterauditorias', async function (req, res) {
     const result = await objects.auditorias.getFilterAuditorias(req)

@@ -87,6 +87,7 @@ const deleteRegister = async (req) => {
 const getParamsInsert = async (req, objects) => {
     var result = [], valor = "", columnasInsertAux = [], valuesInsertAux = [];
     const params_parse = JSON.parse(req.body.data);
+
     params_parse.forEach(function (item, index, arr) {
         if (item['field'] !== 'id') {
             columnasInsertAux.push(item['field'])

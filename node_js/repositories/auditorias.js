@@ -13,6 +13,19 @@ const getAuditorias = async (req) => {
     return result.rows[0].fn_get_auditorias
 }
 
+const getAuditoriasEliminadas = async (req) => {
+    req.session.id_user = '7570c788-e3e8-4ffc-83d5-ac7996eb10ce'
+    const params = [req.query.idsection, req.session.id_user]
+    const query = "SELECT security.fn_get_auditorias_eliminadas($1,$2)"
+    const result = await pool.executeQuery(query, params)
+    if (result.success === false) {
+        return result
+    } else if (result.rows[0].fn_get_auditorias_eliminadas == null) {
+        return []
+    }
+    return result.rows[0].fn_get_auditorias_eliminadas
+}
+
 const getFilterAuditorias = async (req) => {
     const dateDesde = req.query.desde !== '' ? moment(req.query.desde, "MM/DD/YYYY").format('YYYY-MM-DD') : null;
     const dateHasta = req.query.hasta !== '' ? moment(req.query.hasta, "MM/DD/YYYY").format('YYYY-MM-DD') : null;
@@ -33,5 +46,6 @@ const getFilterAuditorias = async (req) => {
 }
 
 objAudit.getAuditorias = getAuditorias
+objAudit.getAuditoriasEliminadas = getAuditoriasEliminadas
 objAudit.getFilterAuditorias = getFilterAuditorias
 module.exports = objAudit
