@@ -817,6 +817,15 @@ router.post('/updateorder', async function (req, res) {
     return res.json({'success': success, 'datos': result != '' ? result : 'Ha ocurrido un error ejecutando el procedimiento'})
 })
 
+router.post('/updatecolumn', async function (req, res) {
+    let result = ''
+    let success = true
+    result = await objects.functions.updateColumn(req)
+    if(result.includes('ERROR') || result == '')
+        success = false
+    return res.json({'success': success, 'datos': result != '' ? result : 'Ha ocurrido un error ejecutando el procedimiento'})
+})
+
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         // Uploads is the Upload_folder_name

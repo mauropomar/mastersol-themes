@@ -1,0 +1,43 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_update_column
+(
+  IN  idsection  uuid,
+  IN  idfirst    varchar,
+  IN  idsecond   varchar
+)
+RETURNS varchar AS
+$$
+declare
+
+result varchar;
+orderx1 integer;
+orderx2 integer;
+full_name_table varchar;
+name_table varchar;
+name_schema varchar;
+column_pk varchar;
+error varchar;
+
+begin
+  -- Buscar sections properties dado el idsection
+  SELECT orderx INTO orderx1 FROM cfgapl.sections_properties WHERE id_sections = $1 AND namex = $2;
+  SELECT orderx INTO orderx2 FROM cfgapl.sections_properties WHERE id_sections = $1 AND namex = $3;
+  
+  BEGIN
+	EXECUTE('UPDATE cfgapl.sections_properties SET orderx = '||orderx1||' WHERE id_sections = '||quote_literal($1)||' AND namex = '||quote_literal($3)||' ');
+   	EXECUTE('UPDATE cfgapl.sections_properties SET orderx = '||orderx2||' WHERE id_sections = '||quote_literal($1)||' AND namex = '||quote_literal($2)||' '); 
+    result = 'Orden cambiado satisfactoriamente';    
+   EXCEPTION when others then  
+    GET STACKED DIAGNOSTICS error = MESSAGE_TEXT; 
+    result = 'ERROR: '||error;    
+   END;
+
+return result;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_update_column(uuid, varchar, varchar)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_update_column(uuid, varchar, varchar)
+  IS 'Update columns order';

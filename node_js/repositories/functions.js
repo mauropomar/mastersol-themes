@@ -2017,6 +2017,21 @@ const updateOrder = async (req) => {
     return result.rows[0].fn_update_order
 }
 
+const updateColumn = async (req) => {
+
+    const params_order = [req.body.idsection, req.body.idfirst, req.body.idsecond]
+
+    const query = "SELECT cfgapl.fn_update_column($1,$2,$3)"
+    const result = await pool.executeQuery(query, params_order)
+    if (result.success === false) {
+        return 'ERROR: '+result.message
+    } else if (!result.rows || result.rows[0].fn_update_column == null) {
+        return ''
+    }
+
+    return result.rows[0].fn_update_column
+}
+
 /*const deleteDir = (dirFile, filename) => {
     let result = ''
     fs.unlink(dirFile + '/' + filename, (err => {
@@ -2114,4 +2129,5 @@ objGenFunc.insertRegister = insertRegister
 objGenFunc.updateRegister = updateRegister
 objGenFunc.importTable = importTable
 objGenFunc.updateOrder = updateOrder
+objGenFunc.updateColumn = updateColumn
 module.exports = objGenFunc
