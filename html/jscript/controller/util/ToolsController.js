@@ -156,7 +156,6 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                     }
                     if (json.type === 5) {
                         var extraParams = MasterApp.tools.getExtraParams();
-                        MasterApp.report.removeAll();
                         MasterApp.report.generateReport(params, json.value, json.name, extraParams);
                     }
                     if (json.type === 6) {

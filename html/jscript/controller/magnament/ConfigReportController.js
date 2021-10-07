@@ -134,7 +134,6 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
                     var extraParams;
                     if (json.type === 5) {
                         extraParams = MasterApp.tools.getExtraParams();
-                        MasterApp.report.removeAll();
                         MasterApp.report.generateReport(params, json.value, json.name, extraParams);
                         return;
                     }
