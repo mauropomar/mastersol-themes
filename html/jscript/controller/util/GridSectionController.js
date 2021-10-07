@@ -51,8 +51,10 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         _this.eventMoveRow(comp, gridView, gridStore);
                 },
                 columnmove: function (view, column, fromIndex, toIndex, eOpts) {
-                    var dataIndexFrom = column.dataIndex;
-                    var dataIndexTo = view.grid.columns[toIndex].dataIndex;
+                    var cols = view.grid.columns;
+                    toIndex = (cols.length > toIndex) ? toIndex : cols.length - 1;
+                    var dataIndexFrom = column.text;
+                    var dataIndexTo = cols[toIndex].text;
                     MasterApp.section.updateColumn(dataIndexFrom, dataIndexTo);
                     var grid = view.grid;
                     var container = grid.up('panel');
@@ -61,8 +63,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         var gridSection = MasterApp.globals.getGridSection();
                         MasterApp.totals.hideGridTotals(gridSection);
                     }
-                    var cols = grid.getView().getHeaderCt().getGridColumns();
-                    MasterApp.gridtotal.reconfigure(gridTotal, cols);
+                    var newColumns = grid.getView().getHeaderCt().getGridColumns();
+                    MasterApp.gridtotal.reconfigure(gridTotal, newColumns);
                 }
             }
         });
