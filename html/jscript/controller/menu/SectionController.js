@@ -808,10 +808,10 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         Ext.Ajax.request(save);
     },
 
-    updateColOrder:function(column, fromIndex, toIndex){
+    updateColumn:function(fromIndex, toIndex){
         var idsection = MasterApp.util.getIdSectionActive();
         var save = {
-            url: 'app/updateordercolumn',
+            url: 'app/updatecolumn',
             method: 'POST',
             scope: this,
             params: {

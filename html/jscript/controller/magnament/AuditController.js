@@ -145,8 +145,8 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
                 success: function (response) {
                     mask.hide();
                     var json = Ext.JSON.decode(response.responseText);
-                    if (data != null) {
-                        store.loadData(json.data);
+                    if (json) {
+                        store.loadData(json);
                     } else {
                         MasterApp.util.showMessageInfo('No existen datos eliminados.');
                     }

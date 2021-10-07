@@ -51,7 +51,9 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         _this.eventMoveRow(comp, gridView, gridStore);
                 },
                 columnmove: function (view, column, fromIndex, toIndex, eOpts) {
-                    //  MasterApp.section.updateColOrder(column, fromIndex, toIndex);
+                    var dataIndexFrom = column.dataIndex;
+                    var dataIndexTo = view.grid.columns[toIndex].dataIndex;
+                    MasterApp.section.updateColumn(dataIndexFrom, dataIndexTo);
                     var grid = view.grid;
                     var container = grid.up('panel');
                     var gridTotal = container.items.items[1];
