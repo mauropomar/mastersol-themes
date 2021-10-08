@@ -808,7 +808,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         Ext.Ajax.request(save);
     },
 
-    updateColumn:function(fromIndex, toIndex){
+    updateColumn:function(fields){
         var idsection = MasterApp.util.getIdSectionActive();
         var save = {
             url: 'app/updatecolumn',
@@ -816,8 +816,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             scope: this,
             params: {
                 idsection:idsection,
-                idfirst: fromIndex,
-                idsecond: toIndex
+                namex: fields.join(',')
             },
             callback: function (options, success, response) {
                 var json = Ext.JSON.decode(response.responseText);
