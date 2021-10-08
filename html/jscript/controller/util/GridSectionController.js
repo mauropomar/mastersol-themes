@@ -53,9 +53,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                 columnmove: function (view, column, fromIndex, toIndex, eOpts) {
                     var grid = view.grid;
                     var cols = grid.getView().getHeaderCt().getGridColumns();
-                    var nameIndexFrom = column.text;
-                    var nameIndexTo = _this.getNameIndexTo(cols, nameIndexFrom, fromIndex, toIndex);
-                    MasterApp.section.updateColumn(nameIndexFrom, nameIndexTo);
+                    var fieldsColumn = _this.getArrayColumnMove(cols);
+                    MasterApp.section.updateColumn(fieldsColumn);
                     var container = grid.up('panel');
                     var gridTotal = container.items.items[1];
                     if (gridTotal.getHeight() > 0) {
