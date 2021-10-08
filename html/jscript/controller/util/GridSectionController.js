@@ -51,12 +51,11 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         _this.eventMoveRow(comp, gridView, gridStore);
                 },
                 columnmove: function (view, column, fromIndex, toIndex, eOpts) {
-                    var cols = view.grid.columns;
-                    toIndex = (cols.length > toIndex) ? toIndex : cols.length - 1;
-                    var dataIndexFrom = column.text;
-                    var dataIndexTo = cols[toIndex].text;
-                    MasterApp.section.updateColumn(dataIndexFrom, dataIndexTo);
                     var grid = view.grid;
+                    var cols = grid.getView().getHeaderCt().getGridColumns();
+                    var nameIndexFrom = column.text;
+                    var nameIndexTo = _this.getNameIndexTo(cols, nameIndexFrom);
+                    MasterApp.section.updateColumn(nameIndexFrom, nameIndexTo);
                     var container = grid.up('panel');
                     var gridTotal = container.items.items[1];
                     if (gridTotal.getHeight() > 0) {
@@ -65,9 +64,24 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                     }
                     var newColumns = grid.getView().getHeaderCt().getGridColumns();
                     MasterApp.gridtotal.reconfigure(gridTotal, newColumns);
-                }
+                },
             }
         });
+    },
+
+    getNameIndexTo: function (columns, name) {
+        var nameTo = '';
+        for (var i = 0; i < columns.length; i++) {
+            if (columns[i].text === name) {
+                if (i === 0) {
+                    nameTo = columns[i + 1].text;
+                } else {
+                    nameTo = columns[i - 1].text;
+                }
+                break;
+            }
+        }
+        return nameTo;
     },
 
     getStore: function (columns, data) {
@@ -289,5 +303,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                 return true;
             }
         });
-    }
-})
+    },
+
+
+});
