@@ -54,7 +54,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                     var grid = view.grid;
                     var cols = grid.getView().getHeaderCt().getGridColumns();
                     var nameIndexFrom = column.text;
-                    var nameIndexTo = _this.getNameIndexTo(cols, nameIndexFrom);
+                    var nameIndexTo = _this.getNameIndexTo(cols, nameIndexFrom, fromIndex, toIndex);
                     MasterApp.section.updateColumn(nameIndexFrom, nameIndexTo);
                     var container = grid.up('panel');
                     var gridTotal = container.items.items[1];
@@ -69,14 +69,19 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
         });
     },
 
-    getNameIndexTo: function (columns, name) {
+    getNameIndexTo: function (columns, name, fromIndex, toIndex) {
         var nameTo = '';
         for (var i = 0; i < columns.length; i++) {
             if (columns[i].text === name) {
                 if (i === 0) {
                     nameTo = columns[i + 1].text;
                 } else {
-                    nameTo = columns[i - 1].text;
+                    if (fromIndex < toIndex) {
+                        nameTo = columns[i - 1].text;
+                    } else {
+                        nameTo = columns[i + 1].text;
+
+                    }
                 }
                 break;
             }
@@ -90,7 +95,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             array.push(columns[i].text);
         }
         return array;
-    },
+    }
+    ,
 
     getStore: function (columns, data) {
         var data = (data) ? data : new Array();
@@ -107,7 +113,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             data: data
         })
         return store;
-    },
+    }
+    ,
 
     getColumns: function (cols) {
         cols = (cols) ? cols : new Array();
@@ -273,7 +280,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             }
         }
         return columns;
-    },
+    }
+    ,
 
     eventMoveRow: function (comp, gridView, gridStore) {
         var body = comp.body;
@@ -311,7 +319,8 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                 return true;
             }
         });
-    },
+    }
+    ,
 
 
 });
