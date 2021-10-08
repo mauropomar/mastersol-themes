@@ -787,7 +787,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             method: 'POST',
             scope: this,
             params: {
-                idsection:idsection,
+                idsection: idsection,
                 idfirst: recordDrag.data.id,
                 idsecond: recordDrop.data.id
             },
@@ -795,7 +795,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
                     Ext.toast(json.datos);
-                }else{
+                } else {
                     Ext.Msg.show({
                         title: 'Informaci&oacute;n',
                         msg: json.datos,
@@ -808,21 +808,22 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         Ext.Ajax.request(save);
     },
 
-    updateColumn:function(fields){
+    updateColumn: function (fromIndex, toIndex) {
         var idsection = MasterApp.util.getIdSectionActive();
         var save = {
             url: 'app/updatecolumn',
             method: 'POST',
             scope: this,
             params: {
-                idsection:idsection,
-                namex: fields.join(',')
+                idsection: idsection,
+                idfirst: fromIndex,
+                idsecond: toIndex
             },
             callback: function (options, success, response) {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
                     Ext.toast(json.datos);
-                }else{
+                } else {
                     Ext.Msg.show({
                         title: 'Informaci&oacute;n',
                         msg: json.datos,
@@ -834,4 +835,4 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         };
         Ext.Ajax.request(save);
     }
-})
+});
