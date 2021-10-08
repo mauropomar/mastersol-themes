@@ -2019,9 +2019,9 @@ const updateOrder = async (req) => {
 
 const updateColumn = async (req) => {
 
-    const params_order = [req.body.idsection, req.body.idfirst, req.body.idsecond]
+    const params_order = [req.body.idsection, req.body.namex]
 
-    const query = "SELECT cfgapl.fn_update_column($1,$2,$3)"
+    const query = "SELECT cfgapl.fn_update_column($1,$2)"
     const result = await pool.executeQuery(query, params_order)
     if (result.success === false) {
         return 'ERROR: '+result.message
