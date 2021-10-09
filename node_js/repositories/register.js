@@ -222,7 +222,7 @@ const getParamsUpdate = (req, objects) => {
                 valuesInsertAux.push(item.field + " = '{" + item.valor + "}'")
             } else if (item.tipo === 'array' && !objects.enum_datatype.isTypeString(item.real_name_in)) {
                 valuesInsertAux.push(item.field + " = {" + item.valor + "}")
-            } else if (item.tipo === 'string') {
+            } else if (item.tipo === 'string' || item.tipo === 'bytea') {
                 valuesInsertAux.push(item.field + " = '" + item.valor + "'")
             } else if (item.tipo === 'boolean') {
                 valor = item.valor ? 'true' : 'false';

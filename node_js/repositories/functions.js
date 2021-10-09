@@ -377,7 +377,6 @@ const executeFunctionsButtons = async (req, objects) => {
                             const legend = resultGraphic.rows[0].fn_get_register[0].show_legend
                             const pos_legend = resultGraphic.rows[0].fn_get_register[0].legend_pos
 							const sql_label = resultGraphic.rows[0].fn_get_register[0].sql_label
-                            console.log('Result con params: ',result)
                             result = {'btn': idbutton, 'type': 7, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
                             flagResult = true
                         }
