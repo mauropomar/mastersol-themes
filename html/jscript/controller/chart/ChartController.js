@@ -1,7 +1,7 @@
 Ext.define('MasterSol.controller.chart.ChartController', {
     extend: 'Ext.app.Controller',
     jsonData: null,
-    type:'column',
+    type: 'column',
     init: function () {
 
     },
@@ -31,7 +31,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         }
     },
 
-    printChart:function(ext){
+    printChart: function (ext) {
         var type = this.type;
         if (type === 'column') {
             MasterApp.getController('MasterSol.controller.chart.ColumnChartController').fireEventPrint(ext);
@@ -52,10 +52,14 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         json['fields'] = MasterApp.util.getObjectKey(json.value);
         json['legend'] = this.getLegend(json);
         this.jsonData = json;
+        var id =  Math.random();
         Ext.create('MasterSol.view.chart.WindowChart', {
             id: 'window_chart',
-            title: json.name
+            title: json.name,
+            idmenu: id
         });
+        json['id'] = id;
+        this.addWindow(json);
     },
 
     cancel: function () {
@@ -83,6 +87,50 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         link.setAttribute("href", base64);
         link.setAttribute("download", fileName);
         link.click();
+    },
+
+    minimize: function (button, evt, toolEl, owner, tool) {
+        var window = owner.up('window');
+        window.collapse();
+        window.isminimize = true;
+        window.attributes.width = window.getWidth();
+        window.attributes.height = window.getHeight();
+        window.attributes.posX = window.getX();
+        window.attributes.posY = window.getY();
+        window.setWidth(300);
+        button.hide();
+        var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
+        btn.show();
+        MasterApp.theme.setHeaderHeightWindowCollpase(window);
+        MasterApp.section.setPositionWindow(window);
+    },
+
+    restore: function (button, evt, toolEl, owner, tool) {
+        var window = owner.up('window');
+        button.hide();
+        button.previousSibling().show();
+        var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
+        btn.hide();
+        btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
+        btn.show();
+        window.expand('', false);
+        window.toFront();
+        window.setWidth(window.attributes.width);
+        window.setHeight(window.attributes.height);
+        window.setPosition(window.attributes.posX, window.attributes.posY);
+        window.isminimize = false;
+    },
+
+    addWindow: function (menu) {
+        var combo = Ext.ComponentQuery.query('#combowindow')[0];
+        var store = combo.getStore();
+        var count = store.getCount();
+        var rec = new MasterSol.model.layout.WindowModel({
+            id: menu.id,
+            name: menu.name,
+            type: 'chart'
+        });
+        store.insert(count, rec);
     }
 
 });

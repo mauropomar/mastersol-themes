@@ -5,15 +5,42 @@ Ext.define('MasterSol.view.chart.WindowChart', {
     extend: 'Ext.window.Window',
     xtype: 'window-chart',
     closable: true,
+    name: 'window-menu',
+    idmenu: '',
+    isminimize: false,
+    attributes: {
+        posX: 0,
+        posY: 0,
+        width: 0,
+        height: 0
+    },
     closeAction: 'destroy',
     height: '80%',
     width: '50%',
-    modal: true,
     layout: 'fit',
     autoShow: true,
     requires: [
         'MasterSol.view.chart.ColumnChart',
     ],
+    tools: [{
+        type: 'minimize',
+        tooltip: 'Minimizar',
+        default: true,
+        name: 'btn_minimize',
+        handler: function (evt, toolEl, owner, tool) {
+            MasterApp.getController('MasterSol.controller.chart.ChartController').minimize(this, evt, toolEl, owner, tool);
+        },
+    }, {
+        iconCls: 'fa fa-expand',
+        hidden: true,
+        tooltip: 'Restaurar',
+        default: true,
+        name: 'btn_restore',
+        handler: function (evt, toolEl, owner, tool) {
+            MasterApp.getController('MasterSol.controller.chart.ChartController').restore(this, evt, toolEl, owner, tool);
+
+        }
+    }],
     items: [{
         xtype: 'panel',
         layout: 'fit',
@@ -72,7 +99,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                 handler: function () {
                     MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('radar');
                 }
-            }, '->',{
+            }, '->', {
                 text: 'Guardar',
                 iconCls: 'fa fa-save',
                 xtype: 'splitbutton',
@@ -82,14 +109,14 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                     handler: function () {
                         MasterApp.getController('MasterSol.controller.chart.ChartController').printChart('png');
                     }
-                },{
+                }, {
                     text: 'JPG',
                     iconCls: 'fa fa-image',
                     handler: function () {
                         MasterApp.getController('MasterSol.controller.chart.ChartController').printChart('jpg');
                     }
                 }]
-            },{
+            }, {
                 xtype: 'button',
                 text: 'Cancelar',
                 iconCls: 'fa fa-close',
@@ -99,5 +126,10 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                 }
             }]
         }]
-    }]
+    }],
+    listeners: {
+        close: function (window) {
+            MasterApp.footer.removeWindowCombo(window);
+        }
+    }
 });

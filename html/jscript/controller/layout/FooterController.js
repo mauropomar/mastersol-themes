@@ -62,13 +62,29 @@ Ext.define('MasterSol.controller.layout.FooterController', {
             combo.reset();
         },
 
+    selectWindowChart: function (combo, record) {
+        var window = Ext.ComponentQuery.query('window[idmenu='+record.data.id+']')[0];
+        var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
+        btn.hide();
+        btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
+        btn.show();
+        window.expand('', false);
+        window.setWidth(window.attributes.width);
+        window.setHeight(window.attributes.height);
+        window.setPosition(window.attributes.posX, window.attributes.posY);
+        window.isminimize = false;
+        window.toFront();
+        combo.reset();
+    },
+
         addWindow: function (menu) {
             var combo = Ext.ComponentQuery.query('#combowindow')[0];
             var store = combo.getStore();
             var count = store.getCount();
             var rec = new MasterSol.model.layout.WindowModel({
                 id: menu.id,
-                name: menu.name
+                name: menu.name,
+                type:'section'
             });
             store.insert(count, rec);
         }

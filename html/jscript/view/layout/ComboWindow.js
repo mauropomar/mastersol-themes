@@ -34,7 +34,11 @@ Ext.define('MasterSol.view.layout.ComboWindow', {
     emptyText: 'Seleccione una ventana...',
     listeners:{
         select:function(combo, record){
+            if(record.data.type === 'section')
             MasterApp.footer.selectWindow(combo, record);
+            else
+                MasterApp.footer.selectWindowChart(combo, record);
+
         }
     }
 })

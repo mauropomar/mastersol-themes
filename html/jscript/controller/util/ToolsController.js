@@ -100,7 +100,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
 
     //devuelve un boton del tool de la ventana especifico
     getBtnTools: function (comp, text) {
-        var tools = (comp.xtype === 'window-menu') ? comp.tools : comp.up('window').tools;
+        var tools = (comp.name === 'window-menu') ? comp.tools : comp.up('window').tools;
         var btn;
         for (var j = 0; j < tools.length; j++) {
             if (tools[j].name == text)
