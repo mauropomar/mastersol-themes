@@ -582,7 +582,8 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         reader.onload = function (evt) {
             var result = evt.target.result;
             rec.set('valor', result);
+            rec.save();
             comp.hide();
-        }
+        };
     }
 })

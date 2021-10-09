@@ -12,7 +12,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
             if (value == '' || value == null) {
                 return '';
             } else {
-                return 'Imagen Seleccionada';
+                return '<i class="fa fa-image"></i>';;
             }
         }
         if (record.data.tipo == 'boolean') {

@@ -36,7 +36,7 @@ Ext.define('MasterSol.view.layout.DataView', {
             '<tpl for=".">',
             '<div class="x-center-principal">',
             '<div class="x-image-principal">',
-            '<img style="width:100%;height:110px" src="../../../../html/assets/icon/images.jpg" />',
+            '<img style="width:100%;height:110px" src={icon} />',
             '</div>',
             '<div class="x-body-principal">',
             '<span class="principal-name center-text" style="color: black;font-size: 13px">{nombre}</span>',
