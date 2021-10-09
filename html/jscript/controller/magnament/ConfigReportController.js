@@ -138,7 +138,6 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
                         return;
                     }
                     if (json.type === 7) {
-                        extraParams = MasterApp.tools.getExtraParams();
                         MasterApp.getController('MasterSol.controller.chart.ChartController').showWindow(json);
                     }
                 } else {
@@ -448,5 +447,12 @@ Ext.define('MasterSol.controller.magnament.ConfigReportController', {
         var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
         var activeTab = tabMagnament.getActiveTab();
         return (activeTab.xtype === 'config-report-view');
+    },
+
+    resetReport:function(){
+        var tabMagnament = Ext.ComponentQuery.query('#tabmagnament')[0];
+        tabMagnament.child('#config-report-view').tab.hide();
+        MasterApp.report.buttonReport = {};
+        this.removeAll();
     }
 });

@@ -147,6 +147,10 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success) {
                     if (json.type === 4) {
+                        if(button.id === MasterApp.report.buttonReport.id){
+                            this.callGenerateReport(params, json);
+                            return;
+                        }
                         tabMagnament.show();
                         tabMagnament.setActiveTab(6);
                         tabMagnament.expand(false);
@@ -155,10 +159,14 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         MasterApp.report.loadValues(json.value, button);
                     }
                     if (json.type === 5) {
-                        var extraParams = MasterApp.tools.getExtraParams();
-                        MasterApp.report.generateReport(params, json.value, json.name, extraParams);
+                        this.callGenerateReport(params, json);
+                        return;
                     }
                     if (json.type === 6) {
+                        if(button.id === MasterApp.report.buttonReport.id){
+                            MasterApp.getController('MasterSol.controller.chart.ChartController').showWindow(json);
+                            return;
+                        }
                         tabMagnament.show();
                         tabMagnament.setActiveTab(6);
                         tabMagnament.expand(false);
@@ -181,6 +189,12 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         };
         Ext.Ajax.request(execute);
     },
+
+    callGenerateReport:function(json, params){
+        var extraParams = MasterApp.tools.getExtraParams();
+        MasterApp.report.generateReport(params, json.value, json.name, extraParams);
+    },
+
 
     showButtonsNotDefault: function (window, show) {
         var tools = window.tools;

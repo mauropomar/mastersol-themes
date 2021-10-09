@@ -156,6 +156,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
             tabMagnament.hide();
             tabMagnament.collapse();
             tabMagnament.setActiveTab(0);
+            MasterApp.report.resetReport();
         }
     },
 
