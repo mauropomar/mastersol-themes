@@ -213,7 +213,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         btn.show();
         var arrayBtn = ['btn_minimize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print'];
         MasterApp.tools.setVisibleBtn(window, arrayBtn, false);
-        this.adjustOtherWindowsMinimize();
+      //  this.adjustOtherWindowsMinimize();
         var panel = Ext.ComponentQuery.query('#panel-center')[0];
         MasterApp.util.resizeWindow(window, panel);
         MasterApp.tools.showButtonsNotDefault(window, true);
@@ -257,7 +257,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             Ext.ComponentQuery.query('#btnEnColumns')[0].setDisabled(true);
             Ext.ComponentQuery.query('#btnEnCascade')[0].setDisabled(true);
         }
-        this.adjustOtherWindowsMinimize();
+   //     this.adjustOtherWindowsMinimize();
         this.adjustOtherWindowsMaximize();
         this.removeOfArrayGlobals(window);
     },
@@ -280,35 +280,32 @@ Ext.define('MasterSol.controller.menu.SectionController', {
 
     //posicionar ventana minimizada
     setPositionWindow: function (win) {
-        var windows = Ext.ComponentQuery.query('window[name=window-menu]');
-        var cant = 0;
+        var posX = 0,
+            posY = 0,
+            cant = 0,
+            i = 1;
+        rest = (MasterApp.theme.isShortTheme()) ? 25 : 30,
+            windows = Ext.ComponentQuery.query('window[name=window-menu]');
         for (var j = 0; j < windows.length; j++) {
             if (windows[j].collapsed) {
                 cant++;
-                if (cant == 1)
-                    this.posYFirts = windows[j].getY();
+                i = (cant == 1 || cant == 5 || cant == 9 || cant == 13) ? 0 : i + 1;
+                posX = (cant == 1 || cant == 5 || cant == 9 || cant == 13) ? 0 : i * 300;
+                windows[j].setX(posX);
+                if (cant >= 5 && cant <= 8) {
+                    posY =  windows[0].getY() - rest;
+                    windows[j].setY(posY);
+                }
+                if (cant >= 9 && cant <= 11) {
+                    posY =  windows[4].getY() - rest;
+                    windows[j].setY(posY);
+                }
+                if (cant >= 12 && cant <= 15) {
+                    posY =  windows[8].getY() - rest;
+                    windows[j].setY(posY);
+                }
             }
-
         }
-        var posX = (cant == 1) ? 0 : (cant - 1) * 300;
-        if (cant < 5) {
-            win.setX(posX);
-            return;
-        }
-        ;
-        if (cant < 10) {
-            var posX = (cant == 5) ? 0 : (cant - 5) * 300;
-            var posY = this.posYFirts - 50;
-            win.setPosition(posX, posY);
-            return;
-        }
-        ;
-        if (cant < 15) {
-            var posX = (cant == 5) ? 0 : (cant - 10) * 300;
-            var posY = this.posYFirts - 100;
-            win.setPosition(posX, posY);
-        }
-        ;
     },
     //reorganiza las otras ventanas minimizadas
     adjustOtherWindowsMinimize: function () {
@@ -322,7 +319,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 windows[j].setY(this.posYFirts);
             }
         }
-    },
+    }
+    ,
     //reorganiza las otras ventanas maximizadas
     adjustOtherWindowsMaximize: function () {
         var windows = Ext.ComponentQuery.query('window-menu[isminimize=false]');
@@ -337,7 +335,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 MasterApp.header.applyColumns();
             }
         }
-    },
+    }
+    ,
 
     // le pone el mismo ancho de la columna al grid de totales
     columnresize: function (ct, column, width, eOpts) {
@@ -351,7 +350,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 break;
             }
         }
-    },
+    }
+    ,
 
     deleteRow: function (button, window) {
         var gridsection = MasterApp.globals.getGridSection();
@@ -414,7 +414,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 Ext.Ajax.request(remove);
             }
         }, this);
-    },
+    }
+    ,
     //despues de eliminar una fila de una seccion deshabilitar las secciones dependientes.
     afterDelete: function () {
         MasterApp.magnament.cleanAll();
@@ -432,7 +433,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 }
             }
         }
-    },
+    }
+    ,
 
     //recargar section
     reloadSectionPrincipal: function (grid) {
@@ -460,7 +462,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             }
         };
         Ext.Ajax.request(load);
-    },
+    }
+    ,
 
     getDataSection: function (idrecordparent, newCard) {
         var mask = new Ext.LoadMask(newCard, {
@@ -490,7 +493,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             }
         };
         Ext.Ajax.request(getData);
-    },
+    }
+    ,
     // Evento para capturar el click en el cuerpo de la sesion principal
     addEventClickSectionPrincipal: function (panel) {
         var comp = panel.getEl();
@@ -510,7 +514,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             MasterApp.tools.setButtons();
             MasterApp.util.setStyleWindow(grid);
         });
-    },
+    }
+    ,
 
 // funcion para capturar el click en el tab seleccionados para tenerlo como referencia
     addEventClickTabSection: function (tabPanel, containerSection) {
@@ -518,7 +523,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         this.onClickTab(tabPanel);
         this.onClickSection(comp);
         this.onDoubleClickTab(tabPanel);
-    },
+    }
+    ,
 // Evento para capturar el click en el tab de las sesion
     onClickTab: function (tabPanel) {
         var comp = tabPanel.tabBar.getEl();
@@ -537,7 +543,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 return false;
             }
         }, comp);
-    },
+    }
+    ,
 // Evento para capturar el click en el cuerpo de las sesion
     onClickSection: function (comp) {
         comp.on('click', function (e) {
@@ -778,7 +785,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 limit: 30
             }
         }
-    },
+    }
+    ,
 
     updateRowOrder: function (recordDrag, recordDrop) {
         var idsection = MasterApp.util.getIdSectionActive();
@@ -806,7 +814,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             }
         };
         Ext.Ajax.request(save);
-    },
+    }
+    ,
 
     updateColumn: function (fields) {
         var idsection = MasterApp.util.getIdSectionActive();
