@@ -16,6 +16,7 @@ const getForeignkey = async (req) => {
 
 const insertRegister = async (req, objects) => {
     const params_insert = await getParamsInsert(req, objects)
+    console.log(params_insert)
     const query = "SELECT cfgapl.fn_insert_register($1,$2,$3,$4,$5,$6)"
     const result = await pool.executeQuery(query, params_insert)
     if (result.success === false) {

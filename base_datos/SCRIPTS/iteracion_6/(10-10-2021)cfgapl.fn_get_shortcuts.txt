@@ -1,0 +1,27 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_shortcuts()
+RETURNS json AS
+$$
+declare
+result json;
+begin
+  
+ SELECT json_agg(dat.*) INTO result FROM 
+ ( SELECT st.id,st.namex as nombre,encode(st.s_imagen, 'escape') as icon,m.id_section as "sectionId"
+   FROM cfgapl.shortcut st
+   JOIN cfgapl.menu m on(st.id_menu = m.id) 
+   UNION ALL
+   SELECT st1.id,st1.namex as nombre,encode(st1.s_imagen, 'escape') as icon,m1.id_section as "sectionId"
+   FROM cfgapl.shortcut st1
+   JOIN cfgapl.menu_cfg m1 on(st1.id_menu_cfg = m1.id) 
+ )dat; 
+  
+  return result;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_shortcuts()
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_get_shortcuts()
+  IS 'Direct accesses app';
