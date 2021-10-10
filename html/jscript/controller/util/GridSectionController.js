@@ -94,12 +94,11 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             array.push(columns[i].text);
         }
         return array;
-    }
-    ,
+    },
 
     getStore: function (columns, data) {
-        var data = (data) ? data : new Array();
-        columns = (columns) ? columns : new Array();
+        var dat = (data) ? data : [];
+        columns = (columns) ? columns : [];
         var fields = [];
 
         for (var i = 0; i < columns.length; i++) {
@@ -109,210 +108,101 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
         var store = Ext.create('Ext.data.Store', {
             alias: 'store.store_dinamic',
             fields: fields,
-            data: data
-        })
+            data: dat
+        });
         return store;
-    }
-    ,
+    },
 
     getColumns: function (cols) {
-        cols = (cols) ? cols : new Array();
-        var columns = [];
+        cols = (cols) ? cols : [];
+        var columns = [],
+            filter = {},
+            renderer = null,
+            xtype = 'gridcolumn';
         for (var i = 0; i < cols.length; i++) {
             if (!cols[i].hidden) {
+                xtype = 'gridcolumn';
+                filter = {};
+                renderer = null;
                 if (cols[i].type === 'boolean') {
-                    columns.push({
-                        xtype: 'checkcolumn',
-                        dataIndex: MasterApp.util.getDataIndex(cols[i]),
-                        width: cols[i].width,
-                        text: cols[i].text,
-                        align: cols[i].align,
-                        functions: cols[i].funcion,
-                        type: cols[i].type,
-                        sortable: cols[i].sortable,
-                        lockable: cols[i].lockout,
-                        locked: cols[i].lockout,
-                        idregister: cols[i].idregister,
-                        audit: cols[i].auditable,
-                        required: cols[i].required,
-                        id_datatype: cols[i].id_datatype,
-                        real_name_in: cols[i].real_name_in,
-                        n_column: cols[i].n_column,
-                        real_name_out: cols[i].real_name_out,
-                        link_parent: cols[i].link_parent,
-                        draggable: !cols[i].no_move,
-                        fk: cols[i].fk,
-                        filter: {
-                            type: 'boolean',
-                            yesText: 'Verdadero',
-                            noText: 'Falso'
-                        }
-                    })
-                }
-                ;
-                if (cols[i].type === 'number') {
-                    columns.push({
-                        dataIndex: MasterApp.util.getDataIndex(cols[i]),
-                        width: cols[i].width,
-                        text: cols[i].text,
-                        align: cols[i].align,
-                        functions: cols[i].funcion,
-                        type: cols[i].type,
-                        sortable: cols[i].sortable,
-                        lockable: cols[i].lockout,
-                        locked: cols[i].lockout,
-                        idregister: cols[i].idregister,
-                        audit: cols[i].auditable,
-                        align: 'right',
-                        required: cols[i].required,
-                        id_datatype: cols[i].id_datatype,
-                        real_name_in: cols[i].real_name_in,
-                        real_name_out: cols[i].real_name_out,
-                        n_column: cols[i].n_column,
-                        link_parent: cols[i].link_parent,
-                        fk: cols[i].fk,
-                        draggable: !cols[i].no_move,
-                        filter: {
+                    xtype = 'checkcolumn';
+                    filter = {
+                        type: 'boolean',
+                        yesText: 'Verdadero',
+                        noText: 'Falso'
+                    };
+                } else {
+                    if (cols[i].type === 'number' || cols[i].type === 'string') {
+                        filter = {
                             type: 'number',
                             emptyText: 'Instroduzca un ' + cols[i].text + '.'
-                        }
-                    })
-                }
-                if (cols[i].type === 'string') {
-                    columns.push({
-                        dataIndex: MasterApp.util.getDataIndex(cols[i]),
-                        width: cols[i].width,
-                        text: cols[i].text,
-                        // align: cols[i].align,
-                        functions: cols[i].funcion,
-                        type: cols[i].type,
-                        sortable: cols[i].sortable,
-                        lockable: cols[i].lockout,
-                        locked: cols[i].lockout,
-                        idregister: cols[i].idregister,
-                        audit: cols[i].auditable,
-                        required: cols[i].required,
-                        align: 'left',
-                        id_datatype: cols[i].id_datatype,
-                        real_name_in: cols[i].real_name_in,
-                        real_name_out: cols[i].real_name_out,
-                        n_column: cols[i].n_column,
-                        link_parent: cols[i].link_parent,
-                        fk: cols[i].fk,
-                        orderable: cols[i].orderable,
-                        draggable: !cols[i].no_move,
-                        filter: {
-                            type: 'string',
-                            emptyText: 'Instroduzca un ' + cols[i].text + '.'
-                        }
-                    });
-                }
-                if (cols[i].type === 'array') {
-                    columns.push({
-                        dataIndex: MasterApp.util.getDataIndex(cols[i]),
-                        width: cols[i].width,
-                        text: cols[i].text,
-                        // align: cols[i].align,
-                        functions: cols[i].funcion,
-                        type: cols[i].type,
-                        sortable: cols[i].sortable,
-                        lockable: cols[i].lockout,
-                        locked: cols[i].lockout,
-                        idregister: cols[i].idregister,
-                        audit: cols[i].auditable,
-                        required: cols[i].required,
-                        align: 'left',
-                        id_datatype: cols[i].id_datatype,
-                        real_name_in: cols[i].real_name_in,
-                        real_name_out: cols[i].real_name_out,
-                        n_column: cols[i].n_column,
-                        link_parent: cols[i].link_parent,
-                        fk: cols[i].fk,
-                        orderable: cols[i].orderable,
-                        draggable: !cols[i].no_move,
-                        filter: {
-                            type: 'list'
-                        }
-                    })
-                }
-                if (cols[i].type === 'date' || cols[i].type === 'datetime') {
-                    columns.push({
-                        dataIndex: MasterApp.util.getDataIndex(cols[i]),
-                        width: cols[i].width,
-                        text: cols[i].text,
-                        //  align: cols[i].align,
-                        functions: cols[i].funcion,
-                        type: cols[i].type,
-                        sortable: cols[i].sortable,
-                        lockable: cols[i].lockout,
-                        locked: cols[i].lockout,
-                        idregister: cols[i].idregister,
-                        audit: cols[i].auditable,
-                        required: cols[i].required,
-                        align: 'left',
-                        id_datatype: cols[i].id_datatype,
-                        real_name_in: cols[i].real_name_in,
-                        real_name_out: cols[i].real_name_out,
-                        n_column: cols[i].n_column,
-                        link_parent: cols[i].link_parent,
-                        fk: cols[i].fk,
-                        orderable: cols[i].orderable,
-                        draggable: !cols[i].no_move,
-                        filter: {
-                            type: 'date',
-                            beforeText: 'Antes',
-                            afterText: 'Déspues',
-                            onText: '='
-                        },
-                        renderer: function (value, record) {
-                            if (value != null) {
-                                var idx = value.indexOf('T');
-                                if (idx > -1) {
-                                    var date = new Date(value);
-                                    return Ext.Date.format(date, 'd/m/Y H:i:s');
+                        };
+                    } else {
+                        if (cols[i].type === 'array') {
+                            filter = {
+                                type: 'list'
+                            };
+                        } else {
+                            if (cols[i].type === 'date' || cols[i].type === 'datetime') {
+                                filter = {
+                                    type: 'date',
+                                    beforeText: 'Antes',
+                                    afterText: 'Déspues',
+                                    onText: '='
+                                };
+                                renderer = function (value, record) {
+                                    if (value != null) {
+                                        var idx = value.indexOf('T');
+                                        if (idx > -1) {
+                                            var date = new Date(value);
+                                            return Ext.Date.format(date, 'd/m/Y H:i:s');
+                                        }
+                                    }
+                                    return value;
+                                };
+                            } else {
+                                if (cols[i].type === 'bytea') {
+                                    filter = {
+                                        type: 'string',
+                                        emptyText: 'Instroduzca un ' + cols[i].text + '.'
+                                    };
+                                    renderer = function (value) {
+                                        return (value !== '' && value !== null) ? '<i class="fa fa-image"></i>' : value;
+                                    };
                                 }
                             }
-                            return value;
                         }
-                    })
-                }
-                if (cols[i].type === 'bytea') {
-                    columns.push({
-                        dataIndex: MasterApp.util.getDataIndex(cols[i]),
-                        width: cols[i].width,
-                        text: cols[i].text,
-                        //  align: cols[i].align,
-                        functions: cols[i].funcion,
-                        type: cols[i].type,
-                        sortable: cols[i].sortable,
-                        lockable: cols[i].lockout,
-                        locked: cols[i].lockout,
-                        idregister: cols[i].idregister,
-                        audit: cols[i].auditable,
-                        required: cols[i].required,
-                        align: 'left',
-                        id_datatype: cols[i].id_datatype,
-                        real_name_in: cols[i].real_name_in,
-                        real_name_out: cols[i].real_name_out,
-                        n_column: cols[i].n_column,
-                        link_parent: cols[i].link_parent,
-                        fk: cols[i].fk,
-                        orderable: cols[i].orderable,
-                        draggable: !cols[i].no_move,
-                        filter: {
-                            type: 'string',
-                            emptyText: 'Instroduzca un ' + cols[i].text + '.'
-                        },
-                        renderer: function (value) {
-                            return (value !== '' && value !== null) ? '<i class="fa fa-image"></i>' : value;
-                        }
-                    })
+                    }
                 }
             }
+            var obj = {
+                xtype: xtype,
+                dataIndex: MasterApp.util.getDataIndex(cols[i]),
+                width: cols[i].width,
+                text: cols[i].text,
+                align: cols[i].align,
+                functions: cols[i].funcion,
+                type: cols[i].type,
+                sortable: cols[i].sortable,
+                lockable: cols[i].lockout,
+                locked: cols[i].lockout,
+                idregister: cols[i].idregister,
+                audit: cols[i].auditable,
+                required: cols[i].required,
+                id_datatype: cols[i].id_datatype,
+                real_name_in: cols[i].real_name_in,
+                n_column: cols[i].n_column,
+                real_name_out: cols[i].real_name_out,
+                link_parent: cols[i].link_parent,
+                draggable: !cols[i].no_move,
+                fk: cols[i].fk,
+                filter: filter,
+                renderer: renderer
+            };
+            columns.push(obj);
         }
         return columns;
-    }
-    ,
+    },
 
     eventMoveRow: function (comp, gridView, gridStore) {
         var body = comp.body;
@@ -351,8 +241,4 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             }
         });
     }
-    ,
-
-
-})
-;
+});
