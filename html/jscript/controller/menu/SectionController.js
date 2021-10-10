@@ -226,6 +226,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         winWidth = window.getWidth();
         winHeight = window.getHeight();
         window.setWidth(300);
+        window.toBack();
         button.hide();
         MasterApp.theme.setHeaderHeightWindowCollpase(window);
         this.setPositionWindow(window);

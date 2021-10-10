@@ -98,6 +98,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         window.attributes.posX = window.getX();
         window.attributes.posY = window.getY();
         window.setWidth(300);
+        window.toBack();
         button.hide();
         var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
         btn.show();
