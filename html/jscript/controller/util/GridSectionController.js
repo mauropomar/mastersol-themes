@@ -178,7 +178,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         }
                     })
                 }
-                if (cols[i].type === 'string' || cols[i].type === 'bytea') {
+                if (cols[i].type === 'string') {
                     columns.push({
                         dataIndex: MasterApp.util.getDataIndex(cols[i]),
                         width: cols[i].width,
@@ -205,7 +205,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                             type: 'string',
                             emptyText: 'Instroduzca un ' + cols[i].text + '.'
                         }
-                    })
+                    });
                 }
                 if (cols[i].type === 'array') {
                     columns.push({
@@ -276,6 +276,38 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                         }
                     })
                 }
+                if (cols[i].type === 'bytea') {
+                    columns.push({
+                        dataIndex: MasterApp.util.getDataIndex(cols[i]),
+                        width: cols[i].width,
+                        text: cols[i].text,
+                        //  align: cols[i].align,
+                        functions: cols[i].funcion,
+                        type: cols[i].type,
+                        sortable: cols[i].sortable,
+                        lockable: cols[i].lockout,
+                        locked: cols[i].lockout,
+                        idregister: cols[i].idregister,
+                        audit: cols[i].auditable,
+                        required: cols[i].required,
+                        align: 'left',
+                        id_datatype: cols[i].id_datatype,
+                        real_name_in: cols[i].real_name_in,
+                        real_name_out: cols[i].real_name_out,
+                        n_column: cols[i].n_column,
+                        link_parent: cols[i].link_parent,
+                        fk: cols[i].fk,
+                        orderable: cols[i].orderable,
+                        draggable: !cols[i].no_move,
+                        filter: {
+                            type: 'string',
+                            emptyText: 'Instroduzca un ' + cols[i].text + '.'
+                        },
+                        renderer: function (value) {
+                            return (value !== '' && value !== null) ? '<i class="fa fa-image"></i>' : value;
+                        }
+                    })
+                }
             }
         }
         return columns;
@@ -322,4 +354,5 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
     ,
 
 
-});
+})
+;
