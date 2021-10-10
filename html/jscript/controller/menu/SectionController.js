@@ -50,7 +50,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
         return false;
     },
 
-    clickSection: function (grid, td, cellIndex, record,tr, rowIndex, e, eOpts) {
+    clickSection: function (grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
         e.stopEvent();
         MasterApp.globals.setGridSection(grid.panel);
         var index = grid.panel.getStore().findExact('id', record.getId());
@@ -504,6 +504,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     addEventClickSectionPrincipal: function (panel) {
         var comp = panel.getEl();
         comp.on('click', function (e) {
+            e.stopEvent();
             if (e.event.target.dataset.ref == 'triggerEl')
                 return false;
             var idpanel = this.id;
@@ -534,6 +535,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     onClickTab: function (tabPanel) {
         var comp = tabPanel.tabBar.getEl();
         comp.on('click', function (e) {
+            e.stopEvent();
             if (!e.event.target.dataset.ref || e.event.target.dataset.ref == 'triggerEl')
                 return false;
             var tabpanel = Ext.ComponentQuery.query('#' + this.id)[0].up('tabpanel');
@@ -553,6 +555,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
 // Evento para capturar el click en el cuerpo de las sesion
     onClickSection: function (comp) {
         comp.on('click', function (e) {
+            e.stopEvent();
             if (!e.event.target.dataset.ref || e.event.target.dataset.ref == 'triggerEl')
                 return false;
             var tabpanel = Ext.ComponentQuery.query('#' + this.id)[0];

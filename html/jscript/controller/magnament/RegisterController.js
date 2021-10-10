@@ -394,7 +394,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             floating: true,
             hasFocus: true,
             name: 'file_editor',
-        //    width: 30,
+            //    width: 30,
             x: pos[0] + 100,
             y: pos[1],
             buttonConfig: {
@@ -403,9 +403,9 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 tooltip: 'Subir archivo',
             },
             listeners: {
-                scope:this,
+                scope: this,
                 change: function (view) {
-                   this.selectImageBytea(view, rec, edit);
+                    this.selectImageBytea(view, edit);
                 },
                 blur: function () {
                     edit.hide();
@@ -566,7 +566,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         });
     },
 
-    selectImageBytea: function (view, rec, comp) {
+    selectImageBytea: function (view, comp) {
         var file = view.fileInputEl.el.dom.files[0];
         if (!MasterApp.util.isFileImage(file)) {
             Ext.MessageBox.show({
@@ -579,10 +579,11 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         }
         var reader = new FileReader();
         reader.readAsDataURL(file);
+        var grid = Ext.ComponentQuery.query('#register-view')[0];
+        var record = grid.getSelectionModel().getSelection()[0];
         reader.onload = function (evt) {
             var result = evt.target.result;
-            rec.set('valor', result);
-            rec.save();
+            record.set('valor', result);
             comp.hide();
         };
     }

@@ -130,6 +130,11 @@ Ext.define('MasterSol.view.chart.WindowChart', {
     listeners: {
         close: function (window) {
             MasterApp.footer.removeWindowCombo(window);
+        },
+        afterrender: function (win) {
+            win.header.el.on('dblclick', function () {
+                MasterApp.getController('MasterSol.controller.chart.ChartController').dblClickHeader(win);
+            });
         }
     }
 });

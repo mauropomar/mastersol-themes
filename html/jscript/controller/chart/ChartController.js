@@ -132,6 +132,35 @@ Ext.define('MasterSol.controller.chart.ChartController', {
             type: 'chart'
         });
         store.insert(count, rec);
-    }
+    },
 
+    dblClickHeader: function (window) {
+        if (!window.isminimize) {
+            window.collapse();
+            window.isminimize = true;
+            window.attributes.width = window.getWidth();
+            window.attributes.height = window.getHeight();
+            window.attributes.posX = window.getX();
+            window.attributes.posY = window.getY();
+            window.setWidth(300);
+            window.toBack();
+            var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
+            btn.show();
+            btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
+            btn.hide();
+            MasterApp.theme.setHeaderHeightWindowCollpase(window);
+            MasterApp.section.setPositionWindow(window);
+        } else {
+            var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
+            btn.hide();
+            btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
+            btn.show();
+            window.expand('', false);
+            window.toFront();
+            window.setWidth(window.attributes.width);
+            window.setHeight(window.attributes.height);
+            window.setPosition(window.attributes.posX, window.attributes.posY);
+            window.isminimize = false;
+        }
+    }
 });
