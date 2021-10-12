@@ -15,8 +15,8 @@ const getAuditorias = async (req) => {
 
 const getAuditoriasEliminadas = async (req) => {
     req.session.id_user = '7570c788-e3e8-4ffc-83d5-ac7996eb10ce'
-    const params = [req.query.idsection, req.session.id_user]
-    const query = "SELECT security.fn_get_auditorias_eliminadas($1,$2)"
+    const params = [req.query.idsection, req.session.id_user, req.query.start ? req.query.start : 0, req.query.limit ? req.query.limit : 50]
+    const query = "SELECT security.fn_get_auditorias_eliminadas($1,$2,$3,$4)"
     const result = await pool.executeQuery(query, params)
     if (result.success === false) {
         return result

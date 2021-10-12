@@ -222,7 +222,7 @@ const executeFunctionsButtons = async (req, objects) => {
     let extra_params = req.query.extra_params;
 
     var success = false;
-    var result = {'btn': '', 'type': '', 'value': '', 'msg': '', 'name':'', 'title': '', 'label_x': '', 'label_y': '', 'legend': '', 'legend_pos': '', 'sql_label': ''}
+    var result = {'success': true, 'btn': '', 'type': '', 'value': '', 'msg': '', 'name':'', 'title': '', 'label_x': '', 'label_y': '', 'legend': '', 'legend_pos': '', 'sql_label': ''}
     let flagResult = false
     if(idbutton) {
         const param_button = ['cfgapl.sections_buttons',idbutton]
@@ -260,20 +260,20 @@ const executeFunctionsButtons = async (req, objects) => {
                                         resultParamsReport.rows[0].fn_get_register[i].datatype = resultDatatype.rows[0].fn_get_register[0].real_name_ext
                                 }
                                 success = true;
-                                result = {'btn': idbutton, 'type': 4, 'value': resultParamsReport.rows[0].fn_get_register, 'msg': 'filter_params'}
+                                result = {'success': true, 'btn': idbutton, 'type': 4, 'value': resultParamsReport.rows[0].fn_get_register, 'msg': 'filter_params'}
                                 flagResult = true
                             }
                             else{
                                 success = true;
                                 let resultReport = await objects.reports.getJasper(report_name)
-                                result = {'btn': idbutton, 'type': 5, 'value': resultReport.jasper, 'msg': resultReport.msg, 'name': resultInform.rows[0].fn_get_register[0].name}
+                                result = {'success': true, 'btn': idbutton, 'type': 5, 'value': resultReport.jasper, 'msg': resultReport.msg, 'name': resultInform.rows[0].fn_get_register[0].name}
                                 flagResult = true
                             }
                         }
                         else{ //generar y devolver el reporte
                             success = true;                            
                             let resultReport = await objects.reports.getJasper(report_name)
-                            result = {'btn': idbutton, 'type': 5, 'value': resultReport.jasper, 'msg': resultReport.msg, 'name': resultInform.rows[0].fn_get_register[0].name}
+                            result = {'success': true, 'btn': idbutton, 'type': 5, 'value': resultReport.jasper, 'msg': resultReport.msg, 'name': resultInform.rows[0].fn_get_register[0].name}
                             flagResult = true
                         }
                     }
@@ -305,7 +305,7 @@ const executeFunctionsButtons = async (req, objects) => {
                                         resultParamsGraphic.rows[0].fn_get_register[i].id_datatype = resultDatatype.rows[0].fn_get_register[0].real_name_ext
                                 }
                                 success = true;
-                                result = {'btn': idbutton, 'type': 6, 'value': resultParamsGraphic.rows[0].fn_get_register, 'msg': 'filter_params'}
+                                result = {'success': true, 'btn': idbutton, 'type': 6, 'value': resultParamsGraphic.rows[0].fn_get_register, 'msg': 'filter_params'}
                                 flagResult = true
                             }
                             else{
@@ -326,8 +326,8 @@ const executeFunctionsButtons = async (req, objects) => {
                                 const legend = resultGraphic.rows[0].fn_get_register[0].show_legend
                                 const pos_legend = resultGraphic.rows[0].fn_get_register[0].legend_pos
                                 const sql_label = resultGraphic.rows[0].fn_get_register[0].sql_label
-                                console.log('Result sin params: ',result)
-                                result = {'btn': idbutton, 'type': 7, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
+
+                                result = {'success': success,'btn': idbutton, 'type': 7, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
                                 flagResult = true
                             }
                         }
@@ -377,7 +377,7 @@ const executeFunctionsButtons = async (req, objects) => {
                             const legend = resultGraphic.rows[0].fn_get_register[0].show_legend
                             const pos_legend = resultGraphic.rows[0].fn_get_register[0].legend_pos
 							const sql_label = resultGraphic.rows[0].fn_get_register[0].sql_label
-                            result = {'btn': idbutton, 'type': 7, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
+                            result = {'success': success, 'btn': idbutton, 'type': 7, 'value': resultSql.rows, 'msg': msg, 'name': name, 'title': title, 'label_x': label_x, 'label_y': label_y, 'legend': legend, 'legend_pos': pos_legend, 'sql_label': sql_label}
                             flagResult = true
                         }
                     }
@@ -388,7 +388,10 @@ const executeFunctionsButtons = async (req, objects) => {
                         success = true;
                 }
             }
-            else result.msg = 'El fichero del botón no existe'
+            else {
+                result.msg = 'El fichero del botón no existe'
+                result.success = false
+            }
 
         }
     }
