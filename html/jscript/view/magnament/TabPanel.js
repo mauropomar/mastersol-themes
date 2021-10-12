@@ -53,6 +53,7 @@ Ext.define('MasterSol.view.magnament.TabPanel', {
     }, {
         xtype: 'audit-view',
         id: 'audit-view',
+        layout: 'fit',
         tabConfig: {
             tooltip: 'Auditoría (F7)'
         }

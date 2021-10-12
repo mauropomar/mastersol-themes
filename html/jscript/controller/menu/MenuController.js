@@ -215,7 +215,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             if (windows[j]['idsection'] == record.data.sectionId) {
                 win = windows[j];
                 MasterApp.util.setWindowSize(win);
-                break
+                break;
             }
         }
         return win;

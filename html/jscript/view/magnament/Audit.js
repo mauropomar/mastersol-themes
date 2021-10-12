@@ -5,16 +5,15 @@ Ext.define("MasterSol.view.magnament.Audit", {
     xtype: 'audit-view',
     border: 0,
     margins: '2 2 2 2',
-    autoScroll: true,
+    scrollable: true,
     frame: false,
     iconCls: 'fa fa-eye',
-    layout: 'fit',
     requires: [
         'MasterSol.store.magnament.AuditStore'
     ],
     plugins: [{
         ptype: 'rowexpander',
-        rowBodyTpl : new Ext.XTemplate(
+        rowBodyTpl: new Ext.XTemplate(
             '<p><b>Usuario:</b> {usuario}</p>',
             '<p><b>Valor Anterior:</b> {valor_anterior}</p>',
             '<p><b>Nuevo Valor:</b> {valor_nuevo}</p>'
@@ -23,16 +22,16 @@ Ext.define("MasterSol.view.magnament.Audit", {
     tbar: [{
         iconCls: 'fa fa-filter',
         tooltip: 'Filtrar',
-        handler:function(){
+        handler: function () {
             MasterApp.audit.showWindow();
         }
-    },'-',{
+    }, '-', {
         iconCls: 'fa fa-eraser',
         tooltip: 'Limpiar filtro',
         handler: function () {
             MasterApp.audit.clean();
         }
-    },'-', {
+    }, '-', {
         iconCls: 'fa fa-list-alt',
         tooltip: 'Mostrar Elimnados',
         handler: function () {
@@ -41,10 +40,10 @@ Ext.define("MasterSol.view.magnament.Audit", {
     }, '->', {
         xtype: 'tbtext',
         text: 'Auditoría',
-        id:'tbtext_magnament_audit',
+        id: 'tbtext_magnament_audit',
         style: {
-            fontSize:'10px',
-            fontWeight:'bold'
+            fontSize: '10px',
+            fontWeight: 'bold'
         }
     }],
     store: {
@@ -53,24 +52,24 @@ Ext.define("MasterSol.view.magnament.Audit", {
     columns: [{
         text: 'Propiedad',
         dataIndex: 'propiedad',
-        flex: 1,
-        renderer: function(value, metaData, record, rowIdx, colIdx, store) {
+        width:150,
+        renderer: function (value, metaData, record, rowIdx, colIdx, store) {
             metaData.tdAttr = 'data-qtip="' + value + '"';
             return value;
         }
     }, {
         text: 'Acción',
         dataIndex: 'accion',
-        flex: 1,
-        renderer: function(value, metaData, record, rowIdx, colIdx, store) {
+        width:110,
+        renderer: function (value, metaData, record, rowIdx, colIdx, store) {
             metaData.tdAttr = 'data-qtip="' + value + '"';
             return value;
         }
-    },{
+    }, {
         text: 'Fecha',
         dataIndex: 'fecha',
-        flex: 1,
-        renderer: function(value, metaData, record, rowIdx, colIdx, store) {
+        width:130,
+        renderer: function (value, metaData, record, rowIdx, colIdx, store) {
             metaData.tdAttr = 'data-qtip="' + value + '"';
             return value;
         }
@@ -79,8 +78,8 @@ Ext.define("MasterSol.view.magnament.Audit", {
         loadMask: true,
         loadingText: 'Cargando...'
     },
-    listeners:{
-        afterrender:function(){
+    listeners: {
+        afterrender: function () {
             MasterApp.audit = MasterApp.getController('MasterSol.controller.magnament.AuditController');
         }
     }

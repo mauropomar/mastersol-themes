@@ -289,7 +289,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             posY = 0,
             cant = 0,
             i = 1;
-        rest = (MasterApp.theme.isShortTheme()) ? 25 : 30,
+        rest = (MasterApp.theme.isShortTheme()) ? 25 : 45,
             windows = Ext.ComponentQuery.query('window[name=window-menu]');
         for (var j = 0; j < windows.length; j++) {
             if (windows[j].collapsed) {

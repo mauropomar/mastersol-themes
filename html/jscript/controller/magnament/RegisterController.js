@@ -469,10 +469,13 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         });
         combo.arrayId = [];
         combo.arrayText = [];
+        var gridsection = MasterApp.globals.getGridSection();
+        var idrecordparent = gridsection.up('panel').idrecordparent;
         var store = combo.getStore();
         store.proxy.url = 'app/foreignkey';
         store.proxy.extraParams = {
             idregistro: rec.data.idregistro,
+            idpadreregistro:(idrecordparent) ? idrecordparent : 0,
             idsection: idsection
         };
         var values = rec.data.valor;
