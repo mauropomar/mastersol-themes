@@ -125,11 +125,13 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                 filter = {};
                 renderer = null;
                 if (cols[i].type === 'boolean') {
-                    xtype = 'checkcolumn';
                     filter = {
                         type: 'boolean',
                         yesText: 'Verdadero',
                         noText: 'Falso'
+                    };
+                    renderer = function (value, record) {
+                        return (value === true) ? '<i class="fa fa-check"></i>' : '<i class="fa fa-square-o"></i>';
                     };
                 } else {
                     if (cols[i].type === 'number' || cols[i].type === 'string') {

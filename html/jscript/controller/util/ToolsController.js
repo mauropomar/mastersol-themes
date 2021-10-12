@@ -146,6 +146,34 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 var params = response.request.params;
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success) {
+                    if (button.action === 2) {
+                        grid.page = 0;
+                        MasterApp.section.paginate(grid);
+                        return;
+                    }
+                    if (button.action === 7) {
+                        MasterApp.section.deleteRow(button, window);
+                        return;
+                    }
+                    if (button.action === 13) {
+                        MasterApp.magnament.newRegister(window);
+                        return;
+                    }
+                    if (button.action === 14) {
+                        var activeTab = tabMagnament.getActiveTab();
+                        if(!tabMagnament.collapsed && activeTab.xtype === 'register-view') {
+                            MasterApp.register.saveChanges();
+                        }else{
+                            window.toBack();
+                            Ext.MessageBox.show({
+                                title: 'Información',
+                                msg: 'Debe editar una fila de la sección activa.',
+                                buttons: Ext.Msg.OK,
+                                icon: Ext.Msg.INFO
+                            });
+                        }
+                        return;
+                    }
                     if (json.type === 4) {
                         tabMagnament.show();
                         tabMagnament.setActiveTab(6);
@@ -390,6 +418,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         var params = (isReport) ? MasterApp.report.getArrayStringKey() : MasterApp.report.getArrayStringKeyChart();
         params = (params === '' || params.length == 0) ? '' : params;
         return params;
-    }
+    },
+
+
 })
 ;
