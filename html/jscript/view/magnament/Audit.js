@@ -4,6 +4,8 @@ Ext.define("MasterSol.view.magnament.Audit", {
     extend: 'Ext.grid.Panel',
     xtype: 'audit-view',
     border: 0,
+    page: 0,
+    isRemoveAudit: false,
     margins: '2 2 2 2',
     scrollable: true,
     frame: false,
@@ -34,8 +36,11 @@ Ext.define("MasterSol.view.magnament.Audit", {
     }, '-', {
         iconCls: 'fa fa-list-alt',
         tooltip: 'Mostrar Elimnados',
-        handler: function () {
-            MasterApp.audit.getAllRemoved();
+        handler: function (btn) {
+            var grid = btn.up('gridpanel');
+            grid.getStore().removeAll();
+            grid.isRemoveAudit = true;
+            MasterApp.audit.getAllRemoved(false);
         }
     }, '->', {
         xtype: 'tbtext',
@@ -52,7 +57,7 @@ Ext.define("MasterSol.view.magnament.Audit", {
     columns: [{
         text: 'Propiedad',
         dataIndex: 'propiedad',
-        width:150,
+        width: 150,
         renderer: function (value, metaData, record, rowIdx, colIdx, store) {
             metaData.tdAttr = 'data-qtip="' + value + '"';
             return value;
@@ -60,7 +65,7 @@ Ext.define("MasterSol.view.magnament.Audit", {
     }, {
         text: 'Acción',
         dataIndex: 'accion',
-        width:110,
+        width: 110,
         renderer: function (value, metaData, record, rowIdx, colIdx, store) {
             metaData.tdAttr = 'data-qtip="' + value + '"';
             return value;
@@ -68,7 +73,7 @@ Ext.define("MasterSol.view.magnament.Audit", {
     }, {
         text: 'Fecha',
         dataIndex: 'fecha',
-        width:130,
+        width: 130,
         renderer: function (value, metaData, record, rowIdx, colIdx, store) {
             metaData.tdAttr = 'data-qtip="' + value + '"';
             return value;
@@ -79,8 +84,17 @@ Ext.define("MasterSol.view.magnament.Audit", {
         loadingText: 'Cargando...'
     },
     listeners: {
-        afterrender: function () {
+        afterrender: function (comp) {
             MasterApp.audit = MasterApp.getController('MasterSol.controller.magnament.AuditController');
+            comp.getTargetEl().on('mouseup', function (e, t) {
+                if (t.scrollTop > 0) {
+                    var height = comp.getTargetEl().getHeight();
+                    if (height + t.scrollTop >= t.scrollHeight) {
+                        if (comp.isRemoveAudit)
+                            MasterApp.audit.getAllRemoved(true);
+                    }
+                }
+            });
         }
     }
 });

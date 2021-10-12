@@ -107,6 +107,7 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
             idrecordsection = (record != null) ? record.data.id : null;
             var idmenu = MasterApp.util.getIdMenuActive();
             var grid = Ext.ComponentQuery.query('audit-view')[0];
+            grid.isRemoveAudit = false;
             var store = grid.getStore();
             store.proxy.extraParams = {
                 idregister: idrecordsection,
@@ -126,29 +127,38 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
             Ext.ComponentQuery.query('#startdt')[0].setMaxValue(newValue);
         },
 
-        getAllRemoved: function () {
+        getAllRemoved: function (onScroll) {
             var grid = Ext.ComponentQuery.query('audit-view')[0];
             var store = grid.getStore();
-            store.removeAll();
             var mask = new Ext.LoadMask(grid, {
                 msg: 'Cargando...'
             });
             mask.show();
+            grid.page = (!onScroll) ? 0 : grid.page;
+            var start = 50 * grid.page;
             var idsection = MasterApp.util.getIdSectionActive();
             var getAll = {
                 url: 'app/auditorias_eliminados',
                 method: 'GET',
                 scope: this,
                 params: {
-                    'idsection': idsection
+                    'idsection': idsection,
+                    'start': start,
+                    'limit': 50
                 },
                 success: function (response) {
                     mask.hide();
-                    var json = Ext.JSON.decode(response.responseText);
-                    if (json) {
-                        store.loadData(json);
+                    var data = Ext.JSON.decode(response.responseText);
+                    if (data.length > 0) {
+                        var count = store.getCount();
+                        for (var j = 0; j < data.length; j++) {
+                            store.insert(count, data[j]);
+                            count++;
+                        }
+                        grid.page++;
                     } else {
-                        MasterApp.util.showMessageInfo('No existen datos eliminados.');
+                        if (!onScroll)
+                            MasterApp.util.showMessageInfo('No existen datos eliminados.');
                     }
                 },
                 failure: function (response) {
