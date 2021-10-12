@@ -2,8 +2,8 @@ const pool = require('../connection/server-db')
 const moment = require('moment')
 const objAudit = {}
 const getAuditorias = async (req) => {
-    const params = [req.query.idsection, req.query.idregister, req.session.id_user]
-    const query = "SELECT security.fn_get_auditorias($1,$2,$3)"
+    const params = [req.query.idsection, req.query.idregister, req.session.id_user, req.query.start ? req.query.start : 0, req.query.limit ? req.query.limit : 50]
+    const query = "SELECT security.fn_get_auditorias($1,$2,$3,$4,$5)"
     const result = await pool.executeQuery(query, params)
     if (result.success === false) {
         return result
