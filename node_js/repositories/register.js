@@ -3,7 +3,7 @@ const moment = require('moment')
 const fs = require('fs')
 const objCrudRegister = {}
 const getForeignkey = async (req) => {
-    const params = [req.query.idsection, req.query.idregistro, req.session.id_rol, req.query.idpadreregistro]
+    const params = [req.query.idsection, req.query.idregistro, req.session.id_rol, req.query.idpadreregistro && req.query.idpadreregistro !== '0' ? req.query.idpadreregistro : null]
     const query = "SELECT cfgapl.fn_get_values_fk($1,$2,$3,$4)"
     const result = await pool.executeQuery(query, params)
     if (result.success === false) {
