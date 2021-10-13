@@ -92,6 +92,8 @@ Ext.define("MasterSol.view.magnament.Audit", {
                     if (height + t.scrollTop >= t.scrollHeight) {
                         if (comp.isRemoveAudit)
                             MasterApp.audit.getAllRemoved(true);
+                        else
+                            MasterApp.audit.getAll(true);
                     }
                 }
             });

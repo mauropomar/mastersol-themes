@@ -101,22 +101,53 @@ Ext.define('MasterSol.controller.magnament.AuditController', {
             this.getAll();
         },
 
-        getAll: function () {
+        getAll: function (onScroll) {
             var idsection = MasterApp.util.getIdSectionActive();
             var record = MasterApp.globals.getRecordSection();
             idrecordsection = (record != null) ? record.data.id : null;
             var idmenu = MasterApp.util.getIdMenuActive();
             var grid = Ext.ComponentQuery.query('audit-view')[0];
-            grid.isRemoveAudit = false;
+            grid.isRemoveAudit =  false;
             var store = grid.getStore();
-            store.proxy.extraParams = {
-                idregister: idrecordsection,
-                idsection: idsection,
-                idmenu: idmenu
-            };
-            store.load();
+            var mask = new Ext.LoadMask(grid, {
+                msg: 'Cargando...'
+            });
+            mask.show();
+            if(!onScroll){
+                grid.page = 0;
+                store.removeAll();
+            }
+            var start = 50 * grid.page;
             var title = MasterApp.util.getTitleSectionSelected();
             Ext.ComponentQuery.query('#tbtext_magnament_audit')[0].setText('Auditoría: ' + title);
+            var getAll = {
+                url: 'app/auditorias',
+                method: 'GET',
+                scope: this,
+                params: {
+                    'idregister': idrecordsection,
+                    'idsection': idsection,
+                    'idmenu': idmenu,
+                    'start': start,
+                    'limit': 50
+                },
+                success: function (response) {
+                    mask.hide();
+                    var data = Ext.JSON.decode(response.responseText);
+                    if (data.length > 0) {
+                        var count = store.getCount();
+                        for (var j = 0; j < data.length; j++) {
+                            store.insert(count, data[j]);
+                            count++;
+                        }
+                        grid.page++;
+                    }
+                },
+                failure: function (response) {
+                    mask.hide();
+                }
+            };
+            Ext.Ajax.request(getAll);
         },
 
         selectDateStart: function (field, newValue, oldValue) {
