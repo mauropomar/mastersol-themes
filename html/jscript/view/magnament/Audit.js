@@ -13,14 +13,6 @@ Ext.define("MasterSol.view.magnament.Audit", {
     requires: [
         'MasterSol.store.magnament.AuditStore'
     ],
-    plugins: [{
-        ptype: 'rowexpander',
-        rowBodyTpl: new Ext.XTemplate(
-            '<p><b>Usuario:</b> {usuario}</p>',
-            '<p><b>Valor Anterior:</b> {valor_anterior}</p>',
-            '<p><b>Nuevo Valor:</b> {valor_nuevo}</p>'
-        )
-    }],
     tbar: [{
         iconCls: 'fa fa-filter',
         tooltip: 'Filtrar',
@@ -78,6 +70,26 @@ Ext.define("MasterSol.view.magnament.Audit", {
             metaData.tdAttr = 'data-qtip="' + value + '"';
             return value;
         }
+    }, {
+        text: 'Valor',
+        columns: [{
+            text: 'Anterior',
+            dataIndex: 'valor_anterior',
+            width: 130,
+            renderer: function (value, metaData, record, rowIdx, colIdx, store) {
+                metaData.tdAttr = 'data-qtip="' + value + '"';
+                return value;
+            }
+
+        }, {
+            text: 'Nuevo',
+            dataIndex: 'valor_nuevo',
+            width: 130,
+            renderer: function (value, metaData, record, rowIdx, colIdx, store) {
+                metaData.tdAttr = 'data-qtip="' + value + '"';
+                return value;
+            }
+        }]
     }],
     viewConfig: {
         loadMask: true,
