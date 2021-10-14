@@ -6,45 +6,46 @@ Ext.define('MasterSol.controller.chart.ChartController', {
 
     },
 
-    addChart: function (type) {
+    addChart: function (window, type) {
+        var container = window.down('panel[name=container_chart_panel]');
         var panel;
         this.type = type;
-        Ext.ComponentQuery.query('#container_chart_panel')[0].removeAll();
+        container.removeAll();
         if (type === 'column') {
             panel = Ext.create('MasterSol.view.chart.ColumnChart');
-            Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+            container.add(panel);
         } else if (type === 'line') {
             panel = Ext.create('MasterSol.view.chart.LineChart');
-            Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+            container.add(panel);
         } else if (type === 'pie') {
             panel = Ext.create('MasterSol.view.chart.PieChart');
-            Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+            container.add(panel);
         } else if (type === 'area') {
             panel = Ext.create('MasterSol.view.chart.AreaChart');
-            Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+            container.add(panel);
         } else if (type === 'stackbar') {
             panel = Ext.create('MasterSol.view.chart.StackBarChart');
-            Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+            container.add(panel);
         } else if (type === 'radar') {
             panel = Ext.create('MasterSol.view.chart.RadarChart');
-            Ext.ComponentQuery.query('#container_chart_panel')[0].add(panel);
+            container.add(panel);
         }
     },
 
-    printChart: function (ext) {
+    printChart: function (window, ext) {
         var type = this.type;
         if (type === 'column') {
-            MasterApp.getController('MasterSol.controller.chart.ColumnChartController').fireEventPrint(ext);
+            MasterApp.getController('MasterSol.controller.chart.ColumnChartController').fireEventPrint(window, ext);
         } else if (type === 'line') {
-            MasterApp.getController('MasterSol.controller.chart.LineChartController').fireEventPrint(ext);
+            MasterApp.getController('MasterSol.controller.chart.LineChartController').fireEventPrint(window, ext);
         } else if (type === 'pie') {
-            MasterApp.getController('MasterSol.controller.chart.PieChartController').fireEventPrint(ext);
+            MasterApp.getController('MasterSol.controller.chart.PieChartController').fireEventPrint(window, ext);
         } else if (type === 'area') {
-            MasterApp.getController('MasterSol.controller.chart.AreaChartController').fireEventPrint(ext);
+            MasterApp.getController('MasterSol.controller.chart.AreaChartController').fireEventPrint(window, ext);
         } else if (type === 'stackbar') {
-            MasterApp.getController('MasterSol.controller.chart.StackBarChartController').fireEventPrint(ext);
+            MasterApp.getController('MasterSol.controller.chart.StackBarChartController').fireEventPrint(window, ext);
         } else if (type === 'radar') {
-            MasterApp.getController('MasterSol.controller.chart.RadarChartController').fireEventPrint(ext);
+            MasterApp.getController('MasterSol.controller.chart.RadarChartController').fireEventPrint(window, ext);
         }
     },
 
@@ -53,17 +54,17 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         json['legend'] = this.getLegend(json);
         this.jsonData = json;
         var id =  Math.random();
-        Ext.create('MasterSol.view.chart.WindowChart', {
-            id: 'window_chart',
+        var window = Ext.create('MasterSol.view.chart.WindowChart', {
             title: json.name,
             idmenu: id
         });
+        MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window,'column');
         json['id'] = id;
         this.addWindow(json);
     },
 
-    cancel: function () {
-        Ext.ComponentQuery.query('#window_chart')[0].close();
+    cancel: function (window) {
+        window.close();
     },
 
     getLegend: function (json) {

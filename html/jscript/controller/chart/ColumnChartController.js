@@ -7,7 +7,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
 
         },
 
-        render: function () {
+        render: function (comp) {
             var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
             this.chart = Ext.create('Ext.chart.CartesianChart', {
                 reference: 'chart',
@@ -82,7 +82,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                     enditemedit: this.onEndItemEdit
                 }
             });
-            Ext.ComponentQuery.query('column-chart')[0].add(this.chart);
+            comp.add(this.chart);
         },
 
         getStore: function (json) {
@@ -191,8 +191,8 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
             return f;
         },
 
-        fireEventPrint: function (ext) {
-            var title = Ext.ComponentQuery.query('window-chart')[0].getTitle();
+        fireEventPrint: function (window, ext) {
+            var title = window.getTitle();
             var fileName = title + '.' + ext;
             MasterApp.getController('MasterSol.controller.chart.ChartController').saveBase64AsFile(this.chart.getImage("stream").data, fileName);
         }

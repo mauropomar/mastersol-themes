@@ -3,8 +3,8 @@ Ext.define('MasterSol.view.chart.StackBarChart', {
     xtype: 'stack-chart',
     layout:'fit',
     listeners: {
-        afterrender: function () {
-            MasterApp.getController('MasterSol.controller.chart.StackBarChartController').render();
+        afterrender: function (comp) {
+            MasterApp.getController('MasterSol.controller.chart.StackBarChartController').render(comp);
         }
     }
 });

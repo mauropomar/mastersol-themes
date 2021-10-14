@@ -47,57 +47,61 @@ Ext.define('MasterSol.view.chart.WindowChart', {
         items: [{
             region: 'center',
             layout: 'fit',
-            id: 'container_chart_panel',
-            items: [{
-                xtype: 'column-chart'
-            }],
+            name: 'container_chart_panel',
+            items: [],
             tbar: [{
                 xtype: 'button',
                 tooltip: 'Gráficos de Columnas',
                 tooltipType: 'title',
                 iconCls: 'fa fa-bar-chart',
-                handler: function () {
-                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('column');
+                handler: function (btn) {
+                    var window = btn.up('window');
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window,'column');
                 }
             }, '-', {
                 xtype: 'button',
                 tooltip: 'Gráficos de Línea',
                 tooltipType: 'title',
                 iconCls: 'fa fa-line-chart',
-                handler: function () {
-                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('line');
+                handler: function (btn) {
+                    var window = btn.up('window');
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window, 'line');
                 }
             }, '-', {
                 xtype: 'button',
                 tooltip: 'Gráficos de Pie',
                 tooltipType: 'title',
                 iconCls: 'fa fa-pie-chart',
-                handler: function () {
-                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('pie');
+                handler: function (btn) {
+                    var window = btn.up('window');
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window,'pie');
                 }
             }, '-', {
                 xtype: 'button',
                 tooltip: 'Gráficos de Área',
                 tooltipType: 'title',
                 iconCls: 'fa fa-area-chart',
-                handler: function () {
-                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('area');
+                handler: function (btn) {
+                    var window = btn.up('window');
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window, 'area');
                 }
             }, '-', {
                 xtype: 'button',
                 tooltip: 'Gráficos de Barras',
                 tooltipType: 'title',
                 iconCls: 'fa fa-align-left',
-                handler: function () {
-                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('stackbar');
+                handler: function (btn) {
+                    var window = btn.up('window');
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window, 'stackbar');
                 }
             }, '-', {
                 xtype: 'button',
                 tooltip: 'Gráficos Radar',
                 tooltipType: 'title',
                 iconCls: 'fa fa-chrome',
-                handler: function () {
-                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart('radar');
+                handler: function (btn) {
+                    var window = btn.up('window');
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window, 'radar');
                 }
             }, '->', {
                 text: 'Guardar',
@@ -106,23 +110,26 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                 menu: [{
                     text: 'PNG',
                     iconCls: 'fa fa-image',
-                    handler: function () {
-                        MasterApp.getController('MasterSol.controller.chart.ChartController').printChart('png');
+                    handler: function (btn) {
+                        var window = btn.up('window');
+                        MasterApp.getController('MasterSol.controller.chart.ChartController').printChart(window, 'png');
                     }
                 }, {
                     text: 'JPG',
                     iconCls: 'fa fa-image',
-                    handler: function () {
-                        MasterApp.getController('MasterSol.controller.chart.ChartController').printChart('jpg');
+                    handler: function (btn) {
+                        var window = btn.up('window');
+                        MasterApp.getController('MasterSol.controller.chart.ChartController').printChart(window,'jpg');
                     }
                 }]
             }, {
                 xtype: 'button',
                 text: 'Cancelar',
                 iconCls: 'fa fa-close',
-                id: 'btn_cancelar_chart',
-                handler: function () {
-                    MasterApp.getController('MasterSol.controller.chart.ChartController').cancel();
+             //   id: 'btn_cancelar_chart',
+                handler: function (btn) {
+                    var window = btn.up('window');
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').cancel(window);
                 }
             }]
         }]

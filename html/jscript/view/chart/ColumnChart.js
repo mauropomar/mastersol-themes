@@ -4,8 +4,8 @@ Ext.define('MasterSol.view.chart.ColumnChart', {
     layout:'fit',
     border:'0',
     listeners: {
-        afterrender: function () {
-            MasterApp.getController('MasterSol.controller.chart.ColumnChartController').render();
+        afterrender: function (comp) {
+            MasterApp.getController('MasterSol.controller.chart.ColumnChartController').render(comp);
         }
     }
 });

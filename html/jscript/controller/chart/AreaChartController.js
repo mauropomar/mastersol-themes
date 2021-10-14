@@ -5,7 +5,7 @@ Ext.define('MasterSol.controller.chart.AreaChartController', {
     init: function () {
 
     },
-    render: function () {
+    render: function (comp) {
         this.json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
         this.chart = Ext.create('Ext.chart.CartesianChart', {
             reference: 'chart',
@@ -39,7 +39,7 @@ Ext.define('MasterSol.controller.chart.AreaChartController', {
                 }
             }]
         });
-        Ext.ComponentQuery.query('area-chart')[0].add(this.chart);
+        comp.add(this.chart);
         this.onAfterRender();
     },
 
@@ -117,9 +117,9 @@ Ext.define('MasterSol.controller.chart.AreaChartController', {
         return f;
     },
 
-    fireEventPrint: function (ext) {
-        var chart = Ext.ComponentQuery.query('area-chart')[0].items.items[0];
-        var title = Ext.ComponentQuery.query('window-chart')[0].getTitle();
+    fireEventPrint: function (window, ext) {
+        var chart = window.down('area-chart').items.items[0];
+        var title = window.getTitle();
         var fileName = title + '.' + ext;
         MasterApp.getController('MasterSol.controller.chart.ChartController').saveBase64AsFile(chart.getImage("stream").data, fileName);
     }

@@ -3,8 +3,8 @@ Ext.define('MasterSol.view.chart.RadarChart', {
     xtype: 'radar-chart',
     layout:'fit',
     listeners: {
-        afterrender: function () {
-            MasterApp.getController('MasterSol.controller.chart.RadarChartController').render();
+        afterrender: function (comp) {
+            MasterApp.getController('MasterSol.controller.chart.RadarChartController').render(comp);
         }
     }
 });

@@ -3,8 +3,8 @@ Ext.define('MasterSol.view.chart.LineChart', {
     xtype: 'line-chart',
     layout:'fit',
     listeners: {
-        afterrender: function () {
-            MasterApp.getController('MasterSol.controller.chart.LineChartController').render();
+        afterrender: function (comp) {
+            MasterApp.getController('MasterSol.controller.chart.LineChartController').render(comp);
         }
     }
 });

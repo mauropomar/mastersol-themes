@@ -3,8 +3,8 @@ Ext.define('MasterSol.view.chart.AreaChart', {
     xtype: 'area-chart',
     layout:'fit',
     listeners: {
-        afterrender: function () {
-            MasterApp.getController('MasterSol.controller.chart.AreaChartController').render();
+        afterrender: function (comp) {
+            MasterApp.getController('MasterSol.controller.chart.AreaChartController').render(comp);
         }
     }
 });
