@@ -52,13 +52,14 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     showWindow: function (json) {
         json['fields'] = MasterApp.util.getObjectKey(json.value);
         json['legend'] = this.getLegend(json);
+        json.value = this.formatValues(json.value, json.fields);
         this.jsonData = json;
-        var id =  Math.random();
+        var id = Math.random();
         var window = Ext.create('MasterSol.view.chart.WindowChart', {
             title: json.name,
             idmenu: id
         });
-        MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window,'column');
+        MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window, 'column');
         json['id'] = id;
         this.addWindow(json);
     },
@@ -163,5 +164,15 @@ Ext.define('MasterSol.controller.chart.ChartController', {
             window.setPosition(window.attributes.posX, window.attributes.posY);
             window.isminimize = false;
         }
+    },
+
+    formatValues: function (values, fields) {
+        for (var i = 0; i < values.length; i++) {
+            for (var j = 0; j < fields.length; j++) {
+                var y = fields[j];
+                values[i][y] = (values[i][y] != null) ? values[i][y] : 0;
+            }
+        }
+        return values;
     }
 });
