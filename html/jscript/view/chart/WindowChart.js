@@ -19,6 +19,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
     width: '50%',
     layout: 'fit',
     autoShow: true,
+    border:false,
     requires: [
         'MasterSol.view.chart.ColumnChart',
     ],
