@@ -1,0 +1,37 @@
+CREATE OR REPLACE FUNCTION "security".fn_get_auditorias_eliminadas
+(
+  IN  id_section  uuid,
+  IN  id_user     uuid    = '7570c788-e3e8-4ffc-83d5-ac7996eb10ce'::uuid,
+  IN  "start"     integer = 0,
+  IN  "limit"     integer = 50
+)
+RETURNS json AS
+$$
+declare 
+result_datas json = null;
+id_action uuid;
+begin
+    
+  SELECT json_agg(rowset.*) INTO result_datas  FROM
+  (
+	  SELECT ft.id,'Id' as propiedad,upper(ac.namex) as accion,us.userx as usuario,ft.created as fecha,
+	  ft.oldvalue as valor_anterior,ft.newvalue as valor_nuevo
+	  FROM security.footprints ft
+	  JOIN cfgapl.tables tb on(ft.id_tables = tb.id)
+	  JOIN cfgapl.sections sc on(sc.id_tables = tb.id)
+	  JOIN cfgapl.tables_properties tbp on(tbp.id = ft.id_tables_properties)
+	  JOIN security.actions ac on(ft.id_actions = ac.id)
+	  JOIN security.users us on(us.id = ft.id_users) 	  
+	  WHERE sc.id = $1 AND upper(ac.namex) = 'DELETE'       
+      AND ft.id_users = $2 	  
+	  ORDER BY ft.created--,tbp.namex,ac.namex 
+      DESC OFFSET $3 LIMIT $4
+  )rowset;
+  
+  return result_datas;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION "security".fn_get_auditorias_eliminadas(uuid, uuid, integer, integer)
+  OWNER TO postgres;
