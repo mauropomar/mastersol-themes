@@ -50,6 +50,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     },
 
     showWindow: function (json) {
+        var panelmenu = Ext.ComponentQuery.query('#panel-center')[0];
         json['fields'] = MasterApp.util.getObjectKey(json.value);
         json['legend'] = this.getLegend(json);
         json.value = this.formatValues(json.value, json.fields);
@@ -57,6 +58,8 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         var id = Math.random();
         var window = Ext.create('MasterSol.view.chart.WindowChart', {
             title: json.name,
+            height: panelmenu.getHeight(),
+            width: panelmenu.getWidth(),
             idmenu: id
         });
         MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window, 'column');
@@ -102,8 +105,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         window.setWidth(300);
         window.toBack();
         button.hide();
-        var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
-        btn.show();
+        MasterApp.tools.getBtnTools(window, 'btn_restore').show();
         MasterApp.theme.setHeaderHeightWindowCollpase(window);
         MasterApp.section.setPositionWindow(window);
     },
@@ -111,17 +113,26 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     restore: function (button, evt, toolEl, owner, tool) {
         var window = owner.up('window');
         button.hide();
-        button.previousSibling().show();
-        var btn = MasterApp.tools.getBtnTools(window, 'btn_restore');
-        btn.hide();
-        btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
-        btn.show();
+        var width = Ext.ComponentQuery.query('#panel-center')[0].getWidth();
+        var height = Ext.ComponentQuery.query('#panel-center')[0].getWidth();
+        MasterApp.tools.getBtnTools(window, 'btn_restore').hide();
+        MasterApp.tools.getBtnTools(window, 'btn_minimize').show();
         window.expand('', false);
         window.toFront();
-        window.setWidth(window.attributes.width);
-        window.setHeight(window.attributes.height);
+        window.setWidth(width);
+        window.setHeight(height);
         window.setPosition(window.attributes.posX, window.attributes.posY);
         window.isminimize = false;
+    },
+
+    resizeWindow: function (win) {
+        var widthPanel = Ext.ComponentQuery.query('#panel-center')[0].getWidth();
+        var width = win.getWidth();
+        if (widthPanel > width) {
+            MasterApp.tools.getBtnTools(win, 'btn_restore').show();
+        } else {
+            MasterApp.tools.getBtnTools(win, 'btn_restore').hide();
+        }
     },
 
     addWindow: function (menu) {

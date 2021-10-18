@@ -167,7 +167,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         var tabs = [];
         for (var j = 0; j < items.length; j++) {
             if (items[j].componentCls === 'x-panel') {
-                tabs.push(items[j])
+                tabs.push(items[j]);
             }
         }
         return tabs;

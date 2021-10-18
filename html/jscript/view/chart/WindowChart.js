@@ -15,11 +15,13 @@ Ext.define('MasterSol.view.chart.WindowChart', {
         height: 0
     },
     closeAction: 'destroy',
-    height: '80%',
-    width: '50%',
+  //  height: '100%',
+  //  width: '100%',
     layout: 'fit',
     autoShow: true,
     border:false,
+    constrain: true,
+    constrainTo: 'panel-center',
     requires: [
         'MasterSol.view.chart.ColumnChart',
     ],
@@ -125,7 +127,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                 }]
             }, {
                 xtype: 'button',
-                text: 'Cancelar',
+                text: 'Cerrar',
                 iconCls: 'fa fa-close',
              //   id: 'btn_cancelar_chart',
                 handler: function (btn) {
@@ -136,6 +138,9 @@ Ext.define('MasterSol.view.chart.WindowChart', {
         }]
     }],
     listeners: {
+        resize: function (window) {
+            MasterApp.getController('MasterSol.controller.chart.ChartController').resizeWindow(window);
+        },
         close: function (window) {
             MasterApp.footer.removeWindowCombo(window);
         },

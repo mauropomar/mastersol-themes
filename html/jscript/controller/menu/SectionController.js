@@ -556,7 +556,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
     onClickSection: function (comp) {
         comp.on('click', function (e) {
             e.stopEvent();
-            if (!e.event.target.dataset.ref || e.event.target.dataset.ref == 'triggerEl')
+            if (e.event.target.dataset.ref === 'triggerEl')
                 return false;
             var tabpanel = Ext.ComponentQuery.query('#' + this.id)[0];
             var sectionActive = tabpanel.getActiveTab();
