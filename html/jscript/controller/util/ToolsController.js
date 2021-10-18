@@ -60,8 +60,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     add: function (window, newbuttons, addDefault) {
-        if (newbuttons == null)
-            return;
+        newbuttons = (newbuttons === null) ? [] : newbuttons;
         var header = window.getHeader();
         var array = [];
         for (var i = 0; i < newbuttons.length; i++) {
@@ -84,8 +83,8 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         header.add(1, array);
         if (addDefault) {
             var others = this.getButtonsDefaut(window);
-            for (var i = 0; i < others.length; i++) {
-                header.add(others[i]);
+            for (var j = 0; j < others.length; j++) {
+                header.add(others[j]);
             }
         }
     },
@@ -126,7 +125,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
         var idsection = grid.idsection;
         var record = MasterApp.globals.getRecordSection();
         var recordId = (record != null) ? record.data.id : null;
-         var extra_params = (button.id === MasterApp.report.buttonReport.id) ? this.getExtraParams() : '';
+        var extra_params = (button.id === MasterApp.report.buttonReport.id) ? this.getExtraParams() : '';
         var execute = {
             url: 'app/executebuttons',
             method: 'GET',
@@ -186,9 +185,9 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                     }
                     if (button.type === 14) {
                         var activeTab = tabMagnament.getActiveTab();
-                        if(!tabMagnament.collapsed && activeTab.xtype === 'register-view') {
+                        if (!tabMagnament.collapsed && activeTab.xtype === 'register-view') {
                             MasterApp.register.saveChanges();
-                        }else{
+                        } else {
                             window.toBack();
                             Ext.MessageBox.show({
                                 title: 'Información',
