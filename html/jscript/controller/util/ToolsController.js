@@ -171,14 +171,14 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         tabMagnament.setDisabled(false);
                         MasterApp.report.setTitle('gráfico');
                         MasterApp.report.loadValuesGraf(json.value, button);
-                        return
+                        return;
                     }
                     if (json.type === 7) {
                         MasterApp.getController('MasterSol.controller.chart.ChartController').showWindow(json);
                         return;
                     }
                     if (json.type === 8) {
-                        var comp = Ext.create(json.comp);
+                        var comp = Ext.create(json.value);
                         MasterApp.getController(comp.control).render(comp);
                         return;
                     }
