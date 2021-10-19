@@ -169,10 +169,9 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 if (json.success == true) {
                     store.commitChanges();
                     if (this.isEdit)
-                        this.update(data);
+                        this.update(json, store);
                     else {
-                        var idcreated = json.datos.id;
-                        this.insert(data, idcreated);
+                        this.insert(json, store);
                         gridsection.max_line++;
                     }
                     this.showFieldRequired = false;
@@ -185,13 +184,23 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         Ext.Ajax.request(save);
     },
 
-    insert: function (data, idcreated) {
-        var obj = {};
-        var array = [];
-        for (var i = 0; i < data.length; i++) {
-            var fk = data[i]['fk'];
-            var field = (fk == 1) ? 'n_' + data[i]['field'] : data[i]['field'];
-            obj[field] = data[i]['valor'];
+    insert: function (json, storeRegister) {
+        var idcreated = json.datos.id,
+            data = json.datos,
+            fields = Object.keys(data),
+            obj = {},
+            array = [];
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            var idx = storeRegister.findExact('field', key);
+            if (idx > -1) {
+                var rec = storeRegister.getAt(idx);
+                obj[key] = data[key];
+                if (rec.data.fk === 1) {
+                    var nField = 'n_' + key;
+                    obj[nField] = rec.data.valor;
+                }
+            }
         }
         array.push(obj);
         var grid = MasterApp.globals.getGridSection();
@@ -211,12 +220,23 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         this.showFieldRequired = false;
     },
 
-    update: function (data) {
+    update: function (json, storeRegister) {
+        var data = json.datos,
+            fields = Object.keys(data),
+            obj = {};
         var record = MasterApp.globals.getRecordSection();
-        for (var i = 0; i < data.length; i++) {
-            var field = data[i]['field'];
-            var valor = data[i]['valor'];
-            record.set(field, valor);
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            var idx = storeRegister.findExact('field', key);
+            if (idx > -1) {
+                var rec = storeRegister.getAt(idx);
+                obj[key] = data[key];
+                record.set(key, data[key]);
+                if (rec.data.fk === 1) {
+                    var nField = 'n_' + key;
+                    record.set(nField, rec.data.valor);
+                }
+            }
         }
         record.commit();
     },
@@ -475,7 +495,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         store.proxy.url = 'app/foreignkey';
         store.proxy.extraParams = {
             idregistro: rec.data.idregistro,
-            idpadreregistro:(idrecordparent) ? idrecordparent : 0,
+            idpadreregistro: (idrecordparent) ? idrecordparent : 0,
             idsection: idsection
         };
         var values = rec.data.valor;

@@ -9,6 +9,13 @@
           "view":"Capsules.siembra.view.panel.PanelJson"
         }
       ]
+    },{
+      "name": "Capsules",
+      "components": [
+        {
+          "view":"Buttons.c_5cdf1800-af89-4ce0-8c9a-ef659b8891c5.html.script.view.boton"
+        }
+      ]
     }
   ]
 }

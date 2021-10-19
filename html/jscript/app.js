@@ -1,8 +1,9 @@
 Ext.Loader.setConfig({
-    enabled : true,
+    enabled: true,
     disableCaching: false,
-    paths   : {
-        'Capsules' : 'html/jscript/capsules'
+    paths: {
+        'Capsules': 'html/jscript/capsules',
+        'Buttons': 'capsules'
     }
 });
 

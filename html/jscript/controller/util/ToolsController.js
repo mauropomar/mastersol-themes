@@ -157,6 +157,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         tabMagnament.setDisabled(false);
                         MasterApp.report.setTitle('reporte');
                         MasterApp.report.loadValues(json.value, button);
+                        return;
                     }
                     if (json.type === 5) {
                         var extraParams = MasterApp.tools.getExtraParams();
@@ -170,32 +171,15 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         tabMagnament.setDisabled(false);
                         MasterApp.report.setTitle('gráfico');
                         MasterApp.report.loadValuesGraf(json.value, button);
+                        return
                     }
                     if (json.type === 7) {
                         MasterApp.getController('MasterSol.controller.chart.ChartController').showWindow(json);
-                    }
-
-                    if (button.type === 8) {
-                        MasterApp.section.deleteRow(button, window);
                         return;
                     }
-                    if (button.type === 13) {
-                        MasterApp.magnament.newRegister(window);
-                        return;
-                    }
-                    if (button.type === 14) {
-                        var activeTab = tabMagnament.getActiveTab();
-                        if (!tabMagnament.collapsed && activeTab.xtype === 'register-view') {
-                            MasterApp.register.saveChanges();
-                        } else {
-                            window.toBack();
-                            Ext.MessageBox.show({
-                                title: 'Información',
-                                msg: 'Debe editar una fila de la sección activa.',
-                                buttons: Ext.Msg.OK,
-                                icon: Ext.Msg.INFO
-                            });
-                        }
+                    if (json.type === 8) {
+                        var comp = Ext.create(json.comp);
+                        MasterApp.getController(comp.control).render(comp);
                         return;
                     }
 

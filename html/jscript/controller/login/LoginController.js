@@ -40,7 +40,7 @@ Ext.define('MasterSol.controller.login.LoginController', {
             '<span class="symbol-input100"><i class="fa fa-lock"></i></span></div>' +
             '<div class="message_login" id="message_login"></div>' +
             '<div class="container-login100-form-btn p-t-10"><button class="login100-form-btn" type="button" onclick=MasterApp.getController("MasterSol.controller.login.LoginController").validateLogin();>Autenticarse</button></div>' +
-            '</a></div></form></div></div></div>'
+            '</a></div></form></div></div></div>';
         return html;
     },
 
@@ -94,7 +94,6 @@ Ext.define('MasterSol.controller.login.LoginController', {
                     MasterApp.globals.setPassword(response.request.params.password);
                     this.setImageDesktop(json);
                     this.loadOptions();
-                    this.loadCapsules();
                 } else {
                     var div_message = Ext.get('message_login');
                     var message = "Usuario o contraseña incorrecta";
@@ -158,29 +157,6 @@ Ext.define('MasterSol.controller.login.LoginController', {
             },
             scope: this
         });
-    },
-
-    loadCapsules: function () {
-        var capsules = {
-            url: '../../data/capsules.json',
-            method: 'GET',
-            scope: this,
-            params: {},
-            success: function (response) {
-                var json = Ext.JSON.decode(response.responseText);
-                var data = json.data;
-                for (var i = 0; i < data.length; i++) {
-                    var comps = data[i].components;
-                    for (var j = 0; j < comps.length; j++) {
-                        var clasName = comps[j].view;
-                        var comp = Ext.create(clasName);
-                        var controller = comp.control;
-                        MasterApp.getController(controller).render(comp);
-                    }
-                }
-            }
-        };
-        Ext.Ajax.request(capsules);
     },
 
     loadSession:function(){
