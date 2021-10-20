@@ -182,6 +182,10 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         MasterApp.getController(comp.control).render(comp);
                         return;
                     }
+                    if (json.type === 9) {
+                        MasterApp.getController('MasterSol.controller.section_user.SectionUserController').showWindow();
+                        return;
+                    }
 
                 } else {
                     Ext.MessageBox.show({
