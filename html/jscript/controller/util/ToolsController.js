@@ -68,7 +68,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 action: newbuttons[i].action,
                 iconCls: newbuttons[i].iconCls,
                 name: newbuttons[i].name,
-                enable: newbuttons[i].enable,
+                disabled: (newbuttons[i].enable || newbuttons[i].enable == null) ? false : true,
                 default: false,
                 id: newbuttons[i].id,
                 tooltip: newbuttons[i].tooltip,
