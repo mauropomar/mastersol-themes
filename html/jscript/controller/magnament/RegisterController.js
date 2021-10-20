@@ -11,7 +11,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
 
     edit: function (editor, obj, e) {
         var record = obj.record;
-        if ((obj.value === null || obj.value === '') && record.previousValues) {
+        if ((obj.value === null) && record.previousValues) {
             record.set('valor', record.previousValues.valor);
         }
         if (record.data[obj.field] == obj.originalValue)

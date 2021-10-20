@@ -542,8 +542,13 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             var sectionActive = tabpanel.getActiveTab();
             if (sectionActive) {
                 var gridsection = sectionActive.down('gridpanel');
-                MasterApp.globals.setGridSection(gridsection);
-                MasterApp.globals.setRecordSection(null);
+                var hasSelection = gridsection.getSelectionModel().hasSelection();
+                if (hasSelection) {
+                    var rec = gridsection.getSelectionModel().getSelection()[0];
+                    MasterApp.globals.setRecordSection(rec);
+                } else {
+                    MasterApp.globals.setRecordSection(null);
+                }
                 MasterApp.magnament.getData(gridsection);
                 var container = gridsection.up('panel');
                 MasterApp.util.setStyleSection(container);
@@ -618,8 +623,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
 
     afterrender: function (panel) {
         //  this.actionKey(panel);
-    }
-    ,
+    },
 
     actionKey: function (panel) {
         Ext.create('Ext.util.KeyMap', {

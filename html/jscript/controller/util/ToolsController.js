@@ -183,7 +183,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         return;
                     }
                     if (json.type === 9) {
-                        MasterApp.getController('MasterSol.controller.section_user.SectionUserController').showWindow();
+                        MasterApp.getController('MasterSol.controller.section_user.SectionUserController').showWindow(grid);
                         return;
                     }
 

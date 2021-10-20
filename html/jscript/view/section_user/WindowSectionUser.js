@@ -9,6 +9,7 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
     title: 'Configuración de Vistas',
     closeAction: 'destroy',
     control: 'MasterSol.controller.section_user.SectionUserController',
+    idmenu:'',
     height:230,
     width: 350,
     layout: 'fit',
@@ -58,7 +59,11 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
     },{
         xtype:'button',
         iconCls:'fa fa-save',
-        text:'Guardar'
+        text:'Guardar',
+        handler:function(btn){
+            var window = btn.up('window');
+           MasterApp.getController('MasterSol.controller.section_user.SectionUserController').saveData(window);
+        }
     },{
         xtype:'button',
         iconCls:'fa fa-close',
