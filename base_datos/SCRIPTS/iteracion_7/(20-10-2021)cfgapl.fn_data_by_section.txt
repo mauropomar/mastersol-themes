@@ -1,0 +1,92 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_data_by_section
+(
+  IN  idsection        uuid,
+  IN  id_rol           uuid,
+  IN  full_table_name  varchar,
+  IN  "start"          integer,
+  IN  "limit"          integer,
+  IN  alert_user       boolean,
+  IN  id_user          uuid   
+)
+RETURNS jsonb AS
+$$
+declare
+res_data jsonb = null;
+sqlWhere varchar = '';
+fn_filter varchar = null;
+fn_first_filter varchar = null;
+elem jsonb = '[]'::jsonb;
+col_bytea varchar = null;
+myschema varchar;
+mytable varchar;
+select_text varchar;
+encoded_bytea text = '';
+pathvalue text[];
+counter int = 0;
+col_orderx varchar = null;
+myorder varchar = 'dat.id';
+   
+BEGIN  
+	--Buscar fn_filter y first_filter de la seccion para proceder condicionalmente
+	SELECT split_part($3, '.', 1) INTO myschema;
+    SELECT split_part($3, '.', 2) INTO mytable;  
+	SELECT cfgapl.sections.fn_filter into fn_filter from cfgapl.sections where id = $1;
+	SELECT cfgapl.sections.fn_first_filter into fn_first_filter from cfgapl.sections where id = $1;
+	--Establecer ordenamiento por orderx si existe
+	SELECT column_name INTO col_orderx from information_schema.columns where table_name = mytable 
+    AND table_schema = myschema AND column_name = 'orderx'; 
+    IF col_orderx is not null THEN
+       myorder = 'dat.orderx';
+    END IF;
+	IF fn_first_filter is not null and fn_first_filter <> '' THEN
+	   --Ejecutar funcion first_filter
+	   EXECUTE 'SELECT jsonb_agg(rowset.*) FROM(SELECT * FROM '|| fn_first_filter || '('||quote_literal($1)||','||quote_literal($2)||','||quote_literal($7)||','||quote_literal($4)||','||quote_literal($5)||'))rowset ' INTO res_data;	    	   
+	ELSIF fn_filter is not null and fn_filter <> '' THEN
+		--Ejecutar funcion filter
+	   EXECUTE 'SELECT jsonb_agg(rowset.*) FROM(SELECT * FROM '|| fn_filter || '('||quote_literal($1)||','||quote_literal($2)||','||quote_literal($7)||','||quote_literal($4)||','||quote_literal($5)||'))rowset ' INTO res_data;	 			   
+	ELSE
+		--Devolver listado completo
+		IF $6 = true THEN
+			sqlWhere = ' WHERE dat.id = '||''''||$7||'''';
+	    END IF;   
+		
+		BEGIN
+		 IF not cfgapl.fn_return_value_fk($1,$2) is null THEN
+		  EXECUTE 'SELECT jsonb_agg(rowset.*) FROM(SELECT dat.*'|| cfgapl.fn_return_value_fk($1,$2)||
+		  ' FROM '|| $3 ||' dat '||sqlWhere||'ORDER BY '||myorder||' OFFSET '|| $4 ||' LIMIT '|| $5 || ')rowset' INTO res_data;
+		 ELSE 
+		  EXECUTE 'SELECT jsonb_agg(rowset.*) FROM(SELECT dat.* FROM '|| $3 ||' dat '||sqlWhere||' ORDER BY '||myorder||' OFFSET '|| $4 ||' LIMIT '|| $5 ||' )rowset ' INTO res_data;
+		 END IF;
+		 EXCEPTION WHEN OTHERS THEN 
+		 RAISE EXCEPTION 'Error en la consulta';
+		END;
+	END IF;		
+	--Recorrer arreglo buscando campos bytea para codificar si existe alguno	
+	select column_name INTO col_bytea from information_schema.columns 
+    where table_name = mytable AND table_schema = myschema 
+    AND data_type = 'bytea' limit 1;
+    
+    IF col_bytea is not null THEN
+       for elem in (select jsonb_array_elements(res_data)) loop        
+          if elem->>col_bytea is not null then
+             select_text = 'SELECT encode('||col_bytea||', ''escape'') FROM '||$3||' WHERE id = '||quote_literal(elem->>'id')||' ';  
+             EXECUTE(select_text) INTO encoded_bytea;             
+             SELECT ('{'|| counter::text ||','||col_bytea||'}')::TEXT[] into pathvalue;
+             SELECT jsonb_set(res_data, pathvalue, to_jsonb(encoded_bytea)) INTO res_data;            
+          end if;   
+          --raise notice '%', elem;          
+          counter = counter + 1;        
+       end loop;    
+    END IF;
+		
+    return res_data;   
+END
+$$
+LANGUAGE 'plpgsql'
+COST 1;
+
+ALTER FUNCTION cfgapl.fn_data_by_section(uuid, uuid, varchar, integer, integer, boolean, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_data_by_section(uuid, uuid, varchar, integer, integer, boolean, uuid)
+  IS 'Return the initial data of the section';
