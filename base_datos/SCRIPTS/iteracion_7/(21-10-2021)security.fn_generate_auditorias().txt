@@ -1,0 +1,71 @@
+CREATE OR REPLACE FUNCTION "security".fn_generate_auditorias()
+RETURNS trigger AS
+$$
+declare
+old_data TEXT; new_data TEXT; rec_user record; rec_action record;
+rec_tables record; rec_tables_aux record; rec_columns record; sqlAux varchar;
+begin     
+  /*Obteniendo idusuario*/
+  IF (TG_OP = 'INSERT') THEN
+	SELECT id,id_capsules,id_organizations INTO rec_user FROM security.users WHERE id = NEW.creator;		
+  ELSEIF (TG_OP = 'UPDATE') THEN 
+	SELECT id,id_capsules,id_organizations INTO rec_user FROM security.users WHERE id = NEW.modifier; 
+  ELSEIF (TG_OP = 'DELETE') THEN 	
+	SELECT id,id_capsules,id_organizations INTO rec_user FROM security.users WHERE id = OLD.modifier; 
+  END IF; 
+  IF (rec_user is null) THEN	
+	SELECT id,id_capsules,id_organizations INTO rec_user FROM security.users WHERE userx = trim(session_user::TEXT);  
+  END IF;	
+  
+  /*Obteniendo idactions*/
+  SELECT id INTO rec_action FROM security.actions WHERE name_bd = TG_OP;
+  
+  /*Obteniendo idtables*/
+  SELECT tb.n_schema,tb.n_table,tb.id INTO rec_tables 
+  FROM cfgapl.tables tb
+  JOIN cfgapl.tables_properties tbp on(tb.id = tbp.id_tables) 
+  WHERE tb.n_table = TG_TABLE_NAME::TEXT AND tb.n_schema = TG_TABLE_SCHEMA::TEXT;     
+      
+  FOR rec_columns IN (SELECT tbp.n_column FROM cfgapl.tables tb JOIN cfgapl.tables_properties tbp on(tb.id = tbp.id_tables) 
+    WHERE tb.n_table = TG_TABLE_NAME::TEXT AND tb.n_schema = TG_TABLE_SCHEMA::TEXT) LOOP
+    sqlAux = 'select $1.'||rec_columns.n_column;
+    
+    SELECT tbp.auditable,tbp.id as idtables_prop INTO rec_tables_aux 
+    FROM cfgapl.tables tb
+    JOIN cfgapl.tables_properties tbp on(tb.id = tbp.id_tables) 
+    WHERE tb.n_table = TG_TABLE_NAME::TEXT AND tb.n_schema = TG_TABLE_SCHEMA::TEXT AND tbp.n_column = rec_columns.n_column;    
+      
+    IF rec_tables_aux.auditable = true THEN
+     EXECUTE sqlAux using NEW INTO new_data;
+     EXECUTE sqlAux using OLD INTO old_data;
+     
+     IF (TG_OP = 'INSERT' AND not new_data is null) THEN        
+        INSERT INTO security.footprints (id_users,id_capsules,id_organizations,id_actions,id_tables,id_record,id_tables_properties,newvalue,datetimex,creator) 
+        VALUES (rec_user.id,rec_user.id_capsules,rec_user.id_organizations,rec_action.id,rec_tables.id,NEW.id,rec_tables_aux.idtables_prop,new_data,CURRENT_TIMESTAMP,rec_user.id);
+     ELSEIF (TG_OP = 'UPDATE' AND not old_data is null AND old_data <> new_data) THEN     
+        INSERT INTO security.footprints (id_users,id_capsules,id_organizations,id_actions,id_tables,id_record,id_tables_properties,oldvalue,newvalue,datetimex,creator) 
+        VALUES (rec_user.id,rec_user.id_capsules,rec_user.id_organizations,rec_action.id,rec_tables.id,NEW.id,rec_tables_aux.idtables_prop,old_data,new_data,CURRENT_TIMESTAMP,rec_user.id);       
+     ELSEIF (TG_OP = 'DELETE' AND not old_data is null) THEN      
+        INSERT INTO security.footprints (id_users,id_capsules,id_organizations,id_actions,id_tables,id_record,id_tables_properties,oldvalue,datetimex,creator) 
+        VALUES (rec_user.id,rec_user.id_capsules,rec_user.id_organizations,rec_action.id,rec_tables.id,OLD.id,rec_tables_aux.idtables_prop,old_data,CURRENT_TIMESTAMP,rec_user.id);
+     END IF; 
+    END IF;       
+    
+  END LOOP;
+  
+    IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE') THEN
+      RETURN NEW;
+    ELSEIF (TG_OP = 'DELETE') THEN
+      RETURN OLD;
+    ELSE 
+      RETURN NULL;
+    END IF;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION "security".fn_generate_auditorias()
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION "security".fn_generate_auditorias()
+  IS 'Generate Auditings for database';
