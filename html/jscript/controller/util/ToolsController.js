@@ -5,12 +5,12 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     getArrayBtn: function () {
-        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
+        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_section_user','btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
         return array;
     },
 
     getArrayBtnDefault: function () {
-        var array = ['btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
+        var array = ['btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_section_user', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
         return array;
     },
 
@@ -182,10 +182,6 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                         MasterApp.getController(comp.control).render(comp);
                         return;
                     }
-                    if (json.type === 9) {
-                        MasterApp.getController('MasterSol.controller.section_user.SectionUserController').showWindow(grid);
-                        return;
-                    }
 
                 } else {
                     Ext.MessageBox.show({
@@ -298,6 +294,14 @@ Ext.define('MasterSol.controller.util.ToolsController', {
             default: true,
             //    handler: 'onExpandAll',
             tooltip: 'Imprimir'
+        },{
+            iconCls: 'fa fa-user-circle',
+            name: 'btn_section_user',
+            default: true,
+            tooltip: 'Guardar sección',
+            handler: function(btn){
+                MasterApp.getController('MasterSol.controller.section_user.SectionUserController').showWindow();
+            }
         }, {
             iconCls: 'fa fa-download',
             name: 'btn_download',

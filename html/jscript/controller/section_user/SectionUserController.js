@@ -4,7 +4,8 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
 
     },
 
-    showWindow: function (grid) {
+    showWindow: function () {
+        var grid = MasterApp.globals.getGridSection();
         var window = grid.up('window');
         Ext.create('MasterSol.view.section_user.WindowSectionUser', {
             idmenu: window.idmenu
@@ -16,12 +17,49 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
     },
 
     saveData: function (window) {
+        var mask = new Ext.LoadMask(window, {
+            msg: 'Exportando. Espere unos minutos por favor...'
+        });
+        var default_section = Ext.ComponentQuery.query('#checkbox_default')[0].getValue();
+        var comp_name = Ext.ComponentQuery.query('#txt_new_view_section')[0];
+        var name_section = comp_name.getValue();
+        if (name_section === '') {
+            comp_name.markInvalid('Debe introducir un nombre a la sección.');
+            mask.hide();
+            return;
+        }
         var idmenu = window.idmenu;
-        var winSections = this.getSection(idmenu);
-        var json = {
-            sections: winSections
+        var data = this.getSection(idmenu);
+        var save = {
+            url: 'app/savesection',
+            method: 'POST',
+            scope: this,
+            timeout: 150000,
+            params: {
+                name: name_section,
+                data: Ext.encode(data),
+                default: default_section
+            },
+            success: function (response) {
+                mask.hide();
+                Ext.ComponentQuery.query('#btn_cancelar_capsule')[0].setDisabled(false);
+                var json = Ext.JSON.decode(response.responseText);
+                if (json.success == true) {
+                    Ext.toast('La sección fue guardada con éxito.');
+                } else {
+                    Ext.MessageBox.show({
+                        title: 'Información',
+                        msg: json.datos,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
+                }
+            },
+            failure: function (response) {
+                mask.hide();
+            }
         };
-        console.log(Ext.encode(json));
+        Ext.Ajax.request(save);
     },
 
     getSection: function (idmenu) {
@@ -41,11 +79,11 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             if (type === 'panel_section') {
                 comp = panels[i].items.items[0];
                 columns = this.getColumns(comp);
-                recSel = [];
                 array[0].panels.push({
                     title: panels[i].title,
                     idsection: panels[i].idsection,
                     idparent: panels[i].idparent,
+                    total: this.getTotalSection(idmenu, panels[i].idsection),
                     columns: columns
                 });
             }
@@ -58,6 +96,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                         title: components[j].title,
                         idsection: components[j].idsection,
                         idparent: components[j].idparent,
+                        total: this.getTotalSection(idmenu, components[j].idsection),
                         columns: columns
                     });
                 }
@@ -69,7 +108,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
     getColumns: function (panel) {
         var array = [];
         var gridSection = panel;
-        var columns = gridSection.columns;
+        var columns = gridSection.getView().getHeaderCt().getGridColumns();
         for (var i = 0; i < columns.length; i++) {
             var filter = this.getFilterByColumn(columns[i]);
             array.push({
@@ -128,5 +167,25 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         return array;
     },
 
-
+    getTotalSection: function (idmenu, idsection) {
+        var array = MasterApp.globals.getArrayTotal();
+        var totals = [];
+        for (var j = 0; j < array.length; j++) {
+            if (array[j]['id'] == idmenu) {
+                var registers = array[j]['registers'];
+                for (var i = 0; i < registers.length; i++) {
+                    if (registers[i]['id'] == idsection) {
+                        var data = registers[i]['totals'];
+                        for (var y = 0; y < data.length; y++) {
+                            if (data[y].idfuncion !== null) {
+                                totals.push(data[y]);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return totals;
+    }
 });

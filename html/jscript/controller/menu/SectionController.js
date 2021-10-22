@@ -581,8 +581,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             }
             return false;
         });
-    }
-    ,
+    },
 // Evento para capturar el doble click en el tab title de las sesion
     onDoubleClickTab: function (tabPanel) {
         var comp = tabPanel.tabBar.getEl();

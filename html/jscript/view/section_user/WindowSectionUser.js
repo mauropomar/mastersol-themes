@@ -46,7 +46,7 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
             xtype:'checkbox',
             fieldLabel:'Por defecto',
             labelAlign: 'left',
-            labelWidth:80,
+            labelWidth:70,
             id: 'checkbox_default',
             value:false,
             margin:'10 0 0 0'
