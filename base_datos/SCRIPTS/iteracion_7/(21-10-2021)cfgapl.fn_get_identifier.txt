@@ -1,0 +1,48 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_identifier
+(
+  IN  idsection   uuid,
+  IN  idregister  uuid
+)
+RETURNS varchar AS
+$$
+declare
+result varchar = '';
+error varchar;
+idtables uuid;
+rec_identifiers record;
+total int = 0;
+counter int = 0;
+table_name varchar;
+field_value varchar;
+
+begin
+  BEGIN
+	SELECT id_tables INTO idtables FROM cfgapl.sections WHERE id = $1;
+	EXECUTE('SELECT COUNT(id) FROM cfgapl.tables_properties WHERE id_tables = '||quote_literal(idtables)||' 
+    AND identifier = true') INTO total;
+	FOR rec_identifiers IN EXECUTE('SELECT namex FROM cfgapl.tables_properties 
+    WHERE id_tables = '||quote_literal(idtables)||' AND identifier = true') LOOP
+      SELECT n_schema||'.'||n_table INTO table_name FROM cfgapl.tables WHERE id = idtables; 
+      EXECUTE('SELECT '||rec_identifiers.namex||' FROM '||table_name||' WHERE id = '||quote_literal($2)||'') 
+      INTO field_value; 
+      counter = counter + 1;
+      result = CONCAT(result,field_value);
+      IF counter < total THEN                            
+         result = CONCAT(result,'/');
+      END IF; 
+    END LOOP;
+   EXCEPTION when others then  
+    GET STACKED DIAGNOSTICS error = MESSAGE_TEXT; 
+    result = 'ERROR: '||error;    
+   END;
+
+  return result;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_identifier(uuid, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_get_identifier(uuid, uuid)
+  IS 'Ger identifiers by section';

@@ -1,0 +1,10 @@
+--Trigger: cfgapl.tables_properties.tr_cfgapl_tables_properties_fn_generate_identifier_idx
+
+/* DROP TRIGGER tr_cfgapl_tables_properties_fn_generate_identifier_idx
+  ON cfgapl.tables_properties; */
+
+CREATE TRIGGER tr_cfgapl_tables_properties_fn_generate_identifier_idx
+  AFTER UPDATE OR INSERT OR DELETE
+  ON cfgapl.tables_properties
+  FOR EACH ROW
+  EXECUTE PROCEDURE cfgapl.fn_generate_identifier_index();

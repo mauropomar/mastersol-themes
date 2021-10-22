@@ -1,0 +1,47 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_return_data_visible_after_insert_update
+(
+  IN  id_section   uuid,
+  IN  id_register  uuid,
+  IN  table_name   varchar
+)
+RETURNS record AS
+$$
+declare
+result_data record = null;
+res_columns varchar;
+begin  
+  
+  SELECT 'scb.'||translate(array_to_string(array_agg(rowset),',scb.',''),'()','') INTO res_columns FROM(
+  SELECT DISTINCT tbp.n_column     
+  FROM cfgapl.sections sc 
+  JOIN security.rol_sections rs on (sc.id = rs.id_sections)
+  JOIN cfgapl.tables tb on (sc.id_tables = tb.id)
+  JOIN cfgapl.tables_properties tbp on (tbp.id_tables = tb.id)
+  JOIN cfgapl.sections_properties scpr on (scpr.id_tables_properties = tbp.id)     
+  WHERE sc.id = $1 AND CASE WHEN scpr.fn_hide IS NOT NULL THEN cfgapl.fn_execute_function(scpr.fn_hide) = false ELSE 1=1 END )rowset; 
+  IF res_columns IS NOT NULL THEN  
+     IF $3 = 'cfgapl.sections_buttons' THEN  
+       EXECUTE 'SELECT '||res_columns|| ', sc.namex as name_section,
+      (SELECT tb.namex FROM cfgapl.sections sc1 JOIN cfgapl.tables tb on(sc1.id_tables = tb.id) 
+       WHERE sc1.id = $1) as name_table FROM '|| $3 ||' scb LEFT JOIN cfgapl.sections sc ON(sc.id = scb.id_section) 
+      WHERE scb.id = $2' INTO result_data USING $1,$2,$3; 
+     ELSEIF  $3 = 'cfgapl.capsules' THEN
+	   EXECUTE 'SELECT '||res_columns|| ', scb.namex as name_section, 
+       (SELECT tb.namex FROM cfgapl.sections sc1 JOIN cfgapl.tables tb on(sc1.id_tables = tb.id) 
+        WHERE sc1.id = $1) as name_table
+       FROM '|| $3 ||' scb WHERE scb.id = $2' INTO result_data USING $1,$2,$3;    
+     ELSE
+       EXECUTE 'SELECT '||res_columns|| ' FROM '||$3|| ' scb WHERE id = '''||$2||'''' INTO result_data;
+     END IF; 
+  END IF;
+  
+  return result_data;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_return_data_visible_after_insert_update(uuid, uuid, varchar)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_return_data_visible_after_insert_update(uuid, uuid, varchar)
+  IS 'Retornar los valores de las columnas visibles';

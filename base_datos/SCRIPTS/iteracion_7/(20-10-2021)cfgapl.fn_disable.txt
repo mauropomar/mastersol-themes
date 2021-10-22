@@ -1,0 +1,16 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_disable
+(
+  IN  id_section  uuid = NULL,
+  IN  id_rol      uuid = NULL,
+  IN  id_user     uuid = NULL
+)
+RETURNS boolean AS
+$$
+begin
+  return false;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_disable(uuid, uuid, uuid)
+  OWNER TO postgres;

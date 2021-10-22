@@ -2034,25 +2034,21 @@ const updateColumn = async (req) => {
     return result.rows[0].fn_update_column
 }
 
-/*const deleteDir = (dirFile, filename) => {
-    let result = ''
-    fs.unlink(dirFile + '/' + filename, (err => {
-        if (err) console.log('No hay fichero');
-        else {
-            console.log("Archivo temporal borrado");
-            fs.rmdir(dirFile, (err) => {
-                if(!err) result = 'Eliminada carpeta temporal'
-                else result = err
-            })
-        }
-    }));
-    fs.rmdir(dirFile, (err) => {
-        if(!err) result = 'Eliminada carpeta temporal'
-        else result = err
-    })
+const getIdentifier = async (req) => {
 
-    return result
-}*/
+    const params_order = [req.query.idsection, req.query.idregister]
+
+    const query = "SELECT cfgapl.fn_get_identifier($1,$2)"
+    const result = await pool.executeQuery(query, params_order)
+    if (result.success === false) {
+        return 'ERROR: '+result.message
+    } else if (!result.rows || result.rows[0].fn_get_identifier == null) {
+        return ''
+    }
+
+    return result.rows[0].fn_get_identifier
+}
+
 
 const SortingAlgorithm = (a, b) => {
     let prop_a = a['name']
@@ -2132,4 +2128,5 @@ objGenFunc.updateRegister = updateRegister
 objGenFunc.importTable = importTable
 objGenFunc.updateOrder = updateOrder
 objGenFunc.updateColumn = updateColumn
+objGenFunc.getIdentifier = getIdentifier
 module.exports = objGenFunc
