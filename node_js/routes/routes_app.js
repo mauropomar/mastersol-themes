@@ -840,17 +840,16 @@ router.post('/savesection', async function (req, res) {
     let success = true
     let idsection = ''
     //Cuando se arregle, obtener del parámetro
-    let mysection = '5597eaa9-3a81-400c-8111-e442e1480936'
     const paramsSection = ['cfgapl.sections', null, "WHERE namex = 'Sec_saved_sections' "];
     const resultParamsSection = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSection);
     if (resultParamsSection && resultParamsSection.rows[0].fn_get_register != null && resultParamsSection.rows[0].fn_get_register.length > 0)
         idsection = resultParamsSection.rows[0].fn_get_register[0].id
 
-    const paramsView = ['cfgapl.saved_sections', null, "WHERE id_section = '" + mysection + "' " +
+    const paramsView = ['cfgapl.saved_sections', null, "WHERE id_section = '" + req.body.idsection + "' " +
     "AND id_users = '" + req.session.id_user + "' AND namex = '" + req.body.name + "' "];
     const resultParamsView = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsView);
     //Si default viene en true, buscar cualquier registro para el id section e id user en true y ponerlo false
-    const paramsDef = ['cfgapl.saved_sections', null, "WHERE defaultx = true "];
+    const paramsDef = ['cfgapl.saved_sections', null, "WHERE defaultx = true AND id_section = '" + req.body.idsection + "' AND id_users = '" + req.session.id_user + "' "];
     const resultParamsDef = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsDef);
     if (resultParamsDef && resultParamsDef.rows[0].fn_get_register != null && resultParamsDef.rows[0].fn_get_register.length > 0){
        let idreg = resultParamsDef.rows[0].fn_get_register[0].id
@@ -873,7 +872,7 @@ router.post('/savesection', async function (req, res) {
         let id_registro = resultParamsView.rows[0].fn_get_register[0].id
         var paramsInsert = [], valuesInsertAux = [];
         valuesInsertAux.push("id_users = '" + req.session.id_user + "'")
-        valuesInsertAux.push("id_section = '" + mysection + "'")
+        valuesInsertAux.push("id_section = '" + req.body.idsection + "'")
         valuesInsertAux.push("namex = '" + req.body.name + "'")
         valuesInsertAux.push("datax = '" + req.body.data + "'")
         valuesInsertAux.push("defaultx = " + req.body.default + "")
@@ -903,7 +902,7 @@ router.post('/savesection', async function (req, res) {
             columnasInsertAux.push('creator')
             //valores a insertar
             valuesInsertAux.push("'" + req.session.id_user + "'")
-            valuesInsertAux.push("'" + mysection + "'")
+            valuesInsertAux.push("'" + req.body.idsection + "'")
             valuesInsertAux.push("'" + req.body.name + "'")
             valuesInsertAux.push("" + req.body.default + "")
             valuesInsertAux.push("'" + req.body.data + "'")
