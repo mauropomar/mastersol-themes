@@ -1,0 +1,66 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_generate_identifier_index()
+RETURNS trigger AS
+$$
+declare
+  record_table record;
+  index_name varchar;
+  identifiers_fields varchar = '';
+  rec_identifiers record;
+  total int = 0;
+  counter int = 0;
+  full_table_name_idx varchar = '';
+  names_tables_properties varchar[];  
+  myvariable record;
+begin 
+  IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE') THEN
+      myvariable = NEW;
+  ELSEIF (TG_OP = 'DELETE') THEN
+      myvariable = OLD;
+  END IF; 
+  --Buscar indidice 'nombre_tabla + identifier_idx' (es una convención) y eliminarlo si existe para recrearlo
+  SELECT n_table, n_schema INTO record_table FROM cfgapl.tables WHERE id = myvariable.id_tables; 
+  SELECT record_table.n_schema||'_'||record_table.n_table INTO full_table_name_idx;
+  SELECT indexname INTO index_name FROM pg_indexes where tablename = record_table.n_table 
+  AND schemaname = record_table.n_schema AND indexname = full_table_name_idx||'_identifier_idx';
+  IF index_name is not null THEN
+    EXECUTE('DROP INDEX '||record_table.n_schema||'.'||index_name||';');
+    ALTER TABLE cfgapl.tables_indexes DISABLE TRIGGER ALL;
+    DELETE FROM cfgapl.tables_indexes WHERE namex = index_name;
+    ALTER TABLE cfgapl.tables_indexes ENABLE TRIGGER ALL;
+  ELSE
+    index_name = full_table_name_idx||'_identifier_idx';   
+  END IF;
+  --Crear el indice con los campos identificadores  
+  EXECUTE('SELECT COUNT(id) FROM cfgapl.tables_properties WHERE id_tables = '||quote_literal(myvariable.id_tables)||' AND identifier = true') INTO total;   
+  IF total > 0 THEN    
+    FOR rec_identifiers IN EXECUTE('SELECT namex FROM cfgapl.tables_properties WHERE id_tables = '||quote_literal(myvariable.id_tables)||' AND identifier = true') LOOP
+        counter = counter + 1;
+        identifiers_fields = CONCAT(identifiers_fields,rec_identifiers.namex);
+        IF counter < total THEN                            
+           identifiers_fields = CONCAT(identifiers_fields,',');
+        END IF; 
+    END LOOP;
+  END IF;
+  IF identifiers_fields <> '' THEN
+    EXECUTE('CREATE UNIQUE INDEX '||full_table_name_idx||'_identifier_idx ON '||record_table.n_schema||'.'||record_table.n_table||' USING btree ('||identifiers_fields||');');
+    --Insertar indice en tables_indexes    
+    names_tables_properties = CONCAT('{',identifiers_fields,'}');    
+    ALTER TABLE cfgapl.tables_indexes DISABLE TRIGGER ALL;
+    INSERT INTO cfgapl.tables_indexes (id_capsules,id_tables,n_names_tables_properties,namex)
+    VALUES (myvariable.id_capsules,myvariable.id_tables,names_tables_properties,index_name);
+    ALTER TABLE cfgapl.tables_indexes ENABLE TRIGGER ALL;
+  END IF;
+  
+  IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE') THEN
+      RETURN NEW;
+    ELSEIF (TG_OP = 'DELETE') THEN
+      RETURN OLD;
+    ELSE 
+      RETURN NULL;
+    END IF;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_generate_identifier_index()
+  OWNER TO postgres;
