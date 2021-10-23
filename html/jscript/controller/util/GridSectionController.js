@@ -7,14 +7,21 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
     getComponents: function (section, columns, tools, height, data, name, windowParent, atributos) {
         var _this = this;
         return Ext.create('Ext.grid.Panel', {
+            alerts_checked: section.alerts_checked,
             btnTools: tools,
             selType: (atributos.section_checked) ? 'checkboxmodel' : null,
             idsection: section.id,
+            idparent:section.idpadre,
             idmenu: windowParent.idmenu,
             resizable: false,
             border: false,
             page: 1,
+            hidden: section.hidden,
             name: name,
+            name_section:section.nombre,
+            levels: section.niveles,
+            level: section.nivel,
+            leaf:section.leaf,
             section_checked: atributos.section_checked,
             store: this.getStore(columns, data),
             height: height,
@@ -26,6 +33,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             autoScroll: true,
             columns: this.getColumns(columns),
             enableDragDrop: true,
+            time_event: section.time_event,
             viewConfig: {
                 loadMask: false,
                 loadingText: 'Cargando...',
