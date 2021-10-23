@@ -9,7 +9,7 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
     title: 'Configuración de Vistas',
     closeAction: 'destroy',
     control: 'MasterSol.controller.section_user.SectionUserController',
-    idmenu: '',
+    idsection: '',
     height: 230,
     width: 350,
     layout: 'fit',

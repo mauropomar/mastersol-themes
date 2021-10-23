@@ -8,7 +8,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         var grid = MasterApp.globals.getGridSection();
         var window = grid.up('window');
         Ext.create('MasterSol.view.section_user.WindowSectionUser', {
-            idmenu: window.idmenu
+            idsection: window.idsection
         });
     },
 
@@ -28,15 +28,15 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             mask.hide();
             return;
         }
-        var idmenu = window.idmenu;
-        var data = this.getSection(idmenu);
+        var idsection = window.idsection;
+        var data = this.getSection(idsection);
         var save = {
             url: 'app/savesection',
             method: 'POST',
             scope: this,
             timeout: 150000,
             params: {
-                idsection:idmenu,
+                idsection:idsection,
                 name: name_section,
                 default: default_section,
                 data: Ext.encode(data),
@@ -63,15 +63,16 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         Ext.Ajax.request(save);
     },
 
-    getSection: function (idmenu) {
-        var menus = Ext.ComponentQuery.query('window-menu[idmenu=' + idmenu + ']')[0];
+    getSection: function (idsection) {
+        var menus = Ext.ComponentQuery.query('window-menu[idsection=' + idsection + ']')[0];
+        var idmenu = menus.idmenu;
         var array = [];
         var panels = menus.items.items[0].items.items[0].items.items;
-        var comp, columns, recSel;
+        var comp, columns;
         array.push({
             title: menus.title,
             idsection: menus.idsection,
-            idmenu: menus.idmenu,
+            idmenu: idmenu,
             collapsed: menus.collapsed,
             panels: []
         });
@@ -85,6 +86,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                     idsection: panels[i].idsection,
                     idparent: panels[i].idparent,
                     total: this.getTotalSection(idmenu, panels[i].idsection),
+                    filter: this.getFilterSection(idmenu, panels[i].idsection),
                     columns: columns
                 });
             }
@@ -98,6 +100,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                         idsection: components[j].idsection,
                         idparent: components[j].idparent,
                         total: this.getTotalSection(idmenu, components[j].idsection),
+                        filter: this.getFilterSection(idmenu, components[j].idsection),
                         columns: columns
                     });
                 }
@@ -188,6 +191,29 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             }
         }
         return totals;
+    },
+
+    getFilterSection: function (idmenu, idsection) {
+        var array = MasterApp.globals.getArrayFilter();
+        var filters = [];
+        for (var j = 0; j < array.length; j++) {
+            if (array[j]['id'] == idmenu) {
+                var registers = array[j]['registers'];
+                for (var i = 0; i < registers.length; i++) {
+                    if (registers[i]['id'] == idsection) {
+                        if (registers[i]['filters']) {
+                            var data = registers[i]['filters'];
+                            for (var y = 0; y < data.length; y++) {
+                                if (data[y].valor1 && data[y].valor1 !== null) {
+                                    filters.push(data[y]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return filters;
     },
 
     showSection:function(window){
