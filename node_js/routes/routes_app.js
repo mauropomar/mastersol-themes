@@ -838,10 +838,93 @@ router.get('/getidentifier', async function (req, res) {
 router.post('/savesection', async function (req, res) {
     let result = ''
     let success = true
-    result = await objects.functions.updateColumn(req)
-    if(result.includes('ERROR') || result == '')
-        success = false
-    return res.json({'success': success, 'datos': result != '' ? result : 'Ha ocurrido un error ejecutando el procedimiento'})
+    let idsection = ''
+    //Cuando se arregle, obtener del parámetro
+    let mysection = '5597eaa9-3a81-400c-8111-e442e1480936'
+    const paramsSection = ['cfgapl.sections', null, "WHERE namex = 'Sec_saved_sections' "];
+    const resultParamsSection = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSection);
+    if (resultParamsSection && resultParamsSection.rows[0].fn_get_register != null && resultParamsSection.rows[0].fn_get_register.length > 0)
+        idsection = resultParamsSection.rows[0].fn_get_register[0].id
+
+    const paramsView = ['cfgapl.saved_sections', null, "WHERE id_section = '" + mysection + "' " +
+    "AND id_users = '" + req.session.id_user + "' AND namex = '" + req.body.name + "' "];
+    const resultParamsView = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsView);
+    //Si default viene en true, buscar cualquier registro para el id section e id user en true y ponerlo false
+    const paramsDef = ['cfgapl.saved_sections', null, "WHERE defaultx = true "];
+    const resultParamsDef = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsDef);
+    if (resultParamsDef && resultParamsDef.rows[0].fn_get_register != null && resultParamsDef.rows[0].fn_get_register.length > 0){
+       let idreg = resultParamsDef.rows[0].fn_get_register[0].id
+        var paramsInsert = [], valuesInsertAux = [];
+        valuesInsertAux.push("defaultx = false")
+
+        paramsInsert.push(idsection)
+        paramsInsert.push(valuesInsertAux.join(','))
+        paramsInsert.push(idreg)
+        paramsInsert.push(req.session.id_user)
+        let response = await objects.functions.updateRegister(paramsInsert)
+        if (response.success === false) {
+            success = false
+            result = response.message
+        }
+    }
+
+    if (resultParamsView && resultParamsView.rows[0].fn_get_register != null && resultParamsView.rows[0].fn_get_register.length > 0){
+        //Existe una vista con este nombre, id section e id user, actualizar
+        let id_registro = resultParamsView.rows[0].fn_get_register[0].id
+        var paramsInsert = [], valuesInsertAux = [];
+        valuesInsertAux.push("id_users = '" + req.session.id_user + "'")
+        valuesInsertAux.push("id_section = '" + mysection + "'")
+        valuesInsertAux.push("namex = '" + req.body.name + "'")
+        valuesInsertAux.push("datax = '" + req.body.data + "'")
+        valuesInsertAux.push("defaultx = " + req.body.default + "")
+        valuesInsertAux.push("modifier = '" + req.session.id_user + "'")
+        valuesInsertAux.push("modified = CURRENT_TIMESTAMP")
+
+        paramsInsert.push(idsection)
+        paramsInsert.push(valuesInsertAux.join(','))
+        paramsInsert.push(id_registro)
+        paramsInsert.push(req.session.id_user)
+        let response = await objects.functions.updateRegister(paramsInsert)
+        if (response.success === false) {
+            success = false
+            result = response.message
+        }
+    }
+    else{
+        var paramsInsert = [], columnasInsertAux = [], valuesInsertAux = [];
+
+        if (success) {
+            //columnas a insertar
+            columnasInsertAux.push('id_users')
+            columnasInsertAux.push('id_section')
+            columnasInsertAux.push('namex')
+            columnasInsertAux.push('defaultx')
+            columnasInsertAux.push('datax')
+            columnasInsertAux.push('creator')
+            //valores a insertar
+            valuesInsertAux.push("'" + req.session.id_user + "'")
+            valuesInsertAux.push("'" + mysection + "'")
+            valuesInsertAux.push("'" + req.body.name + "'")
+            valuesInsertAux.push("" + req.body.default + "")
+            valuesInsertAux.push("'" + req.body.data + "'")
+            valuesInsertAux.push("'" + req.session.id_user + "'")
+
+            paramsInsert.push(idsection)
+            paramsInsert.push(columnasInsertAux.join(','))
+            paramsInsert.push(valuesInsertAux.join(','))
+            paramsInsert.push(null)
+            paramsInsert.push(null)
+            paramsInsert.push(req.session.id_user)
+
+            let response = await objects.functions.insertRegister(paramsInsert)
+            if (response.success === false) {
+                success = false
+                result = response.message
+            }
+        }
+    }
+
+    return res.json({'success': success, 'datos': result})
 })
 
 var storage = multer.diskStorage({
