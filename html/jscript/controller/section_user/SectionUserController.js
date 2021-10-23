@@ -70,7 +70,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
     },
 
     getSectionPrimary: function (window) {
-        var idmenu = window.idmenu;
+        var idsection = window.idsection;
         var grid = window.childs[0].down('gridpanel');
         var childrens = this.getSectionChildren(window);
         var obj = {
@@ -85,16 +85,15 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             'section_checked': grid.section_checked,
             'time_event': grid.time_event,
             'columnas': this.getColumns(grid),
-            'totals': this.getTotalSection(idmenu, grid.idsection),
-            'filters': this.getFilterSection(idmenu, grid.idsection),
-            'childrens': childrens
+            'totals': this.getTotalSection(idsection, grid.idsection),
+            'filters': this.getFilterSection(idsection, grid.idsection),
+            'children': childrens
         };
         return obj;
     },
 
     getSectionChildren: function (window) {
         var idsection = window.idsection,
-            idmenu = window.idmenu,
             grid,
             childrens = [],
             idTab,
@@ -114,8 +113,8 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                     'leaf': grid.leaf,
                     'max_lines': grid.max_lines,
                     'read_only': grid.read_only,
-                    'totals': this.getTotalSection(idmenu, grid.idsection),
-                    'filters': this.getFilterSection(idmenu, grid.idsection),
+                    'totals': this.getTotalSection(idsection, grid.idsection),
+                    'filters': this.getFilterSection(idsection, grid.idsection),
                 });
             }
             return childrens;
