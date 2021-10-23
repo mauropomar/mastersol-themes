@@ -553,6 +553,24 @@ Ext.define('MasterSol.controller.util.UtilController', {
             keys = Object.keys(data[0]);
         }
         return keys;
+    },
+
+    getIdentifier: function (tabPanel) {
+        var panel = tabPanel.getActiveTab();
+        var get = {
+            url: 'app/getidentifier',
+            method: 'GET',
+            scope: this,
+            params: {
+                idsection: panel.idsection,
+                idregister:panel.idrecordparent
+            },
+            success: function (response) {
+                var json = Ext.JSON.decode(response.responseText);
+
+            }
+        };
+        Ext.Ajax.request(get);
     }
 })
 ;
