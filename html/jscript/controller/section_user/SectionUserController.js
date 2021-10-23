@@ -65,20 +65,19 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
 
     getSection: function (idsection) {
         var window = Ext.ComponentQuery.query('window-menu[idsection=' + idsection + ']')[0];
-        var array = [];
-        var section_primary = this.getSectionPrimary(window);
-        array.push(section_primary);
-
+        var data = this.getSectionPrimary(window);
+        return data;
     },
 
     getSectionPrimary: function (window) {
         var idmenu = window.idmenu;
         var grid = window.childs[0].down('gridpanel');
+        var childrens = this.getSectionChildren(window);
         var obj = {
-            'alert_checked': grid.alert_checked,
+            'alerts_checked': grid.alerts_checked,
             'hidden': grid.hidden,
             'idpadre': grid.idparent,
-            'id': grid.id_section,
+            'id': grid.idsection,
             'niveles': grid.levels,
             'nombre': grid.name_section,
             'orderable': grid.orderable,
@@ -86,9 +85,41 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             'section_checked': grid.section_checked,
             'time_event': grid.time_event,
             'columnas': this.getColumns(grid),
-             'totals': this.getTotalSection(idmenu, grid.idsection)
+            'totals': this.getTotalSection(idmenu, grid.idsection),
+            'filters': this.getFilterSection(idmenu, grid.idsection),
+            'childrens': childrens
         };
         return obj;
+    },
+
+    getSectionChildren: function (window) {
+        var idsection = window.idsection,
+            idmenu = window.idmenu,
+            grid,
+            childrens = [],
+            idTab,
+            sections;
+        var tabPanels = Ext.ComponentQuery.query('window-menu[idsection=' + idsection + '] tabpanel');
+        for (var i = 0; i < tabPanels.length; i++) {
+            idTab = tabPanels[i].id;
+            sections = Ext.ComponentQuery.query('#' + idTab + ' gridpanel[name=grid-section]');
+            for (var j = 0; j < sections.length; j++) {
+                grid = sections[j];
+                childrens.push({
+                    'id': grid.idsection,
+                    'idpadre': grid.idparent,
+                    'nombre': grid.name_section,
+                    'columnas': this.getColumns(grid),
+                    'nivel':grid.level,
+                    'leaf': grid.leaf,
+                    'max_lines': grid.max_lines,
+                    'read_only': grid.read_only,
+                    'totals': this.getTotalSection(idmenu, grid.idsection),
+                    'filters': this.getFilterSection(idmenu, grid.idsection),
+                });
+            }
+            return childrens;
+        }
     },
 
     getColumns: function (gridSection) {

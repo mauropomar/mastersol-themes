@@ -25,7 +25,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
             section_checked: atributos.section_checked,
             store: this.getStore(columns, data),
             height: height,
-            max_line: section.max_lines,
+            max_lines: section.max_lines,
             read_only: section.read_only,
             orderable: section.orderable,
             region: 'center',
