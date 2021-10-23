@@ -183,6 +183,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                 width: cols[i].width,
                 text: cols[i].text,
                 align: cols[i].align,
+                dec_count: cols[i].dec_count,
                 functions: cols[i].funcion,
                 type: cols[i].type,
                 sortable: cols[i].sortable,

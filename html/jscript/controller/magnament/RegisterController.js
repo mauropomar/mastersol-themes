@@ -58,6 +58,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 field: columns[i].n_column,
                 idregistro: columns[i].idregister,
                 id_datatype: columns[i].id_datatype,
+                dec_count: columns[i].dec_count,
                 required: columns[i].required,
                 auditable: columns[i].audit,
                 real_name_in: columns[i].real_name_in,
@@ -279,7 +280,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
             this.setNumberField(record, column);
         }
         if (record.data.tipo == 'string' || record.data.tipo == 'array') {
-            this.setTextField(column);
+            this.setTextField(column, record);
         }
         if (record.data.tipo == 'boolean') {
             this.setCheckbox(column);
@@ -338,7 +339,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         column.setEditor(field);
     },
 
-    setTextField: function (column) {
+    setTextField: function (column, rec) {
         var field = Ext.create('Ext.form.field.Text', {
             selectOnFocus: true,
             name: 'fieldRegister',
@@ -346,6 +347,10 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 specialkey: this.specialKey
             }
         });
+        if(rec.data.dec_count !== null){
+            field.maxLength = rec.data.dec_count;
+            field.maxLengthText = 'No debe exceder debe exceder de '+rec.data.dec_count+' carácteres.';
+        }
         column.setEditor(field);
     },
 

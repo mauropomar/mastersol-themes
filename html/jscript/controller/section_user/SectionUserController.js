@@ -36,9 +36,10 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             scope: this,
             timeout: 150000,
             params: {
+                idsection:idmenu,
                 name: name_section,
+                default: default_section,
                 data: Ext.encode(data),
-                default: default_section
             },
             success: function (response) {
                 mask.hide();
@@ -187,5 +188,9 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             }
         }
         return totals;
+    },
+
+    showSection:function(window){
+
     }
 });

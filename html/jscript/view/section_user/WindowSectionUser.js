@@ -9,8 +9,8 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
     title: 'Configuración de Vistas',
     closeAction: 'destroy',
     control: 'MasterSol.controller.section_user.SectionUserController',
-    idmenu:'',
-    height:230,
+    idmenu: '',
+    height: 230,
     width: 350,
     layout: 'fit',
     autoShow: true,
@@ -18,7 +18,7 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
     requires: [],
     items: [{
         xtype: 'form',
-        frame:true,
+        frame: true,
         bodyPadding: 10,
         defaults: {
             labelAlign: 'top',
@@ -33,40 +33,48 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
         }, {
             xtype: 'combo',
             id: 'combo_view_section',
-            valueField:'Id',
-            displayField:'Nombre',
-            store:Ext.create('MasterSol.store.section_user.SectionUserStore'),
+            valueField: 'Id',
+            displayField: 'Nombre',
+            store: Ext.create('MasterSol.store.section_user.SectionUserStore'),
             typeAhead: true,
             fieldLabel: 'Selccione una Vista',
             queryMode: 'local',
             emptyText: 'Seleccione una vista...',
-            allowBlank:false,
-            blankText:'Debe introducir una vista.'
-        },{
-            xtype:'checkbox',
-            fieldLabel:'Por defecto',
+            allowBlank: false,
+            blankText: 'Debe introducir una vista.'
+        }, {
+            xtype: 'checkbox',
+            fieldLabel: 'Por defecto',
             labelAlign: 'left',
-            labelWidth:70,
+            labelWidth: 70,
             id: 'checkbox_default',
-            value:false,
-            margin:'10 0 0 0'
+            value: false,
+            margin: '10 0 0 0'
         }]
     }],
-    buttons:[{
-        xtype:'button',
-        iconCls:'fa fa-file-text',
-        text:'Mostrar'
-    },{
-        xtype:'button',
-        iconCls:'fa fa-save',
-        text:'Guardar',
-        handler:function(btn){
+    buttons: [{
+        xtype: 'button',
+        iconCls: 'fa fa-file-text',
+        text: 'Mostrar',
+        handler: function (btn) {
             var window = btn.up('window');
-           MasterApp.getController('MasterSol.controller.section_user.SectionUserController').saveData(window);
+            MasterApp.getController('MasterSol.controller.section_user.SectionUserController').showSection(window);
         }
-    },{
-        xtype:'button',
-        iconCls:'fa fa-close',
-        text:'Cerrar'
+    }, {
+        xtype: 'button',
+        iconCls: 'fa fa-save',
+        text: 'Guardar',
+        handler: function (btn) {
+            var window = btn.up('window');
+            MasterApp.getController('MasterSol.controller.section_user.SectionUserController').saveData(window);
+        }
+    }, {
+        xtype: 'button',
+        iconCls: 'fa fa-close',
+        text: 'Cerrar',
+        handler: function (btn) {
+            var window = btn.up('window');
+            window.close();
+        }
     }]
 });
