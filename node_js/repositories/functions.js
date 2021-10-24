@@ -2036,7 +2036,7 @@ const updateColumn = async (req) => {
 
 const getIdentifier = async (req) => {
 
-    const params_order = [req.query.idsection, req.query.idregister]
+    const params_order = [req.query.idsection, req.query.idregister != '' ? req.query.idregister : null]
 
     const query = "SELECT cfgapl.fn_get_identifier($1,$2)"
     const result = await pool.executeQuery(query, params_order)

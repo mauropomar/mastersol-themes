@@ -830,9 +830,13 @@ router.get('/getidentifier', async function (req, res) {
     let result = ''
     let success = true
     result = await objects.functions.getIdentifier(req)
-    if(result.includes('ERROR') || result == '')
+    if(result.includes('ERROR'))
         success = false
-    return res.json({'success': success, 'datos': result != '' ? result : 'Ha ocurrido un error ejecutando el procedimiento'})
+    if(result == ''){
+        success = false
+        result = 'La tabla correspondiente a la sección no tiene identificadores definidos'
+    }
+    return res.json({'success': success, 'datos': result})
 })
 
 router.post('/savesection', async function (req, res) {
