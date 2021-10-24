@@ -62,7 +62,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
             width: panelmenu.getWidth(),
             idmenu: id
         });
-        MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window, 'column');
+        MasterApp.chart.addChart(window, 'column');
         json['id'] = id;
         this.addWindow(json);
     },
@@ -214,10 +214,9 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     showSeriesLabel: function (btn) {
         var chart = Ext.ComponentQuery.query('cartesian')[0];
         var series = chart.series;
-        var hidden = !chart.showLabel;
         for (var j = 0; j < series.length; j++) {
             series[j].setLabel({
-                hidden: hidden
+                hidden: chart.showLabel
             });
         }
         chart.showLabel = !chart.showLabel;

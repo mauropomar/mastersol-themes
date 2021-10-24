@@ -5,6 +5,7 @@ Ext.define('MasterSol.controller.chart.RadarChartController', {
     },
 
     render: function (comp) {
+        var window = comp.up('window');
         var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
         var chart = Ext.create('Ext.chart.PolarChart', {
             reference: 'chart',
@@ -12,7 +13,15 @@ Ext.define('MasterSol.controller.chart.RadarChartController', {
             insetPadding: '40 40 60 40',
             interactions: ['rotate'],
             legend: json['legend'],
-            sprites: [],
+            sprites: [{
+                type: 'text',
+                text: window.title,
+                fontSize: 22,
+                width: 100,
+                height: 30,
+                x: 40, // the sprite x position
+                y: 20  // the sprite y position
+            }],
             axes: [{
                 type: 'numeric',
                 position: 'radial',

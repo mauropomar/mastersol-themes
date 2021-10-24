@@ -6,13 +6,22 @@ Ext.define('MasterSol.controller.chart.AreaChartController', {
 
     },
     render: function (comp) {
+        var window = comp.up('window');
         this.json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
         this.chart = Ext.create('Ext.chart.CartesianChart', {
             reference: 'chart',
             store: this.getStore(this.json),
             insetPadding: '40 40 40 40',
             legend: this.json['legend'],
-            sprites: [],
+            sprites: [{
+                type: 'text',
+                text: window.title,
+                fontSize: 22,
+                width: 100,
+                height: 30,
+                x: 40, // the sprite x position
+                y: 20  // the sprite y position
+            }],
             axes: [{
                 type: 'numeric',
                 position: 'left',

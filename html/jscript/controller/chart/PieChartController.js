@@ -5,6 +5,7 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
     },
 
     render: function (comp) {
+        var window = comp.up('window');
         var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
         var chart = Ext.create('Ext.chart.PolarChart', {
             reference: 'chart',
@@ -16,21 +17,12 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
             interactions: ['rotate'],
             sprites: [{
                 type: 'text',
+                text: window.title,
                 fontSize: 22,
                 width: 100,
                 height: 30,
                 x: 40, // the sprite x position
                 y: 20  // the sprite y position
-            }, {
-                type: 'text',
-                text: 'Data: IDC Predictions - 2017',
-                x: 12,
-                y: 425
-            }, {
-                type: 'text',
-                text: 'Source: Internet',
-                x: 12,
-                y: 440
             }],
             series: [{
                 type: 'pie',

@@ -5,9 +5,12 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
         },
 
         render: function (comp) {
+            var window = comp.up('window');
             var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
             var chart = Ext.create('Ext.chart.CartesianChart', {
                 flipXY: true,
+                showLabel: true,
+                displayInsideEnd: true,
                 store: this.getStore(json),
                 legend: json['legend'],
                 axes: [{
@@ -25,7 +28,15 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
                         text: json['label_x']
                     }
                 }],
-
+                sprites: [{
+                    type: 'text',
+                    text: window.title,
+                    fontSize: 22,
+                    width: 100,
+                    height: 30,
+                    x: 40, // the sprite x position
+                    y: 20  // the sprite y position
+                }],
                 //define the actual bar series.
                 series: [{
                     type: 'bar',
@@ -37,6 +48,9 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
                     subStyle: {
                         fill: ["#115fa6", "#94ae0a"]
                     },
+                    label: {
+                        display: 'insideEnd'
+                    },
                     tooltip: {
                         trackMouse: true,
                         scope: this,
@@ -44,7 +58,7 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
                             var label = this.getXField(json);
                             tooltip.setHtml(record.get(label) + ': ' +
                                 Ext.util.Format.number(record.get(item.field)));
-                        },
+                        }
                     }
                 }]
             });
