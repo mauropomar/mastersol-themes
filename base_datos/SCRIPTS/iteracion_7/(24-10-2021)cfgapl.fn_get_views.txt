@@ -1,0 +1,27 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_views
+(
+  IN  idsection  uuid,
+  IN  iduser     uuid
+)
+RETURNS json AS
+$$
+declare
+res_datas json;
+
+begin
+	  
+      BEGIN          
+		EXECUTE('SELECT json_agg(rowset.*) FROM (SELECT id,namex as nombre 
+        FROM cfgapl.saved_sections WHERE id_section = '||quote_literal($1)||' 
+        AND id_users = '||quote_literal($2)||')rowset') INTO res_datas; 	   
+      EXCEPTION WHEN OTHERS THEN END;
+  return res_datas;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_views(uuid, uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_get_views(uuid, uuid)
+  IS 'Return views values by idsection and iduser';

@@ -14,6 +14,19 @@ const getForeignkey = async (req) => {
     return result.rows[0].fn_get_values_fk
 }
 
+const getViews = async (req) => {
+    req.session.id_user = '7570c788-e3e8-4ffc-83d5-ac7996eb10ce'
+    const params = [req.query.idsection,req.session.id_user]
+    const query = "SELECT cfgapl.fn_get_views($1,$2)"
+    const result = await pool.executeQuery(query, params)
+    if (result.success === false) {
+        return result
+    } else if (result.rows[0].fn_get_views == null) {
+        return []
+    }
+    return result.rows[0].fn_get_views
+}
+
 const insertRegister = async (req, objects) => {
     const params_insert = await getParamsInsert(req, objects)
     const query = "SELECT cfgapl.fn_insert_register($1,$2,$3,$4,$5,$6)"
@@ -265,5 +278,6 @@ objCrudRegister.insertRegister = insertRegister
 objCrudRegister.updateRegister = updateRegister
 objCrudRegister.deleteRegister = deleteRegister
 objCrudRegister.getForeignkey = getForeignkey
+objCrudRegister.getViews = getViews
 objCrudRegister.getRegister = getRegister
 module.exports = objCrudRegister
