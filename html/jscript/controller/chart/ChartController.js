@@ -185,5 +185,55 @@ Ext.define('MasterSol.controller.chart.ChartController', {
             }
         }
         return values;
+    },
+
+    setLegendPosition: function (position) {
+        var chart = Ext.ComponentQuery.query('cartesian')[0];
+        chart.setLegend({
+            type: 'sprite',
+            docked: position
+        });
+    },
+
+    showLegend: function (btn) {
+        var legend;
+        var chart = Ext.ComponentQuery.query('cartesian')[0];
+        if (btn.text === 'Mostrar') {
+            legend = {
+                type: 'sprite',
+                docked: 'right'
+            };
+            btn.setText('Ocultar');
+        } else {
+            legend = null;
+            btn.setText('Mostrar');
+        }
+        chart.setLegend(legend);
+    },
+
+    showSeriesLabel: function (btn) {
+        var chart = Ext.ComponentQuery.query('cartesian')[0];
+        var series = chart.series;
+        var hidden = !chart.showLabel;
+        for (var j = 0; j < series.length; j++) {
+            series[j].setLabel({
+                hidden: hidden
+            });
+        }
+        chart.showLabel = !chart.showLabel;
+    },
+
+    showSeriesInsideLabel:function(btn){
+        var chart = Ext.ComponentQuery.query('cartesian')[0];
+        var series = chart.series;
+        var display = (chart.displayInsideEnd)?'outsideEnd':'insideEnd';
+        for (var j = 0; j < series.length; j++) {
+            series[j].setLabel({
+                hidden: false,
+                display:display
+            });
+        }
+        chart.displayInsideEnd = (chart.displayInsideEnd === 'insideEnd')?true:false;
     }
+
 });

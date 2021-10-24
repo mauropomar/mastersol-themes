@@ -31,7 +31,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
         default: true,
         name: 'btn_minimize',
         handler: function (evt, toolEl, owner, tool) {
-            MasterApp.getController('MasterSol.controller.chart.ChartController').minimize(this, evt, toolEl, owner, tool);
+            MasterApp.chart.minimize(this, evt, toolEl, owner, tool);
         },
     }, {
         iconCls: 'fa fa-expand',
@@ -40,18 +40,81 @@ Ext.define('MasterSol.view.chart.WindowChart', {
         default: true,
         name: 'btn_restore',
         handler: function (evt, toolEl, owner, tool) {
-            MasterApp.getController('MasterSol.controller.chart.ChartController').restore(this, evt, toolEl, owner, tool);
+            MasterApp.chart.restore(this, evt, toolEl, owner, tool);
 
         }
     }],
     items: [{
         xtype: 'panel',
-        layout: 'fit',
+        layout: 'border',
         items: [{
+            region:'west',
+            width:100,
+            collapsible:true,
+            title:'Opciones',
+            split:true,
+            items: [{
+                xtype: 'segmentedbutton',
+                vertical: true,
+                width: '100%',
+                items: [{
+                    text: 'Leyenda',
+                    menu: [
+                        {
+                            text: 'Mostrar/Ocultar',
+                            pressed: false,
+                            handler: function (btn) {
+                                MasterApp.chart.showLegend(btn);
+                            }
+                        },
+                        {
+                            text: 'Derecha',
+                            handler: function () {
+                                MasterApp.chart.setLegendPosition('right');
+                            }
+                        },
+                        {
+                            text: 'Izquierda',
+                            handler: function () {
+                                MasterApp.chart.setLegendPosition('left');
+                            }
+                        },
+                        {
+                            text: 'Arriba',
+                            handler: function () {
+                                MasterApp.chart.setLegendPosition('top');
+                            }
+                        },
+                        {
+                            text: 'Abajo',
+                            handler: function () {
+                                MasterApp.chart.setLegendPosition('bottom');
+                            }
+                        }
+                    ]
+                }, {
+                    text: 'Valores',
+                    menu: [{
+                        text: 'Mostrar/Ocultar',
+                        pressed: false,
+                        handler: function (btn) {
+                            MasterApp.chart.showSeriesLabel(btn);
+                        }
+                    }, {
+                        text: 'Dentro o Fuera',
+                        pressed: false,
+                        handler: function (btn) {
+                            MasterApp.chart.showSeriesInsideLabel(btn);
+                        }
+                    }]
+                }]
+            }]
+        },{
             region: 'center',
             layout: 'fit',
             name: 'container_chart_panel',
             items: [],
+            split:true,
             tbar: [{
                 xtype: 'button',
                 tooltip: 'Gráficos de Columnas',

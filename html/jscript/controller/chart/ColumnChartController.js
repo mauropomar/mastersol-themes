@@ -11,6 +11,8 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
             var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
             this.chart = Ext.create('Ext.chart.CartesianChart', {
                 reference: 'chart',
+                showLabel:true,
+                displayInsideEnd:true,
                 store: this.getStore(json),
                 insetPadding: {
                     top: 40,
