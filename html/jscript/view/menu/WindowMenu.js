@@ -18,6 +18,7 @@ Ext.define('MasterSol.view.menu.WindowMenu', {
     isAlert: false,
     isSelect: true,
     childs: [],
+    originalTitle: '',
     tabs: [],
     // tools:this.tools,
     items: [{

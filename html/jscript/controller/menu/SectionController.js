@@ -702,6 +702,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 tabpanel.setHeight(tabpanel['lastHeight']);
                 tabpanel['expanded'] = false;
                 panel_principal.show();
+                window.setTitle(window.originalTitle);
             }
             return;
         }
@@ -726,6 +727,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 firstTabPanel.setHeight('33%');
                 tabpanel.setHeight('33%');
                 tabpanel['expanded'] = false;
+                window.setTitle(window.originalTitle);
             }
         }
     }

@@ -556,18 +556,30 @@ Ext.define('MasterSol.controller.util.UtilController', {
     },
 
     getIdentifier: function (tabPanel) {
+        var window = tabPanel.up('window');
+        window.originalTitle = window.title;
         var panel = tabPanel.getActiveTab();
+        var parentSection = Ext.ComponentQuery.query('gridpanel[idsection='+panel.idparent+']')[0];
         var get = {
             url: 'app/getidentifier',
             method: 'GET',
             scope: this,
             params: {
-                idsection: panel.idsection,
+                idsection: parentSection.idsection,
                 idregister:panel.idrecordparent
             },
             success: function (response) {
                 var json = Ext.JSON.decode(response.responseText);
-
+                 if(json.success){
+                    window.setTitle(json.datos);
+                 }else{
+                     Ext.Msg.show({
+                         title: 'Informaci&oacute;n',
+                         msg: json.datos,
+                         buttons: Ext.MessageBox.OK,
+                         icon: Ext.MessageBox.INFO
+                     });
+                 }
             }
         };
         Ext.Ajax.request(get);
