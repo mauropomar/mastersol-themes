@@ -15,7 +15,6 @@ const getForeignkey = async (req) => {
 }
 
 const getViews = async (req) => {
-    req.session.id_user = '7570c788-e3e8-4ffc-83d5-ac7996eb10ce'
     const params = [req.query.idsection,req.session.id_user]
     const query = "SELECT cfgapl.fn_get_views($1,$2)"
     const result = await pool.executeQuery(query, params)
