@@ -930,6 +930,12 @@ router.post('/savesection', async function (req, res) {
     return res.json({'success': success, 'datos': result})
 })
 
+/*Obtener vistas dado iduser e idsection*/
+router.get('/getviews', async function (req, res) {
+    const result = await objects.register.getViews(req)
+    res.json(result)
+})
+
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         // Uploads is the Upload_folder_name
