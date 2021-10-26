@@ -81,11 +81,21 @@ router.get('/getproperties', async function (req, res) {
 
 /*Obtener sections*/
 router.post('/sections', async function (req, res) {
-    const result = await objects.sections.getSections(req)
-    if (result.success === false) {
-        return res.json(result)
-    } else {
-        res.json(result)
+    //Buscar si existe alguna saved section con default true y devolverla, sino, se devuelve la section
+    const paramsView = ['cfgapl.saved_sections', null, "WHERE id_section = '"+req.body.sectionId+"' " +
+    "AND id_users = '"+req.session.id_user+"' AND defaultx = true "];
+    const resultParamsView = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsView);
+    if (resultParamsView && resultParamsView.rows[0].fn_get_register != null && resultParamsView.rows[0].fn_get_register.length > 0) {
+        let datax = resultParamsView.rows[0].fn_get_register[0].datax
+        res.json({'isview': true, 'datos': JSON.parse(datax)})
+    }
+    else {
+        const result = await objects.sections.getSections(req)
+        if (result.success === false) {
+            return res.json({'isview':false, 'datos':result})
+        } else {
+            res.json({'isview':false, 'datos':result})
+        }
     }
 })
 
