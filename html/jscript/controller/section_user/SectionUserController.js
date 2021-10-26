@@ -10,7 +10,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         Ext.create('MasterSol.view.section_user.WindowSectionUser', {
             idsection: window.idsection
         });
-        this.loadViewCombo();
+        this.loadViewCombo(window.idsection);
     },
 
     click: function () {
@@ -21,6 +21,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         var mask = new Ext.LoadMask(window, {
             msg: 'Exportando. Espere unos minutos por favor...'
         });
+        mask.show();
         var default_section = Ext.ComponentQuery.query('#checkbox_default')[0].getValue();
         var comp_name = Ext.ComponentQuery.query('#txt_new_view_section')[0];
         var name_section = comp_name.getValue();
@@ -31,12 +32,11 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         }
         var idsection = window.idsection;
         var data = this.getSection(idsection);
-        // this.addRecord(idsection, name_section, default_section, data);
         var save = {
             url: 'app/savesection',
             method: 'POST',
             scope: this,
-            timeout: 150000,
+            timeout: 5000,
             params: {
                 idsection: idsection,
                 name: name_section,
@@ -48,7 +48,8 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
                     Ext.toast('La sección fue guardada con éxito.');
-                    this.loadViewCombo();
+                    Ext.ComponentQuery.query('#txt_new_view_section')[0].reset();
+                    this.loadViewCombo(idsection);
                 } else {
                     Ext.MessageBox.show({
                         title: 'Información',
@@ -63,6 +64,45 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             }
         };
         Ext.Ajax.request(save);
+    },
+
+    selectView: function (combo, record) {
+        var comp = combo.up('window');
+        var mask = new Ext.LoadMask(comp, {
+            msg: 'Exportando. Espere unos minutos por favor...'
+        });
+        mask.show();
+        var windowSection = Ext.ComponentQuery.query('window[idsection=' + comp.idsection + ']')[0];
+        windowSection.close();
+        var getview = {
+            url: 'app/showviews',
+            method: 'GET',
+            scope: this,
+            timeout: 5000,
+            params: {
+                idregister: record.data.id,
+            },
+            success: function (response) {
+                mask.hide();
+                var json = Ext.JSON.decode(response.responseText);
+                if (json.datos.length > 0) {
+                    comp.close();
+                    var data = json.datos;
+                    MasterApp.menu.showMenu(data);
+                } else {
+                    Ext.MessageBox.show({
+                        title: 'Información',
+                        msg: json.datos,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
+                }
+            },
+            failure: function (response) {
+                mask.hide();
+            }
+        };
+        Ext.Ajax.request(getview);
     },
 
     getSection: function (idsection) {
@@ -235,9 +275,12 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         return filters;
     },
 
-    loadViewCombo: function () {
+    loadViewCombo: function (idsection) {
         var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
         var store = combo.getStore();
+        store.proxy.extraParams = {
+            idsection:idsection
+        }
         combo.reset();
         store.load();
     },
@@ -265,15 +308,5 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             data: Ext.encode(data),
         });
         store.insert(0, rec);
-    },
-
-    selectView: function (combo, record) {
-        var comp = combo.up('window');
-        var json = Ext.JSON.decode(record.data.data);
-        var windowSection = Ext.ComponentQuery.query('window[idsection=' + comp.idsection + ']')[0];
-        windowSection.close();
-        comp.close();
-        var array = new Array(json);
-        MasterApp.menu.showMenu(array);
     }
 });

@@ -33,8 +33,8 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
         }, {
             xtype: 'combo',
             id: 'combo_view_section',
-            valueField: 'idsection',
-            displayField: 'name',
+            valueField: 'id',
+            displayField: 'nombre',
             store: Ext.create('MasterSol.store.section_user.SectionUserStore'),
             typeAhead: true,
             fieldLabel: 'Selccione una Vista',
