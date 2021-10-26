@@ -87,7 +87,7 @@ router.post('/sections', async function (req, res) {
     const resultParamsView = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsView);
     if (resultParamsView && resultParamsView.rows[0].fn_get_register != null && resultParamsView.rows[0].fn_get_register.length > 0) {
         let datax = resultParamsView.rows[0].fn_get_register[0].datax
-        res.json({'isview': true, 'datos': JSON.parse(datax)})
+        res.json({'isview': true, 'datos': [JSON.parse(datax)]})
     }
     else {
         const result = await objects.sections.getSections(req)
