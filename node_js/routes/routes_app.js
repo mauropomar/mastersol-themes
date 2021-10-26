@@ -99,6 +99,17 @@ router.post('/sections', async function (req, res) {
     }
 })
 
+router.get('/showviews', async function (req, res) {
+    const paramsView = ['cfgapl.saved_sections', req.query.idregister];
+    const resultParamsView = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', paramsView);
+    if (resultParamsView && resultParamsView.rows[0].fn_get_register != null && resultParamsView.rows[0].fn_get_register.length > 0) {
+        let datax = resultParamsView.rows[0].fn_get_register[0].datax
+        res.json({'isview': true, 'datos': [JSON.parse(datax)]})
+    }
+    else
+        res.json({'isview': true, 'datos': []})
+})
+
 /*Obtener actions*/
 router.get('/actions', async function (req, res) {
     const result = await objects.tables.getActions()
