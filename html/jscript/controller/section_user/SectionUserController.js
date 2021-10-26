@@ -10,6 +10,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         Ext.create('MasterSol.view.section_user.WindowSectionUser', {
             idsection: window.idsection
         });
+        this.loadViewCombo();
     },
 
     click: function () {
@@ -30,6 +31,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         }
         var idsection = window.idsection;
         var data = this.getSection(idsection);
+        // this.addRecord(idsection, name_section, default_section, data);
         var save = {
             url: 'app/savesection',
             method: 'POST',
@@ -43,10 +45,10 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             },
             success: function (response) {
                 mask.hide();
-                Ext.ComponentQuery.query('#btn_cancelar_capsule')[0].setDisabled(false);
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
                     Ext.toast('La sección fue guardada con éxito.');
+                    this.loadViewCombo();
                 } else {
                     Ext.MessageBox.show({
                         title: 'Información',
@@ -85,6 +87,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             'read_only': grid.read_only,
             'section_checked': grid.section_checked,
             'time_event': grid.time_event,
+            'buttons': grid.btnTools,
             'columnas': this.getColumns(grid),
             'totals': this.getTotalSection(idmenu, grid.idsection),
             'filters': this.getFilterSection(idmenu, grid.idsection),
@@ -110,17 +113,19 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                     'id': grid.idsection,
                     'idpadre': grid.idparent,
                     'nombre': grid.name_section,
+                    'buttons': grid.btnTools,
                     'columnas': this.getColumns(grid),
-                    'nivel':grid.level,
+                    'nivel': grid.level,
                     'leaf': grid.leaf,
+                    'hidden':grid.hidden,
                     'max_lines': grid.max_lines,
                     'read_only': grid.read_only,
                     'totals': this.getTotalSection(idmenu, grid.idsection),
                     'filters': this.getFilterSection(idmenu, grid.idsection),
                 });
             }
-            return childrens;
         }
+        return childrens;
     },
 
     getColumns: function (gridSection) {
@@ -230,7 +235,45 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         return filters;
     },
 
-    showSection: function (window) {
+    loadViewCombo: function () {
+        var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
+        var store = combo.getStore();
+        combo.reset();
+        store.load();
+    },
 
+    showSection: function (window) {
+        var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
+        if (combo.getValue() === '') {
+            Ext.MessageBox.show({
+                title: 'Información',
+                msg: 'Debe seleccionar una vista.',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.INFO
+            });
+            return;
+        }
+    },
+
+    addRecord: function (idsection, name_section, default_section, data) {
+        var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
+        var store = combo.getStore();
+        var rec = new Array({
+            idsection: idsection,
+            name: name_section,
+            default: default_section,
+            data: Ext.encode(data),
+        });
+        store.insert(0, rec);
+    },
+
+    selectView: function (combo, record) {
+        var comp = combo.up('window');
+        var json = Ext.JSON.decode(record.data.data);
+        var windowSection = Ext.ComponentQuery.query('window[idsection=' + comp.idsection + ']')[0];
+        windowSection.close();
+        comp.close();
+        var array = new Array(json);
+        MasterApp.menu.showMenu(array);
     }
 });

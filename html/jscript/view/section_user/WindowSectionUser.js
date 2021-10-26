@@ -33,15 +33,20 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
         }, {
             xtype: 'combo',
             id: 'combo_view_section',
-            valueField: 'Id',
-            displayField: 'Nombre',
+            valueField: 'idsection',
+            displayField: 'name',
             store: Ext.create('MasterSol.store.section_user.SectionUserStore'),
             typeAhead: true,
             fieldLabel: 'Selccione una Vista',
             queryMode: 'local',
             emptyText: 'Seleccione una vista...',
             allowBlank: false,
-            blankText: 'Debe introducir una vista.'
+            blankText: 'Debe introducir una vista.',
+            listeners:{
+                select:function(combo, record){
+                    MasterApp.getController('MasterSol.controller.section_user.SectionUserController').selectView(combo, record);
+                }
+            }
         }, {
             xtype: 'checkbox',
             fieldLabel: 'Por defecto',
