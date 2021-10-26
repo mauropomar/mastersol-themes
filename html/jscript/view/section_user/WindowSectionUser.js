@@ -57,7 +57,7 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
             margin: '10 0 0 0'
         }]
     }],
-    buttons: [{
+    buttons: [/*{
         xtype: 'button',
         iconCls: 'fa fa-file-text',
         text: 'Mostrar',
@@ -65,7 +65,7 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
             var window = btn.up('window');
             MasterApp.getController('MasterSol.controller.section_user.SectionUserController').showSection(window);
         }
-    }, {
+    }*/, {
         xtype: 'button',
         iconCls: 'fa fa-save',
         text: 'Guardar',
