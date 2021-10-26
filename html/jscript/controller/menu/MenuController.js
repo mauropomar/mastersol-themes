@@ -47,9 +47,9 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             success: function (response) {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
-                this.json = json;
-                if (json != null) {
-                    this.showMenu(json);
+                if (json.datos.length > 0) {
+                     this.json = json.datos;
+                    this.showMenu(this.json);
                 } else {
                     MasterApp.util.showMessageInfo('Este menú no tiene secciones disponibles.');
                 }
