@@ -302,7 +302,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                 valor2: valor2,
                 cantparam: cantparam
             });
-        }, this)
+        }, this);
         return datos;
     },
     //devuelve el id del operador
