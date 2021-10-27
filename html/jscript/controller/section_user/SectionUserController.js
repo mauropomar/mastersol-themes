@@ -89,6 +89,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                     comp.close();
                     var data = json.datos;
                     MasterApp.menu.showMenu(data);
+                    this.loadData(data);
                 } else {
                     Ext.MessageBox.show({
                         title: 'Información',
@@ -121,6 +122,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             'hidden': grid.hidden,
             'idpadre': grid.idparent,
             'id': grid.idsection,
+            'idmenu': window.idmenu,
             'niveles': grid.levels,
             'nombre': grid.name_section,
             'orderable': grid.orderable,
@@ -157,7 +159,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                     'columnas': this.getColumns(grid),
                     'nivel': grid.level,
                     'leaf': grid.leaf,
-                    'hidden':grid.hidden,
+                    'hidden': grid.hidden,
                     'max_lines': grid.max_lines,
                     'read_only': grid.read_only,
                     'totals': this.getTotalSection(idmenu, grid.idsection),
@@ -279,7 +281,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
         var store = combo.getStore();
         store.proxy.extraParams = {
-            idsection:idsection
+            idsection: idsection
         }
         combo.reset();
         store.load();
@@ -308,5 +310,35 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             data: Ext.encode(data),
         });
         store.insert(0, rec);
+    },
+
+    loadData: function (data) {
+        var gridsection = MasterApp.globals.getGridSection();
+        var idsection = data[0].id;
+        var idmenu = data[0].idmenu;
+        var filters = Ext.encode(data[0].filters);
+        var totals = Ext.encode(data[0].totals);
+        var load = {
+            url: 'app/resultfilteroperators',
+            method: 'POST',
+            scope: this,
+            params: {
+                'idregistro': '1d8ac917-80df-4cdd-830c-ab812914cb44',
+                'idsection': idsection,
+                'idseccionpadre': 0,
+                'idpadreregistro': 0,
+                'idmenu': idmenu,
+                'accion': '2',
+                'data': filters,
+                'totales': totals
+            },
+            callback: function (options, success, response) {
+                var json = Ext.JSON.decode(response.responseText);
+                if (json.datos != null) {
+                    gridsection.getStore().loadData(json.datos);
+                }
+            }
+        };
+        Ext.Ajax.request(load);
     }
 });

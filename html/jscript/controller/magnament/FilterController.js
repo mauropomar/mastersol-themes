@@ -284,6 +284,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
             var d = this.getIdOperator(rec, valor1);
             var idoperator = d[0];
             var cantparam = d[1];
+            var real_name_in = MasterApp.util.getValProperty(rec.data.nombrecampo, 'real_name_in');
+            var real_name_out = MasterApp.util.getValProperty(rec.data.nombrecampo, 'real_name_out');
             datos.push({
                 idregister: rec.data.idregistro,
                 nombrecampo: rec.data.nombrecampo,
@@ -293,6 +295,8 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                 idoperador: (valor1) ? idoperator : null,
                 operador: (valor1) ? this.getOperator(rec, valor1) : null,
                 operadores: rec.data.operadores,
+                real_name_in: real_name_in,
+                real_name_out: real_name_out,
                 idvalor: rec.data.idvalor,
                 valor1: valor1,
                 valor2: valor2,
