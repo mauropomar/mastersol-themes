@@ -282,7 +282,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         var store = combo.getStore();
         store.proxy.extraParams = {
             idsection: idsection
-        }
+        };
         combo.reset();
         store.load();
     },
@@ -336,6 +336,9 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.datos != null) {
                     gridsection.getStore().loadData(json.datos);
+                    var ts = json.totales.datos;
+                    if (ts.length > 0)
+                        MasterApp.totals.changeIconsTotals(ts);
                 }
             }
         };
