@@ -44,7 +44,7 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
             blankText: 'Debe introducir una vista.',
             listeners:{
                 select:function(combo, record){
-                    MasterApp.getController('MasterSol.controller.section_user.SectionUserController').selectView(combo, record);
+             //       MasterApp.getController('MasterSol.controller.section_user.SectionUserController').selectView(combo, record);
                 }
             }
         }, {
@@ -57,21 +57,29 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
             margin: '10 0 0 0'
         }]
     }],
-    buttons: [/*{
+    buttons: [{
         xtype: 'button',
         iconCls: 'fa fa-file-text',
         text: 'Mostrar',
         handler: function (btn) {
             var window = btn.up('window');
-            MasterApp.getController('MasterSol.controller.section_user.SectionUserController').showSection(window);
+            MasterApp.getController('MasterSol.controller.section_user.SectionUserController').showView(window);
         }
-    }*/, {
+    }, {
         xtype: 'button',
         iconCls: 'fa fa-save',
         text: 'Guardar',
         handler: function (btn) {
             var window = btn.up('window');
             MasterApp.getController('MasterSol.controller.section_user.SectionUserController').saveData(window);
+        }
+    }, {
+        xtype: 'button',
+        iconCls: 'fa fa-trash',
+        text: 'Eliminar',
+        handler: function (btn) {
+            var window = btn.up('window');
+            MasterApp.getController('MasterSol.controller.section_user.SectionUserController').deleteView(window);
         }
     }, {
         xtype: 'button',

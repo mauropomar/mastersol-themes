@@ -12,6 +12,56 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         });
         this.loadViewCombo(window.idsection);
     },
+
+    showView:function(window){
+        var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
+        var idSectionView = combo.getValue();
+        if(idSectionView === null){
+            Ext.MessageBox.show({
+                title: 'Información',
+                msg: 'Debe seleccionar una vista de la sección.',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.INFO
+            });
+            return;
+        }
+        var mask = new Ext.LoadMask(window, {
+            msg: 'Cargando...'
+        });
+        mask.show();
+        var windowSection = Ext.ComponentQuery.query('window[idsection=' + window.idsection + ']')[0];
+        windowSection.close();
+        var getview = {
+            url: 'app/showviews',
+            method: 'GET',
+            scope: this,
+            timeout: 5000,
+            params: {
+                idregister: idSectionView ,
+            },
+            success: function (response) {
+                mask.hide();
+                var json = Ext.JSON.decode(response.responseText);
+                if (json.datos.length > 0) {
+                    window.close();
+                    var data = json.datos;
+                    MasterApp.menu.showMenu(data);
+                    this.loadDataSectionUser(data);
+                } else {
+                    Ext.MessageBox.show({
+                        title: 'Información',
+                        msg: json.datos,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
+                }
+            },
+            failure: function (response) {
+                mask.hide();
+            }
+        };
+        Ext.Ajax.request(getview);
+    },
     // Salva la vista de la sección en formato JSON
     saveData: function (window) {
         var mask = new Ext.LoadMask(window, {
@@ -61,46 +111,45 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         };
         Ext.Ajax.request(save);
     },
-    // Selecciona una  vista de la seccion y la muestra
-    selectView: function (combo, record) {
-        var comp = combo.up('window');
-        var mask = new Ext.LoadMask(comp, {
-            msg: 'Exportando. Espere unos minutos por favor...'
-        });
-        mask.show();
-        var windowSection = Ext.ComponentQuery.query('window[idsection=' + comp.idsection + ']')[0];
-        windowSection.close();
-        var getview = {
-            url: 'app/showviews',
-            method: 'GET',
-            scope: this,
-            timeout: 5000,
-            params: {
-                idregister: record.data.id,
-            },
-            success: function (response) {
-                mask.hide();
-                var json = Ext.JSON.decode(response.responseText);
-                if (json.datos.length > 0) {
-                    comp.close();
-                    var data = json.datos;
-                    MasterApp.menu.showMenu(data);
-                    this.loadDataSectionUser(data);
-                } else {
-                    Ext.MessageBox.show({
-                        title: 'Información',
-                        msg: json.datos,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.INFO
-                    });
-                }
-            },
-            failure: function (response) {
-                mask.hide();
+
+    deleteView:function(window){
+        var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
+        var idSectionView = combo.getValue();
+        if(idSectionView === null){
+            Ext.MessageBox.show({
+                title: 'Información',
+                msg: 'Debe seleccionar una vista de la sección.',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.INFO
+            });
+            return;
+        }
+        Ext.Msg.confirm('Confirmaci&oacute;n', '&iquest;Est&aacute; seguro que desea eliminar la vista seleccionada?', function (conf) {
+            if (conf == 'yes') {
+                Ext.Ajax.request({
+                    url: 'app/deleteView',
+                    method: 'post',
+                    params: {
+                        idsection: idSectionView
+                    },
+                    success: function (resp, o) {
+                        var json = Ext.JSON.decode(resp.responseText);
+                        if (json.success == 'true') {
+                            MasterApp.util.showMessageInfo('La vista de la sección fue eliminada con éxito.');
+                        } else {
+                            Ext.Msg.show({
+                                title: 'Informaci&oacute;n',
+                                msg: json.mensaje[0],
+                                buttons: Ext.MessageBox.OK,
+                                icon: Ext.MessageBox.INFO
+                            });
+                        }
+                    }
+                })
             }
-        };
-        Ext.Ajax.request(getview);
+        }, this);
     },
+
     // Obtiene la ventana que contiene a las secciones
     getSection: function (idsection) {
         var window = Ext.ComponentQuery.query('window-menu[idsection=' + idsection + ']')[0];
