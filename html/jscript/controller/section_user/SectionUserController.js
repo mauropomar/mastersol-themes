@@ -130,7 +130,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                     url: 'app/deleteView',
                     method: 'post',
                     params: {
-                        idsection: idSectionView
+                        id: idSectionView
                     },
                     success: function (resp, o) {
                         var json = Ext.JSON.decode(resp.responseText);
