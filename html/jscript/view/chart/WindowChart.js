@@ -107,6 +107,37 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                             MasterApp.chart.showSeriesInsideLabel(btn);
                         }
                     }]
+                }, {
+                    text: 'Etiquetas',
+                    menu: [
+                        {
+                            text: 'Mostrar u Ocultar Eje X',
+                            pressed: false,
+                            handler: function (btn) {
+                                MasterApp.chart.showLabel(1);
+                            }
+                        },{
+                            text: 'Mostrar u Ocultar Eje Y',
+                            pressed: false,
+                            handler: function (btn) {
+                                MasterApp.chart.showLabel(0);
+                            }
+                        },{
+                            text: 'Vertical',
+                            handler: function (btn) {
+                                MasterApp.chart.showLabelPosition(btn);
+                            }
+                        },{
+                            text: 'Horizontal',
+                            handler: function (btn) {
+                                MasterApp.chart.showLabelPosition(btn);
+                            }
+                        },{
+                            text: 'Inclinado',
+                            handler: function (btn) {
+                                MasterApp.chart.showLabelPosition(btn);
+                            }
+                        }]
                 }]
             }]
         },{

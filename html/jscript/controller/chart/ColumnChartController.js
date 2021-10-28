@@ -45,6 +45,12 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                     position: 'bottom',
                     title: {
                         text: json['label_x']
+                    },
+                    label: {
+                        textPadding: 0,
+                        rotate: {
+                            degrees: 0
+                        }
                     }
                 }],
                 animation: Ext.isIE8 ? false : true,

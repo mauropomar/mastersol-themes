@@ -222,17 +222,44 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         chart.showLabel = !chart.showLabel;
     },
 
-    showSeriesInsideLabel:function(btn){
+    showSeriesInsideLabel: function (btn) {
         var chart = Ext.ComponentQuery.query('cartesian')[0];
         var series = chart.series;
-        var display = (chart.displayInsideEnd)?'outsideEnd':'insideEnd';
+        var display = (chart.displayInsideEnd) ? 'outsideEnd' : 'insideEnd';
         for (var j = 0; j < series.length; j++) {
             series[j].setLabel({
                 hidden: false,
-                display:display
+                display: display
             });
         }
-        chart.displayInsideEnd = (chart.displayInsideEnd === 'insideEnd')?true:false;
+        chart.displayInsideEnd = (chart.displayInsideEnd === 'insideEnd') ? true : false;
+    },
+
+    showLabel: function (pos) {
+        var chart = Ext.ComponentQuery.query('cartesian')[0];
+        var leftAxis = chart.getAxes()[pos];
+        if (!leftAxis['_hidden']) {
+            leftAxis.setHidden(true);
+            leftAxis['lastTitle'] = leftAxis.title;
+            leftAxis.setTitle('');
+        } else {
+            leftAxis.setHidden(false);
+            var title = leftAxis['_title'].text;
+            leftAxis.setTitle(title);
+        }
+        chart.redraw();
+    },
+
+    showLabelPosition: function () {
+        var chart = Ext.ComponentQuery.query('cartesian')[0];
+        var xAxis = chart.getAxes()[1];
+        xAxis.setLabel({
+            textPadding: 0,
+            rotate: {
+                degrees: -45
+            }
+        });
+        chart.redraw();
     }
 
 });

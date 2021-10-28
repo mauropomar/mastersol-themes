@@ -35,6 +35,12 @@ Ext.define('MasterSol.controller.chart.RadarChartController', {
                 type: 'category',
                 position: 'angular',
                 grid: true,
+                label: {
+                    textPadding: 0,
+                    rotate: {
+                        degrees: -45
+                    }
+                }
             }],
             series: this.getSeries(json)
         });

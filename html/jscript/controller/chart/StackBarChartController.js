@@ -26,6 +26,12 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
                     position: 'left',
                     title: {
                         text: json['label_x']
+                    },
+                    label: {
+                        textPadding: 0,
+                        rotate: {
+                            degrees: -45
+                        }
                     }
                 }],
                 sprites: [{
