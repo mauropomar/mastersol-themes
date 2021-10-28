@@ -83,7 +83,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             url: 'app/savesection',
             method: 'POST',
             scope: this,
-            timeout: 5000,
+            timeout: 50000,
             params: {
                 idsection: idsection,
                 name: (name_section !== '') ? name_section : combo.lastSelection[0].data.nombre,
