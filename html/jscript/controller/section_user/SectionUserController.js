@@ -13,10 +13,10 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         this.loadViewCombo(window.idsection);
     },
 
-    showView:function(window){
+    showView: function (window) {
         var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
         var idSectionView = combo.getValue();
-        if(idSectionView === null){
+        if (idSectionView === null) {
             Ext.MessageBox.show({
                 title: 'Información',
                 msg: 'Debe seleccionar una vista de la sección.',
@@ -37,7 +37,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             scope: this,
             timeout: 5000,
             params: {
-                idregister: idSectionView ,
+                idregister: idSectionView,
             },
             success: function (response) {
                 mask.hide();
@@ -65,14 +65,15 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
     // Salva la vista de la sección en formato JSON
     saveData: function (window) {
         var mask = new Ext.LoadMask(window, {
-            msg: 'Exportando. Espere unos minutos por favor...'
+            msg: 'Guardando. Espere unos minutos por favor...'
         });
         mask.show();
         var default_section = Ext.ComponentQuery.query('#checkbox_default')[0].getValue();
         var comp_name = Ext.ComponentQuery.query('#txt_new_view_section')[0];
         var name_section = comp_name.getValue();
-        if (name_section === '') {
-            comp_name.markInvalid('Debe introducir un nombre a la sección.');
+        var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
+        if (name_section === '' && combo.getValue() === null) {
+            comp_name.markInvalid('Debe introducir un nombre a la vista de la sección.');
             mask.hide();
             return;
         }
@@ -85,7 +86,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             timeout: 5000,
             params: {
                 idsection: idsection,
-                name: name_section,
+                name: (name_section !== '') ? name_section : combo.lastSelection[0].data.nombre,
                 default: default_section,
                 data: Ext.encode(data),
             },
@@ -112,10 +113,10 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         Ext.Ajax.request(save);
     },
 
-    deleteView:function(window){
+    deleteView: function (window) {
         var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
         var idSectionView = combo.getValue();
-        if(idSectionView === null){
+        if (idSectionView === null) {
             Ext.MessageBox.show({
                 title: 'Información',
                 msg: 'Debe seleccionar una vista de la sección.',
@@ -124,24 +125,31 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             });
             return;
         }
+        var mask = new Ext.LoadMask(window, {
+            msg: 'Eliminando. Espere unos minutos por favor...'
+        });
+        mask.show();
         Ext.Msg.confirm('Confirmaci&oacute;n', '&iquest;Est&aacute; seguro que desea eliminar la vista seleccionada?', function (conf) {
             if (conf == 'yes') {
                 Ext.Ajax.request({
-                    url: 'app/deleteView',
+                    url: 'app/deleteview',
                     method: 'post',
                     params: {
                         id: idSectionView
                     },
                     success: function (resp, o) {
+                        mask.hide();
                         var json = Ext.JSON.decode(resp.responseText);
-                        if (json.success == 'true') {
-                            MasterApp.util.showMessageInfo('La vista de la sección fue eliminada con éxito.');
+                        if (json.success == true) {
+                            Ext.toast('La vista de la sección fue eliminada con éxito.');
+                            combo.reset();
+                            combo.getStore().reload();
                         } else {
-                            Ext.Msg.show({
-                                title: 'Informaci&oacute;n',
-                                msg: json.mensaje[0],
-                                buttons: Ext.MessageBox.OK,
-                                icon: Ext.MessageBox.INFO
+                            Ext.MessageBox.show({
+                                title: 'Información',
+                                msg: json.datos,
+                                buttons: Ext.Msg.OK,
+                                icon: Ext.Msg.INFO
                             });
                         }
                     }
@@ -156,7 +164,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         var data = this.getSectionPrimary(window);
         return data;
     },
-  // Obtiene la seccion principal
+    // Obtiene la seccion principal
     getSectionPrimary: function (window) {
         var idsection = window.idsection;
         var idmenu = window.idmenu;
