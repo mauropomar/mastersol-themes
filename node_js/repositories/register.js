@@ -56,11 +56,20 @@ const updateRegister = async (req, objects) => {
     return result.rows[0].fn_update_register
 }
 
-const deleteRegister = async (req) => {
-    const params_parse = JSON.parse(req.body.id);
-    const ids = "{" + params_parse.join(',') + "}"
+const deleteRegister = async (req,idjson=true) => {
+    let params_parse = ''
+    let ids = ''
+    if(idjson) {
+        params_parse = JSON.parse(req.body.id);
+        ids = "{" + params_parse.join(',') + "}"
+    }
+    else {
+        ids = "{" + req.body.id + "}"
+    }
+
     const params_delete = [req.body.idsection, ids, req.session.id_user, req.body.idpadreregistro && req.body.idpadreregistro !== '0' ? req.body.idpadreregistro : null]
     //Si se elimina un botón, borrar el .js asociado
+    console.log(params_delete)
     const param_section = ['cfgapl.sections',req.body.idsection]
     const resultSeccion = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_section)
     if(resultSeccion && resultSeccion.rows[0].fn_get_register[0].namex == 'Sec_sections_buttons'){

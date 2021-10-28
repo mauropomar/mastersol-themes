@@ -1,0 +1,5 @@
+CREATE TRIGGER tr_cfgapl_saved_sections_fn_generate_auditorias
+  AFTER UPDATE OR INSERT OR DELETE
+  ON cfgapl.saved_sections
+  FOR EACH ROW
+  EXECUTE PROCEDURE "security".fn_generate_auditorias();

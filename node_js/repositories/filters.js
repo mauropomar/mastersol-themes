@@ -241,7 +241,7 @@ function getParamsResultFilter(req, objects) {
     return result
 }
 
-function getParamsResultFunctionsgetParamsResultFunctions(req, objects, params_parse_data, params_parse_filtros) {
+function getParamsResultFunctions(req, objects, params_parse_data, params_parse_filtros) {
     var result = [], fields = [], functions = [],
     where = [], operador = "", date_start = "", date_end = "", valor = false;
     params_parse_data.forEach(function (item, index, arr) {

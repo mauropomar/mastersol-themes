@@ -216,7 +216,7 @@ router.get('/getregisters', async function (req, res) {
 
 /*CRUD registros*/
 router.post('/crudregister', async function (req, res) {
-    var result;
+    var result = '';
 
     if (req.body.accion === '13') { //Insert
         result = await objects.register.insertRegister(req, objects)
@@ -955,6 +955,29 @@ router.post('/savesection', async function (req, res) {
 router.get('/getviews', async function (req, res) {
     const result = await objects.register.getViews(req)
     res.json(result)
+})
+
+router.post('/deleteview', async function (req, res) {
+    var result = '';
+    //Obtener id de la section saved_sections
+    const paramsSection = ['cfgapl.sections', null, "WHERE namex = 'Sec_saved_sections' "];
+    const resultParamsSection = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSection);
+    if (resultParamsSection && resultParamsSection.rows[0].fn_get_register != null && resultParamsSection.rows[0].fn_get_register.length > 0)
+        req.body.idsection = resultParamsSection.rows[0].fn_get_register[0].id
+    req.body.idpadreregistro = 0
+    req.session.id_user = '7570c788-e3e8-4ffc-83d5-ac7996eb10ce'
+    result = await objects.register.deleteRegister(req,false)
+
+    if (result.success === false) {
+        return res.json(result)
+    }
+    else if (result.includes('ERROR')){
+        return res.json({'success': false, 'datos': result, 'message': result})
+    }
+    else {
+        return res.json({'success': true, 'datos': result, 'message': ''})
+    }
+
 })
 
 var storage = multer.diskStorage({
