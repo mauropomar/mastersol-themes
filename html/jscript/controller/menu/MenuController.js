@@ -52,7 +52,6 @@ Ext.define('MasterSol.controller.menu.MenuController', {
                     this.showMenu(this.json);
                     if (json.isview)
                         MasterApp.getController('MasterSol.controller.section_user.SectionUserController').loadDataSectionUser(this.json);
-
                 } else {
                     MasterApp.util.showMessageInfo('Este menú no tiene secciones disponibles.');
                 }
@@ -64,37 +63,33 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         Ext.Ajax.request(getdata);
     },
 
-    showMenu:
-
-        function (json, isAlert = false) {
-            var panelmenu = Ext.ComponentQuery.query('#panel-center')[0];
-            var window = Ext.create('MasterSol.view.menu.WindowMenu');
-            var height = panelmenu.getHeight();
-            var width = panelmenu.getWidth();
-            window.setWidth(width);
-            window.setHeight(height);
-            window.setTitle(this.menu.name);
-            window.idsection = this.menu.idsection;
-            window.idmenu = this.menu.id;
-            window.isAlert = isAlert;
-            window.showAt(0, 38);
-            if (json.length == 0) {
-                MasterApp.tools.setButtonsDefault(window);
-                return;
-            }
-            MasterApp.tools.setButtonsInit(window, json[0].buttons);
-            this.windowParent = window;
-            this.panelMenu = window.down('panel').down('container');
-            this.generateLevels(json);
-            this.configureSections(json);
-            Ext.ComponentQuery.query('#btnEnRows')[0].setDisabled(false);
-            Ext.ComponentQuery.query('#btnEnColumns')[0].setDisabled(false);
-            Ext.ComponentQuery.query('#btnEnCascade')[0].setDisabled(false);
-            MasterApp.util.setStyleWindow(MasterApp.globals.getSectionPrincipal());
-            MasterApp.magnament.setActiveTabDefault(window);
+    showMenu: function (json, isAlert = false) {
+        var panelmenu = Ext.ComponentQuery.query('#panel-center')[0];
+        var window = Ext.create('MasterSol.view.menu.WindowMenu');
+        var height = panelmenu.getHeight();
+        var width = panelmenu.getWidth();
+        window.setWidth(width);
+        window.setHeight(height);
+        window.setTitle(this.menu.name);
+        window.idsection = this.menu.idsection;
+        window.idmenu = this.menu.id;
+        window.isAlert = isAlert;
+        window.showAt(0, 38);
+        if (json.length == 0) {
+            MasterApp.tools.setButtonsDefault(window);
+            return;
         }
-
-    ,
+        MasterApp.tools.setButtonsInit(window, json[0].buttons);
+        this.windowParent = window;
+        this.panelMenu = window.down('panel').down('container');
+        this.generateLevels(json);
+        this.configureSections(json);
+        Ext.ComponentQuery.query('#btnEnRows')[0].setDisabled(false);
+        Ext.ComponentQuery.query('#btnEnColumns')[0].setDisabled(false);
+        Ext.ComponentQuery.query('#btnEnCascade')[0].setDisabled(false);
+        MasterApp.util.setStyleWindow(MasterApp.globals.getSectionPrincipal());
+        MasterApp.magnament.setActiveTabDefault(window);
+    },
     //configurar la cantidad de niveles que va a tener el menu
     generateLevels: function (json) {
         var levels = json[0].niveles;
@@ -113,8 +108,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
                 }
             }
         }
-    }
-    ,
+    },
     //generar seccion principal y agregar a la opcion del combo de ventanas que esta en el footer
     generateSectionPrincipal: function (json, height) {
         var panel = MasterApp.containersections.getPanel('', json[0], [], height, 'section-principal', this.windowParent);
@@ -123,8 +117,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         this.panelMenu.add(panel);
         MasterApp.footer.addWindow(this.menu);
         MasterApp.section.addEventClickSectionPrincipal(panel);
-    }
-    ,
+    },
 
     generateSections: function (level, height) {
         var tabpanel = Ext.create('Ext.tab.Panel', {
@@ -138,8 +131,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             border: 1
         });
         this.panelMenu.add(tabpanel);
-    }
-    ,
+    },
 
     // configuracion y creacion de secciones
     configureSections: function (json) {
@@ -159,8 +151,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
         } else {
             this.setHeightTabs(window);
         }
-    }
-    ,
+    },
     // crea una seccion y la agrega al tab
     insertSection: function (section, tab) {
         var title = section.nombre;
@@ -171,8 +162,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             tab.hide();
         }
         MasterApp.section.addEventClickTabSection(tab, containerSection);
-    }
-    ,
+    },
 
 
     getTabsOfPanel: function (items) {
@@ -183,8 +173,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             }
         }
         return tabs;
-    }
-    ,
+    },
     // elimina todas la secciones y agregar las secciones correspondiente al padre
     addChildOfTab: function (tab, panel) {
         var level, tabs;
@@ -219,8 +208,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
                 panel.up('tabpanel').setHeight('100%');
             }
         }
-    }
-    ,
+    },
     //verificar si la ventana existe para que no se repita
     getWindow: function (record) {
         var win = null;
@@ -233,8 +221,7 @@ Ext.define('MasterSol.controller.menu.MenuController', {
             }
         }
         return win;
-    }
-    ,
+    },
 
     setHeightTabs: function (window, nivel) {
         var p = MasterApp.globals.getPanelPrincipalByWindow(window);
