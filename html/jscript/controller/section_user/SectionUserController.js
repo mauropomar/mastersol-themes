@@ -359,7 +359,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                 if (json.datos != null) {
                     gridsection.getStore().loadData(json.datos);
                     var ts = json.totales.datos;
-                    if (ts.length > 0)
+                    if (ts && ts.length > 0)
                         MasterApp.totals.changeIconsTotals(ts);
 
                 }
@@ -370,8 +370,11 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
     // Obtiene los filtros validos que hayan sido configurados
     getFiltersOnlyFunctions: function (info) {
         var filters = info.filters;
+        if (filters.length == 0)
+            return [];
         var data = [];
         var arrayFilters = MasterApp.globals.getArrayFilter();
+
         arrayFilters.push({
             id: info.idmenu,
             registers: [{
@@ -405,6 +408,8 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
     // Obtiene los totales validos que hayan sido configurados
     getTotalsOnlyFunctions: function (info) {
         var totals = info.totals;
+        if (totals.length == 0)
+            return [];
         var data = [];
         var arrayTotals = MasterApp.globals.getArrayTotal();
         arrayTotals.push({

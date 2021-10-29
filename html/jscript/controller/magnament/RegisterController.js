@@ -505,9 +505,11 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         };
         var values = rec.data.valor;
         store.load({
-                callback: function (store, records) {
-                    var values = (values) ? values.split(',') : combo.getValue();
-                    combo.setValue(values);
+                callback: function () {
+                    if(values) {
+                        values = (values) ? values.split(',') : combo.getValue();
+                        combo.setValue(values);
+                    }
                 }
             }
         );
