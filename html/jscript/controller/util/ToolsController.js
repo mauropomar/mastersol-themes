@@ -60,7 +60,7 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     add: function (window, newbuttons, addDefault) {
-        newbuttons = (newbuttons === null) ? [] : newbuttons;
+        newbuttons = (!newbuttons || newbuttons === null) ? [] : newbuttons;
         var header = window.getHeader();
         var array = [];
         for (var i = 0; i < newbuttons.length; i++) {
