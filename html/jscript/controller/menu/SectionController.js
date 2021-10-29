@@ -459,7 +459,8 @@ Ext.define('MasterSol.controller.menu.SectionController', {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 var data = json.datos[0].datos;
-                grid.getStore().loadData(data);
+                if (data)
+                    grid.getStore().loadData(data);
 
             },
             failure: function (response) {

@@ -96,6 +96,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                 if (json.success == true) {
                     Ext.toast('La sección fue guardada con éxito.');
                     Ext.ComponentQuery.query('#txt_new_view_section')[0].reset();
+                    Ext.ComponentQuery.query('#checkbox_default')[0].setValue(false);
                     this.loadViewCombo(idsection);
                 } else {
                     Ext.MessageBox.show({
