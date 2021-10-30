@@ -9,7 +9,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
 
         render: function (comp) {
             var window = comp.up('window');
-            var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
+            var json = MasterApp.chart.jsonData;
             this.chart = Ext.create('Ext.chart.CartesianChart', {
                 reference: 'chart',
                 showLabel:true,

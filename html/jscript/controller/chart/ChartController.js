@@ -198,17 +198,12 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     showLegend: function (btn) {
         var legend;
         var chart = Ext.ComponentQuery.query('cartesian')[0];
-        if (btn.text === 'Mostrar') {
-            legend = {
-                type: 'sprite',
-                docked: 'right'
-            };
-            btn.setText('Ocultar');
-        } else {
-            legend = null;
-            btn.setText('Mostrar');
+        var series = chart.series;
+        for (var j = 0; j < series.length; j++) {
+            series[j].setShowInLegend(false);
         }
-        chart.setLegend(legend);
+        chart.redraw();
+        chart.getStore().reload();
     },
 
     showSeriesLabel: function (btn) {
@@ -233,6 +228,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
             });
         }
         chart.displayInsideEnd = (chart.displayInsideEnd === 'insideEnd') ? true : false;
+        chart.getStore().reload();
     },
 
     showLabel: function (pos) {
@@ -250,16 +246,21 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         chart.redraw();
     },
 
-    showLabelPosition: function () {
+    showLabelPosition: function (type) {
         var chart = Ext.ComponentQuery.query('cartesian')[0];
         var xAxis = chart.getAxes()[1];
+        var number = -45;
+        if (type === 'horizontal')
+            number = 0;
+        if (type === 'vertical')
+            number = -90;
         xAxis.setLabel({
             textPadding: 0,
             rotate: {
-                degrees: -45
+                degrees: number
             }
         });
-        chart.redraw();
+        chart.getStore().reload();
     }
 
 });

@@ -61,7 +61,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                     text: 'Leyenda',
                     menu: [
                         {
-                            text: 'Mostrar/Ocultar',
+                            text: 'Mostrar u Ocultar',
                             pressed: false,
                             handler: function (btn) {
                                 MasterApp.chart.showLegend(btn);
@@ -125,17 +125,17 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                         },{
                             text: 'Vertical',
                             handler: function (btn) {
-                                MasterApp.chart.showLabelPosition(btn);
+                                MasterApp.chart.showLabelPosition('vertical');
                             }
                         },{
                             text: 'Horizontal',
                             handler: function (btn) {
-                                MasterApp.chart.showLabelPosition(btn);
+                                MasterApp.chart.showLabelPosition('horizontal');
                             }
                         },{
                             text: 'Inclinado',
                             handler: function (btn) {
-                                MasterApp.chart.showLabelPosition(btn);
+                                MasterApp.chart.showLabelPosition('inclinado');
                             }
                         }]
                 }]
