@@ -11,6 +11,8 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
                 flipXY: true,
                 showLabel: true,
                 displayInsideEnd: true,
+                height: 500,
+                insetPadding: 40,
                 store: this.getStore(json),
                 legend: json['legend'],
                 axes: [{
@@ -52,7 +54,7 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
                     // Cycles the green and blue fill mode over 2008 and 2009
                     // subStyle parameters also override style parameters
                     subStyle: {
-                        fill: ["#115fa6", "#94ae0a"]
+                        fill: ["#94ae0a", "#115fa6"]
                     },
                     label: {
                         display: 'insideEnd'
@@ -68,6 +70,7 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
                     }
                 }]
             });
+            MasterApp.chart.chartSelect = chart;
             comp.add(chart);
         },
 

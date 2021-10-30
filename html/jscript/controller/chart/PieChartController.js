@@ -42,6 +42,7 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
                 }
             }]
         });
+        MasterApp.chart.chartSelect = chart;
         comp.add(chart);
     },
 
@@ -75,6 +76,6 @@ Ext.define('MasterSol.controller.chart.PieChartController', {
         var chart = window.down('pie-chart').items.items[0];
         var title = window.getTitle();
         var fileName = title + '.' + ext;
-        MasterApp.getController('MasterSol.controller.chart.ChartController').saveBase64AsFile(chart.getImage("stream").data, fileName);
+        MasterApp.chart.saveBase64AsFile(chart.getImage("stream").data, fileName);
     }
 });

@@ -49,7 +49,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                     label: {
                         textPadding: 0,
                         rotate: {
-                            degrees: 0
+                            degrees: -45
                         }
                     }
                 }],
@@ -91,6 +91,7 @@ Ext.define('MasterSol.controller.chart.ColumnChartController', {
                     enditemedit: this.onEndItemEdit
                 }
             });
+            MasterApp.chart.chartSelect = this.chart;
             comp.add(this.chart);
         },
 

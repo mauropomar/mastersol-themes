@@ -44,6 +44,7 @@ Ext.define('MasterSol.controller.chart.RadarChartController', {
             }],
             series: this.getSeries(json)
         });
+        MasterApp.chart.chartSelect = chart;
         comp.add(chart);
     },
 

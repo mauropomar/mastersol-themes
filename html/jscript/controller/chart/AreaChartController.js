@@ -48,6 +48,7 @@ Ext.define('MasterSol.controller.chart.AreaChartController', {
                 }
             }]
         });
+        MasterApp.chart.chartSelect = this.chart;
         comp.add(this.chart);
         this.onAfterRender();
     },

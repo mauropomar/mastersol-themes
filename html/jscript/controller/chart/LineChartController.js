@@ -60,6 +60,7 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
                 }],
                 series: this.getSeries(json)
             });
+            MasterApp.chart.chartSelect = chart;
             comp.add(chart);
         },
 

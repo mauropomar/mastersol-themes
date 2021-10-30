@@ -2,6 +2,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     extend: 'Ext.app.Controller',
     jsonData: null,
     type: 'column',
+    chartSelect: {},
     init: function () {
 
     },
@@ -188,7 +189,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     },
 
     setLegendPosition: function (position) {
-        var chart = Ext.ComponentQuery.query('cartesian')[0];
+        var chart = MasterApp.chart.chartSelect;
         chart.setLegend({
             type: 'sprite',
             docked: position
@@ -197,7 +198,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
 
     showLegend: function (btn) {
         var legend;
-        var chart = Ext.ComponentQuery.query('cartesian')[0];
+        var chart = MasterApp.chart.chartSelect;
         var series = chart.series;
         for (var j = 0; j < series.length; j++) {
             series[j].setShowInLegend(false);
@@ -207,7 +208,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     },
 
     showSeriesLabel: function (btn) {
-        var chart = Ext.ComponentQuery.query('cartesian')[0];
+        var chart = MasterApp.chart.chartSelect;
         var series = chart.series;
         for (var j = 0; j < series.length; j++) {
             series[j].setLabel({
@@ -218,7 +219,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     },
 
     showSeriesInsideLabel: function (btn) {
-        var chart = Ext.ComponentQuery.query('cartesian')[0];
+        var chart = MasterApp.chart.chartSelect;
         var series = chart.series;
         var display = (chart.displayInsideEnd) ? 'outsideEnd' : 'insideEnd';
         for (var j = 0; j < series.length; j++) {
@@ -232,35 +233,39 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     },
 
     showLabel: function (pos) {
-        var chart = Ext.ComponentQuery.query('cartesian')[0];
+        var chart = MasterApp.chart.chartSelect;
         var leftAxis = chart.getAxes()[pos];
-        if (!leftAxis['_hidden']) {
-            leftAxis.setHidden(true);
-            leftAxis['lastTitle'] = leftAxis.title;
-            leftAxis.setTitle('');
-        } else {
-            leftAxis.setHidden(false);
-            var title = leftAxis['_title'].text;
-            leftAxis.setTitle(title);
+        if(leftAxis) {
+            if (!leftAxis['_hidden']) {
+                leftAxis.setHidden(true);
+                leftAxis['lastTitle'] = leftAxis.title;
+                leftAxis.setTitle('');
+            } else {
+                leftAxis.setHidden(false);
+                var title = leftAxis['_title'].text;
+                leftAxis.setTitle(title);
+            }
+            chart.redraw();
         }
-        chart.redraw();
     },
 
     showLabelPosition: function (type) {
-        var chart = Ext.ComponentQuery.query('cartesian')[0];
+        var chart = MasterApp.chart.chartSelect;
         var xAxis = chart.getAxes()[1];
-        var number = -45;
-        if (type === 'horizontal')
-            number = 0;
-        if (type === 'vertical')
-            number = -90;
-        xAxis.setLabel({
-            textPadding: 0,
-            rotate: {
-                degrees: number
-            }
-        });
-        chart.getStore().reload();
+        if(xAxis) {
+            var number = -45;
+            if (type === 'horizontal')
+                number = 0;
+            if (type === 'vertical')
+                number = -90;
+            xAxis.setLabel({
+                textPadding: 0,
+                rotate: {
+                    degrees: number
+                }
+            });
+            chart.getStore().reload();
+        }
     }
 
 });
