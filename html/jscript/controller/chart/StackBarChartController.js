@@ -6,7 +6,7 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
 
         render: function (comp) {
             var window = comp.up('window');
-            var json = MasterApp.getController('MasterSol.controller.chart.ChartController').jsonData;
+            var json = MasterApp.chart.jsonData;
             var chart = Ext.create('Ext.chart.CartesianChart', {
                 flipXY: true,
                 showLabel: true,
@@ -57,7 +57,9 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
                         fill: ["#94ae0a", "#115fa6"]
                     },
                     label: {
-                        display: 'insideEnd'
+                        display: 'insideEnd',
+                        field: this.getYField(json),
+                        renderer: this.onSeriesLabelRender
                     },
                     tooltip: {
                         trackMouse: true,
@@ -106,6 +108,10 @@ Ext.define('MasterSol.controller.chart.StackBarChartController', {
             var title = window.getTitle();
             var fileName = title + '.' + ext;
             MasterApp.getController('MasterSol.controller.chart.ChartController').saveBase64AsFile(chart.getImage("stream").data, fileName);
+        },
+
+        onSeriesLabelRender: function (value) {
+            return value.toFixed(1);
         }
     }
 );

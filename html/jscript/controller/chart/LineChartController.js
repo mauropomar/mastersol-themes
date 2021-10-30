@@ -21,18 +21,6 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
                     height: 30,
                     x: 40, // the sprite x position
                     y: 20  // the sprite y position
-                }, {
-                    type: 'text',
-                    text: 'Data: Browser Stats 2012',
-                    fontSize: 10,
-                    x: 12,
-                    y: 470
-                }, {
-                    type: 'text',
-                    text: 'Source: http://www.w3schools.com/',
-                    fontSize: 10,
-                    x: 12,
-                    y: 485
                 }],
                 axes: [{
                     type: 'numeric',
