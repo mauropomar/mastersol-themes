@@ -864,7 +864,7 @@ router.post('/savesection', async function (req, res) {
     let result = ''
     let success = true
     let idsection = ''
-    //Cuando se arregle, obtener del parámetro
+
     const paramsSection = ['cfgapl.sections', null, "WHERE namex = 'Sec_saved_sections' "];
     const resultParamsSection = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSection);
     if (resultParamsSection && resultParamsSection.rows[0].fn_get_register != null && resultParamsSection.rows[0].fn_get_register.length > 0)
@@ -874,21 +874,23 @@ router.post('/savesection', async function (req, res) {
     "AND id_users = '" + req.session.id_user + "' AND namex = '" + req.body.name + "' "];
     const resultParamsView = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsView);
     //Si default viene en true, buscar cualquier registro para el id section e id user en true y ponerlo false
-    const paramsDef = ['cfgapl.saved_sections', null, "WHERE defaultx = true AND id_section = '" + req.body.idsection + "' AND id_users = '" + req.session.id_user + "' "];
-    const resultParamsDef = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsDef);
-    if (resultParamsDef && resultParamsDef.rows[0].fn_get_register != null && resultParamsDef.rows[0].fn_get_register.length > 0){
-       let idreg = resultParamsDef.rows[0].fn_get_register[0].id
-        var paramsInsert = [], valuesInsertAux = [];
-        valuesInsertAux.push("defaultx = false")
+    if(req.body.default == true) {
+        const paramsDef = ['cfgapl.saved_sections', null, "WHERE defaultx = true AND id_section = '" + req.body.idsection + "' AND id_users = '" + req.session.id_user + "' "];
+        const resultParamsDef = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsDef);
+        if (resultParamsDef && resultParamsDef.rows[0].fn_get_register != null && resultParamsDef.rows[0].fn_get_register.length > 0) {
+            let idreg = resultParamsDef.rows[0].fn_get_register[0].id
+            var paramsInsert = [], valuesInsertAux = [];
+            valuesInsertAux.push("defaultx = false")
 
-        paramsInsert.push(idsection)
-        paramsInsert.push(valuesInsertAux.join(','))
-        paramsInsert.push(idreg)
-        paramsInsert.push(req.session.id_user)
-        let response = await objects.functions.updateRegister(paramsInsert)
-        if (response.success === false) {
-            success = false
-            result = response.message
+            paramsInsert.push(idsection)
+            paramsInsert.push(valuesInsertAux.join(','))
+            paramsInsert.push(idreg)
+            paramsInsert.push(req.session.id_user)
+            let response = await objects.functions.updateRegister(paramsInsert)
+            if (response.success === false) {
+                success = false
+                result = response.message
+            }
         }
     }
 
@@ -965,7 +967,6 @@ router.post('/deleteview', async function (req, res) {
     if (resultParamsSection && resultParamsSection.rows[0].fn_get_register != null && resultParamsSection.rows[0].fn_get_register.length > 0)
         req.body.idsection = resultParamsSection.rows[0].fn_get_register[0].id
     req.body.idpadreregistro = 0
-    req.session.id_user = '7570c788-e3e8-4ffc-83d5-ac7996eb10ce'
     result = await objects.register.deleteRegister(req,false)
 
     if (result.success === false) {
