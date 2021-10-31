@@ -227,7 +227,7 @@ const executeFunctionsButtons = async (req, objects) => {
     if(idbutton) {
         const param_button = ['cfgapl.sections_buttons',idbutton]
         const resultButton = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2)', param_button)
-        if (resultButton && resultButton.rows) {
+        if (resultButton && resultButton.rows && resultButton.rows[0].fn_get_register) {
             let requireDir = '../../capsules/' + 'c_' + resultButton.rows[0].fn_get_register[0].id_capsules + '/node_js/buttons/' + resultButton.rows[0].fn_get_register[0].js_name
             let dirFile = global.appRootApp + '\\capsules\\' + 'c_' + resultButton.rows[0].fn_get_register[0].id_capsules + '\\node_js\\buttons\\' + resultButton.rows[0].fn_get_register[0].js_name +'.js'
             if(fs.existsSync(dirFile)) {
@@ -393,6 +393,10 @@ const executeFunctionsButtons = async (req, objects) => {
                 result.success = false
             }
 
+        }
+        else{
+            result.msg = 'El botón no existe'
+            result.success = false
         }
     }
     return result

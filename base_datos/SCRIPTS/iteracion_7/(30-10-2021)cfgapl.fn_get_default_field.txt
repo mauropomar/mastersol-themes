@@ -1,0 +1,25 @@
+CREATE OR REPLACE FUNCTION cfgapl.fn_get_default_field
+(
+  IN  idregister  uuid
+)
+RETURNS boolean AS
+$$
+declare
+result boolean;
+
+begin
+	  
+      BEGIN          
+		EXECUTE('SELECT defaultx as default FROM cfgapl.saved_sections 
+        WHERE id = '||quote_literal($1)||'') INTO result; 	   
+      EXCEPTION WHEN OTHERS THEN END;
+  return result;
+end
+$$
+LANGUAGE 'plpgsql';
+
+ALTER FUNCTION cfgapl.fn_get_default_field(uuid)
+  OWNER TO postgres;
+
+COMMENT ON FUNCTION cfgapl.fn_get_default_field(uuid)
+  IS 'Return defaultx field from view';

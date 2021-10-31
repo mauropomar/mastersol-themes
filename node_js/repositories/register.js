@@ -26,6 +26,17 @@ const getViews = async (req) => {
     return result.rows[0].fn_get_views
 }
 
+const getDefaultField = async (req) => {
+    const params = [req.query.idregister]
+    const query = "SELECT cfgapl.fn_get_default_field($1)"
+    const result = await pool.executeQuery(query, params)    
+    if (!result) {
+        return null
+    } 
+    return result.rows[0].fn_get_default_field
+}
+
+
 const insertRegister = async (req, objects) => {
     const params_insert = await getParamsInsert(req, objects)
     const query = "SELECT cfgapl.fn_insert_register($1,$2,$3,$4,$5,$6)"
@@ -287,4 +298,5 @@ objCrudRegister.deleteRegister = deleteRegister
 objCrudRegister.getForeignkey = getForeignkey
 objCrudRegister.getViews = getViews
 objCrudRegister.getRegister = getRegister
+objCrudRegister.getDefaultField = getDefaultField
 module.exports = objCrudRegister

@@ -959,6 +959,46 @@ router.get('/getviews', async function (req, res) {
     res.json(result)
 })
 
+router.get('/getdefaultfield', async function (req, res) {
+    let success = true
+    const result = await objects.register.getDefaultField(req)
+    if(result == null)
+        success = false
+
+    return res.json({'success': success, 'datos': result})
+})
+
+router.post('/resetview', async function (req, res) {
+    let result = ''
+    let success = true
+    let idsection = ''
+
+    const paramsSection = ['cfgapl.sections', null, "WHERE namex = 'Sec_saved_sections' "];
+    const resultParamsSection = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSection);
+    if (resultParamsSection && resultParamsSection.rows[0].fn_get_register != null && resultParamsSection.rows[0].fn_get_register.length > 0)
+        idsection = resultParamsSection.rows[0].fn_get_register[0].id
+    req.session.id_user = '7570c788-e3e8-4ffc-83d5-ac7996eb10ce'
+    const paramsDef = ['cfgapl.saved_sections', null, "WHERE defaultx = true AND id_section = '" + req.body.idsection + "' AND id_users = '" + req.session.id_user + "' "];
+    const resultParamsDef = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsDef);
+    if (resultParamsDef && resultParamsDef.rows[0].fn_get_register != null && resultParamsDef.rows[0].fn_get_register.length > 0) {
+        let idreg = resultParamsDef.rows[0].fn_get_register[0].id
+        var paramsInsert = [], valuesInsertAux = [];
+        valuesInsertAux.push("defaultx = false")
+
+        paramsInsert.push(idsection)
+        paramsInsert.push(valuesInsertAux.join(','))
+        paramsInsert.push(idreg)
+        paramsInsert.push(req.session.id_user)
+        let response = await objects.functions.updateRegister(paramsInsert)
+        if (response.success === false) {
+            success = false
+            result = response.message
+        }
+    }
+
+    return res.json({'success': success, 'datos': result})
+})
+
 router.post('/deleteview', async function (req, res) {
     var result = '';
     //Obtener id de la section saved_sections
