@@ -186,7 +186,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             scope: this,
             timeout: 5000,
             params: {
-                idsection: idSectionView
+                idsection: window.idsection
             },
             success: function (response) {
                 mask.hide();
