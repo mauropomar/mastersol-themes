@@ -15,4 +15,4 @@ Ext.define('MasterSol.view.magnament.ComboFunction', {
             record.query = new RegExp(record.query, 'ig');
         }
     }
-})
+});

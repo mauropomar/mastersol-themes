@@ -62,6 +62,11 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         };
         Ext.Ajax.request(getview);
     },
+
+    selectView:function(combo, record){
+        Ext.ComponentQuery.query('#checkbox_default')[0].setValue(record.data.default);
+    },
+
     // Salva la vista de la sección en formato JSON
     saveData: function (window) {
         var mask = new Ext.LoadMask(window, {
@@ -154,9 +159,56 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                             });
                         }
                     }
-                })
+                });
             }
         }, this);
+    },
+
+    resetView:function(window){
+        var mask = new Ext.LoadMask(window, {
+            msg: 'Reseteando. Espere unos minutos por favor...'
+        });
+        mask.show();
+        var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
+        var idSectionView = combo.getValue();
+        if (idSectionView === null) {
+            Ext.MessageBox.show({
+                title: 'Información',
+                msg: 'Debe seleccionar una vista de la sección.',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.INFO
+            });
+            return;
+        }
+        var save = {
+            url: 'app/resetview',
+            method: 'POST',
+            scope: this,
+            timeout: 5000,
+            params: {
+                idsection: idSectionView
+            },
+            success: function (response) {
+                mask.hide();
+                var json = Ext.JSON.decode(response.responseText);
+                if (json.success == true) {
+                    Ext.toast('Los cambios fueron realizados con éxito.');
+                    combo.getStore().reload();
+                    combo.reset();
+                } else {
+                    Ext.MessageBox.show({
+                        title: 'Información',
+                        msg: json.datos,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
+                }
+            },
+            failure: function (response) {
+                mask.hide();
+            }
+        };
+        Ext.Ajax.request(save);
     },
 
     // Obtiene la ventana que contiene a las secciones

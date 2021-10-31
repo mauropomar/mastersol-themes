@@ -51,7 +51,6 @@ Ext.define('MasterSol.controller.chart.LineChartController', {
             MasterApp.chart.chartSelect = chart;
             comp.add(chart);
         },
-
         getStore: function (json) {
             var store = {
                 fields: json.fields,

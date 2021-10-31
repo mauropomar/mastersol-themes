@@ -9,3 +9,21 @@
 .pdf{
     background: url(../icon/others/exppdf.jpg) no-repeat center center !important;
 }
+
+.custom-combo .x-form-field {
+    background-color: #FFC;
+    background-image: none;
+}
+
+.custom-list {
+    background-color: #FFC;
+}
+
+.custom-list .x-boundlist-item {
+    border-color: #FFC;
+}
+
+.x-section-default {
+    color: black;
+    font-weight: bold;
+}
