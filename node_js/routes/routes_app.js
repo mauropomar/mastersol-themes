@@ -977,7 +977,7 @@ router.post('/resetview', async function (req, res) {
     const resultParamsSection = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsSection);
     if (resultParamsSection && resultParamsSection.rows[0].fn_get_register != null && resultParamsSection.rows[0].fn_get_register.length > 0)
         idsection = resultParamsSection.rows[0].fn_get_register[0].id
-    req.session.id_user = '7570c788-e3e8-4ffc-83d5-ac7996eb10ce'
+    
     const paramsDef = ['cfgapl.saved_sections', null, "WHERE defaultx = true AND id_section = '" + req.body.idsection + "' AND id_users = '" + req.session.id_user + "' "];
     const resultParamsDef = await pool.executeQuery('SELECT cfgapl.fn_get_register($1,$2,$3)', paramsDef);
     if (resultParamsDef && resultParamsDef.rows[0].fn_get_register != null && resultParamsDef.rows[0].fn_get_register.length > 0) {
