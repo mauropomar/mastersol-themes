@@ -14,6 +14,7 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
     width: 350,
     layout: 'fit',
     autoShow: true,
+    modal:true,
     border: false,
     requires: [],
     items: [{

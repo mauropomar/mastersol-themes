@@ -169,17 +169,6 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
             msg: 'Reseteando. Espere unos minutos por favor...'
         });
         mask.show();
-        var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
-        var idSectionView = combo.getValue();
-        if (idSectionView === null) {
-            Ext.MessageBox.show({
-                title: 'Información',
-                msg: 'Debe seleccionar una vista de la sección.',
-                buttons: Ext.Msg.OK,
-                icon: Ext.Msg.INFO
-            });
-            return;
-        }
         var save = {
             url: 'app/resetview',
             method: 'POST',
