@@ -181,9 +181,9 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
                 if (json.success == true) {
-                    Ext.toast('Los cambios fueron realizados con éxito.');
                     combo.getStore().reload();
                     combo.reset();
+                    Ext.toast('Los cambios fueron realizados con éxito.');
                 } else {
                     Ext.MessageBox.show({
                         title: 'Información',

@@ -11,10 +11,10 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
     control: 'MasterSol.controller.section_user.SectionUserController',
     idsection: '',
     height: 230,
-    width: 350,
+    width: 450,
     layout: 'fit',
     autoShow: true,
-    modal:true,
+    modal: true,
     border: false,
     requires: [],
     items: [{
@@ -29,45 +29,31 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
         items: [{
             xtype: 'textfield',
             allowBlank: true,
-            flex:1,
+            flex: 1,
             fieldLabel: 'Nueva Vista',
             id: 'txt_new_view_section'
         }, {
-            xtype: 'fieldcontainer',
-            layout: 'hbox',
-            items: [{
-                xtype: 'combo',
-                id: 'combo_view_section',
-                valueField: 'id',
-                displayField: 'nombre',
-                store: Ext.create('MasterSol.store.section_user.SectionUserStore'),
-                typeAhead: true,
-                fieldLabel: 'Selccione una Vista',
-                queryMode: 'local',
-                labelAlign:'top',
-                flex:1,
-                margin:'0 10 0 0',
-                listConfig: {
-                    cls: 'custom-list',
-                    getInnerTpl: function () {
-                        return '<span<tpl if="default"> class="x-section-default"</tpl>>{nombre}</span>';
-                    }
-                },
-                listeners: {
-                    select: function (combo, record) {
-                        MasterApp.getController('MasterSol.controller.section_user.SectionUserController').selectView(combo, record);
-                    }
+            xtype: 'combo',
+            id: 'combo_view_section',
+            valueField: 'id',
+            displayField: 'nombre',
+            store: Ext.create('MasterSol.store.section_user.SectionUserStore'),
+            typeAhead: true,
+            fieldLabel: 'Selccione una Vista',
+            queryMode: 'local',
+            labelAlign: 'top',
+            flex: 1,
+            listConfig: {
+                cls: 'custom-list',
+                getInnerTpl: function () {
+                    return '<span<tpl if="default"> class="x-section-default"</tpl>>{nombre}</span>';
                 }
-            },{
-                xtype:'button',
-                iconCls:'fa fa-undo',
-                tooltip:'Resetear Sección por Defecto',
-                margin:'22 0 0 0',
-                handler:function(btn){
-                    var window = btn.up('window');
-                    MasterApp.getController('MasterSol.controller.section_user.SectionUserController').resetView(window);
+            },
+            listeners: {
+                select: function (combo, record) {
+                    MasterApp.getController('MasterSol.controller.section_user.SectionUserController').selectView(combo, record);
                 }
-            }]
+            }
         }, {
             xtype: 'checkbox',
             fieldLabel: 'Por defecto',
@@ -93,6 +79,15 @@ Ext.define('MasterSol.view.section_user.WindowSectionUser', {
         handler: function (btn) {
             var window = btn.up('window');
             MasterApp.getController('MasterSol.controller.section_user.SectionUserController').saveData(window);
+        }
+    }, {
+        xtype: 'button',
+        iconCls: 'fa fa-undo',
+        text: 'Resetear',
+        tooltip: 'Resetear Sección por Defecto',
+        handler: function (btn) {
+            var window = btn.up('window');
+            MasterApp.getController('MasterSol.controller.section_user.SectionUserController').resetView(window);
         }
     }, {
         xtype: 'button',

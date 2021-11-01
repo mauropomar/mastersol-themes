@@ -7,7 +7,7 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
         this.control({
             'tabmagnament': {
                 collapse: 'collapse',
-                expand: 'expand',
+              //  expand: 'expand',
                 resize: 'resize',
                 tabchange: 'tabChange'
             }
@@ -162,10 +162,6 @@ Ext.define('MasterSol.controller.magnament.MagnamentController', {
 
     resize: function () {
         MasterApp.util.resizeAllWindow();
-    },
-
-    expand: function () {
-        //  MasterApp.util.resizeAllWindow();
     },
 
     resetTitle: function () {

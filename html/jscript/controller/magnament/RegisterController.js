@@ -19,9 +19,11 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
     },
 
     new: function (window) {
+        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
+        if(tabMagnament.collapsed)
+            return;
         Ext.ComponentQuery.query('#btn_insert_register')[0].show();
         Ext.ComponentQuery.query('#btn_save_register')[0].hide();
-        var tabMagnament = Ext.ComponentQuery.query('tabmagnament')[0];
         tabMagnament.idmenumag = window.idmenu;
         var gridsection = MasterApp.globals.getGridSection();
         if (!gridsection || gridsection.idmenu != window.idmenu) {
@@ -347,9 +349,9 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
                 specialkey: this.specialKey
             }
         });
-        if(rec.data.dec_count !== null){
+        if (rec.data.dec_count !== null) {
             field.maxLength = rec.data.dec_count;
-            field.maxLengthText = 'No debe exceder debe exceder de '+rec.data.dec_count+' carácteres.';
+            field.maxLengthText = 'No debe exceder debe exceder de ' + rec.data.dec_count + ' carácteres.';
         }
         column.setEditor(field);
     },
@@ -506,7 +508,7 @@ Ext.define('MasterSol.controller.magnament.RegisterController', {
         var values = rec.data.valor;
         store.load({
                 callback: function () {
-                    if(values) {
+                    if (values) {
                         values = (values) ? values.split(',') : combo.getValue();
                         combo.setValue(values);
                     }
