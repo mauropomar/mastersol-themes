@@ -6,6 +6,12 @@ Ext.define('MasterSol.view.magnament.ComboSign', {
     displayField: 'simbolo',
     triggerAction: 'all',
     queryMode: 'local',
+    listConfig: {
+        minWidth: 100,
+        getInnerTpl: function () {
+            return '<span<tpl></tpl>>{simbolo} ({nombre})</span>';
+        }
+    },
     store: {
         type: 'store-sign'
     },

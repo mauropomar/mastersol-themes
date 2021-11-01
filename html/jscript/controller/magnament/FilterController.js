@@ -266,7 +266,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                         valor1: valor1,
                         valor2: valor2,
                         cantparam: cantparam
-                    })
+                    });
                 }
             }
         }, this);
