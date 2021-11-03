@@ -235,44 +235,28 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         var chart = MasterApp.chart.chartSelect,
             type = MasterApp.chart.type,
             leftAxis;
-        if(type === 'column' || type === 'line' || type === 'area') {
-            leftAxis = chart.getAxes()[pos];
-            if (leftAxis) {
-                if (!leftAxis['_hidden']) {
-                    leftAxis.setHidden(true);
-                    leftAxis['lastTitle'] = leftAxis.title;
-                    leftAxis.setTitle('');
-                } else {
-                    leftAxis.setHidden(false);
-                    var title = leftAxis['_title'].text;
-                    leftAxis.setTitle(title);
-                }
-                chart.redraw();
+        if (type === 'stackbar')
+            pos = (pos === 1) ? 0 : 1;
+        leftAxis = chart.getAxes()[pos];
+        if (leftAxis) {
+            if (!leftAxis['_hidden']) {
+                leftAxis.setHidden(true);
+                leftAxis['lastTitle'] = leftAxis.title;
+                leftAxis.setTitle('');
+            } else {
+                leftAxis.setHidden(false);
+                var title = leftAxis['_title'].text;
+                leftAxis.setTitle(title);
             }
-            return;
+            chart.redraw();
         }
-        if(type === 'stackbar') {
-            pos = (pos === 1)?0:1;
-            leftAxis = chart.getAxes()[pos];
-            if (leftAxis) {
-                if (!leftAxis['_hidden']) {
-                    leftAxis.setHidden(true);
-                    leftAxis['lastTitle'] = leftAxis.title;
-                    leftAxis.setTitle('');
-                } else {
-                    leftAxis.setHidden(false);
-                    var title = leftAxis['_title'].text;
-                    leftAxis.setTitle(title);
-                }
-                chart.redraw();
-            }
-        }
+        return;
     },
 
     showLabelPosition: function (type) {
         var chart = MasterApp.chart.chartSelect;
         var xAxis = chart.getAxes()[1];
-        if(xAxis) {
+        if (xAxis) {
             var number = -45;
             if (type === 'horizontal')
                 number = 0;
@@ -287,5 +271,5 @@ Ext.define('MasterSol.controller.chart.ChartController', {
             chart.getStore().reload();
         }
     }
-
-});
+})
+;
