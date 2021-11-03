@@ -197,7 +197,6 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     },
 
     showLegend: function (btn) {
-        var legend;
         var chart = MasterApp.chart.chartSelect;
         var series = chart.series;
         for (var j = 0; j < series.length; j++) {
@@ -233,19 +232,40 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     },
 
     showLabel: function (pos) {
-        var chart = MasterApp.chart.chartSelect;
-        var leftAxis = chart.getAxes()[pos];
-        if(leftAxis) {
-            if (!leftAxis['_hidden']) {
-                leftAxis.setHidden(true);
-                leftAxis['lastTitle'] = leftAxis.title;
-                leftAxis.setTitle('');
-            } else {
-                leftAxis.setHidden(false);
-                var title = leftAxis['_title'].text;
-                leftAxis.setTitle(title);
+        var chart = MasterApp.chart.chartSelect,
+            type = MasterApp.chart.type,
+            leftAxis;
+        if(type === 'column' || type === 'line' || type === 'area') {
+            leftAxis = chart.getAxes()[pos];
+            if (leftAxis) {
+                if (!leftAxis['_hidden']) {
+                    leftAxis.setHidden(true);
+                    leftAxis['lastTitle'] = leftAxis.title;
+                    leftAxis.setTitle('');
+                } else {
+                    leftAxis.setHidden(false);
+                    var title = leftAxis['_title'].text;
+                    leftAxis.setTitle(title);
+                }
+                chart.redraw();
             }
-            chart.redraw();
+            return;
+        }
+        if(type === 'stackbar') {
+            pos = (pos === 1)?0:1;
+            leftAxis = chart.getAxes()[pos];
+            if (leftAxis) {
+                if (!leftAxis['_hidden']) {
+                    leftAxis.setHidden(true);
+                    leftAxis['lastTitle'] = leftAxis.title;
+                    leftAxis.setTitle('');
+                } else {
+                    leftAxis.setHidden(false);
+                    var title = leftAxis['_title'].text;
+                    leftAxis.setTitle(title);
+                }
+                chart.redraw();
+            }
         }
     },
 
