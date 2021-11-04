@@ -84,7 +84,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
             docked = 'bottom';
         return {
             type: 'sprite',
-            docked: docked
+            docked: docked,
         };
     },
 
@@ -202,7 +202,9 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         for (var j = 0; j < series.length; j++) {
             series[j].setShowInLegend(false);
         }
+        chart.getLegend().toggle(false);
         chart.redraw();
+      //  chart.setLegend(null);
         chart.getStore().reload();
     },
 

@@ -193,6 +193,7 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                 align: cols[i].align,
                 dec_count: cols[i].dec_count,
                 functions: cols[i].funcion,
+                align:this.getAlign(cols[i].type),
                 type: cols[i].type,
                 sortable: cols[i].sortable,
                 lockable: cols[i].lockout,
@@ -251,5 +252,15 @@ Ext.define('MasterSol.controller.util.GridSectionController', {
                 return true;
             }
         });
+    },
+
+    getAlign:function(type){
+        if(type === 'string'){
+            return 'left';
+        }
+        if(type === 'number'){
+            return 'right';
+        }
+        return 'center';
     }
 });

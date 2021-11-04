@@ -574,12 +574,7 @@ Ext.define('MasterSol.controller.util.UtilController', {
                     var title = window.title + ' ' + json.datos;
                     window.setTitle(title);
                 } else {
-                    Ext.Msg.show({
-                        title: 'Informaci&oacute;n',
-                        msg: json.datos,
-                        buttons: Ext.MessageBox.OK,
-                        icon: Ext.MessageBox.INFO
-                    });
+                    Ext.toast(json.datos);
                 }
             }
         };

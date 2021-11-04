@@ -60,33 +60,38 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                 items: [{
                     text: 'Leyenda',
                     menu: [
-                        {
+                    /*    {
                             text: 'Mostrar u Ocultar',
                             pressed: false,
+                           iconCls:'fa fa-eye',
                             handler: function (btn) {
                                 MasterApp.chart.showLegend(btn);
                             }
-                        },
+                        },*/
                         {
                             text: 'Derecha',
+                   //         iconCls:'fa fa-arrow-circle-right',
                             handler: function () {
                                 MasterApp.chart.setLegendPosition('right');
                             }
                         },
                         {
                             text: 'Izquierda',
+                      //      iconCls:'fa fa-arrow-circle-left',
                             handler: function () {
                                 MasterApp.chart.setLegendPosition('left');
                             }
                         },
                         {
                             text: 'Arriba',
+                      //      iconCls:'fa fa-arrow-circle-up',
                             handler: function () {
                                 MasterApp.chart.setLegendPosition('top');
                             }
                         },
                         {
                             text: 'Abajo',
+                  //          iconCls:'fa fa-arrow-circle-down',
                             handler: function () {
                                 MasterApp.chart.setLegendPosition('bottom');
                             }
@@ -96,44 +101,50 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                     text: 'Valores',
                     menu: [{
                         text: 'Mostrar/Ocultar',
+                 //      iconCls:'fa fa-eye',
                         pressed: false,
                         handler: function (btn) {
                             MasterApp.chart.showSeriesLabel(btn);
                         }
-                    }, {
+                    }, /*{
                         text: 'Dentro o Fuera',
                         pressed: false,
                         handler: function (btn) {
                             MasterApp.chart.showSeriesInsideLabel(btn);
                         }
-                    }]
+                    }*/]
                 }, {
                     text: 'Etiquetas',
                     menu: [
                         {
                             text: 'Mostrar u Ocultar Eje X',
+                     //       iconCls:'fa fa-long-arrow-right',
                             pressed: false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabel(1);
                             }
                         },{
                             text: 'Mostrar u Ocultar Eje Y',
+                     //       iconCls:'fa fa-long-arrow-up',
                             pressed: false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabel(0);
                             }
                         },{
                             text: 'Vertical',
+                     //       iconCls:'fa fa-arrows-v',
                             handler: function (btn) {
                                 MasterApp.chart.showLabelPosition('vertical');
                             }
                         },{
                             text: 'Horizontal',
+                     //       iconCls:'fa fa-arrows-h',
                             handler: function (btn) {
                                 MasterApp.chart.showLabelPosition('horizontal');
                             }
                         },{
                             text: 'Inclinado',
+                       //     iconCls:'fa fa-external-link-square',
                             handler: function (btn) {
                                 MasterApp.chart.showLabelPosition('inclinado');
                             }
