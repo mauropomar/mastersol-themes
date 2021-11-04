@@ -206,6 +206,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             grid = MasterApp.globals.getSectionPrincipalByWindow(window);
             this.reloadSectionPrincipal(grid);
         }
+
     },
 
     restore: function (button, evt, toolEl, owner, tool) {
