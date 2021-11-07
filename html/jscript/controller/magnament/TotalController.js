@@ -5,7 +5,6 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
     },
 
     beforeedit: function (editor, obj, eOpts) {
-        var record = obj.record;
         Ext.ComponentQuery.query('total-view toolbar button')[0].setDisabled(false);
         this.loadFunctions(obj);
     },
@@ -20,6 +19,8 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
     },
 
     getAll: function () {
+        var title = MasterApp.util.getTitleSectionSelected();
+        Ext.ComponentQuery.query('#tbtext_magnament_total')[0].setText('Totales: ' + title);
         var grid = Ext.ComponentQuery.query('total-view')[0];
         var store = grid.getStore();
         var idsection = MasterApp.util.getIdSectionActive();
@@ -45,8 +46,6 @@ Ext.define('MasterSol.controller.magnament.TotalController', {
                 }
             }
         });
-        var title = MasterApp.util.getTitleSectionSelected();
-        Ext.ComponentQuery.query('#tbtext_magnament_total')[0].setText('Totales: ' + title);
     },
 
     checkData: function () {

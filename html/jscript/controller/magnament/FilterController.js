@@ -67,10 +67,13 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
     },
 
     getAll: function () {
+        var title = MasterApp.util.getTitleSectionSelected();
+        Ext.ComponentQuery.query('#tbtext_magnament_filter')[0].setText('Filter: ' + title);
         var idsection = MasterApp.util.getIdSectionActive();
         var idmenu = MasterApp.util.getIdMenuActive();
-        if (this.checkData())
+        if (this.checkData()) {
             return;
+        }
         var grid = Ext.ComponentQuery.query('#filter-view')[0];
         var store = grid.getStore();
         store.proxy.extraParams = {
@@ -91,9 +94,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
                 }
                 if (MasterApp.globals.actionKeyCrtlF)
                     MasterApp.filter.findIndexSetFocusField();
-                var title = MasterApp.util.getTitleSectionSelected();
-                Ext.ComponentQuery.query('#tbtext_magnament_filter')[0].setText('Filter: ' + title);
-            }
+              }
         });
     },
 

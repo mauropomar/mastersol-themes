@@ -377,35 +377,31 @@ Ext.define('MasterSol.controller.util.UtilController', {
     setStyleSection: function (newCard) {
         var tab,
             hasColor = false,
+            borderColor = '',
             containers = this.getContainerSections();
         if (containers.length === 0)
             return;
-        if (newCard) {
+        if (newCard) {  // si hice click en un tab
             document.getElementById(newCard.tab.id).style.borderTop = '2px solid #49db32';
             for (var i = 0; i < containers.length; i++) {
                 tab = containers[i];
                 if (tab.card.idsection !== newCard.idsection) {
                     if (document.getElementById(tab.id)) {
-                        var borderColor = document.getElementById(tab.id).style.borderTop;
-                        var hasColorParent = this.hasColorParent(tab.card.idparent);
-                        if (hasColorParent)
-                            document.getElementById(tab.id).style.borderTop = '2px solid #49db32';
-                        else
-                            document.getElementById(tab.id).style.borderTop = 'transparent';
+                        this.setBorderColor(newCard, tab);
                     }
                 }
             }
         } else {
             for (var j = 0; j < containers.length; j++) {
-                tab = containers[j];
+                tab = containers[j]; // si selecciono una fila en el sección principal
                 if (document.getElementById(tab.id)) {
-                    var borderColor = document.getElementById(tab.id).style.borderTop;
+                    borderColor = document.getElementById(tab.id).style.borderTop;
                     if (borderColor.indexOf('2px solid') > -1) {
                         hasColor = true;
                     }
                 }
             }
-            if (!hasColor) {
+            if (!hasColor) { // sino hay nadie seleccionado ponle color al primer tab
                 tab = containers[0];
                 if (tab.id)
                     document.getElementById(tab.id).style.borderTop = '2px solid #49db32';
@@ -413,25 +409,20 @@ Ext.define('MasterSol.controller.util.UtilController', {
         }
     },
 
-    hasColorParent: function (idparent) {
-        var tab,
-            hasColor = false,
-            containers = this.getContainerSections();
-        for (var i = 0; i < containers.length; i++) {
-            tab = containers[i];
-            if (tab.card.idsection === idparent) {
-                if (document.getElementById(tab.id)) {
-                    var borderColor = document.getElementById(tab.id).style.borderTop;
-                    var grid = tab.card.down('grid');
-                    var hasSelection = grid.getSelectionModel().hasSelection();
-                    if (borderColor.indexOf('2px solid') > -1 && hasSelection) {
-                        hasColor = true;
-                        break;
-                    }
-                }
+    setBorderColor: function (newCard, tab) {
+        var gridSection = MasterApp.globals.getGridSection();
+        if (newCard.idparent == tab.card.idsection) {// si el tab seleccionado es hijo de la seccion que viene
+            document.getElementById(tab.id).style.borderTop = '2px solid #49db32';
+            return;
+        }
+        if (newCard.idsection == tab.card.idparent) {// si el tab seleccionado es padre de la seccion que viene
+            var hasSel = gridSection.getSelectionModel().hasSelection();  // si hay alguna fila seleccionada del tab seleccionado
+            if (hasSel) {
+                document.getElementById(tab.id).style.borderTop = '2px solid #49db32';
+                return;
             }
         }
-        return hasColor;
+        document.getElementById(tab.id).style.borderTop = 'transparent';
     },
 
     getNameOperatorByRecord: function (record) {
@@ -579,6 +570,26 @@ Ext.define('MasterSol.controller.util.UtilController', {
             }
         };
         Ext.Ajax.request(get);
+    },
+
+    selectSection: function (id, clickTab) {
+        var comp = Ext.ComponentQuery.query('#' + id)[0];
+        var tabpanel = (clickTab) ? comp.up('tabpanel') : comp;
+        var sectionActive = tabpanel.getActiveTab();
+        if (sectionActive) {
+            var gridsection = sectionActive.down('gridpanel');
+            MasterApp.globals.setGridSection(gridsection);
+            var hasSelection = gridsection.getSelectionModel().hasSelection();
+            if (hasSelection) {
+                var rec = gridsection.getSelectionModel().getSelection()[0];
+                MasterApp.globals.setRecordSection(rec);
+            } else {
+                MasterApp.globals.setRecordSection(null);
+            }
+            MasterApp.magnament.getData(gridsection);
+            var container = gridsection.up('panel');
+            MasterApp.util.setStyleSection(container);
+        }
     }
 })
 ;
