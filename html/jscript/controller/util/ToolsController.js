@@ -5,12 +5,12 @@ Ext.define('MasterSol.controller.util.ToolsController', {
     },
 
     getArrayBtn: function () {
-        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_section_user','btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
+        var array = ['btn_maximize', 'btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_section_user','btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
         return array;
     },
 
     getArrayBtnDefault: function () {
-        var array = ['btn_trash', 'btn_add', 'btn_refresh', 'btn_download', 'btn_print', 'btn_section_user', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
+        var array = ['btn_trash', 'btn_add', 'btn_download', 'btn_print', 'btn_section_user', 'btn_export_capsule', 'btn_import_capsula', 'btn_save_bd', 'btn_restore_bd', 'btn_import_section'];
         return array;
     },
 
@@ -283,14 +283,11 @@ Ext.define('MasterSol.controller.util.ToolsController', {
                 MasterApp.magnament.newRegister(window);
             }
         }, {
-            iconCls: 'fa fa-refresh',
-            name: 'btn_refresh',
+            iconCls: 'fa fa-edit',
+            hidden: true,
             default: true,
-            tooltip: 'Refrescar sección',
-            handler: function (evt, toolEl, owner, tool) {
-                var window = owner.up('window');
-                MasterApp.section.refreshSectionActive(window);
-            }
+            // handler: 'onExpandAll',
+            tooltip: 'Editar'
         }, {
             iconCls: 'fa fa-print',
             name: 'btn_print',

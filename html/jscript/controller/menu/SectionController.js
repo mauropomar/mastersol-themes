@@ -459,10 +459,13 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             success: function (response) {
                 mask.hide();
                 var json = Ext.JSON.decode(response.responseText);
-                var data = json.datos[0].datos;
-                if (data)
-                    grid.getStore().loadData(data);
-
+                if (json.isview) {
+                    MasterApp.getController('MasterSol.controller.section_user.SectionUserController').loadDataSectionUser(json.datos);
+                } else {
+                    var data = json.datos[0].datos;
+                    if (data)
+                        grid.getStore().loadData(data);
+                }
             },
             failure: function (response) {
                 mask.hide();

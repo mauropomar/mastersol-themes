@@ -26,6 +26,8 @@ Ext.define('MasterSol.controller.util.GlobalController', {
             this.isLoading = false;
             this.password = '';
             this.imageDesktop = '';
+            this.filtersView = [];
+            this.totalsView = [];
         },
         getIdRol: function () {
             return this.idRol;

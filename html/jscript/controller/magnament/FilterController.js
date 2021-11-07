@@ -8,7 +8,7 @@ Ext.define('MasterSol.controller.magnament.FilterController', {
     edit: function (editor, obj) {
         var record = obj.record;
         var field = obj.field;
-        if (record.data.tipo == 'date' && obj.value == null) {
+        if ((record.data.tipo == 'date' || record.data.tipo == 'datetime') && (obj.value == null || !obj.value)) {
             record.set(field, record.previousValues[field]);
         }
         if (record.data[field] == obj.originalValue)

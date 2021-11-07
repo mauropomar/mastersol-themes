@@ -411,6 +411,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
     },
     // Obtiene los filtros validos que hayan sido configurados
     getFiltersOnlyFunctions: function (info) {
+        MasterApp.globals.filtersView = [];
         var filters = info.filters;
         if (filters.length == 0)
             return [];
@@ -445,10 +446,12 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                 });
             }
         }
+        MasterApp.globals.filtersView = data;
         return data;
     },
     // Obtiene los totales validos que hayan sido configurados
     getTotalsOnlyFunctions: function (info) {
+        MasterApp.globals.totalsView = [];
         var totals = info.totals;
         if (totals.length == 0)
             return [];
@@ -475,6 +478,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
                 });
             }
         }
+        MasterApp.globals.totalsView = data;
         return data;
     },
 });
