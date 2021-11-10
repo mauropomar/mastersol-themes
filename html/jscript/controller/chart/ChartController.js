@@ -189,6 +189,8 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     },
 
     setLegendPosition: function (position) {
+        var items = Ext.ComponentQuery.query('menuitem[action=legend]');
+        this.setChecked(items, position, 'legend');
         var chart = MasterApp.chart.chartSelect;
         chart.setLegend({
             type: 'sprite',
@@ -204,7 +206,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         }
         chart.getLegend().toggle(false);
         chart.redraw();
-      //  chart.setLegend(null);
+        //  chart.setLegend(null);
         chart.getStore().reload();
     },
 
@@ -256,6 +258,8 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     },
 
     showLabelPosition: function (type) {
+        var items = Ext.ComponentQuery.query('menuitem[action=label]');
+        this.setChecked(items, type, 'label');
         var chart = MasterApp.chart.chartSelect;
         var xAxis = chart.getAxes()[1];
         if (xAxis) {
@@ -271,6 +275,14 @@ Ext.define('MasterSol.controller.chart.ChartController', {
                 }
             });
             chart.getStore().reload();
+        }
+    },
+
+    setChecked: function (items, position, menu) {
+        var name = position + '-' + menu;
+        for (var i = 0; i < items.length; i++) {
+            var checked = (items[i].name == name) ? true : false;
+            items[i].setChecked(checked);
         }
     }
 })

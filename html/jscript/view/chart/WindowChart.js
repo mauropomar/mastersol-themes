@@ -57,6 +57,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                 xtype: 'segmentedbutton',
                 vertical: true,
                 width: '100%',
+                allowToggle: true,
                 items: [{
                     text: 'Leyenda',
                     menu: [
@@ -70,28 +71,37 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                         },*/
                         {
                             text: 'Derecha',
-                   //         iconCls:'fa fa-arrow-circle-right',
+                            name:'right-legend',
+                            action:'legend',
+                            checked: true,
                             handler: function () {
-                                MasterApp.chart.setLegendPosition('right');
+                               MasterApp.chart.setLegendPosition('right');
                             }
                         },
                         {
                             text: 'Izquierda',
-                      //      iconCls:'fa fa-arrow-circle-left',
-                            handler: function () {
-                                MasterApp.chart.setLegendPosition('left');
+                            name:'left-legend',
+                            action:'legend',
+                            checked: false,
+                            handler: function (btn) {
+                                btn.setChecked(true);
+                               MasterApp.chart.setLegendPosition('left');
                             }
                         },
                         {
                             text: 'Arriba',
-                      //      iconCls:'fa fa-arrow-circle-up',
+                            name:'top-legend',
+                            action:'legend',
+                            checked: false,
                             handler: function () {
                                 MasterApp.chart.setLegendPosition('top');
                             }
                         },
                         {
                             text: 'Abajo',
-                  //          iconCls:'fa fa-arrow-circle-down',
+                            name:'bottom-legend',
+                            action:'legend',
+                            checked: false,
                             handler: function () {
                                 MasterApp.chart.setLegendPosition('bottom');
                             }
@@ -101,8 +111,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                     text: 'Valores',
                     menu: [{
                         text: 'Mostrar/Ocultar',
-                 //      iconCls:'fa fa-eye',
-                        pressed: false,
+                        checked: false,
                         handler: function (btn) {
                             MasterApp.chart.showSeriesLabel(btn);
                         }
@@ -118,33 +127,37 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                     menu: [
                         {
                             text: 'Mostrar u Ocultar Eje X',
-                     //       iconCls:'fa fa-long-arrow-right',
-                            pressed: false,
+                            checked: false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabel(1);
                             }
                         },{
                             text: 'Mostrar u Ocultar Eje Y',
-                     //       iconCls:'fa fa-long-arrow-up',
-                            pressed: false,
+                            checked: false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabel(0);
                             }
                         },{
                             text: 'Vertical',
-                     //       iconCls:'fa fa-arrows-v',
+                            name:'vertical-label',
+                            action:'label',
+                            checked: false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabelPosition('vertical');
                             }
                         },{
                             text: 'Horizontal',
-                     //       iconCls:'fa fa-arrows-h',
+                            name:'horizontal-label',
+                            action:'label',
+                            checked: false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabelPosition('horizontal');
                             }
                         },{
                             text: 'Inclinado',
-                       //     iconCls:'fa fa-external-link-square',
+                            name:'inclinado-label',
+                            action:'label',
+                            checked: false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabelPosition('inclinado');
                             }
