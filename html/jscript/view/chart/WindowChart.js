@@ -15,11 +15,11 @@ Ext.define('MasterSol.view.chart.WindowChart', {
         height: 0
     },
     closeAction: 'destroy',
-  //  height: '100%',
-  //  width: '100%',
+    //  height: '100%',
+    //  width: '100%',
     layout: 'fit',
     autoShow: true,
-    border:false,
+    border: false,
     constrain: true,
     constrainTo: 'panel-center',
     requires: [
@@ -48,11 +48,11 @@ Ext.define('MasterSol.view.chart.WindowChart', {
         xtype: 'panel',
         layout: 'border',
         items: [{
-            region:'west',
-            width:100,
-            collapsible:true,
-            title:'Opciones',
-            split:true,
+            region: 'west',
+            width: 100,
+            collapsible: true,
+            title: 'Opciones',
+            split: true,
             items: [{
                 xtype: 'segmentedbutton',
                 vertical: true,
@@ -61,37 +61,36 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                 items: [{
                     text: 'Leyenda',
                     menu: [
-                    /*    {
+                        {
                             text: 'Mostrar u Ocultar',
-                            pressed: false,
-                           iconCls:'fa fa-eye',
+                            checked: true,
                             handler: function (btn) {
                                 MasterApp.chart.showLegend(btn);
                             }
-                        },*/
+                        },
                         {
                             text: 'Derecha',
-                            name:'right-legend',
-                            action:'legend',
+                            name: 'right-legend',
+                            action: 'legend',
                             checked: true,
                             handler: function () {
-                               MasterApp.chart.setLegendPosition('right');
+                                MasterApp.chart.setLegendPosition('right');
                             }
                         },
                         {
                             text: 'Izquierda',
-                            name:'left-legend',
-                            action:'legend',
+                            name: 'left-legend',
+                            action: 'legend',
                             checked: false,
                             handler: function (btn) {
                                 btn.setChecked(true);
-                               MasterApp.chart.setLegendPosition('left');
+                                MasterApp.chart.setLegendPosition('left');
                             }
                         },
                         {
                             text: 'Arriba',
-                            name:'top-legend',
-                            action:'legend',
+                            name: 'top-legend',
+                            action: 'legend',
                             checked: false,
                             handler: function () {
                                 MasterApp.chart.setLegendPosition('top');
@@ -99,8 +98,8 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                         },
                         {
                             text: 'Abajo',
-                            name:'bottom-legend',
-                            action:'legend',
+                            name: 'bottom-legend',
+                            action: 'legend',
                             checked: false,
                             handler: function () {
                                 MasterApp.chart.setLegendPosition('bottom');
@@ -131,32 +130,32 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                             handler: function (btn) {
                                 MasterApp.chart.showLabel(1);
                             }
-                        },{
+                        }, {
                             text: 'Mostrar u Ocultar Eje Y',
                             checked: false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabel(0);
                             }
-                        },{
+                        }, {
                             text: 'Vertical',
-                            name:'vertical-label',
-                            action:'label',
+                            name: 'vertical-label',
+                            action: 'label',
                             checked: false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabelPosition('vertical');
                             }
-                        },{
+                        }, {
                             text: 'Horizontal',
-                            name:'horizontal-label',
-                            action:'label',
+                            name: 'horizontal-label',
+                            action: 'label',
                             checked: false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabelPosition('horizontal');
                             }
-                        },{
+                        }, {
                             text: 'Inclinado',
-                            name:'inclinado-label',
-                            action:'label',
+                            name: 'inclinado-label',
+                            action: 'label',
                             checked: false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabelPosition('inclinado');
@@ -164,12 +163,12 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                         }]
                 }]
             }]
-        },{
+        }, {
             region: 'center',
             layout: 'fit',
             name: 'container_chart_panel',
             items: [],
-            split:true,
+            split: true,
             tbar: [{
                 xtype: 'button',
                 tooltip: 'Gráficos de Columnas',
@@ -177,7 +176,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                 iconCls: 'fa fa-bar-chart',
                 handler: function (btn) {
                     var window = btn.up('window');
-                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window,'column');
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window, 'column');
                 }
             }, '-', {
                 xtype: 'button',
@@ -195,7 +194,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                 iconCls: 'fa fa-pie-chart',
                 handler: function (btn) {
                     var window = btn.up('window');
-                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window,'pie');
+                    MasterApp.getController('MasterSol.controller.chart.ChartController').addChart(window, 'pie');
                 }
             }, '-', {
                 xtype: 'button',
@@ -240,14 +239,14 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                     iconCls: 'fa fa-image',
                     handler: function (btn) {
                         var window = btn.up('window');
-                        MasterApp.getController('MasterSol.controller.chart.ChartController').printChart(window,'jpg');
+                        MasterApp.getController('MasterSol.controller.chart.ChartController').printChart(window, 'jpg');
                     }
                 }]
             }, {
                 xtype: 'button',
                 text: 'Cerrar',
                 iconCls: 'fa fa-close',
-             //   id: 'btn_cancelar_chart',
+                //   id: 'btn_cancelar_chart',
                 handler: function (btn) {
                     var window = btn.up('window');
                     MasterApp.getController('MasterSol.controller.chart.ChartController').cancel(window);

@@ -199,15 +199,10 @@ Ext.define('MasterSol.controller.chart.ChartController', {
     },
 
     showLegend: function (btn) {
-        var chart = MasterApp.chart.chartSelect;
-        var series = chart.series;
-        for (var j = 0; j < series.length; j++) {
-            series[j].setShowInLegend(false);
-        }
-        chart.getLegend().toggle(false);
-        chart.redraw();
-        //  chart.setLegend(null);
-        chart.getStore().reload();
+        var show = (btn.checked) ? 'visible' : 'hidden';
+        var type = MasterApp.chart.type;
+        var pos = (type != 'pie') ? 0 : 4;
+        document.getElementsByClassName('x-surface-canvas')[pos].offsetParent.offsetParent.style.visibility = show;
     },
 
     showSeriesLabel: function (btn) {
