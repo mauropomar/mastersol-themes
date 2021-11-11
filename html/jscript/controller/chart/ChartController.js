@@ -9,6 +9,7 @@ Ext.define('MasterSol.controller.chart.ChartController', {
 
     addChart: function (window, type) {
         var container = window.down('panel[name=container_chart_panel]');
+        this.deselectAllMenuItem();
         var panel;
         this.type = type;
         container.removeAll();
@@ -277,6 +278,14 @@ Ext.define('MasterSol.controller.chart.ChartController', {
         var name = position + '-' + menu;
         for (var i = 0; i < items.length; i++) {
             var checked = (items[i].name == name) ? true : false;
+            items[i].setChecked(checked);
+        }
+    },
+
+    deselectAllMenuItem:function(){
+        var items = Ext.ComponentQuery.query('segmentedbutton[name=menu-chart] menuitem');
+        for (var i = 0; i < items.length; i++) {
+            var checked = items[i].defaultChecked;
             items[i].setChecked(checked);
         }
     }

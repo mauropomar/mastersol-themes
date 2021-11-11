@@ -55,6 +55,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
             split: true,
             items: [{
                 xtype: 'segmentedbutton',
+                name:'menu-chart',
                 vertical: true,
                 width: '100%',
                 allowToggle: true,
@@ -64,6 +65,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                         {
                             text: 'Mostrar u Ocultar',
                             checked: true,
+                            defaultChecked:true,
                             handler: function (btn) {
                                 MasterApp.chart.showLegend(btn);
                             }
@@ -73,6 +75,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                             name: 'right-legend',
                             action: 'legend',
                             checked: true,
+                            defaultChecked:true,
                             handler: function () {
                                 MasterApp.chart.setLegendPosition('right');
                             }
@@ -82,6 +85,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                             name: 'left-legend',
                             action: 'legend',
                             checked: false,
+                            defaultChecked:false,
                             handler: function (btn) {
                                 btn.setChecked(true);
                                 MasterApp.chart.setLegendPosition('left');
@@ -92,6 +96,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                             name: 'top-legend',
                             action: 'legend',
                             checked: false,
+                            defaultChecked:false,
                             handler: function () {
                                 MasterApp.chart.setLegendPosition('top');
                             }
@@ -101,6 +106,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                             name: 'bottom-legend',
                             action: 'legend',
                             checked: false,
+                            defaultChecked:false,
                             handler: function () {
                                 MasterApp.chart.setLegendPosition('bottom');
                             }
@@ -111,6 +117,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                     menu: [{
                         text: 'Mostrar/Ocultar',
                         checked: false,
+                        defaultChecked:false,
                         handler: function (btn) {
                             MasterApp.chart.showSeriesLabel(btn);
                         }
@@ -127,12 +134,14 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                         {
                             text: 'Mostrar u Ocultar Eje X',
                             checked: false,
+                            defaultChecked:false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabel(1);
                             }
                         }, {
                             text: 'Mostrar u Ocultar Eje Y',
                             checked: false,
+                            defaultChecked:false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabel(0);
                             }
@@ -141,6 +150,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                             name: 'vertical-label',
                             action: 'label',
                             checked: false,
+                            defaultChecked:false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabelPosition('vertical');
                             }
@@ -149,6 +159,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                             name: 'horizontal-label',
                             action: 'label',
                             checked: false,
+                            defaultChecked:false,
                             handler: function (btn) {
                                 MasterApp.chart.showLabelPosition('horizontal');
                             }
@@ -157,6 +168,7 @@ Ext.define('MasterSol.view.chart.WindowChart', {
                             name: 'inclinado-label',
                             action: 'label',
                             checked: false,
+                            defaultChecked:true,
                             handler: function (btn) {
                                 MasterApp.chart.showLabelPosition('inclinado');
                             }
