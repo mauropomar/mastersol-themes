@@ -89,6 +89,7 @@ Ext.define('MasterSol.controller.util.ThemeController', {
             window.setPosition(0, panelMenu.getHeight());
             return;
         }
-        window.alignTo(panelMenu, 'bl-bl');
+        window.getHeader().setHeight(27);
+        window.setPosition(0, panelMenu.getHeight() + 15);
     }
 });
