@@ -63,7 +63,7 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         Ext.Ajax.request(getview);
     },
 
-    selectView:function(combo, record){
+    selectView: function (combo, record) {
         Ext.ComponentQuery.query('#checkbox_default')[0].setValue(record.data.default);
     },
 
@@ -164,11 +164,12 @@ Ext.define('MasterSol.controller.section_user.SectionUserController', {
         }, this);
     },
 
-    resetView:function(window){
+    resetView: function (window) {
         var mask = new Ext.LoadMask(window, {
             msg: 'Reseteando. Espere unos minutos por favor...'
         });
         mask.show();
+        var combo = Ext.ComponentQuery.query('#combo_view_section')[0];
         var save = {
             url: 'app/resetview',
             method: 'POST',
