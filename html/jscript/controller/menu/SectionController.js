@@ -624,7 +624,7 @@ Ext.define('MasterSol.controller.menu.SectionController', {
             window.setWidth(300);
             var btn = MasterApp.tools.getBtnTools(window, 'btn_minimize');
             btn.hide();
-            window.alignTo(panelMenu, 'bl-bl');
+            MasterApp.theme.setHeaderHeightWindowCollpase(window);
             this.setPositionWindow(window);
             MasterApp.magnament.isMenuTabMagnament(window);
             this.adjustOtherWindowsMaximize();
