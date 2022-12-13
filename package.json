@@ -12,7 +12,7 @@
     "concat-stream": "^2.0.0",
     "connect-timeout": "^1.9.0",
     "directory-tree": "^2.2.9",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-session": "^1.17.1",
     "extract-zip": "^2.0.1",
     "file-type": "^16.5.0",
